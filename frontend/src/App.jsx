@@ -39,9 +39,11 @@ function App() {
         }
       } catch (err) {
         console.error(err);
+        
         const message = err.response?.data?.message || "Server Internal Error";
         dispatch(setUser(null))
         dispatch(setAuthenticated(false));
+        if(!err.status===401)
         toast.error(message);
       } finally {
         setLoading(false);
