@@ -98,6 +98,7 @@ const AuthPage = () => {
         // console.log(res.data.user.username)
         dispatch(setUser(res.data.user))
         dispatch(setAuthenticated(true))
+        navigate('/home',{replace:true})
         setLoading(false)
         setLoginEmail('')
         setLoginPassword('')

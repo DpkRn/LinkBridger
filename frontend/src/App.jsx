@@ -11,6 +11,8 @@ import VerificationPage from './components/VerificationPage'
 import Nav from './components/navbar/Nav'
 import VerifiedPage from './components/VerifiedPage'
 import PasswordReset from './components/PasswordReset'
+import Documentation from './components/Documentation'
+import LinkPage from './components/pages/LinkPage'
 
 function App() {
   const dispatch = useDispatch();
@@ -22,7 +24,7 @@ function App() {
   };
 
   const AuthRoute = ({ children }) => {
-    return isAuthenticated === false ? children : <Navigate to='/' />;
+    return isAuthenticated === false ? children : <Navigate to='/home' />;
   };
 
   useEffect(() => {
@@ -60,11 +62,15 @@ function App() {
       {isAuthenticated && <Nav />}
 
       <Routes>
+        <Route path='/doc' element={<Documentation/>} />
         <Route path='/login' element={<AuthRoute><AuthPage /></AuthRoute>} />
         <Route path='/verify' element={<VerificationPage />} />
-        <Route path='/' element={<PrivateRoute><DashBoard /></PrivateRoute>} />
+        <Route path='/links' element={<PrivateRoute><LinkPage/></PrivateRoute>} />
+        <Route path='/' element={<Documentation/>} />
+        <Route path='/home' element={<PrivateRoute><DashBoard /></PrivateRoute>} />
         <Route path='/verified' element={<VerifiedPage />} />
         <Route path='/reset_password' element={<PasswordReset />} />
+        
       </Routes>
     </div>
   );

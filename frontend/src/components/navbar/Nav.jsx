@@ -105,14 +105,14 @@ const Nav = () => {
               <div className="flex space-x-4">
                 {/* <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" --> */}
                 <Link
-                  to="#"
+                  to="/home"
                   className="rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white"
                   aria-current="page"
                 >
                   Home
                 </Link>
                 <Link
-                  to="#"
+                  to="/links"
                   className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
                 >
                   Links
@@ -122,13 +122,13 @@ const Nav = () => {
                   className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
                 >
                   Analysis
-                </Link>
+                </Link> */}
                 <Link
-                  to="#"
+                  to="/doc"
                   className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
                 >
                   Docs
-                </Link>*/}
+                </Link>
               </div>
             </div>
           </div> 
@@ -161,7 +161,7 @@ const Nav = () => {
               <div>
                 <button
                   type="button"
-                  className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                  className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 hover:cursor-pointer"
                   id="user-menu-button"
                   aria-expanded="false"
                   aria-haspopup="true"
@@ -188,7 +188,7 @@ const Nav = () => {
                 {/* <!-- Active: "bg-gray-100", Not Active: "" --> */}
                 <div
                   
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-slate-300"
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-slate-300 hover:cursor-pointer"
                   role="menuitem"
                   tabindex="-1"
                   id="user-menu-item-0"
@@ -197,7 +197,7 @@ const Nav = () => {
                 </div>
                 <div
                   
-                  className="block px-4 py-2 text-sm text-gray-700  hover:bg-slate-300"
+                  className="block px-4 py-2 text-sm text-gray-700  hover:bg-slate-300 hover:cursor-pointer"
                   role="menuitem"
                   tabindex="-1"
                   id="user-menu-item-1"
@@ -206,7 +206,7 @@ const Nav = () => {
                 </div>
                 <div
                   
-                  className="block px-4 py-2 text-sm text-gray-700  hover:bg-slate-300"
+                  className="block px-4 py-2 text-sm text-gray-700  hover:bg-slate-300 hover:cursor-pointer"
                   role="menuitem"
                   tabindex="-1"
                   id="user-menu-item-2"
@@ -224,26 +224,30 @@ const Nav = () => {
       {sidebarMenu&&<div className="sm:hidden bg-black/80" id="mobile-menu">
         <div className="space-y-1 px-2 pb-3 pt-2">
           <Link
-            to="#"
+            to="/home"
+            onClick={()=>dispatch(setSidebarMenu(!sidebarMenu))}
             className="block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white"
             aria-current="page"
           >
             Home
           </Link>
           <Link
-            to="#"
+            to="/links"
+            onClick={()=>dispatch(setSidebarMenu(!sidebarMenu))}
             className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
           >
             Links
           </Link>
           <Link
             to="#"
+            onClick={()=>dispatch(setSidebarMenu(!sidebarMenu))}
             className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
           >
             Analysis
           </Link>
           <Link
-            to="#"
+            to="/doc"
+            onClick={()=>dispatch(setSidebarMenu(!sidebarMenu))}
             className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
           >
             Docs

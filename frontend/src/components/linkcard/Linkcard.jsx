@@ -14,8 +14,7 @@ const Linkcard = ({ sources }) => {
   const dispatch=useDispatch()
 
   const { source, destination, clicked,_id } = sources;
-  console.log("like");
-  console.log(sources);
+  
 
 
   const handleCardClick=async(id)=>{
@@ -47,7 +46,7 @@ const Linkcard = ({ sources }) => {
 
 
   return (
-    <div className=" flex  bg-slate-200 items-center mx-4 p-5 my-2 shadow-md rounded-lg relative gap-4">
+    <div className=" flex  bg-slate-200 items-center mx-4 p-5 my-2 shadow-md rounded-lg relative gap-4 hover:bg-black/20 transition-all duration-700">
       
       {/* linkLogo */}
       <div className="hidden md:flex flex-col items-center border-r-2 border-dashed border-black pr-5 h-full gap-2">
