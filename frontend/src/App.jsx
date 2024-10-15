@@ -25,33 +25,33 @@ function App() {
     return isAuthenticated === false ? children : <Navigate to='/' />;
   };
 
-  // useEffect(() => {
-  //   const getUserInfo = async () => {
-  //     try {
-  //       const res = await api.post('/auth/verify', {}, { withCredentials: true });
-  //       if (res.status === 200 && res.data.success) {
-  //         console.log("User verified!");
-  //         dispatch(setUser(res.data.user));
-  //         dispatch(setAuthenticated(true));
-  //         toast.success(`Welcome back ${res.data.user.username}`);
-  //       }
-  //     } catch (err) {
-  //       console.error(err);
-  //       const message = err.response?.data?.message || "Server Internal Error";
-  //       dispatch(setUser(null))
-  //       dispatch(setAuthenticated(false));
-  //       toast.error(message);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
+  useEffect(() => {
+    const getUserInfo = async () => {
+      try {
+        const res = await api.post('/auth/verify', {}, { withCredentials: true });
+        if (res.status === 200 && res.data.success) {
+          console.log("User verified!");
+          dispatch(setUser(res.data.user));
+          dispatch(setAuthenticated(true));
+          toast.success(`Welcome back ${res.data.user.username}`);
+        }
+      } catch (err) {
+        console.error(err);
+        const message = err.response?.data?.message || "Server Internal Error";
+        dispatch(setUser(null))
+        dispatch(setAuthenticated(false));
+        toast.error(message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  //   if (!user) {
-  //     getUserInfo();
-  //   } else {
-  //     setLoading(false);
-  //   }
-  // }, [user]);
+    if (!user) {
+      getUserInfo();
+    } else {
+      setLoading(false);
+    }
+  }, []);
 
   if (isLoading) return <div className="flex justify-center items-center h-screen">Loading....</div>;
 
