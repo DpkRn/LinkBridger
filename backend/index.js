@@ -29,6 +29,9 @@ app.use(express.json())
 
 app.use('/auth',authRoute)
 app.use('/source',linkRoute)
+app.get('/',(req,res)=>{
+  return res.send('welcome to my page: Dwizard')
+})
 
 app.get('/:username/:source', async (req, res) => {
      const {username,source}=req.params;
