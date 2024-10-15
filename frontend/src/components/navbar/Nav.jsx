@@ -32,6 +32,8 @@ const Nav = () => {
   const handleClickOutside = (e) => {
     if (!e.target.closest(".profile-menu")) {
       setProfileMenu(false);
+    }else{
+      setProfileMenu(true);
     }
   };
 
