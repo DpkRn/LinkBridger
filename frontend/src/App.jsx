@@ -16,7 +16,7 @@ function App() {
   const dispatch = useDispatch();
   const [isLoading, setLoading] = useState(true);
   const isAuthenticated = useSelector(store => store.admin.isAuthenticated);
-
+  const user=useSelector(store=>store.admin.user)
   const PrivateRoute = ({ children }) => {
     return isAuthenticated === true ? children : <Navigate to='/login' />;
   };
@@ -38,6 +38,7 @@ function App() {
       } catch (err) {
         console.error(err);
         const message = err.response?.data?.message || "Server Internal Error";
+        dispatch(setUser(null))
         dispatch(setAuthenticated(false));
         toast.error(message);
       } finally {
@@ -45,12 +46,12 @@ function App() {
       }
     };
 
-    if (isAuthenticated === false) {
+    if (!user) {
       getUserInfo();
     } else {
       setLoading(false);
     }
-  }, [dispatch, isAuthenticated]);
+  }, [dispatch,user]);
 
   if (isLoading) return <div className="flex justify-center items-center h-screen">Loading....</div>;
 
