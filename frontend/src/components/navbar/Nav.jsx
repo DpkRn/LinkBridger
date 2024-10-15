@@ -14,7 +14,8 @@ const Nav = () => {
   // const [sidebarMenu,setSidebarMenu]=useState(false)
   const {sidebarMenu}=useSelector(store=>store.page)
 
-  const handleSignOut=async()=>{
+  const handleSignOut=async(e)=>{
+    e.preventDefault()
     try{
       const res=await api.get('/auth/signout',{withCredentials:true})
       if(res.status===200&&res.data.success){

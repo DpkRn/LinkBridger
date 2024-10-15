@@ -10,7 +10,7 @@ router.post('/signin',singInController)
 router.post('/checkavailablity',checkAvailablity)
 router.get('/verify',verifyToken,getUserInfo)
 router.post('/verifyacc',otpVerify,singUpController)
-router.get('/signout',signOut)
+router.get('/signout',verifyToken,signOut)
 
 
 router.post('/password_reset',sendOtp)
