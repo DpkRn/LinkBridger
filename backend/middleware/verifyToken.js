@@ -10,7 +10,7 @@ const verifyToken = async (req, res, next) => {
         .status(404)
         .json({ success: false, message: "token expired or invalid" });
     }
-
+    console.log('verifing')
     const auth = jwt.verify(token, process.env.JWT_KEY);
     if (auth) {
       console.log(auth);

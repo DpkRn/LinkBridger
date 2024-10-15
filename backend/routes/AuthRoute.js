@@ -8,7 +8,7 @@ const router=require('express').Router();
 router.post('/signup',sendOtp)
 router.post('/signin',singInController)
 router.post('/checkavailablity',checkAvailablity)
-router.get('/verify',verifyToken,getUserInfo)
+router.post('/verify',verifyToken,getUserInfo)
 router.post('/verifyacc',otpVerify,singUpController)
 router.get('/signout',signOut)
 
