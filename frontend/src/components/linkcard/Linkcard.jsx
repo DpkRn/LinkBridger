@@ -1,14 +1,17 @@
 import React, { useRef } from "react";
 import toast from "react-hot-toast";
 import { MdContentCopy } from "react-icons/md";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { FaEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import api from "../../utils/api";
+import { setLinks } from "../../redux/userSlice";
 
 const Linkcard = ({ sources }) => {
   const linkRef = useRef(null);
   const { username } = useSelector((store) => store.admin.user);
+  const links  = useSelector((store) => store.admin.links);
+  const dispatch=useDispatch()
 
   const { source, destination, clicked,_id } = sources;
   console.log("like");
@@ -21,10 +24,7 @@ const Linkcard = ({ sources }) => {
       if(res.status===200&&res.data.success){
         const tempArr=links.filter(link=>link._id!=id)
         dispatch(setLinks(tempArr))
-        // setSource(res.data.link.source)
-        // setShowBridge(true)
-        // setPlatform('')
-        // setProfileLink('')
+       
         toast.success("bridge has been deleted successfully!")
       }
     }catch(err){
