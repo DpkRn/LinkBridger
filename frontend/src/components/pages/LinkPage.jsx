@@ -12,7 +12,7 @@ const LinkPage = () => {
   return (
     
     <div className={` md:p-10 ${sidebarMenu?"blur-sm":""}`}>
-        {links.length===0?<h1>No links found. add new link by clicking on create new button</h1>:(links.map((link)=><Linkcard key={link._id} sources={link} />))}    
+        {links.length===0?<h1 className='mt-8'>No links found. add new link by clicking on create new button</h1>:(links.map((link)=><Linkcard key={link._id} sources={link} />))}    
     </div>
   )
 }
