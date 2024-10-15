@@ -9,7 +9,7 @@ const verifyToken = async (req, res, next) => {
     if (token==''||!token) {
       return res
         .status(401)
-        
+        .json({ success: false });
     }
     console.log('verifing')
     const auth = await jwt.verify(token, process.env.JWT_KEY);
