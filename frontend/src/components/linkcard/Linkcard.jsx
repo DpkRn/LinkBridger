@@ -4,14 +4,34 @@ import { MdContentCopy } from "react-icons/md";
 import { useSelector } from "react-redux";
 import { FaEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
+import api from "../../utils/api";
 
 const Linkcard = ({ sources }) => {
   const linkRef = useRef(null);
   const { username } = useSelector((store) => store.admin.user);
 
-  const { source, destination, clicked } = sources;
+  const { source, destination, clicked,_id } = sources;
   console.log("like");
   console.log(sources);
+
+
+  const handleCardClick=async(id)=>{
+    try{
+      const res=await api.post('/source/deletelink',{id:id},{withCredentials:true})
+      if(res.status===200&&res.data.success){
+        const tempArr=links.filter(link=>link._id!=id)
+        dispatch(setLinks(tempArr))
+        // setSource(res.data.link.source)
+        // setShowBridge(true)
+        // setPlatform('')
+        // setProfileLink('')
+        toast.success("bridge has been deleted successfully!")
+      }
+    }catch(err){
+      const message=err.response?.data?.message || "Server Internal Error"
+      toast.error(message)
+    }
+  }
 
   const copyToClipboard = () => {
     const linkText = linkRef.current.innerText; // Get the text from the ref
@@ -24,6 +44,8 @@ const Linkcard = ({ sources }) => {
         toast.error("Failed to copy!"); // Show error message if failed
       });
   };
+
+
   return (
     <div className=" flex  bg-slate-200 items-center mx-4 p-5 my-2 shadow-md rounded-lg relative gap-4">
       
@@ -69,7 +91,7 @@ const Linkcard = ({ sources }) => {
         {/* Edit section */}
         <div className="flex  bg-white pl-6 rounded-md ">
           <button className="text-black text-2xl hover:bg-black/10 active:bg-black/50 rounded-full p-3"><FaEdit /></button>
-          <button className="text-black text-2xl hover:bg-black/10 active:bg-black/50 rounded-full p-3"><MdDelete className="text-red-900 text-2xl"/></button>
+          <button className="text-black text-2xl hover:bg-black/10 active:bg-black/50 rounded-full p-3" onClick={()=>handleCardClick(_id)}><MdDelete className="text-red-900 text-2xl"/></button>
 
         </div>
       </div>

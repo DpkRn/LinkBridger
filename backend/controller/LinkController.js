@@ -44,24 +44,27 @@ const getAllSource=async(req,res)=>{
          return res.status(500).json({success:false,message:"Server Internal Error"})
      }
     }
-// const getParticularSource=async(req,res)=>{
-//     try{
-//        const id=req.userId
-//        console.log(id)
+const deleteLink=async(req,res)=>{
+    try{
+       const id=req.body.id
+       if(!id){
+        return res.status(404).json({success:false,message:"link already deleted !"})
+       }
      
-//          const user=await User.findById(id);
-//          if(!user)
-//          return res.status(404).json({success:false,message:'Not found!'})
+         const link=await Link.findByIdAndDelete(id);
+         if(!link)
+         return res.status(404).json({success:false,message:'Not found!'})
          
-//          return res.status(200).json({success:true,message:`welcom back ${user.username}`,user})
+         return res.status(200).json({success:true,message:"link has been deleted successfully"})
  
-//      }catch(err){
-//          console.log(err)
-//          return res.status(500).json({success:false,message:"Server Internal Error"})
-//      }
-//     }
+     }catch(err){
+         console.log(err)
+         return res.status(500).json({success:false,message:"Server Internal Error"})
+     }
+    }
 
 module.exports={
     addNewSource,
-    getAllSource
+    getAllSource,
+    deleteLink
 }
