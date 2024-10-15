@@ -7,6 +7,7 @@ import { setLinks } from '../../redux/userSlice';
 
 const CreateBridge = () => {
   const dispatch=useDispatch()
+  const [loading,setLoading]=useState(false)
   const [platform, setPlatform] = useState('');
   const [source,setSource]=useState('')
   const [profileLink, setProfileLink] = useState('');
@@ -20,6 +21,7 @@ const CreateBridge = () => {
     //  const source=source.toLowerCase()
     //  setSource(source)
     try{
+      setLoading(true)
       const res=await api.post('/source/addnewsource',{userId:_id,username:username,source:platform,destination:profileLink})
       if(res.status===201&&res.data.success){
         links=[...links,res.data.link]
@@ -28,11 +30,14 @@ const CreateBridge = () => {
         setShowBridge(true)
         setPlatform('')
         setProfileLink('')
+        setLoading(false)
         toast.success("bridge has been made successfully!")
       }
     }catch(err){
       const message=err.response?.data?.message || "Server Internal Error"
       toast.error(message)
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -79,7 +84,7 @@ const CreateBridge = () => {
 
           onClick={handleSubmit}
         >
-          Create New
+          {`${!loading?"Create New":"Creating"}`}
         </button>
         {/* bridge */}
         {showBridge&&<div className="">

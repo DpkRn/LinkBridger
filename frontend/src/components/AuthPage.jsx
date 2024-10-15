@@ -14,7 +14,7 @@ const AuthPage = () => {
 
   const navigate=useNavigate()
 
-
+   const [loading,setLoading]=useState(false)
 
   // Create references for the elements you want to manipulate
   const signInBtnRef = useRef(null);
@@ -69,9 +69,11 @@ const AuthPage = () => {
   const handleSignUp=async(e)=>{
     e.preventDefault()
     try{
+      setLoading(true)
       const res=await api.post('/auth/signup',{username:username,email:signinemail,password:signinpassword},{withCredentials:true});
       if(res.status===201&&res.data.success){
         toast.success(res.data.message)
+        setLoading(false)
         navigate('/verify',{state:{username:username,email:signinemail,password:signinpassword}})
       }
     }catch(err){
@@ -81,6 +83,8 @@ const AuthPage = () => {
       if(err.status===409){
         navigate('/login')
       }
+    }finally{
+      setLoading(false)
     }
   }
 
@@ -88,19 +92,24 @@ const AuthPage = () => {
   const handleLogin=async(e)=>{
     e.preventDefault()
     try{
+      setLoading(true)
       const res=await api.post('/auth/signin',{email:loginemail,password:loginpassword},{withCredentials:true});
       if(res.status===200&&res.data.success){
         // console.log(res.data.user.username)
         dispatch(setUser(res.data.user))
         dispatch(setAuthenticated(true))
+        setLoading(false)
         setLoginEmail('')
         setLoginPassword('')
         toast.success(`welcome ${res.data.user.username}`)
       }
     }catch(err){
       console.log(err)
+
       const message=err.response?.data?.message||"Network Slow ! Try again";
       toast.error(message)
+    }finally{
+      setLoading(false)
     }
   }
 
@@ -140,7 +149,7 @@ const AuthPage = () => {
                 <i className="fas fa-lock"></i>
                 <input type="password" placeholder="Password"  value={loginpassword} onChange={(e)=>setLoginPassword(e.target.value)} />
               </div>
-              <button  className="btn solid"  onClick={handleLogin}>Sign In</button>
+              <button  className="btn solid  "  onClick={handleLogin}>{`${!loading?"Sign In":"..."}`}</button>
               <p className="social-text">Or Sign in with social platforms</p>
               <Link to='/reset_password' className='text-blue-500 cursor-pointer' >forgot password?</Link>
               {/* <div className="social-media">
@@ -181,7 +190,7 @@ const AuthPage = () => {
                 <input type="password" placeholder="Password" value={signinpassword} onChange={(e)=>setSigninPassword(e.target.value)}/>
               </div>
 
-              <button  className="btn solid"   onClick={handleSignUp} >Sign up</button>
+              <button  className="btn solid"   onClick={handleSignUp} >{`${!loading?"Sign Up":"..."}`}</button>
               <p className="social-text">Or Sign up with social platforms</p>
              
               {/* <div className="social-media">
