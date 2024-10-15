@@ -17,7 +17,7 @@ const db_url=process.env.DATABASE_URL;
 
 
 app.use(cors({
-  origin:['http://localhost:5173'],
+  origin:['https://linkbriger.vercel.app','http://localhost:5173'],
   methods:['POST','GET'],
   credentials:true
 }))
