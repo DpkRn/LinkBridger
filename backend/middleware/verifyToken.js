@@ -4,6 +4,7 @@ const Otp = require("../model/otpModel");
 const verifyToken = async (req, res, next) => {
   try {
     const token = req.cookies.token;
+    console.log(token)
 
     if (token==''||!token) {
       return res
@@ -25,7 +26,7 @@ const verifyToken = async (req, res, next) => {
     if (err.name === 'TokenExpiredError') {
       return res.status(401).json({ success: false, message: "Session expired, please log in again." });
     }
-    return res.status(401).json({ success: false, message: "Invalid token." });
+    
     return res
       .status(500)
       .json({ success: false, message: "Server Internal Error" });
