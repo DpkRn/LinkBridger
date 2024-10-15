@@ -5,6 +5,7 @@ import { setSidebarMenu } from "../../redux/pageSlice";
 import toast from "react-hot-toast";
 import api from "../../utils/api";
 import { setAuthenticated, setUser } from "../../redux/userSlice";
+import { MdOutlineArrowDropDownCircle } from "react-icons/md";
 
 const Nav = () => {
   const navigate=useNavigate()
@@ -13,6 +14,7 @@ const Nav = () => {
   const [profileMenu,setProfileMenu]=useState(false)
   // const [sidebarMenu,setSidebarMenu]=useState(false)
   const {sidebarMenu}=useSelector(store=>store.page)
+  const username=useSelector(store=>store.admin.user.username)
 
   const handleSignOut=async(e)=>{
     e.preventDefault()
@@ -92,7 +94,7 @@ const Nav = () => {
           <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
 
 {/* Logo */}
-            <div className="flex flex-shrink-0 items-center">
+            <div className="flex flex-shrink-0 mr-5  items-center">
               <img
                 className="h-8 w-auto"
                 src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500"
@@ -161,7 +163,7 @@ const Nav = () => {
               <div>
                 <button
                   type="button"
-                  className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 hover:cursor-pointer"
+                  className="relative font-bold gap-1 text-white shadow-md items-center px-4 py-2 flex rounded-full uppercase bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 hover:cursor-pointer"
                   id="user-menu-button"
                   aria-expanded="false"
                   aria-haspopup="true"
@@ -169,11 +171,13 @@ const Nav = () => {
                 >
                   <span className="absolute -inset-1.5"></span>
                   <span className="sr-only">Open user menu</span>
-                  <img
+                  {/* <img
                     className="h-8 w-8 rounded-full"
                     src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
                     alt=""
-                  />
+                  /> */}
+                  {username}
+                  <MdOutlineArrowDropDownCircle />
                 </button>
               </div>
 
