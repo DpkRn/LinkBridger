@@ -1,36 +1,36 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom'
 import { setSidebarMenu } from "../../redux/pageSlice";
 import toast from "react-hot-toast";
 import api from "../../utils/api";
 import { setAuthenticated, setUser } from "../../redux/userSlice";
 
 const Nav = () => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const [profileMenu, setProfileMenu] = useState(false);
-  const { sidebarMenu } = useSelector(store => store.page);
-  const [isLoggingOut, setIsLoggingOut] = useState(false); // New state for logout
+  const navigate=useNavigate()
+  const dispatch=useDispatch()
+ 
+  const [profileMenu,setProfileMenu]=useState(false)
+  // const [sidebarMenu,setSidebarMenu]=useState(false)
+  const {sidebarMenu}=useSelector(store=>store.page)
 
-  const handleSignOut = async (e) => {
-    e.preventDefault();
-    setIsLoggingOut(true); // Set logout state
-    try {
-      const res = await api.get('/auth/signout', { withCredentials: true });
-      if (res.status === 200 && res.data.success) {
-        dispatch(setUser(null));
-        dispatch(setAuthenticated(false));
-        navigate('/login', { replace: true });
-        toast.success(res.data.message);
+  const handleSignOut=async(e)=>{
+    e.preventDefault()
+    try{
+      const res=await api.get('/auth/signout',{withCredentials:true})
+      if(res.status===200&&res.data.success){
+        dispatch(setUser(null))
+        dispatch(setAuthenticated(false))
+        navigate('/login',{replace:true})
+        toast.success(res.data.message)
       }
-    } catch (err) {
-      const message = err.response?.data?.message || "Server Internal Error";
-      toast.error(message);
-    } finally {
-      setIsLoggingOut(false); // Reset logout state after process
+    }catch(err){
+      const message=err.response?.data?.message || "Server Internal Error"
+      toast.error(message)
     }
-  };
+  }
+
+
   return (
     <nav className="bg-gray-800 h-[70px]   relative z-40">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -211,7 +211,6 @@ const Nav = () => {
                   tabindex="-1"
                   id="user-menu-item-2"
                   onClick={handleSignOut}
-                  disabled={isLoggingOut}
                 >
                   Sign out
                 </div>
