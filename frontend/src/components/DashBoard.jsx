@@ -15,7 +15,7 @@ import CreateBridge from './pages/CreateBridge'
 const DashBoard = () => {
   const dispatch=useDispatch()
 
-  // const links=useSelector(store=>store.admin.links)
+  
   const [showLinkBridge,setShowLinkBridge]=useState(false)
   const {username}=useSelector(store=>store.admin.user)
  useEffect(()=>{
@@ -23,9 +23,8 @@ const DashBoard = () => {
      try{
       const res=await api.post('/source/getallsource',{username},{withCredentials:true});
       if(res.status===200&&res.data.success){
-        // console.log(res.data.sources)
+       
         dispatch(setLinks(res.data.sources))
-        toast.success('links fetched')
       }
      }catch(err){
       console.log(err)

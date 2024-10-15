@@ -30,7 +30,7 @@ function App() {
       try {
         const res = await api.post('/auth/verify', {}, { withCredentials: true });
         if (res.status === 200 && res.data.success) {
-          console.log("User verified!");
+          // console.log("User verified!");
           dispatch(setUser(res.data.user));
           dispatch(setAuthenticated(true));
           toast.success(`Welcome back ${res.data.user.username}`);
@@ -56,7 +56,7 @@ function App() {
   if (isLoading) return <div className="flex justify-center items-center h-screen">Loading....</div>;
 
   return (
-    <div className='pb-1 w-[100%] bg-gradient-to-r from-slate-100 via-lime-100 to-slate-100 overflow-hidden'>
+    <div className='pb-1 min-h-screen  bg-gradient-to-r from-slate-100 via-lime-100 to-slate-100 overflow-hidden'>
       {isAuthenticated && <Nav />}
 
       <Routes>

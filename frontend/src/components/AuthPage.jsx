@@ -125,11 +125,11 @@ const AuthPage = () => {
   }
   return (
     <>
-      <div className="container" ref={containerRef}>
-        <div className="forms-container">
-          <div className="signin-signup">
+      <div className="container min-w-screen " ref={containerRef}>
+        <div className="forms-container ">
+          <div className="signin-signup  shadow-lg">
             {/* Sign-in form */}
-            <form  className="sign-in-form">
+            <form  className="sign-in-form ">
               <h2 className="title">Log in</h2>
               <div className="input-field">
                 <i className="fas fa-user"></i>
@@ -138,7 +138,7 @@ const AuthPage = () => {
               </div>
               <div className="input-field">
                 <i className="fas fa-lock"></i>
-                <input type="password" placeholder="Password" value={loginpassword} onChange={(e)=>setLoginPassword(e.target.value)} />
+                <input type="password" placeholder="Password"  value={loginpassword} onChange={(e)=>setLoginPassword(e.target.value)} />
               </div>
               <button  className="btn solid"  onClick={handleLogin}>Sign In</button>
               <p className="social-text">Or Sign in with social platforms</p>

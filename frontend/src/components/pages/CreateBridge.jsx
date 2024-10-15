@@ -17,7 +17,8 @@ const CreateBridge = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log("clickeddddddddd")
+    //  const source=source.toLowerCase()
+    //  setSource(source)
     try{
       const res=await api.post('/source/addnewsource',{userId:_id,username:username,source:platform,destination:profileLink})
       if(res.status===201&&res.data.success){
@@ -58,7 +59,7 @@ const CreateBridge = () => {
           type="text"
           placeholder="Platform (e.g., linkdin, instagram, facebook)"
           value={platform}
-          onChange={(e) => setPlatform(e.target.value)}
+          onChange={(e) => setPlatform((e.target.value).toLowerCase())}
           className="p-3 w-full md:w-[80%] lowercase border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 outline-none transition-transform transform hover:scale-105 duration-300"
           required
         />
