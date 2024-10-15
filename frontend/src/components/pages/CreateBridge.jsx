@@ -84,7 +84,7 @@ const CreateBridge = () => {
         {showBridge&&<div className="">
           <div className="px-4 py-2 bg-black/30 text-white rounded-md flex items-center break-words gap-3">
             <span className="break-all font-mono" ref={linkRef}>
-              {`http://localhost:8080/${username}/${source}`}
+              {`https://linkb-one.vercel.app/${username}/${source}`}
             </span>
             <span>
               <MdContentCopy

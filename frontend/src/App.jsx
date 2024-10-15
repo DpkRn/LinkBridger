@@ -23,7 +23,7 @@ function App() {
     return isAuthenticated?children:<Navigate to='/login'/>;
   }
   const AuthRoute=({children})=>{
-    return !isAuthenticated?children:<Navigate to='/'/>;
+    return isAuthenticated===false?children:<Navigate to='/'/>;
   }
 
   useEffect(()=>{
