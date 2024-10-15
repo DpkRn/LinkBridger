@@ -5,9 +5,9 @@ const verifyToken = async (req, res, next) => {
   try {
     const token = req.cookies.token;
 
-    if (!token) {
+    if (token==''||!token) {
       return res
-        .status(404)
+        .status(401)
         .json({ success: false, message: "token expired or invalid" });
     }
     console.log('verifing')
@@ -22,6 +22,10 @@ const verifyToken = async (req, res, next) => {
       .json({ success: false, message: "user unauthenticated !" });
   } catch (err) {
     console.log(err);
+    if (err.name === 'TokenExpiredError') {
+      return res.status(401).json({ success: false, message: "Session expired, please log in again." });
+    }
+    return res.status(401).json({ success: false, message: "Invalid token." });
     return res
       .status(500)
       .json({ success: false, message: "Server Internal Error" });
