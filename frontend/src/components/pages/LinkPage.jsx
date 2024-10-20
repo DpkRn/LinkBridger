@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import Linkcard from "../linkcard/Linkcard";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
