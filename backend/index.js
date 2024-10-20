@@ -18,6 +18,8 @@ const port = process.env.PORT || 8080
 const db_url=process.env.DATABASE_URL;
 
 app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+console.log('Views directory:', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(cors({
@@ -54,7 +56,7 @@ app.get('/:username', async (req, res) => {
   const tree=await Link.find({username:username})
   if(tree){
     console.log(tree)
-    return res.render('linktree',{ 
+    return res.render('linktree.ejs',{ 
       username:username,
       tree:tree 
     })   
