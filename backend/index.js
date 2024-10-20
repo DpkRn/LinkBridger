@@ -4,6 +4,7 @@ const cookieParser=require('cookie-parser')
 const path =require('path')
 const mongoose=require('mongoose')
 const dotenv = require('dotenv')
+const helmet = require('helmet'); 
 
 
 const authRoute=require('./routes/AuthRoute')
@@ -27,7 +28,18 @@ app.use(cors({
 
 app.use(cookieParser());
 app.use(express.json())
+app.use(helmet());
 
+app.use(helmet.contentSecurityPolicy({
+  directives: {
+    defaultSrc: ["'self'"],
+    scriptSrc: ["'self'", "https://vercel.live"],
+    imgSrc: ["'self'", "data:", "https://your-image-host.com"],  // Add your image host if needed
+    styleSrc: ["'self'", "'unsafe-inline'"],  // Allow inline styles if needed
+    connectSrc: ["'self'", "https://linkb-one.vercel.app"],  // Add your API backend here
+    // Add more directives as needed
+  }
+}));
 
 
 app.use('/auth',authRoute)
