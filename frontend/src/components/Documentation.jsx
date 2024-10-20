@@ -52,7 +52,7 @@ const Documentation = () => {
           <p className="text-lg">LeetCode: <a href="https://linkb-one.vercel.app/dpkrn/leetcode" className="text-blue-500 underline">https://linkb-one.vercel.app/dpkrn/leetcode</a></p>
           <p className="text-lg">Portfolio: <a href="https://linkb-one.vercel.app/dpkrn/portfolio" className="text-blue-500 underline">https://linkb-one.vercel.app/dpkrn/portfolio</a></p>
           <p className="text-lg">Instagram: <a href="https://linkb-one.vercel.app/dpkrn/instagram" className="text-blue-500 underline">https://linkb-one.vercel.app/dpkrn/instagram</a></p>
-          <p className="text-lg">Instagram: <a href="https://linkb-one.vercel.app/dpkrn/facebook" className="text-blue-500 underline">https://linkb-one.vercel.app/dpkrn/facebook</a></p>
+          <p className="text-lg">Facebook: <a href="https://linkb-one.vercel.app/dpkrn/facebook" className="text-blue-500 underline">https://linkb-one.vercel.app/dpkrn/facebook</a></p>
           <p className="text-lg">LeetCode: <a href="https://linkb-one.vercel.app/dpkrn/codeforces" className="text-blue-500 underline">https://linkb-one.vercel.app/dpkrn/codeforces</a></p>
           <p className="text-lg mt-4">
             Only Plateform name has been changed..all remains same  

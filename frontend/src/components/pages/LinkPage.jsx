@@ -2,20 +2,33 @@ import React from "react";
 import Linkcard from "../linkcard/Linkcard";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
+import { MdContentCopy } from "react-icons/md";
 
 const LinkPage = () => {
   const navigate = useNavigate();
+  const linkRef = useRef(null);
   const location = useLocation();
   const sidebarMenu = useSelector((store) => store.page.sidebarMenu);
   const links = useSelector((store) => store.admin.links);
   const username = useSelector((store) => store.admin.user.username);
-
+  
   console.log(location);
 
   const handleCreateNewBridge = () => {
     navigate("/home");
   };
-
+ 
+  const copyToClipboard = () => {
+    const linkText = linkRef.current.innerText; // Get the text from the ref
+    navigator.clipboard
+      .writeText(linkText)
+      .then(() => {
+        toast.success("Link copied to clipboard!"); // Show notification
+      })
+      .catch((err) => {
+        toast.error("Failed to copy!"); // Show error message if failed
+      });
+  };
   return (
     <div className={` md:p-10 ${sidebarMenu ? "blur-sm" : ""}`}>
       {/* button */}
@@ -29,7 +42,20 @@ const LinkPage = () => {
           </button>
         </div>
       )}
-      {username&&<p>your linktree is live live on: https://linkb-one.vercel.app/{username}</p>}
+      <span>your linktree is live live on:</span> 
+      <div className="px-4 py-2 bg-black/30 text-white rounded-md flex items-center break-words gap-3">
+      <span className="break-all font-mono" ref={linkRef}>
+        {`https://linkb-one.vercel.app/${username}`}
+      </span>
+      <span>
+        <MdContentCopy
+          className="hover:text-blue-700 active:text-black cursor-pointer"
+          onClick={copyToClipboard}
+        />
+      </span>
+    </div>
+      
+
       {links.length === 0 ? (
         <h1 className="mt-8">
           No links found. add new link by clicking on create new button
