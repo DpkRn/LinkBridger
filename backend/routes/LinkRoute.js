@@ -5,9 +5,9 @@ const router=require('express').Router();
 
 
 
-router.post('/addnewsource',addNewSource)
-router.post('/getallsource',getAllSource)
-router.post('/deletelink',deleteLink)
+router.post('/addnewsource',verifyToken,addNewSource)
+router.post('/getallsource',verifyToken,getAllSource)
+router.post('/deletelink',verifyToken,deleteLink)
 
 // router.get('/verify',verifyToken,getUserInfo)
 

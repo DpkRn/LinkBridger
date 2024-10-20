@@ -2,9 +2,9 @@ const Link = require("../model/linkModel");
 
 const addNewSource=async(req,res)=>{
     try{
-        // const userId=req.userId;
-        console.log('adding')
-       const {userId,username,source,destination}=req.body
+         const userId=req.userId;
+        console.log(userId)
+       const {username,source,destination}=req.body
         if(!userId||!source||!username||!destination){
             return res.status(400).json({success:false,message:"All fields are required"})
         }
@@ -20,32 +20,35 @@ const addNewSource=async(req,res)=>{
         return res.status(201).json({success:true,message:`${source} added !`,link:doc})
 
     }catch(err){
-        console.log(err)
-        return res.status(500).json({success:false,message:"Server Internal Error !"})
+        console.log(err,"error")
+        return res.status(500).json({success:false,message:"Server Internal Erro !"})
     }
 }
 
 
 const getAllSource=async(req,res)=>{
     try{
-
+        const userId=req.userId;
         const {username}=req.body
-         if(!username){
-             return res.status(400).json({success:false,message:"username is required"})
+         if(!userId||!username){
+             return res.status(400).json({success:false,message:"looks like you entered link directely ! please login first"})
          }
      
-         const sources=await Link.find({username},{source:1,destination:1,clicked:1});
+         const sources=await Link.find({username,userId},{source:1,destination:1,clicked:1});
          if(!sources)
          return res.status(404).json({success:false,message:'sources not found !'})
          return res.status(200).json({success:true,message:'sources fetched successfully',sources})
  
      }catch(err){
-         console.log(err)
+         console.log(err,"error")
          return res.status(500).json({success:false,message:"Server Internal Error"})
      }
     }
 const deleteLink=async(req,res)=>{
     try{
+        if(!req.userId){
+            return res.status(404).json({success:false,message:"Login first. token expired !"})
+        }
        const id=req.body.id
        if(!id){
         return res.status(404).json({success:false,message:"link already deleted !"})

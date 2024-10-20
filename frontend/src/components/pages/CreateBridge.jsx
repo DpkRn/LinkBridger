@@ -22,7 +22,7 @@ const CreateBridge = () => {
     //  setSource(source)
     try{
       setLoading(true)
-      const res=await api.post('/source/addnewsource',{userId:_id,username:username,source:platform,destination:profileLink})
+      const res=await api.post('/source/addnewsource',{userId:_id,username:username,source:platform,destination:profileLink},{withCredentials:true})
       if(res.status===201&&res.data.success){
         links=[...links,res.data.link]
         dispatch(setLinks(links))

@@ -1,6 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 const cookieParser=require('cookie-parser')
+const path =require('path')
 const mongoose=require('mongoose')
 const dotenv = require('dotenv')
 
@@ -15,6 +16,8 @@ const app = express()
 const port = process.env.PORT || 8080
 const db_url=process.env.DATABASE_URL;
 
+app.set('view engine', 'ejs');
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(cors({
   origin:['https://linkbriger.vercel.app','http://localhost:5173'],
@@ -30,9 +33,21 @@ app.use(express.json())
 app.use('/auth',authRoute)
 app.use('/source',linkRoute)
 app.get('/',(req,res)=>{
-  return res.send('welcome to my page: Dwizard')
+  return res.render('welcome to my page: Dwizard')
 })
 
+app.get('/:username', async (req, res) => {
+  const username=req.params.username
+  const tree=await Link.find({username:username})
+  if(tree){
+    console.log(tree)
+    return res.render('linktree',{ 
+      username:username,
+      tree:tree 
+    })   
+  }
+  return res.render('not exists')
+})
 app.get('/:username/:source', async (req, res) => {
      const {username,source}=req.params;
      const doc=await Link.findOne({username,source})

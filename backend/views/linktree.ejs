@@ -1,0 +1,32 @@
+<!-- views/profile.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%=username%></title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="profile">
+           
+            <div class="title">
+                <h1><%= username.toUpperCase() %></h1>
+            </div>
+            
+
+            <div class="links">
+                <%tree.forEach(item =>{
+                    %><div class="link-item">
+                    <a href="<%= item.destination %>" class="btn">
+                        <%= item.source.toUpperCase() %>
+                    </a>
+                </div>
+                <%})%> 
+            </div>
+            <a href="https://linkbriger.vercel.app">Click here to make your own links. </a>
+        </div>
+    </div>
+</body>
+</html>

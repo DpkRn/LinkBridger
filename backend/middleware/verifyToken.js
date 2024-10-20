@@ -6,10 +6,10 @@ const verifyToken = async (req, res, next) => {
     const token = req.cookies.token;
     console.log(token)
 
-    if (token==''||!token) {
+    if (!token) {
       return res
         .status(401)
-        .json({ success: false });
+        .json({ success: false,message:"token expired !" });
     }
     console.log('verifing')
     const auth = await jwt.verify(token, process.env.JWT_KEY);
