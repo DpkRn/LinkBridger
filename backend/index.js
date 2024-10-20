@@ -33,10 +33,10 @@ app.use(helmet());
 app.use(helmet.contentSecurityPolicy({
   directives: {
     defaultSrc: ["'self'"],
-    scriptSrc: ["'self'", "https://vercel.live"],
+    scriptSrc: ["'self'", "https://vercel.live", "https://*.vercel.app"],  // Allow Vercel scripts
     imgSrc: ["'self'", "data:", "https://your-image-host.com"],  // Add your image host if needed
     styleSrc: ["'self'", "'unsafe-inline'"],  // Allow inline styles if needed
-    connectSrc: ["'self'", "https://linkb-one.vercel.app"],  // Add your API backend here
+    connectSrc: ["'self'", "https://linkb-one.vercel.app","https://linkb-one.vercel.app/*"],  // Add your API backend here
     // Add more directives as needed
   }
 }));
