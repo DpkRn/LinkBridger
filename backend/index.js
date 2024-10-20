@@ -44,8 +44,9 @@ app.use(helmet.contentSecurityPolicy({
 
 app.use('/auth',authRoute)
 app.use('/source',linkRoute)
+
 app.get('/',(req,res)=>{
-  return res.render('welcome to my page: Dwizard')
+  return res.send('welcome to my page: Dwizard')
 })
 
 app.get('/:username', async (req, res) => {
