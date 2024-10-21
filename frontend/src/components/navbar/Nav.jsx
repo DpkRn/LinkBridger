@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { setSidebarMenu } from "../../redux/pageSlice";
@@ -13,9 +13,12 @@ import {
 import { MdOutlineArrowDropDownCircle } from "react-icons/md";
 import Notification from "../notification/Notification";
 
+
 const Nav = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const notificationRef=useRef(null)
+  const profilePageRef=useRef(null)
 
   const [profileMenu, setProfileMenu] = useState(false);
   const [notificationPage, setNotificationPage] = useState(false);
@@ -79,6 +82,7 @@ const Nav = () => {
     dispatch(
       setNotifications(links.reduce((acc, link) => acc + link.notSeen, 0))
     );
+    
   }, [links, notifications]);
 
   const onNotificationClick = async () => {
@@ -89,10 +93,42 @@ const Nav = () => {
     setNotificationPage((state) => !state);
   };
 
+// handle out side click
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        notificationRef.current && 
+        !notificationRef.current.contains(event.target) && 
+        !event.target.closest(".notification-button")
+      ) {
+        setNotificationPage(false);
+      }
+      if (
+        profilePageRef.current && 
+        !profilePageRef.current.contains(event.target) && 
+        !event.target.closest(".profileMenu-button")
+      ) {
+        setProfileMenu(false);
+      }
+    };
+
+    if (notificationPage || profileMenu) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [notificationPage,profileMenu]);
+
+
+
   return (
     <nav className="bg-gray-800 h-[70px]   relative z-40 px-5 ">
       <div className="">
-        <div className="relative flex h-16 items-center md:justify-between justify-end  ">
+        <div className="relative flex h-16 items-center md:justify-between justify-end">
           {/* mobile menu icon */}
           <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
             {/* <!-- Mobile menu button--> */}
@@ -191,14 +227,12 @@ const Nav = () => {
             </div>
           </div>
 
-
           <div className="absolute inset-y-0  flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-
             {/* notification */}
             <div className="relative">
               <button
                 type="button"
-                className="relative rounded-full  bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                className=" notification-button relative rounded-full  bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                 onClick={onNotificationClick}
               >
                 <span className="absolute -inset-1.5"></span>
@@ -225,13 +259,15 @@ const Nav = () => {
                   <span>{notifications}</span>
                 </div>
               )}
+
+             
             </div>
             {/* <!-- Profile dropdown --> */}
             <div className="relative ml-3">
               <div>
                 <button
                   type="button"
-                  className="relative font-bold gap-1 text-white shadow-md items-center px-4 py-2 flex rounded-full uppercase bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 hover:cursor-pointer"
+                  className="relative profileMenu-button font-bold gap-1 text-white shadow-md items-center px-4 py-2 flex rounded-full uppercase bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 hover:cursor-pointer"
                   id="user-menu-button"
                   aria-expanded="false"
                   aria-haspopup="true"
@@ -259,6 +295,7 @@ const Nav = () => {
                   aria-orientation="vertical"
                   aria-labelledby="user-menu-button"
                   tabindex="-1"
+                  ref={profilePageRef}
                 >
                   {/* <!-- Active: "bg-gray-100", Not Active: "" --> */}
                   <div
@@ -289,8 +326,19 @@ const Nav = () => {
                 </div>
               )}
             </div>
-
           </div>
+          {notificationPage && (
+                <div className=" notification-page absolute rounded-lg  top-[55px] right-2  bg-cyan-700 text-center ">
+                  <Notification />
+                  <button
+                    className="px-3 py-2 bg-slate-200 rounded-md mb-4 hover:bg-slate-400"
+                    onClick={handleMarkRead}
+                    ref={notificationRef}
+                  >
+                    mark as read
+                  </button>
+                </div>
+              )}
         </div>
       </div>
 
@@ -328,17 +376,6 @@ const Nav = () => {
               Docs
             </Link>
           </div>
-        </div>
-      )}
-      {notificationPage && (
-        <div className="absolute rounded-lg mx-auto top-[60px] bg-cyan-700 text-center ">
-          <Notification />
-          <button
-            className="px-3 py-2 bg-slate-200 rounded-md mb-4 hover:bg-slate-400"
-            onClick={handleMarkRead}
-          >
-            mark as read
-          </button>
         </div>
       )}
     </nav>
