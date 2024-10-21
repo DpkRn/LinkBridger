@@ -63,7 +63,9 @@ const AuthPage = () => {
   }, []); 
 
 
-
+  const validateSpace=()=>{
+    
+  }
 
   //Authentication
   const handleSignUp=async(e)=>{
@@ -144,11 +146,21 @@ const AuthPage = () => {
               <div className="input-field">
                 <i className="fas fa-user"></i>
                 
-                <input type="text" placeholder="Email" value={loginemail} onChange={(e)=>setLoginEmail(e.target.value)} />
+                <input type="text" placeholder="Email" value={loginemail} onChange={(e)=>{
+                  if(e.target.value.includes(' ')){
+                    toast.error('space not allowed')
+                    return;
+                  }
+                  setLoginEmail(e.target.value)}} />
               </div>
               <div className="input-field">
                 <i className="fas fa-lock"></i>
-                <input type="password" placeholder="Password"  value={loginpassword} onChange={(e)=>setLoginPassword(e.target.value)} />
+                <input type="password" placeholder="Password"  value={loginpassword} onChange={(e)=>{
+                  if(e.target.value.includes(' ')){
+                    toast.error('space not allowed')
+                    return;
+                  }
+                  setLoginPassword(e.target.value)}} />
               </div>
               <button  className="btn solid  "  onClick={handleLogin}>{`${!loading?"Sign In":"..."}`}</button>
               <p className="social-text">Or Sign in with social platforms</p>
@@ -176,6 +188,10 @@ const AuthPage = () => {
               <div className="input-field px-5 flex items-center justify-around">
                  <input type="text" placeholder="username" className='mr-5 w-[80%]' value={username} 
                  onChange={(e)=>{
+                  if(e.target.value.includes(' ')){
+                    toast.error('space not allowed')
+                    return;
+                  }
                   checkAvailablity(e.target.value);
                    setUsername(e.target.value)}
                   } />
@@ -184,11 +200,21 @@ const AuthPage = () => {
               </div>
 
               <div className="input-field flex items-center pl-5 justify-between">
-                <input type="email" placeholder="Email" value={signinemail} onChange={(e)=>setSigninEmail(e.target.value)}/>
+                <input type="email" placeholder="Email" value={signinemail} onChange={(e)=>{
+                  if(e.target.value.includes(' ')){
+                    toast.error('space not allowed')
+                    return;
+                  }
+                  setSigninEmail(e.target.value)}}/>
               </div>
 
               <div  className="input-field flex items-center pl-5 justify-between">
-                <input type="password" placeholder="Password" value={signinpassword} onChange={(e)=>setSigninPassword(e.target.value)}/>
+                <input type="password" placeholder="Password" value={signinpassword} onChange={(e)=>{
+                  if(e.target.value.includes(' ')){
+                    toast.error('space not allowed')
+                    return;
+                  }
+                  setSigninPassword(e.target.value)}}/>
               </div>
 
               <button  className="btn solid"   onClick={handleSignUp} >{`${!loading?"Sign Up":"..."}`}</button>
