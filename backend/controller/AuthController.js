@@ -140,7 +140,7 @@ const signOut = async (req, res) => {
 const getUserInfo = async (req, res) => {
   try {
     const id = req.userId;
-    console.log(id);
+    
 
     const user = await User.findById(id);
     if (!user)

@@ -16,6 +16,10 @@ const linkSchema=mongoose.Schema({
         type:String,
         required:true
     },
+    notSeen:{
+        type:Number,
+        default:0
+    },
     clicked:{
         type:Number,
         default:0

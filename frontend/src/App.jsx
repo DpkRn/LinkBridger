@@ -5,7 +5,7 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import DashBoard from './components/DashBoard'
 import { useDispatch, useSelector } from 'react-redux'
 import api from './utils/api'
-import { setAuthenticated, setUser } from './redux/userSlice'
+import { setAuthenticated, setLinks, setUser } from './redux/userSlice'
 import toast from 'react-hot-toast'
 import VerificationPage from './components/VerificationPage'
 import Nav from './components/navbar/Nav'
@@ -32,10 +32,10 @@ function App() {
       try {
         const res = await api.post('/auth/verify', {}, { withCredentials: true });
         if (res.status === 200 && res.data.success) {
-          // console.log("User verified!");
+           console.log("User verified!");
           dispatch(setUser(res.data.user));
           dispatch(setAuthenticated(true));
-          toast.success(`Welcome back ${res.data.user.username}`);
+          // toast.success(`Welcome back ${res.data.user.username}`);
         }
       } catch (err) {
         console.error(err);
@@ -50,9 +50,23 @@ function App() {
       }
     };
 
+    const getAllLinks=async(username)=>{
+      try{
+       const res=await api.post('/source/getallsource',{username},{withCredentials:true});
+       if(res.status===200&&res.data.success){
+         dispatch(setLinks(res.data.sources))
+       }
+      }catch(err){
+       console.log(err)
+       const message=err.response?.data?.message||"Server Internal Error"
+       toast.error(message)
+      }
+     }
     if (!user) {
       getUserInfo();
     } else {
+      getAllLinks(user.username)
+      // toast.success(`welcome ${user.username}`)
       setLoading(false);
     }
   }, []);
@@ -65,10 +79,10 @@ function App() {
 
       <Routes>
         <Route path='/doc' element={<Documentation/>} />
-        <Route path='/login' element={<AuthRoute><AuthPage /></AuthRoute>} />
+        <Route path='/login' element={<AuthRoute><AuthPage /></AuthRoute>}/>
         <Route path='/verify' element={<VerificationPage />} />
         <Route path='/links' element={<PrivateRoute><LinkPage/></PrivateRoute>} />
-        <Route path='/' element={<Documentation/>} />
+        <Route path='/' element={<AuthRoute><Documentation/></AuthRoute>} />
         <Route path='/home' element={<PrivateRoute><DashBoard /></PrivateRoute>} />
         <Route path='/verified' element={<VerifiedPage />} />
         <Route path='/reset_password' element={<PasswordReset />} />

@@ -1,23 +1,40 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import Linkcard from "../linkcard/Linkcard";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { MdContentCopy } from "react-icons/md";
+import { setLinks } from "../../redux/userSlice";
+import toast from "react-hot-toast";
+import api from "../../utils/api";
 
 const LinkPage = () => {
   const navigate = useNavigate();
+  const dispatch=useDispatch()
   const linkRef = useRef(null);
   const location = useLocation();
   const sidebarMenu = useSelector((store) => store.page.sidebarMenu);
   const links = useSelector((store) => store.admin.links);
   const username = useSelector((store) => store.admin.user.username);
-  
-  console.log(location);
-
   const handleCreateNewBridge = () => {
     navigate("/home");
   };
- 
+//  useEffect(()=>{
+//   const getAllLinks=async()=>{
+//     try{
+//      const res=await api.post('/source/getallsource',{username},{withCredentials:true});
+//      if(res.status===200&&res.data.success){
+//        dispatch(setLinks(res.data.sources))
+//      }
+//     }catch(err){
+//      console.log(err)
+//      const message=err.response?.data?.message||"Server Internal Error"
+//      toast.error(message)
+//     }
+//    }
+//    if(links.length===0){
+//     getAllLinks()
+//    }
+//  },[links])
   const copyToClipboard = () => {
     const linkText = linkRef.current.innerText; // Get the text from the ref
     navigator.clipboard

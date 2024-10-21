@@ -4,17 +4,16 @@ const Otp = require("../model/otpModel");
 const verifyToken = async (req, res, next) => {
   try {
     const token = req.cookies.token;
-    console.log(token)
+   
 
     if (!token) {
       return res
         .status(401)
         .json({ success: false,message:"token expired !" });
     }
-    console.log('verifing')
     const auth = await jwt.verify(token, process.env.JWT_KEY);
     if (auth) {
-      console.log(auth);
+      
       req.userId = auth.id;
       return next();
     }

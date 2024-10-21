@@ -1,51 +1,107 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {Link, useNavigate} from 'react-router-dom'
+import { Link, useNavigate } from "react-router-dom";
 import { setSidebarMenu } from "../../redux/pageSlice";
 import toast from "react-hot-toast";
 import api from "../../utils/api";
-import { setAuthenticated, setUser } from "../../redux/userSlice";
+import {
+  setAuthenticated,
+  setLinks,
+  setNotifications,
+  setUser,
+} from "../../redux/userSlice";
 import { MdOutlineArrowDropDownCircle } from "react-icons/md";
+import Notification from "../notification/Notification";
 
 const Nav = () => {
-  const navigate=useNavigate()
-  const dispatch=useDispatch()
- 
-  const [profileMenu,setProfileMenu]=useState(false)
-  // const [sidebarMenu,setSidebarMenu]=useState(false)
-  const {sidebarMenu}=useSelector(store=>store.page)
-  const username=useSelector(store=>store.admin.user.username)
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const handleSignOut=async(e)=>{
-    e.preventDefault()
-    try{
-      const res=await api.get('/auth/signout',{withCredentials:true})
-      if(res.status===200&&res.data.success){
-        dispatch(setUser(null))
-        dispatch(setAuthenticated(false))
-        navigate('/login',{replace:true})
-        toast.success(res.data.message)
+  const [profileMenu, setProfileMenu] = useState(false);
+  const [notificationPage, setNotificationPage] = useState(false);
+
+  const { sidebarMenu } = useSelector((store) => store.page);
+  const username = useSelector((store) => store.admin.user.username);
+  const links = useSelector((store) => store.admin.links);
+  const notifications = useSelector((store) => store.admin.notifications);
+
+  const handleSignOut = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await api.get("/auth/signout", { withCredentials: true });
+      if (res.status === 200 && res.data.success) {
+        dispatch(setUser(null));
+        dispatch(setAuthenticated(false));
+        navigate("/login", { replace: true });
+        toast.success(res.data.message);
       }
-    }catch(err){
-      const message=err.response?.data?.message || "Server Internal Error"
-      toast.error(message)
+    } catch (err) {
+      const message = err.response?.data?.message || "Server Internal Error";
+      toast.error(message);
     }
-  }
+  };
 
+  const getAllLinks = async () => {
+    try {
+      const res = await api.post(
+        "/source/getallsource",
+        { username },
+        { withCredentials: true }
+      );
+      if (res.status === 200 && res.data.success) {
+        dispatch(setLinks(res.data.sources));
+      }
+    } catch (err) {
+      console.log(err);
+      const message = err.response?.data?.message || "Server Internal Error";
+      toast.error(message);
+    }
+  };
+
+  const handleMarkRead = async () => {
+    console.log("clicked !");
+    try {
+      const res = await api.post(
+        "/source/notifications",
+        {},
+        { withCredentials: true }
+      );
+      if (res.status === 201 && res.data.success) {
+        await getAllLinks();
+        dispatch(setNotifications(0));
+        setNotificationPage(false);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  useEffect(() => {
+    dispatch(
+      setNotifications(links.reduce((acc, link) => acc + link.notSeen, 0))
+    );
+  }, [links, notifications]);
+
+  const onNotificationClick = async () => {
+    if (notifications === 0) {
+      toast("you have no any new clicks");
+      return;
+    }
+    setNotificationPage((state) => !state);
+  };
 
   return (
-    <nav className="bg-gray-800 h-[70px]   relative z-40">
-      <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
-        <div className="relative flex h-16 items-center justify-between">
+    <nav className="bg-gray-800 h-[70px]   relative z-40 px-5 ">
+      <div className="">
+        <div className="relative flex h-16 items-center md:justify-between justify-end  ">
+          {/* mobile menu icon */}
           <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
-           
             {/* <!-- Mobile menu button--> */}
             <button
               type="button"
               className="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
               aria-controls="mobile-menu"
               aria-expanded="false"
-              onClick={()=>dispatch(setSidebarMenu(!sidebarMenu))}
+              onClick={() => dispatch(setSidebarMenu(!sidebarMenu))}
             >
               <span className="absolute -inset-0.5"></span>
               <span className="sr-only">Open main menu</span>
@@ -91,19 +147,19 @@ const Nav = () => {
               </svg>
             </button>
           </div>
-          <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
 
-{/* Logo */}
+          <div className="flex  items-center justify-center">
+            {/* Logo */}
             <div className="flex flex-shrink-0 mr-5  items-center">
               <img
                 className="h-8 w-auto"
                 src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500"
-                alt="Your Company"
+                alt="Link Bridge"
               />
             </div>
 
-{/* NavMenu */}
-            <div className="hidden sm:ml-6 sm:block">
+            {/* NavMenu */}
+            <div className="hidden sm:ml-6 sm:block z-50 text-white">
               <div className="flex space-x-4">
                 {/* <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" --> */}
                 <Link
@@ -133,31 +189,43 @@ const Nav = () => {
                 </Link>
               </div>
             </div>
-          </div> 
-          <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-            <button
-              type="button"
-              className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-            >
-              <span className="absolute -inset-1.5"></span>
-              <span className="sr-only">View notifications</span>
-              <svg
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                aria-hidden="true"
-                data-slot="icon"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"
-                />
-              </svg>
-            </button>
+          </div>
 
+
+          <div className="absolute inset-y-0  flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+
+            {/* notification */}
+            <div className="relative">
+              <button
+                type="button"
+                className="relative rounded-full  bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                onClick={onNotificationClick}
+              >
+                <span className="absolute -inset-1.5"></span>
+                <span className="sr-only">View notifications</span>
+                <svg
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                  data-slot="icon"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"
+                  />
+                </svg>
+              </button>
+              {/* notification icon */}
+              {notifications > 0 && (
+                <div className="bg-white size-5 absolute -top-2 cursor-pointer -right-2  text-black flex justify-center items-center rounded-full text-sm p-1">
+                  <span>{notifications}</span>
+                </div>
+              )}
+            </div>
             {/* <!-- Profile dropdown --> */}
             <div className="relative ml-3">
               <div>
@@ -167,7 +235,9 @@ const Nav = () => {
                   id="user-menu-button"
                   aria-expanded="false"
                   aria-haspopup="true"
-                  onClick={()=>{setProfileMenu((state)=>!state)}}
+                  onClick={() => {
+                    setProfileMenu((state) => !state);
+                  }}
                 >
                   <span className="absolute -inset-1.5"></span>
                   <span className="sr-only">Open user menu</span>
@@ -182,82 +252,95 @@ const Nav = () => {
               </div>
 
               {/* Profile Menu */}
-              {profileMenu&&<div
-                className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-                role="menu"
-                aria-orientation="vertical"
-                aria-labelledby="user-menu-button"
-                tabindex="-1"
-              >
-                {/* <!-- Active: "bg-gray-100", Not Active: "" --> */}
+              {profileMenu && (
                 <div
-                  
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-slate-300 hover:cursor-pointer"
-                  role="menuitem"
+                  className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                  role="menu"
+                  aria-orientation="vertical"
+                  aria-labelledby="user-menu-button"
                   tabindex="-1"
-                  id="user-menu-item-0"
                 >
-                  Your Profile
+                  {/* <!-- Active: "bg-gray-100", Not Active: "" --> */}
+                  <div
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-slate-300 hover:cursor-pointer"
+                    role="menuitem"
+                    tabindex="-1"
+                    id="user-menu-item-0"
+                  >
+                    Your Profile
+                  </div>
+                  <div
+                    className="block px-4 py-2 text-sm text-gray-700  hover:bg-slate-300 hover:cursor-pointer"
+                    role="menuitem"
+                    tabindex="-1"
+                    id="user-menu-item-1"
+                  >
+                    Settings
+                  </div>
+                  <div
+                    className="block px-4 py-2 text-sm text-gray-700  hover:bg-slate-300 hover:cursor-pointer"
+                    role="menuitem"
+                    tabindex="-1"
+                    id="user-menu-item-2"
+                    onClick={handleSignOut}
+                  >
+                    Sign out
+                  </div>
                 </div>
-                <div
-                  
-                  className="block px-4 py-2 text-sm text-gray-700  hover:bg-slate-300 hover:cursor-pointer"
-                  role="menuitem"
-                  tabindex="-1"
-                  id="user-menu-item-1"
-                >
-                  Settings
-                </div>
-                <div
-                  
-                  className="block px-4 py-2 text-sm text-gray-700  hover:bg-slate-300 hover:cursor-pointer"
-                  role="menuitem"
-                  tabindex="-1"
-                  id="user-menu-item-2"
-                  onClick={handleSignOut}
-                >
-                  Sign out
-                </div>
-              </div>}
+              )}
             </div>
+
           </div>
         </div>
       </div>
 
-{/* sidebarMenu */}
-      {sidebarMenu&&<div className="sm:hidden bg-black/80" id="mobile-menu">
-        <div className="space-y-1 px-2 pb-3 pt-2">
-          <Link
-            to="/home"
-            onClick={()=>dispatch(setSidebarMenu(!sidebarMenu))}
-            className="block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white"
-            aria-current="page"
-          >
-            Home
-          </Link>
-          <Link
-            to="/links"
-            onClick={()=>dispatch(setSidebarMenu(!sidebarMenu))}
-            className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-          >
-            Links
-          </Link>
-          <Link
-            to="#"
-            onClick={()=>dispatch(setSidebarMenu(!sidebarMenu))}
-            className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-          >
-            Analysis
-          </Link>
-          <Link
-            to="/doc"
-            onClick={()=>dispatch(setSidebarMenu(!sidebarMenu))}
-            className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-          >
-            Docs
-          </Link>
+      {/* sidebarMenu */}
+      {sidebarMenu && (
+        <div className="sm:hidden bg-black/80" id="mobile-menu">
+          <div className="space-y-1 px-2 pb-3 pt-2">
+            <Link
+              to="/home"
+              onClick={() => dispatch(setSidebarMenu(!sidebarMenu))}
+              className="block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white"
+              aria-current="page"
+            >
+              Home
+            </Link>
+            <Link
+              to="/links"
+              onClick={() => dispatch(setSidebarMenu(!sidebarMenu))}
+              className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+            >
+              Links
+            </Link>
+            <Link
+              to="#"
+              onClick={() => dispatch(setSidebarMenu(!sidebarMenu))}
+              className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+            >
+              Analysis
+            </Link>
+            <Link
+              to="/doc"
+              onClick={() => dispatch(setSidebarMenu(!sidebarMenu))}
+              className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+            >
+              Docs
+            </Link>
+          </div>
         </div>
-      </div>}
+      )}
+      {notificationPage && (
+        <div className="absolute rounded-lg mx-auto top-[60px] bg-cyan-700 text-center ">
+          <Notification />
+          <button
+            className="px-3 py-2 bg-slate-200 rounded-md mb-4 hover:bg-slate-400"
+            onClick={handleMarkRead}
+          >
+            mark as read
+          </button>
+        </div>
+      )}
     </nav>
   );
 };

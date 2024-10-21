@@ -34,7 +34,7 @@ const getAllSource=async(req,res)=>{
              return res.status(400).json({success:false,message:"looks like you entered link directely ! please login first"})
          }
      
-         const sources=await Link.find({username,userId},{source:1,destination:1,clicked:1});
+         const sources=await Link.find({username,userId},{source:1,destination:1,clicked:1,notSeen:1});
          if(!sources)
          return res.status(404).json({success:false,message:'sources not found !'})
          return res.status(200).json({success:true,message:'sources fetched successfully',sources})
@@ -66,8 +66,21 @@ const deleteLink=async(req,res)=>{
      }
     }
 
+    const setNotificationToZero=async(req,res)=>{
+        try{
+            const userId=req.userId;
+            console.log('updating')
+            await Link.updateMany({userId},{$set:{notSeen:0}});
+            return res.status(201).json({success:true})
+        }catch(err){
+            console.log(err);
+            return res.status(500).json({success:false,message:"Server Internal Error"})
+        }
+    }
+
 module.exports={
     addNewSource,
     getAllSource,
-    deleteLink
+    deleteLink,
+    setNotificationToZero,
 }

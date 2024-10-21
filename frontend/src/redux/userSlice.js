@@ -4,7 +4,8 @@ const userSlice=createSlice({
     initialState:{
         user:null,
         isAuthenticated:false,
-        links:[]
+        links:[],
+        notifications:0
     },
     reducers:{
         setUser:(state,action)=>{
@@ -16,9 +17,12 @@ const userSlice=createSlice({
         },
         setLinks:(state,action)=>{
             state.links=action.payload
+        },
+        setNotifications:(state,action)=>{
+            state.notifications=action.payload
         }
     }
 })
 
-export const {setUser,setAuthenticated,setLinks}=userSlice.actions;
+export const {setUser,setAuthenticated,setLinks,setNotifications}=userSlice.actions;
 export default userSlice.reducer;

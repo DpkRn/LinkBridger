@@ -68,8 +68,9 @@ app.get('/:username/:source', async (req, res) => {
      const doc=await Link.findOne({username,source})
      if(!doc) return res.status(404).json({success:false,message:`${source} not has been added for this user !`})
     
-     const {destination,clicked}=doc
-     await Link.updateOne({username,source},{$set:{clicked:clicked+1}})
+     const {destination,clicked,notSeen}=doc
+     await Link.updateOne({username,source},{$set:{clicked:clicked+1,notSeen:notSeen+1}})
+     console.log(notSeen)
      return res.redirect(307,destination)
 })
 
