@@ -35,6 +35,7 @@ const Nav = () => {
       if (res.status === 200 && res.data.success) {
         dispatch(setUser(null));
         dispatch(setAuthenticated(false));
+        dispatch(setLinks([]));
         navigate("/login", { replace: true });
         toast.success(res.data.message);
       }
