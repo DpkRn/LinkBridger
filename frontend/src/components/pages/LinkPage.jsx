@@ -47,7 +47,7 @@ const LinkPage = () => {
       });
   };
   return (
-    <div className={` md:p-10 ${sidebarMenu ? "blur-sm" : ""}`}>
+    <div className={` md:p-10 mt-4`}>
       {/* button */}
       {location.pathname === "/links" && (
         <div className="text-right m-8">
@@ -59,8 +59,8 @@ const LinkPage = () => {
           </button>
         </div>
       )}
-      <span>your linktree is live live on:</span> 
-      <div className="px-4 py-2 bg-black/30 text-white rounded-md flex items-center break-words gap-3">
+      <span className="mt-8 font-bold text-cyan-500 mx-1">Your linktree is live live on:</span> 
+      <div className="px-4 py-2 mx-1 bg-black/30 text-white rounded-md flex items-center break-words gap-3">
       <span className="break-all font-mono" ref={linkRef}>
         {`https://linkb-one.vercel.app/${username}`}
       </span>
