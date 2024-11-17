@@ -1,0 +1,14 @@
+if i have to talk about only one project then i ll choose the project linkBridger. there is reason to choose that its complete my own idea and obviously its around of unique. some idea has been taken from link tree.
+so lets talk about the working of project and what basically it does.
+
+the person who is having many social profiles and also there are many hard or long http links   they can use this project like influencer, it sector person because they all have contain many type of links like github, linkdin, portfolio, instagram, facebook, and some coding profile like leetcode, codeforces etc.
+
+there are for major benifit of this project.
+
+Personalized Smart Links: they can create simple  and easy links. actually while creating it follows clear pattern that makes it easy to remeber . ex.  server.com/dpkrn/github
+
+Centralized Link Management: it works as centralized link. how lets talk. lets take a scenerio where you have given your linkdin profile link at 10 places and somehow you have deleted your account or account has been banned. then you will have to update on all the 10th places one by one by your new linkdin account. even there may be chances that you dont remember the places where you have given. but if you are using this application then you have to edit only on my plateform all places automatically get edited.
+
+Click Tracking: you can also track you visited profile which profile visited how many times.
+
+and final things its very easy to set up. just one this have to remember keep your username short and easy. because your customized link will be made of your username and plateform.

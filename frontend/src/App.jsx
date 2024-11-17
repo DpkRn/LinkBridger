@@ -13,6 +13,7 @@ import VerifiedPage from './components/VerifiedPage'
 import PasswordReset from './components/PasswordReset'
 import Documentation from './components/Documentation'
 import LinkPage from './components/pages/LinkPage'
+import ProfilePage from './components/pages/Profile'
 
 function App() {
   const dispatch = useDispatch();
@@ -83,6 +84,7 @@ function App() {
         <Route path='/verify' element={<VerificationPage />} />
         <Route path='/links' element={<PrivateRoute><LinkPage/></PrivateRoute>} />
         <Route path='/' element={<AuthRoute><Documentation/></AuthRoute>} />
+        <Route path='/profile' element={<ProfilePage/>} />
         <Route path='/home' element={<PrivateRoute><DashBoard /></PrivateRoute>} />
         <Route path='/verified' element={<VerifiedPage />} />
         <Route path='/reset_password' element={<PasswordReset />} />

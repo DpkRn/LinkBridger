@@ -13,7 +13,7 @@ const Documentation = () => {
   };
 
   return (
-    <>
+    <div className='min-h-screen w-full bg-gradient-to-br  from-pink-200 via-sky-200 to-blue-300'>
      {location.pathname==='/'&&<div className='min-w-screen h-[70px] shadow-lg bg-neutral-100   text-right flex items-center justify-between '>
      <img
                 className="h-8 w-auto ml-10 sm:ml-20"
@@ -27,7 +27,7 @@ const Documentation = () => {
           Get Started
         </button>
      </div>}
-    <div className={`sm:m-10 p-10 ${sidebarMenu?"blur-sm":""}`}>
+    <div className={`p-2 md:p-10 `}>
       
       {/* Title Section */}
       <h1 className="text-4xl font-bold text-center mb-8">LinkBridger: Personalized Social Profile Link Manager</h1>
@@ -71,20 +71,25 @@ const Documentation = () => {
       </section>
 
       {/* Key Features Section */}
-      <section className="mb-12">
-        <h2 className="text-2xl font-semibold mb-4">Key Features</h2>
-        <ul className="list-disc list-inside space-y-2">
-          <li>**Personalized Smart Links**: Generate easy-to-remember links for your social profiles using your username and platform names.</li>
-          <li>**Centralized Link Management**: Update your social profile links in one place, and the change reflects everywhere.</li>
-          <li>**Click Tracking**: Keep track of how many times your social profile links are clicked.</li>
-          <li>**Easy to Setup**: No complicated setup; just choose your username, add the platform, and you're ready to go!</li>
-        </ul>
+      <section className="mb-8 bg-white/40 shadow-lg rounded-md  py-4 md:py-5 px-2 md:px-4">
+      <div className=''>
+        <h2 className="text-4xl font-semibold mb-4 text-center">Key Features</h2>
+      <div className='space-y-2 flex flex-col '>
+          
+          <div className=' text-center  flex-col md:text-left flex md:flex-row md:justify-around items-center gap-4 flex-wrap'><img src="easy-to-remember.webp" alt="" className='h-[250px] w-[250px] object-contain opacity-60 rounded-md flex-[1]' /><p className='text-xl flex-[1]'><span className='font-bold text-2xl'>Personalized Smart Links</span>: Generate easy-to-remember links for your social profiles using your username and platform names.</p></div>
+
+
+          <div className='text-center  flex-col-reverse md:text-left flex md:flex-row md:justify-around  items-center gap-4 flex-wrap'><p className='text-xl flex-[1] '><span className='font-bold'>Centralized Link Management</span>: Update your social profile links in one place, and the change reflects everywhere.</p><img src="update.webp" alt="" className='h-[250px] w-[250px] object-contain opacity-60 rounded-lg flex-[1]' /></div>
+          <div className='text-center  flex-col md:text-left flex md:flex-row md:justify-around items-center gap-4 flex-wrap'><img src="click.webp" alt="" className='h-[250px] w-[250px] object-contain opacity-60 rounded-md flex-[1]' /><p className='text-xl flex-[1]'><span className='font-bold'>Click Tracking</span>: Keep track of how many times your social profile links are clicked.</p></div>
+          <div className='text-center  flex-col-reverse md:text-left flex md:flex-row items-center gap-4 flex-wrap'><p className='text-xl flex-[1]'><span className='font-bold'>Easy to Setup</span>: No complicated setup; just choose your username, add the platform, and you're ready to go!</p><img src="easy-to-remember.webp" alt="" className='h-[250px] w-[250px] object-contain opacity-60 rounded-md flex-[1]' /></div>
+          </div>
+        </div>
       </section>
 
    
 
       {/* How It Works Section */}
-      <section className="mb-12">
+      <section className=" mb-8 bg-white/40 shadow-lg rounded-md  py-4 md:py-5 px-2 md:px-6">
         <h2 className="text-2xl font-semibold mb-4">How It Works</h2>
         <p className="text-lg leading-7">
           The core idea behind **LinkBridger** is to simplify the management of social media links. Instead of sharing long, hard-to-remember URLs, 
@@ -113,7 +118,7 @@ const Documentation = () => {
       </section>
 
       {/* Click Tracking Section */}
-      <section className="mb-12">
+      <section className="mb-12  bg-white/40 shadow-lg rounded-md  py-4 md:py-5 px-2 md:px-4">
         <h2 className="text-2xl font-semibold mb-4">Click Tracking</h2>
         <p className="text-lg leading-7">
           With **LinkBridger**, you can track how many times each of your links has been clicked. This allows you to monitor the engagement on your social media profiles across different platforms. 
@@ -122,7 +127,7 @@ const Documentation = () => {
       </section>
 
       {/* Future Enhancements Section */}
-      <section className="mb-12">
+      <section className="mb-12  bg-white/40 shadow-lg rounded-md  py-4 md:py-5 px-2 md:px-4">
         <h2 className="text-2xl font-semibold mb-4">Future Enhancements</h2>
         <p className="text-lg leading-7">Here are some potential features and enhancements we are planning to add to **LinkBridger**:</p>
         <ul className="list-disc list-inside space-y-2">
@@ -134,7 +139,7 @@ const Documentation = () => {
       </section>
 
       {/* FAQ Section */}
-      <section className="mb-12">
+      <section className="mb-12 bg-white/40 shadow-lg rounded-md  py-4 md:py-5 px-2 md:px-4">
         <h2 className="text-2xl font-semibold mb-4">Frequently Asked Questions (FAQ)</h2>
         <p className="text-lg leading-7 mb-4">
           Here are some common questions users have about **LinkBridger**:
@@ -156,7 +161,10 @@ const Documentation = () => {
         <p className="text-lg">&copy; 2024 LinkBridger. All Rights Reserved.</p>
       </footer>
     </div>
-    </>
+    </div>
+   
+
+
   );
 };
 
