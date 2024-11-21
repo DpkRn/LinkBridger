@@ -29,23 +29,23 @@ const Documentation = () => {
     },
     {
       text: "Personalized",
-      className: "text-4xl font-bold"
+      className: "text-4xl font-bold text-black"
     },
     {
       text: "Social ",
-      className: "text-4xl font-bold"
+      className: "text-4xl font-bold text-black"
     },
     {
       text: "Profile ",
-      className: "text-4xl font-bold"
+      className: "text-4xl font-bold text-black"
     },
     {
       text: "Link ",
-      className: "text-4xl font-bold"
+      className: "text-4xl font-bold text-black"
     },
     {
       text: "Manager.",
-      className: "text-4xl font-bold"
+      className: "text-4xl font-bold text-black"
       
     },
   ];
