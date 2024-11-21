@@ -94,7 +94,7 @@ const Documentation = () => {
           </>
         }
       >
-       <div className='mx-auto rounded-2xl object-cover h-full object-left-top flex flex-col justify-center items-center bg-slate-600 '>
+       <div className='mx-auto rounded-2xl object-cover h-full object-left-top flex flex-col justify-center items-center bg-slate-600 p-4 '>
        <p className="text-lg">Linkdin: <a href="https://linkb-one.vercel.app/dpkrn/linkdin" className="text-white underline">https://linkb-one.vercel.app/dpkrn/linkdin</a></p>
           <p className="text-lg">Github: <a href="https://linkb-one.vercel.app/dpkrn/github" className="text-white  underline">https://linkb-one.vercel.app/dpkrn/github</a></p>
           <p className="text-lg">LeetCode: <a href="https://linkb-one.vercel.app/dpkrn/leetcode" className="text-white  underline">https://linkb-one.vercel.app/dpkrn/leetcode</a></p>
