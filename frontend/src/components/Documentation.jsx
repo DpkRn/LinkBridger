@@ -88,7 +88,7 @@ const Documentation = () => {
       <ContainerScroll
         titleComponent={
           <>
-            <p className="text-4xl font-semibold text-pretty text-black dark:text-white">
+            <p className="text-4xl font-semibold text-pretty text-black">
             Have you Ever Wondered How AuthorLink Has Been Persionalized:  
           </p>
           </>
