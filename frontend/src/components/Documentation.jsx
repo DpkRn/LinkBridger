@@ -147,7 +147,7 @@ const Documentation = () => {
 
           <div className='text-center  flex-col-reverse md:text-left flex md:flex-row md:justify-around  items-center gap-4 flex-wrap'><p className='text-xl flex-[1] '><span className='font-bold'>Centralized Link Management</span>: Update your social profile links in one place, and the change reflects everywhere.</p><img src="update.webp" alt="" className='h-[250px] w-[250px] object-contain opacity-60 rounded-lg flex-[1]' /></div>
           <div className='text-center  flex-col md:text-left flex md:flex-row md:justify-around items-center gap-4 flex-wrap'><img src="click.webp" alt="" className='h-[250px] w-[250px] object-contain opacity-60 rounded-md flex-[1]' /><p className='text-xl flex-[1]'><span className='font-bold'>Click Tracking</span>: Keep track of how many times your social profile links are clicked.</p></div>
-          <div className='text-center  flex-col-reverse md:text-left flex md:flex-row items-center gap-4 flex-wrap'><p className='text-xl flex-[1]'><span className='font-bold'>Easy to Setup</span>: No complicated setup; just choose your username, add the platform, and you're ready to go!</p><img src="easy-to-remember.webp" alt="" className='h-[250px] w-[250px] object-contain opacity-60 rounded-md flex-[1]' /></div>
+          <div className='text-center  flex-col-reverse md:text-left flex md:flex-row items-center gap-4 flex-wrap'><p className='text-xl flex-[1]'><span className='font-bold'>Easy to Setup</span>: No complicated setup; just choose your username, add the platform, and you're ready to go!</p><img src="easysetup.webp" alt="" className='h-[250px] w-[250px] object-contain opacity-60 rounded-md flex-[1]' /></div>
           </div>
         </div>
       </section>
