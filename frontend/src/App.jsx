@@ -84,12 +84,13 @@ function App() {
         <Route path='/verify' element={<VerificationPage />} />
         <Route path='/links' element={<PrivateRoute><LinkPage/></PrivateRoute>} />
         <Route path='/' element={<AuthRoute><Documentation/></AuthRoute>} />
-        <Route path='/profile' element={<ProfilePage/>} />
+        <Route path='/profile' element={<PrivateRoute><ProfilePage/></PrivateRoute>} />
         <Route path='/home' element={<PrivateRoute><DashBoard /></PrivateRoute>} />
         <Route path='/verified' element={<VerifiedPage />} />
         <Route path='/reset_password' element={<PasswordReset />} />
         
       </Routes>
+      
     </div>
   );
 }

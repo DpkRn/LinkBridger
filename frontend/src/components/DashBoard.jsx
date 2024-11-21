@@ -10,6 +10,7 @@ import LinkPage from './pages/LinkPage'
 import Content from './content/Content'
 import Form from './pages/CreateBridge'
 import CreateBridge from './pages/CreateBridge'
+import Footer from './footer/Footer'
 
 
 const DashBoard = () => {
@@ -40,6 +41,7 @@ const DashBoard = () => {
       <Content/>
       <CreateBridge/>
       <LinkPage/>
+      <Footer/>
     </div>
   )
 }
