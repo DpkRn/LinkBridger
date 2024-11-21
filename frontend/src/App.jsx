@@ -72,7 +72,12 @@ function App() {
     }
   }, []);
 
-  if (isLoading) return <div className="flex justify-center items-center h-screen">Loading....</div>;
+  if (isLoading) return <div className="flex justify-center items-center h-screen">
+    <div class="relative flex justify-center items-center">
+    <div class="absolute animate-spin rounded-full h-32 w-32 border-t-4 border-b-4 border-purple-500"></div>
+    <img src="https://www.svgrepo.com/show/509001/avatar-thinking-9.svg"  class="rounded-full h-28 w-28"/>
+</div>
+  </div>;
 
   return (
     <div className='pb-1 min-h-screen  bg-gradient-to-r from-slate-100 via-lime-100 to-slate-100 overflow-hidden'>
