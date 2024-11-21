@@ -124,6 +124,11 @@ const Nav = () => {
     };
   }, [notificationPage,profileMenu]);
 
+  const handleProfileClick=(e)=>{
+    navigate('/profile')
+    setProfileMenu(false)
+  }
+
 
 
   return (
@@ -304,6 +309,7 @@ const Nav = () => {
                     role="menuitem"
                     tabindex="-1"
                     id="user-menu-item-0"
+                    onClick={handleProfileClick}
                   >
                     Your Profile
                   </div>

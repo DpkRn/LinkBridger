@@ -112,7 +112,7 @@ const ProfilePage = () => {
           </a>
         </div>
       </div>
-      <div className="flex-[2] bg-white/30 flex items-center justify-center  rounded-md"> profile info</div>
+      <div className="flex-[2] bg-white/30 flex items-center justify-center  rounded-md"> not completed yet</div>
     </div>
     </div>
   );
