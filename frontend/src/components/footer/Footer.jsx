@@ -9,12 +9,12 @@ const Footer = () => {
           <div className="mb-6 md:mb-0">
               <a href="https://deepak-aryan.vercel.app/" target="_blank" className="flex items-center blank">
                   <img src="https://flowbite.com/docs/images/logo.svg" className="h-8 me-3" alt="FlowBite Logo" />
-                  <span className="self-center text-2xl font-semibold whitespace-nowrap text-white">Dwizard</span>
+                  <span className="self-center text-2xl font-semibold whitespace-nowrap text-black">Dwizard</span>
               </a>
           </div>
           <div className="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
               <div>
-                  <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Resources</h2>
+                  <h2 className="mb-6 text-sm font-semibold text-black uppercase ">Resources</h2>
                   <ul className="text-gray-500 dark:text-gray-400 font-medium">
                       <li className="mb-4">
                           <a href="https://deepak-aryan.vercel.app/" className="hover:underline">Portfolio</a>
@@ -25,7 +25,7 @@ const Footer = () => {
                   </ul>
               </div>
               <div>
-                  <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Follow us</h2>
+                  <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase ">Follow us</h2>
                   <ul className="text-gray-500 dark:text-gray-400 font-medium">
                       <li className="mb-4">
                           <a href="https://github.com/DpkRn" className="hover:underline ">Github</a>
@@ -36,7 +36,7 @@ const Footer = () => {
                   </ul>
               </div>
               <div>
-                  <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">Legal</h2>
+                  <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase ">Legal</h2>
                   <ul className="text-gray-500 dark:text-gray-400 font-medium">
                       <li className="mb-4">
                           <a href="#" className="hover:underline">Privacy Policy</a>

@@ -121,7 +121,7 @@ const Documentation = () => {
           </div>
         </div>
        </div>
-        <p className='text-sm md:text-2xl'><a href="https://linkb-one.vercel.app/dpkrn/linkdin" className="text-blue-500 underline font-mono">https://linkb-one.vercel.app/dpkrn/<FlipWords className="text-blue-500" words={plateforms} /> </a></p>
+        <p className='text-sm md:text-2xl'><a href="https://linkb-one.vercel.app/dpkrn/linkdin" className="text-blue-500 underline font-mono">https://linkb-one.vercel.app/dpkrn/<FlipWords className="text-blue-500" words={plateforms}/> </a></p>
         </BackgroundBeamsWithCollision>
         </div>
 
