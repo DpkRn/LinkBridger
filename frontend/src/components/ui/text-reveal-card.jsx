@@ -137,14 +137,14 @@ const Stars = () => {
   const random = () => Math.random();
   return (
     (<div className="absolute inset-0">
-      {[...Array(80)].map((_, i) => (
+      {[...Array(100)].map((_, i) => (
         <motion.span
           key={`star-${i}`}
           animate={{
             top: `calc(${random() * 100}% + ${randomMove()}px)`,
             left: `calc(${random() * 100}% + ${randomMove()}px)`,
             opacity: randomOpacity(),
-            scale: [1, 1.2, 0],
+            scale: [2, 2, 2],
           }}
           transition={{
             duration: random() * 10 + 20,
@@ -155,9 +155,9 @@ const Stars = () => {
             position: "absolute",
             top: `${random() * 100}%`,
             left: `${random() * 100}%`,
-            width: `2px`,
-            height: `2px`,
-            backgroundColor: "white",
+            width: `4px`,
+            height: `4px`,
+            backgroundColor: "red",
             borderRadius: "50%",
             zIndex: 1,
           }}

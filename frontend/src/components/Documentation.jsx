@@ -93,18 +93,23 @@ const Documentation = () => {
           </p>
           </>
         }
+        
       >
-       <div className='mx-auto rounded-2xl object-cover h-full object-left-top flex flex-col justify-center items-center bg-slate-600 p-4 '>
-       <p className="text-lg">Linkdin: <a href="https://linkb-one.vercel.app/dpkrn/linkdin" className="text-white underline">https://linkb-one.vercel.app/dpkrn/linkdin</a></p>
-          <p className="text-lg">Github: <a href="https://linkb-one.vercel.app/dpkrn/github" className="text-white  underline">https://linkb-one.vercel.app/dpkrn/github</a></p>
-          <p className="text-lg">LeetCode: <a href="https://linkb-one.vercel.app/dpkrn/leetcode" className="text-white  underline">https://linkb-one.vercel.app/dpkrn/leetcode</a></p>
-          <p className="text-lg">Portfolio: <a href="https://linkb-one.vercel.app/dpkrn/portfolio" className="text-white  underline">https://linkb-one.vercel.app/dpkrn/portfolio</a></p>
-          <p className="text-lg">Instagram: <a href="https://linkb-one.vercel.app/dpkrn/instagram" className="text-white  underline">https://linkb-one.vercel.app/dpkrn/instagram</a></p>
-          <p className="text-lg">Facebook: <a href="https://linkb-one.vercel.app/dpkrn/facebook" className="text-white underline">https://linkb-one.vercel.app/dpkrn/facebook</a></p>
-          <p className="text-lg">Codeforce: <a href="https://linkb-one.vercel.app/dpkrn/codeforces" className="text-white underline">https://linkb-one.vercel.app/dpkrn/codeforces</a></p>
-          <p className="text-lg mt-4">
+       <div className='mx-auto rounded-2xl h-full  flex  justify-center items-center bg-slate-600'>
+        <div className='md:mx-auto rounded-2xl h-full w-full space-y-1 flex flex-col justify-center md:items-center sm:ml-4 p-2 '>
+       <p className="text-sm md:text-base">Linkdin: 
+        <a href="https://linkb-one.vercel.app/dpkrn/linkdin" className=" text-blue-400 underline">https://linkb-one.vercel.app/dpkrn/linkdin</a>
+        </p>
+          <p className="text-sm md:text-base">Github: <a href="https://linkb-one.vercel.app/dpkrn/github" className="text-blue-400  underline">https://linkb-one.vercel.app/dpkrn/github</a></p>
+          <p className="text-sm md:text-base">LeetCode: <a href="https://linkb-one.vercel.app/dpkrn/leetcode" className="text-blue-400  underline">https://linkb-one.vercel.app/dpkrn/leetcode</a></p>
+          <p className="text-sm md:text-base">Portfolio: <a href="https://linkb-one.vercel.app/dpkrn/portfolio" className="text-blue-400  underline">https://linkb-one.vercel.app/dpkrn/portfolio</a></p>
+          <p className="text-sm md:text-base">Instagram: <a href="https://linkb-one.vercel.app/dpkrn/instagram" className="text-blue-400  underline">https://linkb-one.vercel.app/dpkrn/instagram</a></p>
+          <p className="text-sm md:text-base">Facebook: <a href="https://linkb-one.vercel.app/dpkrn/facebook" className="text-blue-400 underline">https://linkb-one.vercel.app/dpkrn/facebook</a></p>
+          <p className="text-sm md:text-base">Codeforce: <a href="https://linkb-one.vercel.app/dpkrn/codeforces" className="text-blue-400 underline">https://linkb-one.vercel.app/dpkrn/codeforces</a></p>
+          <p className="text-sm md:text-base">
             Only Plateform name has been changed..all remains same  
           </p>
+          </div>
        </div>
       </ContainerScroll>
 
@@ -112,12 +117,10 @@ const Documentation = () => {
         <div className=' mb-8 bg-white/40 shadow-lg rounded-md  py-4 md:py-5 px-2 md:px-6 text-center'>
         <BackgroundBeamsWithCollision >
        <div>
-       <div className="relative mx-auto inline-block w-max [filter:drop-shadow(0px_1px_3px_rgba(27,_37,_80,_0.14))]">
-          <div className="absolute left-0 top-[1px] bg-clip-text bg-no-repeat text-transparent bg-gradient-to-r py-4 from-purple-500 via-violet-500 to-pink-500 [text-shadow:0_0_rgba(0,0,0,0.1)]">
-            <span className="uppercase text-[10px] md:text-lg">Redirect on all your profile by changing only plateform name</span>
-          </div>
-          <div className="relative bg-clip-text text-transparent bg-no-repeat bg-gradient-to-r from-purple-500 via-violet-500 to-pink-500 py-4">
-            <span className="uppercase text-[10px] md:text-lg">Redirect on all your profile by changing only plateform name</span>
+       <div className="relative mx-auto  w-max [filter:drop-shadow(0px_1px_3px_rgba(27,_37,_80,_0.14))]">
+          
+          <div className="relative bg-clip-text text-transparent bg-no-repeat bg-gradient-to-r from-purple-400 via-violet-200 to-pink-500 py-4">
+            <span className="uppercase text-[8px] md:text-lg">Change only plateform name-redirect to all profiles</span>
           </div>
         </div>
        </div>

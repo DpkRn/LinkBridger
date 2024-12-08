@@ -12,29 +12,37 @@ const LinkPage = () => {
   const dispatch=useDispatch()
   const linkRef = useRef(null);
   const location = useLocation();
-  const sidebarMenu = useSelector((store) => store.page.sidebarMenu);
+  
   const links = useSelector((store) => store.admin.links);
   const username = useSelector((store) => store.admin.user.username);
+
+
   const handleCreateNewBridge = () => {
     navigate("/home");
   };
-//  useEffect(()=>{
-//   const getAllLinks=async()=>{
-//     try{
-//      const res=await api.post('/source/getallsource',{username},{withCredentials:true});
-//      if(res.status===200&&res.data.success){
-//        dispatch(setLinks(res.data.sources))
-//      }
-//     }catch(err){
-//      console.log(err)
-//      const message=err.response?.data?.message||"Server Internal Error"
-//      toast.error(message)
-//     }
-//    }
-//    if(links.length===0){
-//     getAllLinks()
-//    }
-//  },[links])
+
+
+  
+ useEffect(()=>{
+    const getAllLinks=async()=>{
+     try{
+      const res=await api.post('/source/getallsource',{username},{withCredentials:true});
+      if(res.status===200&&res.data.success){
+       
+        dispatch(setLinks(res.data.sources))
+      }
+     }catch(err){
+      console.log(err)
+      const message=err.response?.data?.message||"Server Internal Error"
+      toast.error(message)
+     }
+    }
+    getAllLinks()
+ },[])
+
+
+
+
   const copyToClipboard = () => {
     const linkText = linkRef.current.innerText; // Get the text from the ref
     navigator.clipboard
@@ -46,6 +54,8 @@ const LinkPage = () => {
         toast.error("Failed to copy!"); // Show error message if failed
       });
   };
+
+
   return (
     <div className={` md:p-10 mt-4`}>
       {/* button */}

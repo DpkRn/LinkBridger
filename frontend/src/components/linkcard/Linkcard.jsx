@@ -6,6 +6,7 @@ import { FaEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import api from "../../utils/api";
 import { setLinks } from "../../redux/userSlice";
+import { FcImageFile } from "react-icons/fc";
 
 const Linkcard = ({ sources }) => {
   const linkRef = useRef(null);
@@ -17,7 +18,7 @@ const Linkcard = ({ sources }) => {
   
 
 
-  const handleCardClick=async(id)=>{
+  const handleDeleteLink=async(id)=>{
     try{
       const res=await api.post('/source/deletelink',{id:id},{withCredentials:true})
       if(res.status===200&&res.data.success){
@@ -25,6 +26,20 @@ const Linkcard = ({ sources }) => {
         dispatch(setLinks(tempArr))
        
         toast.success("bridge has been deleted successfully!")
+      }
+    }catch(err){
+      const message=err.response?.data?.message || "Server Internal Error"
+      toast.error(message)
+    }
+  }
+  const handleEditLink=async(id)=>{
+    try{
+      const res=await api.post('/source/editlink',{id:id},{withCredentials:true})
+      if(res.status===200&&res.data.success){
+        // const tempArr=links.filter(link=>link._id!=id)
+        dispatch(setLinks(tempArr))
+       
+        toast.success("bridge has been edited successfully!")
       }
     }catch(err){
       const message=err.response?.data?.message || "Server Internal Error"
@@ -89,8 +104,12 @@ const Linkcard = ({ sources }) => {
 
         {/* Edit section */}
         <div className="flex  bg-white pl-6 rounded-md ">
-          <button className="text-black text-2xl hover:bg-black/10 active:bg-black/50 rounded-full p-3"><FaEdit /></button>
-          <button className="text-black text-2xl hover:bg-black/10 active:bg-black/50 rounded-full p-3" onClick={()=>handleCardClick(_id)}><MdDelete className="text-red-900 text-2xl"/></button>
+          
+          <button className="text-black text-2xl hover:bg-black/10 active:bg-black/50 rounded-full p-3" onClick={()=>handleDeleteLink(_id)}><MdDelete className="text-red-900 text-2xl"/></button>
+          <button className="text-black text-2xl hover:bg-black/10 active:bg-black/50 rounded-full p-3" onClick={()=>handleEditLink(_id)}><FaEdit /></button>
+          <button  className="text-black text-2xl hover:bg-black/10 active:bg-black/50 rounded-full p-3" onClick={()=>handleEditLink(_id)}><FcImageFile /></button>
+          
+          
 
         </div>
       </div>

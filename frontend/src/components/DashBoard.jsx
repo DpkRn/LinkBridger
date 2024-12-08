@@ -14,26 +14,7 @@ import Footer from './footer/Footer'
 
 
 const DashBoard = () => {
-  const dispatch=useDispatch()
-  const [showLinkBridge,setShowLinkBridge]=useState(false)
-  const {username}=useSelector(store=>store.admin.user)
- useEffect(()=>{
-    const getAllLinks=async()=>{
-     try{
-      const res=await api.post('/source/getallsource',{username},{withCredentials:true});
-      if(res.status===200&&res.data.success){
-       
-        dispatch(setLinks(res.data.sources))
-      }
-     }catch(err){
-      console.log(err)
-      const message=err.response?.data?.message||"Server Internal Error"
-      toast.error(message)
-     }
-    }
-    getAllLinks()
- },[])
-
+ 
 
   return (
     <div className="flex  flex-col">
