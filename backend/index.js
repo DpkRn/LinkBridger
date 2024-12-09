@@ -5,14 +5,25 @@ const path =require('path')
 const mongoose=require('mongoose')
 const dotenv = require('dotenv')
 const helmet = require('helmet'); 
+const cloudinary = require('cloudinary')
 
 
 const authRoute=require('./routes/AuthRoute')
 const linkRoute=require('./routes/LinkRoute')
 const Link = require('./model/linkModel')
+const Profile=require('./model/userProfile')
+const profileRoute=require('./routes/ProfileRoute')
 
 
 dotenv.config()
+cloudinary.config({
+  cloud_name:process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+
+
 const app = express()
 const port = process.env.PORT || 8080
 const db_url=process.env.DATABASE_URL;
@@ -29,14 +40,14 @@ app.use(cors({
 }))
 
 app.use(cookieParser());
-app.use(express.json())
+app.use(express.json({limit:'50mb'}))
 app.use(helmet());
 
 app.use(helmet.contentSecurityPolicy({
   directives: {
     defaultSrc: ["'self'"],
     scriptSrc: ["'self'", "https://vercel.live", "https://*.vercel.app"],  // Allow Vercel scripts
-    imgSrc: ["'self'", "data:", "https://your-image-host.com"],  // Add your image host if needed
+    imgSrc: ["'self'", "data:", "https://res.cloudinary.com"],  // Add your image host if needed
     styleSrc: ["'self'", "'unsafe-inline'"],  // Allow inline styles if needed
     connectSrc: ["'self'", "https://linkb-one.vercel.app","https://linkb-one.vercel.app/*"],  // Add your API backend here
     // Add more directives as needed
@@ -46,6 +57,7 @@ app.use(helmet.contentSecurityPolicy({
 
 app.use('/auth',authRoute)
 app.use('/source',linkRoute)
+app.use('/profile',profileRoute)
 
 app.get('/',(req,res)=>{
   return res.send('welcome to my page: Dwizard')
@@ -54,14 +66,17 @@ app.get('/',(req,res)=>{
 app.get('/:username', async (req, res) => {
   const username=req.params.username
   const tree=await Link.find({username:username})
-  if(tree){
+  const dp=await Profile.findOne({username},{image:1,bio:1});
+  if(tree&&dp){
     console.log(tree)
-    return res.render('linktree.ejs',{ 
+    console.log(dp)
+    return res.render('linktree',{ 
       username:username,
-      tree:tree 
+      tree:tree,
+      dp:dp 
     })   
   }
-  return res.render('not exists')
+  return res.render('not_exists')
 })
 app.get('/:username/:source', async (req, res) => {
      const {username,source}=req.params;

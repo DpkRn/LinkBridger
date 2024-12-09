@@ -132,7 +132,7 @@ const Nav = () => {
 
 
   return (
-    <nav className="bg-gray-800 h-[70px]   relative z-40 px-5 ">
+    <nav className="bg-gray-800 h-[70px]   relative z-40 px-5 shadow-xl shadow-white ">
       <div className="">
         <div className="relative flex h-16 items-center md:justify-between justify-end">
           {/* mobile menu icon */}

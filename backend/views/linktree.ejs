@@ -4,12 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%=username%></title>
+    <link rel="icon" type="image/svg+xml" href="<%=dp.image%>" />
+    <title><%=username.toUpperCase()%></title>
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
     <div class="container">
         <div class="profile">
+            <div class="profile-pic">
+                <img src="<%=dp.image%>" alt="Profile Picture">
+            </div>
+            <p class="bio"><%=dp.bio%></p>
            
             <div class="title">
                 <h1><%= username.toUpperCase() %></h1>
@@ -25,7 +30,7 @@
                 </div>
                 <%})%> 
             </div>
-            <a href="https://linkbriger.vercel.app">Click here to make your own links. </a>
+            <a class="website" href="https://linkbriger.vercel.app">Click here to make your own links. </a>
         </div>
     </div>
 </body>

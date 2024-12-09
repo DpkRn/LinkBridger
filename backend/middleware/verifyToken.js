@@ -41,11 +41,11 @@ const otpVerify = async (req, res, next) => {
 
   try {
     // Find the OTP record for the given email
-    console.log('d')
+  
     const otpRecord = await Otp.findOne({ email });
-    console.log('d')
+  
     if (!otpRecord) {
-      console.log('d')
+     
       return res
         .status(400)
         .json({ success: false, message: "Invalid or expired OTP" });
