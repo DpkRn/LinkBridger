@@ -42,7 +42,7 @@ const singUpController = async (req, res, next) => {
       password: hashedPassword,
       username,
     });
-    const userinfo=await Profile.create({username});
+    const userinfo=await Profile.create({username,image:"/images/panda.png"});
     if (user&&userinfo) {
       console.log("user created");
       return res

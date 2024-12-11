@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { setSidebarMenu } from "../../redux/pageSlice";
 import toast from "react-hot-toast";
 import api from "../../utils/api";
@@ -19,6 +19,8 @@ const Nav = () => {
   const dispatch = useDispatch();
   const notificationRef=useRef(null)
   const profilePageRef=useRef(null)
+  const location=useLocation()
+
 
   const [profileMenu, setProfileMenu] = useState(false);
   const [notificationPage, setNotificationPage] = useState(false);
@@ -79,6 +81,8 @@ const Nav = () => {
       console.log(err);
     }
   };
+
+
   useEffect(() => {
     dispatch(
       setNotifications(links.reduce((acc, link) => acc + link.notSeen, 0))
@@ -206,14 +210,14 @@ const Nav = () => {
                 {/* <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" --> */}
                 <Link
                   to="/home"
-                  className="rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white"
+                  className={`${location.pathname=="/home"?'font-bold text-base':"font-medium text-sm"} rounded-md  px-3 py-2  text-white hover:bg-gray-700 hover:text-white`}
                   aria-current="page"
                 >
                   Home
                 </Link>
                 <Link
                   to="/links"
-                  className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+                  className={`${location.pathname=="/links"?'font-bold text-base':"font-medium text-sm"} rounded-md  px-3 py-2   text-white hover:bg-gray-700 hover:text-white`}
                 >
                   Links
                 </Link>
@@ -225,7 +229,7 @@ const Nav = () => {
                 </Link> */}
                 <Link
                   to="/doc"
-                  className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+                  className={`${location.pathname=="/doc"?'font-bold text-base':"font-medium text-sm"} rounded-md  px-3 py-2   text-white hover:bg-gray-700 hover:text-white`}
                 >
                   Docs
                 </Link>
@@ -233,8 +237,9 @@ const Nav = () => {
             </div>
           </div>
 
+  {/* notification */}
           <div className="absolute inset-y-0  flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-            {/* notification */}
+          
             <div className="relative">
               <button
                 type="button"
@@ -334,6 +339,8 @@ const Nav = () => {
               )}
             </div>
           </div>
+
+
           {notificationPage && (
                 <div className=" notification-page absolute rounded-lg  top-[55px] right-2  bg-cyan-700 text-center ">
                   <Notification />

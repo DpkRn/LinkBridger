@@ -62,7 +62,7 @@ const updateProfile = async (req, res) => {
     console.log("uploading image")
     const result=await cloudinary.v2.uploader.upload(image,{folder:"linkbrige-Profile"})
     console.log("uploaded image")
-    const imgUrl=result.secure_url || "profile.jpg";
+    const imgUrl=result.secure_url || "/images/panda.png";
     console.log(imgUrl)
     try {
       

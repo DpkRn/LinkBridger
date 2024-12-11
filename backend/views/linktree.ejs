@@ -14,7 +14,7 @@
             <div class="profile-pic">
                 <img src="<%=dp.image%>" alt="Profile Picture">
             </div>
-            <p class="bio"><%=dp.bio%></p>
+            <p class="bio"><%=dp.bio||"bio not available"%></p>
            
             <div class="title">
                 <h1><%= username.toUpperCase() %></h1>
