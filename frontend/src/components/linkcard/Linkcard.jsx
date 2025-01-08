@@ -84,7 +84,7 @@ const Linkcard = ({ sources }) => {
 
         {/* bridge */}
         <div className="">
-          <div className="px-4 py-2 bg-black/30 text-white rounded-md flex items-center break-words gap-3">
+          <div className="px-4 py-2 bg-black/80 text-white rounded-md flex items-center break-words gap-3">
             <span className="break-all font-mono" ref={linkRef}>
               {`https://linkb-one.vercel.app/${username}/${source}`}
             </span>
