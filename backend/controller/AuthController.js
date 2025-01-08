@@ -66,7 +66,8 @@ const singInController = async (req, res) => {
         .json({ success: false, message: "All fields are required" });
     }
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).lean();
+    
     if (!user)
       return res
         .status(404)
@@ -87,6 +88,7 @@ const singInController = async (req, res) => {
       sameSite: "None",
       secure: true,
     });
+    delete user.password
     return res
       .status(200)
       .json({ success: true, message: "Login successfull", user });
@@ -132,6 +134,8 @@ const signOut = async (req, res) => {
       .status(200)
       .json({ success: true, message: "Logged Out successfull" });
   } catch (err) {
+
+
     console.log(err);
     return res
       .status(500)
@@ -141,22 +145,30 @@ const signOut = async (req, res) => {
 const getUserInfo = async (req, res) => {
   try {
     const id = req.userId;
-    
 
-    const user = await User.findById(id);
-    if (!user)
-      return res.status(404).json({ success: false, message: "Not found!" });
+    // Find user by ID and return a plain JavaScript object
+    const user = await User.findById(id).lean();
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found!" });
+    }
 
-    return res
-      .status(200)
-      .json({ success: true, message: `welcom back ${user.username}`, user });
+    // Remove the password field from the user object
+    delete user.password;
+
+    return res.status(200).json({
+      success: true,
+      message: `Welcome back, ${user.username}!`,
+      user,
+    });
   } catch (err) {
-    console.log(err);
-    return res
-      .status(500)
-      .json({ success: false, message: "Server Internal Error" });
+    console.error(err);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
   }
 };
+
 
 const sendOtp = async (req, res, next) => {
   const { email } = req.body;
