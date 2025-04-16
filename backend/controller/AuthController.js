@@ -11,7 +11,7 @@ function generateOTP() {
   console.log(otp)
   return otp;
 }
-const singUpController = async (req, res, next) => {
+const signUpController = async (req, res, next) => {
   try {
     const { email, password, username } = req.body;
     if (!email || !username || !password) {
@@ -57,7 +57,7 @@ const singUpController = async (req, res, next) => {
   }
 };
 
-const singInController = async (req, res) => {
+const signInController = async (req, res) => {
   try {
     
     const { email, password } = req.body;
@@ -129,7 +129,7 @@ const signOut = async (req, res) => {
   try {
     //  const token=jwt.sign({email:email,id:user._id},process.env.JWT_KEY,{expiresIn:'24h'})
     res.cookie("token", "", {
-      expiresIn: Date.now(),
+      expires: new Date.now(0),
       sameSite: "None",
       secure: true,
     });
@@ -242,8 +242,8 @@ const changePassword = async (req, res, next) => {
 };
 
 module.exports = {
-  singUpController,
-  singInController,
+  signUpController,
+  signInController,
   getUserInfo,
   signOut,
   checkAvailablity,
