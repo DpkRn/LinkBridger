@@ -13,9 +13,11 @@ const linkRoute=require('./routes/LinkRoute')
 const Link = require('./model/linkModel')
 const Profile=require('./model/userProfile')
 const profileRoute=require('./routes/ProfileRoute')
+const { env } = require('process')
 
 
 dotenv.config()
+
 cloudinary.config({
   cloud_name:process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -30,7 +32,7 @@ const db_url=process.env.DATABASE_URL;
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-console.log('Views directory:', path.join(__dirname, 'views'));
+// console.log('Views directory:', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(cors({
@@ -78,6 +80,8 @@ app.get('/:username', async (req, res) => {
   }
   return res.render('not_exists')
 })
+
+
 app.get('/:username/:source', async (req, res) => {
      const {username,source}=req.params;
      const doc=await Link.findOne({username,source})
@@ -89,11 +93,12 @@ app.get('/:username/:source', async (req, res) => {
      return res.redirect(307,destination)
 })
 
+
 mongoose.connect(db_url).then(()=>{
     console.log('db connected')
 }).catch(err=>console.log(err))
 
 
 app.listen(port, () => {
-  console.log(`Example app "http://localhost:8080"`)
+  console.log(`Example app http://localhost:${process.env.PORT}`)
 })

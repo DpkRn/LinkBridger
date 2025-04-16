@@ -99,6 +99,7 @@ const AuthPage = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
+      console.log("here its coming")
       setLoading(true);
       const res = await api.post(
         "/auth/signin",

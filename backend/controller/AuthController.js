@@ -59,6 +59,7 @@ const singUpController = async (req, res, next) => {
 
 const singInController = async (req, res) => {
   try {
+    
     const { email, password } = req.body;
     if (!email || !password) {
       return res
@@ -67,12 +68,14 @@ const singInController = async (req, res) => {
     }
 
     const user = await User.findOne({ email }).lean();
+    console.log("user",user)
     
     if (!user)
       return res
         .status(404)
-        .json({ success: false, message: "Invalid Credentials !" });
+        .json({ success: false, message: "Email does not exist !" });
     const auth = await bcryptjs.compare(password, user.password);
+    console.log(auth)
     if (!auth) {
       return res
         .status(401)
@@ -126,7 +129,7 @@ const signOut = async (req, res) => {
   try {
     //  const token=jwt.sign({email:email,id:user._id},process.env.JWT_KEY,{expiresIn:'24h'})
     res.cookie("token", "", {
-      maxAge: 1,
+      expiresIn: Date.now(),
       sameSite: "None",
       secure: true,
     });
