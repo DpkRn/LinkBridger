@@ -129,7 +129,7 @@ const signOut = async (req, res) => {
   try {
     //  const token=jwt.sign({email:email,id:user._id},process.env.JWT_KEY,{expiresIn:'24h'})
     res.cookie("token", "", {
-      expiresIn: new Date.now(0),
+      expires: new Date(0),
       sameSite: "None",
       secure: true,
     });

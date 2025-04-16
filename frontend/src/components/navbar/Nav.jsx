@@ -199,7 +199,7 @@ const Nav = () => {
             <div className="flex flex-shrink-0 mr-5  items-center">
               <img
                 className="h-8 w-auto"
-                src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500"
+                src="logo.png"
                 alt="Link Bridge"
               />
             </div>
