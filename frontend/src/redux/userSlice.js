@@ -16,12 +16,14 @@ const userSlice=createSlice({
             state.isAuthenticated=action.payload
         },
         setLinks:(state,action)=>{
+            console.log(action)
             state.links=action.payload
         },
         setNotifications:(state,action)=>{
             state.notifications=action.payload
         }
     }
+    
 })
 
 export const {setUser,setAuthenticated,setLinks,setNotifications}=userSlice.actions;

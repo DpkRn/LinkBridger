@@ -31,7 +31,7 @@ const Nav = () => {
   const notifications = useSelector((store) => store.admin.notifications);
 
   const handleSignOut = async (e) => {
-    e.preventDefault();
+    // e.preventDefault();
     try {
       const res = await api.get("/auth/signout", { withCredentials: true });
       if (res.status === 200 && res.data.success) {
