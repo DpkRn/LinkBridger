@@ -31,6 +31,9 @@ const verifyToken = async (req, res, next) => {
       .json({ success: false, message: "Server Internal Error" });
   }
 };
+
+
+
 const otpVerify = async (req, res, next) => {
   const { email, otp } = req.body;
 

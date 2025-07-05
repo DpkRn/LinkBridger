@@ -172,7 +172,95 @@ const Welcome_Email_Template = `
   </html>
 `;
 
+const Notification_Email_Template=`<!DOCTYPE html>
+<html lang="en" style="margin:0;padding:0;box-sizing:border-box;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Visit Notification</title>
+    <style>
+        /* Reset */
+        body, table, td, p, a {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+        a {
+            text-decoration: none;
+        }
+        .card {
+            background: #f9f9f9;
+            border-radius: 8px;
+            padding: 15px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin-top: 20px;
+            background: linear-gradient(90deg, #4f46e5, #7c3aed);
+            color: #fff;
+            border-radius: 6px;
+            font-weight: bold;
+            transition: background 0.4s ease;
+        }
+        .button:hover {
+            background: linear-gradient(90deg, #7c3aed, #4f46e5);
+        }
+        @media (max-width: 600px) {
+            .main-table {
+                width: 100% !important;
+            }
+        }
+    </style>
+</head>
+<body style="background-color:#f4f4f4;">
+    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+            <td align="center" style="padding:20px 0;">
+                <table class="main-table" role="presentation" border="0" cellpadding="0" cellspacing="0" width="600" style="background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+                    <tr>
+                        <td align="center" bgcolor="#4f46e5" style="padding:20px;color:#ffffff;">
+                            <h1 style="margin:0;font-size:24px;">🔔 LinkBriger Visit Alert</h1>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:20px;">
+                            <p style="font-size:16px;margin-bottom:10px;">Hi <b>{{name}}</b>,</p>
+                            <p style="font-size:16px;margin-bottom:20px;">Someone just visited your <b>{{platform}}</b> link!</p>
+
+                            <div class="card">
+                                <p><b>📍 Location:</b> {{city}}, {{country}}</p>
+                                <p><b>🖥️ Browser:</b> {{browser}}</p>
+                                <p><b>⏰ Time:</b> {{time}}</p>
+                                <p><b>⏰ IP:</b> {{ipAdd}}</p>
+                            </div>
+
+                            <a href="https://linkbriger.com/analytics" class="button">View Analytics</a>
+
+                            <p style="font-size:14px;color:#555;margin-top:20px;">This is an automatic notification from <b>LinkBriger</b>.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#f4f4f4" align="center" style="padding:15px;color:#999;font-size:12px;">
+                            © 2025 LinkBriger. All rights reserved.
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
+`
+
 module.exports={
     Verification_Email_Template,
-    Welcome_Email_Template
+    Welcome_Email_Template,
+    Notification_Email_Template
 }

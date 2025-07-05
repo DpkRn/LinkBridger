@@ -75,7 +75,6 @@ const signInController = async (req, res) => {
         .status(404)
         .json({ success: false, message: "Email does not exist !" });
     const auth = await bcryptjs.compare(password, user.password);
-    console.log(auth)
     if (!auth) {
       return res
         .status(401)

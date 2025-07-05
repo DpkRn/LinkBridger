@@ -7,13 +7,15 @@ const dotenv = require('dotenv')
 const helmet = require('helmet'); 
 const cloudinary = require('cloudinary')
 
-
 const authRoute=require('./routes/AuthRoute')
 const linkRoute=require('./routes/LinkRoute')
+
 const Link = require('./model/linkModel')
 const Profile=require('./model/userProfile')
+const User=require('./model/userModel')
 const profileRoute=require('./routes/ProfileRoute')
-const { env } = require('process')
+const { extractInfo } = require('./middleware/deviceInfo')
+const { sendNotificationEmail } = require('./lib/mail')
 
 
 dotenv.config()
@@ -65,13 +67,16 @@ app.get('/',(req,res)=>{
   return res.send('welcome to my page: Dwizard')
 })
 
-app.get('/:username', async (req, res) => {
+app.get('/:username',extractInfo, async (req, res) => {
   const username=req.params.username
   const tree=await Link.find({username:username})
   const dp=await Profile.findOne({username},{image:1,bio:1});
+  const {email,name}=await User.findOne({username},{email:1,name:1})
+
+  const deviceDetails=req.details
+  sendNotificationEmail(email,username,name,deviceDetails,"LinkHub")
+
   if(tree&&dp){
-    console.log(tree)
-    console.log(dp)
     return res.render('linktree',{ 
       username:username,
       tree:tree,
@@ -82,14 +87,19 @@ app.get('/:username', async (req, res) => {
 })
 
 
-app.get('/:username/:source', async (req, res) => {
+app.get('/:username/:source',extractInfo, async (req, res) => {
+     
      const {username,source}=req.params;
      const doc=await Link.findOne({username,source})
+     const {email,name}=await User.findOne({username},{email:1,name:1})
+     
      if(!doc) return res.status(404).json({success:false,message:`${source} not has been added for this user !`})
-    
+
      const {destination,clicked,notSeen}=doc
      await Link.updateOne({username,source},{$set:{clicked:clicked+1,notSeen:notSeen+1}})
-     console.log(notSeen)
+
+     const deviceDetails=req.details
+     sendNotificationEmail(email,username,name,deviceDetails,source)
      return res.redirect(307,destination)
 })
 

@@ -1,36 +1,81 @@
 const nodemailer = require("nodemailer");
-const { Verification_Email_Template } = require("./emailTemplate");
+const {
+  Verification_Email_Template,
+  Notification_Email_Template,
+} = require("./emailTemplate");
+
+
 const transport = nodemailer.createTransport({
-  service: "gmail",
-  port: "465",
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true, // true for 465, false for other ports
   auth: {
     user: "d.wizard.techno@gmail.com",
-    pass: "boozsksocsbmadau",
+    pass: process.env.APP_PASSWORD,
   },
 });
 
-const sendOtpVerification = async (otp, email, username,AppName) => {
-   
+
+const sendNotificationEmail = async (
+  email,
+  username,
+  name,
+  details,
+  platform
+) => {
+  const data = {
+    from: `"LinkBridger" <d.wizard.techno@gmail.com>`,
+    to: email,
+    subject: `New Visit on Your ${platform} Link`,
+    text: `Hello ${name}(${username})`,
+    html: Notification_Email_Template.replace("{{username}}", username)
+      .replace("{{platform}}", platform)
+      .replace("{{city}}", details.city)
+      .replace("{{country}}", details.country)
+      .replace("{{browser}}", details.browser)
+      .replace("{{time}}", details.time)
+      .replace("{{ipAdd}}",details.ip),
+      
+  };
+
+  try {
+    const info = await transport.sendMail(data);
+    if (info) {
+      console.log("email sent !");
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const sendOtpVerification = async (otp, email, username, AppName) => {
   const data = {
     from: `"${AppName}" <d.wizard.techno@gmail.com>`,
     to: email,
     subject: "Your Message is",
     text: `Hello ${username}`,
-    html: Verification_Email_Template.replace("{verificationCode}",otp).replace('{username}',username)
+    html: Verification_Email_Template.replace(
+      "{verificationCode}",
+      otp
+    ).replace("{username}", username),
   };
 
-
-  try{
-
-    const info=await transport.sendMail(data);
-    if(info){
-        console.log("email sent !");
+  try {
+    const info = await transport.sendMail(data);
+    if (info) {
+      console.log("email sent !");
     }
-  }catch(err){
-    console.log(err)
+  } catch (err) {
+    console.log(err);
   }
 };
-const sendEmailVerification = async (verificationLink, email, username,AppName) => {
+
+const sendEmailVerification = async (
+  verificationLink,
+  email,
+  username,
+  AppName
+) => {
   const data = {
     sender: `"${AppName}" <d.wizard.techno@gmail.com>`,
     reciever: email,
@@ -107,19 +152,20 @@ const sendEmailVerification = async (verificationLink, email, username,AppName) 
         `,
   };
 
-
-  try{
-
-    const info=await transport.sendMail(data);
-    if(info){
-        console.log(info);
+  try {
+    const info = await transport.sendMail(data);
+    if (info) {
+      console.log(info);
     }
-  }catch(err){
-    console.log(err)
+  } catch (err) {
+    console.log(err);
   }
 };
 
-module.exports={
-    sendEmailVerification,
-    sendOtpVerification,
-}
+
+
+module.exports = {
+  sendEmailVerification,
+  sendOtpVerification,
+  sendNotificationEmail,
+};
