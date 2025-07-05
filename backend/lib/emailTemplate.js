@@ -231,15 +231,16 @@ const Notification_Email_Template=`<!DOCTYPE html>
                     </tr>
                     <tr>
                         <td style="padding:20px;">
-                            <p style="font-size:16px;margin-bottom:10px;">Hi <b>{{name}}</b>,</p>
+                            <p style="font-size:16px;margin-bottom:10px;">Hi <b>{{username}}</b>,</p>
                             <p style="font-size:16px;margin-bottom:20px;">Someone just visited your <b>{{platform}}</b> link!</p>
-
+                              <p><b>Someone from {{city}}, {{country}} using {{browser}} visited your {{platform}} link at {{time}}.</b></p>
                             <div class="card">
                                 <p><b>📍 Location:</b> {{city}}, {{country}}</p>
                                 <p><b>🖥️ Browser:</b> {{browser}}</p>
                                 <p><b>⏰ Time:</b> {{time}}</p>
-                                <p><b>⏰ IP:</b> {{ipAdd}}</p>
+                                <p><b>🌐 IP:</b> {{ipAdd}}</p>
                             </div>
+
 
                             <a href="https://linkbriger.com/analytics" class="button">View Analytics</a>
 

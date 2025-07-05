@@ -11,7 +11,7 @@ const transport = nodemailer.createTransport({
   secure: true, // true for 465, false for other ports
   auth: {
     user: "d.wizard.techno@gmail.com",
-    pass: process.env.APP_PASSWORD,
+    pass: "lscemukhybvgeqmt",
   },
 });
 
@@ -23,30 +23,43 @@ const sendNotificationEmail = async (
   details,
   platform
 ) => {
+  const placeholders = {
+    "{{username}}": username,
+    "{{name}}": name,
+    "{{platform}}": platform,
+    "{{city}}": details.city,
+    "{{country}}": details.country,
+    "{{browser}}": details.browser,
+    "{{time}}": details.time,
+    "{{ipAdd}}": details.ip,
+  };
+
+  let emailHTML = Notification_Email_Template;
+  for (const [key, value] of Object.entries(placeholders)) {
+    const regex = new RegExp(key, "g");
+    emailHTML = emailHTML.replace(regex, value);
+  }
+
   const data = {
     from: `"LinkBridger" <d.wizard.techno@gmail.com>`,
     to: email,
-    subject: `New Visit on Your ${platform} Link`,
-    text: `Hello ${name}(${username})`,
-    html: Notification_Email_Template.replace("{{username}}", username)
-      .replace("{{platform}}", platform)
-      .replace("{{city}}", details.city)
-      .replace("{{country}}", details.country)
-      .replace("{{browser}}", details.browser)
-      .replace("{{time}}", details.time)
-      .replace("{{ipAdd}}",details.ip),
-      
+    subject: `New Visit on Your ${platform}`,
+    text: `Hello ${name} (${username}), someone visited your ${platform} link.`,
+    html: emailHTML,
   };
 
   try {
     const info = await transport.sendMail(data);
-    if (info) {
-      console.log("email sent !");
+    if (info.accepted.length > 0) {
+      console.log("✅ Email sent to:", email);
+    } else {
+      console.warn("⚠️ Email not accepted:", info);
     }
   } catch (err) {
-    console.log(err);
+    console.error("❌ Error sending email:", err.message);
   }
 };
+
 
 const sendOtpVerification = async (otp, email, username, AppName) => {
   const data = {
