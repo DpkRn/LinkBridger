@@ -136,7 +136,7 @@ const Nav = () => {
 
 
   return (
-    <nav className="bg-gray-800 h-[70px]   relative z-40 px-5 shadow-xl shadow-white ">
+  <nav className="bg-gray-800 h-[70px] sticky top-0 z-50 px-5 shadow-lg ">
       <div className="">
         <div className="relative flex h-16 items-center md:justify-between justify-end">
           {/* mobile menu icon */}
@@ -198,26 +198,26 @@ const Nav = () => {
             {/* Logo */}
             <div className="flex flex-shrink-0 mr-5  items-center">
               <img
-                className="h-8 w-auto"
+                className="h-10 w-auto drop-shadow-lg"
                 src="logo.png"
-                alt="Link Bridge"
+                alt="LinkBridger Logo"
               />
             </div>
 
             {/* NavMenu */}
             <div className="hidden sm:ml-6 sm:block z-50 text-white">
-              <div className="flex space-x-4">
+              <div className="flex space-x-6">
                 {/* <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" --> */}
                 <Link
                   to="/home"
-                  className={`${location.pathname=="/home"?'font-bold text-base':"font-medium text-sm"} rounded-md  px-3 py-2  text-white hover:bg-gray-700 hover:text-white`}
+                  className={`${location.pathname=="/home"?'font-bold text-lg':"font-medium text-base"} rounded-md px-4 py-2 text-white hover:bg-primary hover:text-white transition-colors duration-200`}
                   aria-current="page"
                 >
                   Home
                 </Link>
                 <Link
                   to="/links"
-                  className={`${location.pathname=="/links"?'font-bold text-base':"font-medium text-sm"} rounded-md  px-3 py-2   text-white hover:bg-gray-700 hover:text-white`}
+                  className={`${location.pathname=="/links"?'font-bold text-lg':"font-medium text-base"} rounded-md px-4 py-2 text-white hover:bg-primary hover:text-white transition-colors duration-200`}
                 >
                   Links
                 </Link>
@@ -229,7 +229,7 @@ const Nav = () => {
                 </Link> */}
                 <Link
                   to="/doc"
-                  className={`${location.pathname=="/doc"?'font-bold text-base':"font-medium text-sm"} rounded-md  px-3 py-2   text-white hover:bg-gray-700 hover:text-white`}
+                  className={`${location.pathname=="/doc"?'font-bold text-lg':"font-medium text-base"} rounded-md px-4 py-2 text-white hover:bg-primary hover:text-white transition-colors duration-200`}
                 >
                   Docs
                 </Link>
