@@ -37,11 +37,27 @@ app.set('views', path.join(__dirname, 'views'));
 // console.log('Views directory:', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 
+const allowedOrigins = [
+  'https://clickly.cv',
+  'https://www.clickly.cv',
+  'https://linkbriger.vercel.app' // if your frontend ever runs directly on Vercel
+];
+
 app.use(cors({
-  origin:['https://linkbriger.vercel.app','http://localhost:5173'],
-  methods:['POST','GET'],
-  credentials:true
-}))
+  origin: function (origin, callback) {
+    // allow requests with no origin (like curl, Postman)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+}));
+
+// Optional: explicitly handle OPTIONS for all routes
+app.options('*', cors());
 
 app.use(cookieParser());
 app.use(express.json({limit:'100mb'}))
