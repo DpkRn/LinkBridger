@@ -1,0 +1,289 @@
+const User = require("../model/userModel");
+const bcryptjs = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const { sendOtpVerification } = require("../lib/mail");
+const Profile = require('../model/userProfile');
+const Otp = require("../model/otpModel");
+const Device = require("../model/deviceModel");
+
+function generateOTP() {
+  let otp = Math.floor(1000 + Math.random() * 9000);
+  return String(otp);
+}
+
+// Device-based login: first time user provides deviceId + passKey
+const deviceLogin = async (req, res) => {
+  try {
+    const { deviceId, passKey } = req.body;
+    if (!deviceId || !passKey) {
+      return res
+        .status(400)
+        .json({ success: false, message: "deviceId and passKey are required" });
+    }
+
+    let device = await Device.findOne({ deviceId });
+
+    // If device not found => first time login for this device => create
+    if (!device) {
+      const hashedPass = await bcryptjs.hash(passKey, 10);
+      const created = await Device.create({ deviceId, passKey: hashedPass });
+      const token = jwt.sign({ deviceId: created.deviceId, id: created._id }, process.env.JWT_KEY, { expiresIn: '24h' });
+      created.token = token;
+      await created.save();
+      res.cookie('token', token, { maxAge: 24 * 60 * 60 * 1000, sameSite: 'None', secure: true });
+      return res.status(201).json({ success: true, message: 'Device registered and logged in', device: { deviceId: created.deviceId, _id: created._id } });
+    }
+
+    // Device exists: verify passKey
+    const match = await bcryptjs.compare(passKey, device.passKey);
+    if (!match) {
+      return res.status(401).json({ success: false, message: 'Invalid passKey for this device' });
+    }
+
+    // Generate new token and update
+    const token = jwt.sign({ deviceId: device.deviceId, id: device._id }, process.env.JWT_KEY, { expiresIn: '24h' });
+    device.token = token;
+    await device.save();
+    res.cookie('token', token, { maxAge: 24 * 60 * 60 * 1000, sameSite: 'None', secure: true });
+    return res.status(200).json({ success: true, message: 'Login successful', device: { deviceId: device.deviceId, _id: device._id } });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ success: false, message: 'Server Internal Error' });
+  }
+};
+// const signUpController = async (req, res, next) => {
+//   try {
+//     const { email, password, username } = req.body;
+//     if (!email || !username || !password) {
+//       return res
+//         .status(400)
+//         .json({ success: false, message: "All fields are required" });
+//     }
+
+//     if (username.length < 5) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "username should be atleast 5 character length !",
+//       });
+//     }
+
+    
+//     const userExist = await User.findOne({ email });
+//     if (userExist) {
+//       return res
+//         .status(409)
+//         .json({ success: false, message: "user allready exists !" });
+//     }
+//     const hashedPassword = await bcryptjs.hash(password, 10);
+    
+
+//     const user = await User.create({
+//       email,
+//       password: hashedPassword,
+//       username,
+//     });
+//     const userinfo=await Profile.create({username,image:"/images/panda.png"});
+//     if (user&&userinfo) {
+//       console.log("user created");
+//       return res
+//         .status(201)
+//         .json({ success: true, message: "user registerd !", user });
+//     }
+//   } catch (err) {
+//     console.log(err);
+//     return res
+//       .status(500)
+//       .json({ success: false, message: "Server Internal Error" });
+//   }
+// };
+
+// const signInController = async (req, res) => {
+//   try {
+    
+//     const { email, password } = req.body;
+//     if (!email || !password) {
+//       return res
+//         .status(400)
+//         .json({ success: false, message: "All fields are required" });
+//     }
+
+//     const user = await User.findOne({ email }).lean();
+//     console.log("user",user)
+    
+//     if (!user)
+//       return res
+//         .status(404)
+//         .json({ success: false, message: "Email does not exist !" });
+//     const auth = await bcryptjs.compare(password, user.password);
+//     if (!auth) {
+//       return res
+//         .status(401)
+//         .json({ success: false, message: "Invalid Credentials !" });
+//     }
+//     const token = jwt.sign(
+//       { email: email, id: user._id },
+//       process.env.JWT_KEY,
+//       { expiresIn: "24h" }
+//     );
+//     res.cookie("token", token, {
+//       maxAge: 24 * 60 * 60 * 1000,
+//       sameSite: "None",
+//       secure: true,
+//     });
+//     delete user.password
+//     return res
+//       .status(200)
+//       .json({ success: true, message: "Login successfull", user });
+//   } catch (err) {
+//     console.log(err);
+//     return res
+//       .status(500)
+//       .json({ success: false, message: "Server Internal Error" });
+//   }
+// };
+
+const checkAvailablity = async (req, res) => {
+  try {
+    const { username } = req.body;
+    console.log(username);
+
+    const userExist = await User.findOne({ username });
+    if (userExist) {
+      return res
+        .status(209)
+        .json({ success: true, message: "username exists !" });
+    }
+    return res
+      .status(200)
+      .json({ success: true, message: "username not exists !" });
+  } catch (err) {
+    console.log(err);
+    return res
+      .status(500)
+      .json({ success: false, message: "Server Internal Error !" });
+  }
+};
+
+const signOut = async (req, res) => {
+  try {
+    const token = req.cookies.token;
+    // try to clear stored device token too
+    if (token) {
+      try {
+        const auth = jwt.verify(token, process.env.JWT_KEY);
+        if (auth && auth.id) {
+          await Device.updateOne({ _id: auth.id }, { $set: { token: null } });
+        }
+      } catch (e) {
+        // ignore verification errors; we'll still clear cookie
+      }
+    }
+    res.cookie('token', '', { expires: new Date(0), sameSite: 'None', secure: true });
+    return res.status(200).json({ success: true, message: 'Logged Out successful' });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ success: false, message: 'Server Internal Error' });
+  }
+};
+
+// Return device info for the authenticated device (based on token)
+const getDeviceInfo = async (req, res) => {
+  try {
+    const id = req.userId; // set by verifyToken middleware from JWT
+    const device = await Device.findById(id).lean();
+    if (!device) {
+      return res.status(404).json({ success: false, message: 'Device not found' });
+    }
+    // Never return sensitive fields
+    const safe = {
+      _id: device._id,
+      deviceId: device.deviceId,
+      createdAt: device.createdAt,
+      updatedAt: device.updatedAt,
+    };
+    return res.status(200).json({ success: true, message: 'Device info', device: safe });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ success: false, message: 'Internal Server Error' });
+  }
+};
+
+
+const sendOtp = async (req, res, next) => {
+  const { email } = req.body;
+  let { username } = req.body || "";
+  if (!username) username = " ";
+  console.log("sending otp");
+  if (!email) return res.status(400).json({ error: "Email is required" });
+
+  try {
+    const otp = generateOTP();
+
+    const hashedOtp = await bcryptjs.hash(otp, 10);
+
+    // Save the hashed OTP in the database
+    sendOtpVerification(otp, email, username, "Link Bridge");
+    const isAvailable = await Otp.findOne({ email });
+    if (isAvailable) {
+      const isOtp = await Otp.updateOne(
+        { email },
+        { $set: { otp: hashedOtp, createdAt: Date.now() } }
+      );
+      if (isOtp) {
+        return res
+          .status(201)
+          .json({ success: true, message: `Otp has been sent to ${email}` });
+      }
+    } else {
+      const isOtp = await Otp.create({ otp: hashedOtp, email });
+      if (isOtp) {
+        return res
+          .status(201)
+          .json({ success: true, message: `Otp has been sent to ${email}` });
+      }
+    }
+  } catch (err) {
+    console.log(err);
+    return res
+      .status(500)
+      .json({ success: false, message: "Server Internal Error" });
+  }
+};
+
+const changePassword = async (req, res, next) => {
+  const { email, password } = req.body;
+  if (!email || !password)
+    return res.status(400).json({ error: "Fields Required" });
+
+  try {
+    const hashedPassword = await bcryptjs.hash(password, 10);
+
+    // Save the hashed OTP in the database
+
+    const isChanged = await User.updateOne(
+      { email },
+      { $set: { password: hashedPassword } }
+    );
+    if (isChanged) {
+      return res
+        .status(201)
+        .json({ success: true, message: `Password Reset Successfully` });
+    }
+  } catch (err) {
+    console.log(err);
+    return res
+      .status(500)
+      .json({ success: false, message: "Server Internal Error" });
+  }
+};
+
+module.exports = {
+  // Device-based auth handlers
+  deviceLogin,
+  getDeviceInfo,
+  signOut,
+  // legacy / auxiliary handlers (kept for compatibility)
+  checkAvailablity,
+  sendOtp,
+  changePassword,
+};
