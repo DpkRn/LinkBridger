@@ -45,7 +45,6 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: function (origin, callback) {
-    // allow requests with no origin (like curl, Postman)
     if (!origin) return callback(null, true);
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
@@ -69,19 +68,21 @@ app.use(helmet.contentSecurityPolicy({
     scriptSrc: ["'self'", "https://vercel.live", "https://*.vercel.app"],  // Allow Vercel scripts
     imgSrc: ["'self'", "data:", "https://res.cloudinary.com"],  // Add your image host if needed
     styleSrc: ["'self'", "'unsafe-inline'"],  // Allow inline styles if needed
-    connectSrc: ["'self'", "https://linkb-one.vercel.app","https://linkb-one.vercel.app/*"],  // Add your API backend here
+    connectSrc: ["'self'", "https://linkb-one.vercel.app","https://linkb-one.vercel.app/*","https://clickly.cv/*"],  // Add your API backend here
     // Add more directives as needed
   }
 }));
 
 
+
+app.get('/',(req,res)=>{
+  return res.redirect(307,"https://clickly.cv/app/")
+})
+
 app.use('/auth',authRoute)
 app.use('/source',linkRoute)
 app.use('/profile',profileRoute)
 
-app.get('/',(req,res)=>{
-  return res.send('welcome to my page: Dwizard')
-})
 
 app.get('/:username',extractInfo, async (req, res) => {
   const username=req.params.username
