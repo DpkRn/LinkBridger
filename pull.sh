@@ -1,4 +1,4 @@
 BRANCH="release"
 echo "Cloning repo..."
-git pull  origin "$BRANCH" 
+git pull  
 cp ../.env backend/

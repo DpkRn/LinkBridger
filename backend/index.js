@@ -84,41 +84,82 @@ app.use('/source',linkRoute)
 app.use('/profile',profileRoute)
 
 
-app.get('/:username',extractInfo, async (req, res) => {
-  const username=req.params.username
-  const tree=await Link.find({username:username})
-  const dp=await Profile.findOne({username},{image:1,bio:1});
-  const {email,name}=await User.findOne({username},{email:1,name:1})
+const normalizeUsername = u => (u ? String(u).trim() : '');
 
-  const deviceDetails=req.details
-  sendNotificationEmail(email,username,name,deviceDetails,"LinkHub")
+app.get('/:username', extractInfo, async (req, res) => {
+  try {
+    const usernameRaw = req.params.username;
+    const username = normalizeUsername(usernameRaw);
+    console.log('GET /:username - raw:', JSON.stringify(usernameRaw), 'normalized:', username);
 
-  if(tree&&dp){
-    return res.render('linktree',{ 
-      username:username,
-      tree:tree,
-      dp:dp 
-    })   
+    const [tree, dp, user] = await Promise.all([
+      Link.find({ username }).lean(),
+      Profile.findOne({ username }, { image: 1, bio: 1 }).lean(),
+      User.findOne({ username }, { email: 1, name: 1 }).lean()
+    ]);
+
+    if (!user) {
+      console.warn(`No user record found for username="${username}"`);
+      // decide what’s correct in your app: render not_exists or continue without email
+      return res.render('not_exists');
+    }
+
+    // send email only if email exists
+    if (user.email) {
+      try {
+        await sendNotificationEmail(user.email, username, user.name, req.details || {}, 'LinkHub');
+      } catch (mailErr) {
+        console.error('sendNotificationEmail failed:', mailErr);
+      }
+    } else {
+      console.warn(`User ${username} has no email; skipping notification`);
+    }
+
+    if (tree && dp) {
+      return res.render('linktree', { username, tree, dp });
+    }
+    return res.render('not_exists');
+
+  } catch (err) {
+    console.error('Error in GET /:username route:', err);
+    return res.status(500).send('Internal server error');
   }
-  return res.render('not_exists')
-})
+});
 
+app.get('/:username/:source', extractInfo, async (req, res) => {
+  try {
+    const username = normalizeUsername(req.params.username);
+    const { source } = req.params;
+    console.log('GET /:username/:source', { username, source });
 
-app.get('/:username/:source',extractInfo, async (req, res) => {
-     
-     const {username,source}=req.params;
-     const doc=await Link.findOne({username,source})
-     const {email,name}=await User.findOne({username},{email:1,name:1})
-     
-     if(!doc) return res.status(404).json({success:false,message:`${source} not has been added for this user !`})
+    const [doc, user] = await Promise.all([
+      Link.findOne({ username, source }).lean(),
+      User.findOne({ username }, { email: 1, name: 1 }).lean()
+    ]);
 
-     const {destination,clicked,notSeen}=doc
-     await Link.updateOne({username,source},{$set:{clicked:clicked+1,notSeen:notSeen+1}})
+    if (!doc) {
+      return res.status(404).json({ success: false, message: `${source} has not been added for this user!` });
+    }
 
-     const deviceDetails=req.details
-     sendNotificationEmail(email,username,name,deviceDetails,source)
-     return res.redirect(307,destination)
-})
+    await Link.updateOne({ username, source }, { $inc: { clicked: 1, notSeen: 1 } });
+
+    if (user && user.email) {
+      try {
+        await sendNotificationEmail(user.email, username, user.name, req.details || {}, source);
+      } catch (mailErr) {
+        console.error('sendNotificationEmail failed:', mailErr);
+      }
+    } else {
+      console.warn(`No email to send for username=${username}`);
+    }
+
+    return res.redirect(307, doc.destination);
+  } catch (err) {
+    console.error('Error in GET /:username/:source route:', err);
+    return res.status(500).send('Internal server error');
+  }
+});
+
 
 
 mongoose.connect(db_url).then(()=>{
