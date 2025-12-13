@@ -40,7 +40,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 const allowedOrigins = [
   'https://clickly.cv',
   'https://www.clickly.cv',
-  'https://linkbriger.vercel.app' // if your frontend ever runs directly on Vercel
+  'https://linkbriger.vercel.app', 
+  'http://localhost:5173'
 ];
 
 app.use(cors({
