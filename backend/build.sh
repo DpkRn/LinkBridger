@@ -1,10 +1,5 @@
-
-
-BACKEND_IMAGE="clickly-server"
-echo "Building backend docker image: $BACKEND_IMAGE"
 sudo chmod +X Dockerfile
-sudo docker rmi -f $BACKEND_IMAGE || true
-sudo docker build -t $BACKEND_IMAGE .
-
+docker rmi -f backend || true
+docker build -t backend .
 echo "Backend Docker image built successfully! 🎉"
 
