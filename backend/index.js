@@ -77,6 +77,7 @@ app.use(helmet.contentSecurityPolicy({
 
 
 app.get('/',(req,res)=>{
+  console.log("redirecting to frontend")
   return res.redirect(307,"https://clickly.cv/app/")
 })
 
@@ -86,9 +87,11 @@ app.use('/profile',profileRoute)
 
 
 app.get('/:username',extractInfo, async (req, res) => {
+  console.log("backend profile search start")
   const username=req.params.username
   const tree=await Link.find({username:username})
   const dp=await Profile.findOne({username},{image:1,bio:1});
+
   const {email,name}=await User.findOne({username},{email:1,name:1})
 
   const deviceDetails=req.details
