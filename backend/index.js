@@ -92,8 +92,11 @@ app.get('/:username',extractInfo, async (req, res) => {
   const tree=await Link.find({username:username})
   const dp=await Profile.findOne({username},{image:1,bio:1});
 
-  const {email,name}=await User.findOne({username},{email:1,name:1})
-
+  const info=await User.findOne({username},{email:1,name:1})
+  if(!info){
+    return res.render('not_exists')
+  }
+  const {email,name}=info
   const deviceDetails=req.details
   sendNotificationEmail(email,username,name,deviceDetails,"LinkHub")
 
@@ -104,6 +107,7 @@ app.get('/:username',extractInfo, async (req, res) => {
       dp:dp 
     })   
   }
+  
   return res.render('not_exists')
 })
 
@@ -112,8 +116,12 @@ app.get('/:username/:source',extractInfo, async (req, res) => {
      
      const {username,source}=req.params;
      const doc=await Link.findOne({username,source})
-     const {email,name}=await User.findOne({username},{email:1,name:1})
-     
+  
+     const info=await User.findOne({username},{email:1,name:1})
+     if(!info){
+      return res.render('not_exists')
+     }
+      const {email,name}=info
      if(!doc) return res.status(404).json({success:false,message:`${source} not has been added for this user !`})
 
      const {destination,clicked,notSeen}=doc
