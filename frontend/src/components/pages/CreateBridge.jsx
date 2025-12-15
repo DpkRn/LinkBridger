@@ -31,7 +31,7 @@ const CreateBridge = () => {
         setPlatform('')
         setProfileLink('')
         setLoading(false)
-        toast.success("bridge has been made successfully!")
+        toast.success("Bridge has been created successfully!")
       }
     }catch(err){
       const message=err.response?.data?.message || "Server Internal Error"
@@ -52,49 +52,47 @@ const CreateBridge = () => {
       });
   };
   return (
-    <div className="h-full">
+    <div className="h-full bg-gradient-to-r from-slate-100 via-lime-100 to-slate-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
       <form  
-        className=" p-10  rounded-lg shadow-2xl   space-y-4  w-full"
+        className="p-10 rounded-lg shadow-2xl space-y-4 w-full bg-white/80 dark:bg-gray-800/80 transition-colors duration-300"
       >
-        <h1 className="text-2xl font-bold text-gray-700 ">
+        <h1 className="text-2xl font-bold text-gray-700 dark:text-gray-200 transition-colors duration-300">
           Social Profile Bridge
         </h1>
 
         <input
           type="text"
-          placeholder="Platform (e.g., linkdin, instagram, facebook)"
+          placeholder="Platform (e.g., linkedin, instagram, facebook)"
           value={platform}
           onChange={(e) => setPlatform((e.target.value).toLowerCase())}
-          className="p-3 w-full md:w-[80%] lowercase border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 outline-none transition-transform transform hover:scale-105 duration-300"
+          className="p-3 w-full md:w-[80%] lowercase border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-indigo-400 dark:focus:ring-indigo-500 outline-none transition-all transform hover:scale-105 duration-300"
           required
         />
 
         <input
           type="url"
-          placeholder={`Profile Link (e.g., https://www.linkdin.com/...../)`}
+          placeholder={`Profile Link (e.g., https://www.linkedin.com/...../)`}
           value={profileLink}
           onChange={(e) => setProfileLink(e.target.value)}
-          className="p-3 w-full md:w-[80%] border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 outline-none transition-transform transform hover:scale-105 duration-300"
+          className="p-3 w-full md:w-[80%] border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-indigo-400 dark:focus:ring-indigo-500 outline-none transition-all transform hover:scale-105 duration-300"
           required
         />
 
         <button
-        
-          className="py-3 px-6 bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-bold rounded-lg shadow-lg hover:shadow-2xl transform hover:scale-70 transition-transform duration-500 hover:rotate-3"
-
+          className="py-3 px-6 bg-gradient-to-r from-purple-500 to-indigo-500 dark:from-purple-600 dark:to-indigo-600 text-white font-bold rounded-lg shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-500 hover:rotate-3"
           onClick={handleSubmit}
         >
           {`${!loading?"Create New":"Creating"}`}
         </button>
         {/* bridge */}
         {showBridge&&<div className="">
-          <div className="px-4 py-2 bg-black/30 text-white rounded-md flex items-center break-words gap-3">
+          <div className="px-4 py-2 bg-black/30 dark:bg-gray-700/50 text-white dark:text-gray-200 rounded-md flex items-center break-words gap-3 transition-colors duration-300">
             <span className="break-all font-mono" ref={linkRef}>
               {`https://linkb-one.vercel.app/${username}/${source}`}
             </span>
             <span>
               <MdContentCopy
-                className="hover:text-blue-700 active:text-black cursor-pointer"
+                className="hover:text-blue-700 dark:hover:text-blue-400 active:text-black dark:active:text-white cursor-pointer transition-colors duration-200"
                 onClick={copyToClipboard}
               />
             </span>

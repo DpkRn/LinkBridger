@@ -78,9 +78,52 @@ const deleteLink=async(req,res)=>{
         }
     }
 
+    const editLink=async(req,res)=>{
+        try{
+            if(!req.userId){
+                return res.status(401).json({success:false,message:"Login first. token expired !"})
+            }
+            const {id, source, destination} = req.body;
+            if(!id){
+                return res.status(400).json({success:false,message:"Link ID is required"})
+            }
+            
+            const link = await Link.findById(id);
+            if(!link){
+                return res.status(404).json({success:false,message:"Link not found!"})
+            }
+            
+            // Verify the link belongs to the user
+            if(link.userId.toString() !== req.userId.toString()){
+                return res.status(403).json({success:false,message:"You don't have permission to edit this link"})
+            }
+            
+            // Update the link
+            const updateData = {};
+            if(source) updateData.source = source;
+            if(destination) updateData.destination = destination;
+            
+            const updatedLink = await Link.findByIdAndUpdate(
+                id,
+                {$set: updateData},
+                {new: true}
+            );
+            
+            return res.status(200).json({
+                success:true,
+                message:"Link has been updated successfully",
+                link:updatedLink
+            })
+        }catch(err){
+            console.log(err);
+            return res.status(500).json({success:false,message:"Server Internal Error"})
+        }
+    }
+
 module.exports={
     addNewSource,
     getAllSource,
     deleteLink,
     setNotificationToZero,
+    editLink,
 }

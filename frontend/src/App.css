@@ -65,6 +65,11 @@ form.sign-in-form {
   font-size: 2.2rem;
   color: #444;
   margin-bottom: 10px;
+  transition: color 0.3s ease;
+}
+
+.dark .title {
+  color: #ffffff;
 }
 
 .input-field {
@@ -78,6 +83,11 @@ form.sign-in-form {
   grid-template-columns: 15% 85%;
   padding: 0 0.4rem;
   position: relative;
+  transition: background-color 0.3s ease;
+}
+
+.dark .input-field {
+  background-color: #374151;
 }
 
 .input-field i {
@@ -88,6 +98,10 @@ form.sign-in-form {
   font-size: 1.1rem;
 }
 
+.dark .input-field i {
+  color: #9ca3af;
+}
+
 .input-field input {
   background: none;
   outline: none;
@@ -96,11 +110,21 @@ form.sign-in-form {
   font-weight: 600;
   font-size: 1.1rem;
   color: #333;
+  transition: color 0.3s ease;
+}
+
+.dark .input-field input {
+  color: #f3f4f6;
 }
 
 .input-field input::placeholder {
   color: #aaa;
   font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.dark .input-field input::placeholder {
+  color: #9ca3af;
 }
 
 .social-text {

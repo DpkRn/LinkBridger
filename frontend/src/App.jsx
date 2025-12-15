@@ -15,12 +15,14 @@ import Documentation from './components/Documentation'
 import LinkPage from './components/pages/LinkPage'
 import ProfilePage from './components/pages/Profile'
 import NotFound from './components/pages/NotFound'
+import { setDarkMode } from './redux/pageSlice'
 
 function App() {
   const dispatch = useDispatch();
   const [isLoading, setLoading] = useState(true);
   const isAuthenticated = useSelector(store => store.admin.isAuthenticated);
   const user=useSelector(store=>store.admin.user)
+  const darkMode = useSelector(store => store.page.darkMode);
   const PrivateRoute = ({ children }) => {
     return isAuthenticated === true ? children : <Navigate to='/login' />;
   };
@@ -28,6 +30,25 @@ function App() {
   const AuthRoute = ({ children }) => {
     return isAuthenticated === false ? children : <Navigate to='/home' />;
   };
+
+  useEffect(() => {
+    // Apply dark mode class to document
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [darkMode]);
+
+  useEffect(() => {
+    // Initialize dark mode from localStorage, default to light mode
+    const stored = localStorage.getItem('darkMode');
+    if (stored !== null) {
+      dispatch(setDarkMode(stored === 'true'));
+    } else {
+      dispatch(setDarkMode(false)); // Default to light mode
+    }
+  }, [dispatch]);
 
   useEffect(() => {
     const getUserInfo = async () => {
@@ -73,15 +94,15 @@ function App() {
     }
   }, []);
 
-  if (isLoading) return <div className="flex justify-center items-center h-screen">
+  if (isLoading) return <div className="flex justify-center items-center h-screen bg-white dark:bg-gray-900">
     <div className="relative flex justify-center items-center">
-    <div className="absolute animate-spin rounded-full h-32 w-32 border-t-4 border-b-4 border-purple-500"></div>
+    <div className="absolute animate-spin rounded-full h-32 w-32 border-t-4 border-b-4 border-purple-500 dark:border-purple-400"></div>
     <img src="https://www.svgrepo.com/show/509001/avatar-thinking-9.svg"  className="rounded-full h-28 w-28"/>
 </div>
   </div>;
 
   return (
-    <div className='pb-1 min-h-screen  bg-gradient-to-r from-slate-100 via-lime-100 to-slate-100 overflow-hidden'>
+    <div className='pb-1 min-h-screen bg-gradient-to-r from-slate-100 via-lime-100 to-slate-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden transition-colors duration-300'>
       {isAuthenticated && <Nav />}
 
       <Routes>

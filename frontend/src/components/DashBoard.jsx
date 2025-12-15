@@ -17,7 +17,7 @@ const DashBoard = () => {
  
 
   return (
-    <div className="flex  flex-col">
+    <div className="flex flex-col bg-gradient-to-r from-slate-100 via-lime-100 to-slate-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
       
       <Content/>
       <CreateBridge/>
