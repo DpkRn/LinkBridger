@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed - 2024-12-19
+- **Edit Link Functionality**: Redesigned edit link feature to reuse CreateBridge component
+  - Removed prompt dialog for editing links
+  - Edit button now populates CreateBridge form with existing link data
+  - Platform field is disabled during edit mode (source cannot be changed)
+  - Button text changes from "Create New" to "Update Bridge" in edit mode
+  - Added "Cancel" button to exit edit mode
+  - Added visual indicator showing which link is being edited
+  - Automatic scroll to CreateBridge form when edit is triggered
+  - Reuses same form component for both create and update operations
+
 ### Added - 2024-12-19
 - **Dark Mode Support**: Complete dark mode implementation with toggle button in navbar
   - Added dark mode toggle button with sun/moon icons in navigation bar
@@ -19,6 +30,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added font smoothing for better rendering across browsers
   - Improved line heights and letter spacing for better readability
   - Enhanced typography hierarchy for headings and paragraphs
+
+- **Redux State Management**: Added edit link state management
+  - Added `editLinkData` state to `pageSlice.js` for managing edit mode
+  - Added `setEditLinkData` and `clearEditLinkData` actions
+  - Enables communication between Linkcard and CreateBridge components
 
 - **Component Dark Mode Styling**: All components updated with dark mode support
   - App.jsx: Dark mode initialization and background gradients
@@ -79,6 +95,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added prompt dialog for editing destination URL
   - Fixed undefined variable reference (`tempArr`)
   - Improved error handling and user feedback
+
+- **Link Update State Management**: Fixed silent failure when updating deleted links
+  - Added check to verify link exists in Redux state before updating
+  - If link is missing from state (e.g., deleted during edit), the updated link is now added back to the array
+  - Added user warning notification when link is restored during update
+  - Prevents silent data loss when link state is out of sync
+  - Ensures successful backend updates are always reflected in frontend state
+
+- **Error Handling Logic**: Fixed operator precedence bug in authentication error handling
+  - Fixed incorrect condition `if(!err.status===401)` which evaluated as `(!err.status) === 401` (always false)
+  - Changed to `if(err.response?.status !== 401)` to correctly skip error toasts for 401 authentication errors
+  - Added proper optional chaining for `err.response?.status` since axios errors have status in response object
+  - Prevents showing error toasts for expected 401 (unauthorized) errors during token verification
 
 - **Accessibility**: Fixed label-input associations
   - Fixed `htmlFor` attribute mismatch in AuthPage signup form

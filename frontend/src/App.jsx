@@ -66,8 +66,10 @@ function App() {
         const message = err.response?.data?.message || "Server Internal Error";
         dispatch(setUser(null))
         dispatch(setAuthenticated(false));
-        if(!err.status===401)
-        toast.error(message);
+        // Only show error toast if it's not a 401 (unauthorized) error
+        if(err.response?.status !== 401) {
+          toast.error(message);
+        }
       } finally {
         setLoading(false);
       }

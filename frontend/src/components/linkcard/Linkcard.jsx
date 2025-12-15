@@ -6,6 +6,7 @@ import { FaEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import api from "../../utils/api";
 import { setLinks } from "../../redux/userSlice";
+import { setEditLinkData } from "../../redux/pageSlice";
 import { FcImageFile } from "react-icons/fc";
 
 const Linkcard = ({ sources }) => {
@@ -32,45 +33,27 @@ const Linkcard = ({ sources }) => {
       toast.error(message)
     }
   }
-  const handleEditLink=async(id)=>{
-    try{
-      const linkToEdit = links.find(link => link._id === id);
-      if(!linkToEdit) {
-        toast.error("Link not found");
-        return;
-      }
-      
-      // Prompt for new destination URL
-      const newDestination = prompt(`Edit destination URL for ${linkToEdit.source}:\n\nCurrent: ${linkToEdit.destination}`, linkToEdit.destination);
-      
-      if(newDestination === null) {
-        return; // User cancelled
-      }
-      
-      if(newDestination.trim() === '') {
-        toast.error("Destination URL cannot be empty");
-        return;
-      }
-      
-      const res=await api.post('/source/editlink',{
-        id: id,
-        destination: newDestination.trim()
-      },{withCredentials:true})
-      
-      if(res.status===200&&res.data.success){
-        // Update the specific link in the array with the response data
-        const updatedLink = res.data.link || res.data;
-        const updatedLinks = links.map(link => 
-          link._id === id ? { ...link, ...updatedLink } : link
-        );
-        dispatch(setLinks(updatedLinks))
-       
-        toast.success("Bridge has been updated successfully!")
-      }
-    }catch(err){
-      const message=err.response?.data?.message || "Server Internal Error"
-      toast.error(message)
+  const handleEditLink=(id)=>{
+    const linkToEdit = links.find(link => link._id === id);
+    if(!linkToEdit) {
+      toast.error("Link not found");
+      return;
     }
+    
+    // Set edit mode with link data - this will populate CreateBridge form
+    dispatch(setEditLinkData({
+      id: linkToEdit._id,
+      source: linkToEdit.source,
+      destination: linkToEdit.destination
+    }));
+    
+    // Scroll to CreateBridge component
+    setTimeout(() => {
+      const createBridgeElement = document.querySelector('[data-create-bridge]');
+      if (createBridgeElement) {
+        createBridgeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100);
   }
 
   const copyToClipboard = () => {
