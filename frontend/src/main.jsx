@@ -9,11 +9,13 @@ import store from './redux/store.js'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
+
     <Provider store={store}>
-    <BrowserRouter basename="/app">
-    <App />
-    <Toaster/>
+      <BrowserRouter basename="/app">
+        <App />
+        <Toaster/>
     </BrowserRouter>
     </Provider>
+ 
   </StrictMode>,
 )
