@@ -98,6 +98,20 @@ const deleteLink=async(req,res)=>{
                 return res.status(403).json({success:false,message:"You don't have permission to edit this link"})
             }
             
+            // If source is being changed, check for duplicates (excluding current link)
+            if(source && source !== link.source){
+                const sourceExist = await Link.findOne({
+                    userId: req.userId,
+                    username: link.username,
+                    source: source,
+                    _id: { $ne: id } // Exclude the current link being edited
+                });
+                
+                if(sourceExist){
+                    return res.status(409).json({success:false,message:`${source} already exists! Please choose a different platform name.`})
+                }
+            }
+            
             // Update the link
             const updateData = {};
             if(source) updateData.source = source;

@@ -39,6 +39,24 @@ const CreateBridge = () => {
     e.preventDefault()
     
     if (isEditMode && editLinkData) {
+      // Check if platform is being changed
+      const platformChanged = platform.toLowerCase() !== editLinkData.source.toLowerCase();
+      
+      // Show warning if platform is being changed
+      if (platformChanged) {
+        const confirmed = window.confirm(
+          `⚠️ WARNING: Changing the platform from "${editLinkData.source}" to "${platform.toLowerCase()}" will make your old link invalid!\n\n` +
+          `Old link: https://linkb-one.vercel.app/${username}/${editLinkData.source}\n` +
+          `New link: https://linkb-one.vercel.app/${username}/${platform.toLowerCase()}\n\n` +
+          `Anyone who has bookmarked or shared the old link will need to use the new one.\n\n` +
+          `Do you want to continue?`
+        );
+        
+        if (!confirmed) {
+          return; // User cancelled, don't proceed with update
+        }
+      }
+      
       // Update existing link
       try {
         setLoading(true);
@@ -131,7 +149,7 @@ const CreateBridge = () => {
 
         {isEditMode && (
           <div className="bg-blue-100 dark:bg-blue-900/30 border border-blue-300 dark:border-blue-700 rounded-lg p-3 text-blue-800 dark:text-blue-200 text-sm">
-            Editing: <span className="font-semibold">{editLinkData?.source}</span>
+            Editing link ID: <span className="font-semibold">{editLinkData?.id}</span>
           </div>
         )}
 
@@ -139,10 +157,16 @@ const CreateBridge = () => {
           type="text"
           placeholder="Platform (e.g., linkedin, instagram, facebook)"
           value={platform}
-          onChange={(e) => setPlatform((e.target.value).toLowerCase())}
+          onChange={(e) => {
+            const newPlatform = (e.target.value).toLowerCase();
+            setPlatform(newPlatform);
+            // Update source state when platform changes in edit mode
+            if (isEditMode) {
+              setSource(newPlatform);
+            }
+          }}
           className="p-3 w-full md:w-[80%] lowercase border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-indigo-400 dark:focus:ring-indigo-500 outline-none transition-all transform hover:scale-105 duration-300"
           required
-          disabled={isEditMode}
         />
 
         <input

@@ -12,9 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added `editLink` function in `LinkController.js`
   - Endpoint: `POST /source/editlink`
   - Validates user ownership before allowing edits
-  - Supports updating both `source` and `destination` fields
+  - Supports updating both `source` (platform) and `destination` fields
+  - Added duplicate source validation when changing platform name
+  - Prevents creating duplicate platforms for the same user
+  - Uses link ID to identify and update links (flexible and safe)
   - Returns updated link object in response
-  - Proper error handling for unauthorized access and missing links
+  - Proper error handling for unauthorized access, missing links, and duplicate sources
 
 - **Route Configuration**: Added edit link route
   - Registered `/editlink` route in `LinkRoute.js`

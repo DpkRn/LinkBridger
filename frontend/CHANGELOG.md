@@ -11,12 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Edit Link Functionality**: Redesigned edit link feature to reuse CreateBridge component
   - Removed prompt dialog for editing links
   - Edit button now populates CreateBridge form with existing link data
-  - Platform field is disabled during edit mode (source cannot be changed)
+  - Platform field is now editable during edit mode (both platform and destination can be changed)
+  - Added warning confirmation dialog when platform name is changed (old link becomes invalid)
+  - Warning only appears for platform changes, not destination changes
+  - Warning shows old and new link URLs for user awareness
   - Button text changes from "Create New" to "Update Bridge" in edit mode
   - Added "Cancel" button to exit edit mode
-  - Added visual indicator showing which link is being edited
+  - Added visual indicator showing link ID being edited
   - Automatic scroll to CreateBridge form when edit is triggered
   - Reuses same form component for both create and update operations
+  - Platform changes update the source state in real-time during editing
 
 ### Added - 2024-12-19
 - **Dark Mode Support**: Complete dark mode implementation with toggle button in navbar
