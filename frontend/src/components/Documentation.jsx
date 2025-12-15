@@ -27,27 +27,27 @@ const Documentation = () => {
   const words = [
     {
       text: "LinkBridger : ",
-      className: "text-blue-500 dark:text-blue-500 text-4xl font-bold",
+      className: "text-blue-500 dark:text-blue-400 text-4xl font-bold",
     },
     {
       text: "Personalized",
-      className: "text-4xl font-bold text-black",
+      className: "text-4xl font-bold text-black dark:text-gray-200",
     },
     {
       text: "Social ",
-      className: "text-4xl font-bold text-black",
+      className: "text-4xl font-bold text-black dark:text-gray-200",
     },
     {
       text: "Profile ",
-      className: "text-4xl font-bold text-black",
+      className: "text-4xl font-bold text-black dark:text-gray-200",
     },
     {
       text: "Link ",
-      className: "text-4xl font-bold text-black",
+      className: "text-4xl font-bold text-black dark:text-gray-200",
     },
     {
       text: "Manager.",
-      className: "text-4xl font-bold text-black",
+      className: "text-4xl font-bold text-black dark:text-gray-200",
     },
   ];
   const plateforms = [
@@ -99,9 +99,9 @@ const Documentation = () => {
         />
         {/* Introduction Section */}
   <motion.section variants={fadeInUp} className="mb-12">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-primary dark:text-blue-400">Introduction</h2>
-          <p className="text-base md:text-lg leading-7 text-neutral-dark dark:text-gray-300">
-            Welcome to <b>LinkBridger</b>, a tool designed to make your social
+          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-primary dark:text-blue-400 transition-colors duration-300">Introduction</h2>
+          <p className="text-base md:text-lg leading-7 text-gray-800 dark:text-gray-300 transition-colors duration-300">
+            Welcome to <b className="text-gray-900 dark:text-gray-100">LinkBridger</b>, a tool designed to make your social
             media links easier to remember and manage. Whether you're sharing
             your Instagram, GitHub, or LinkedIn profile, LinkBridger allows you
             to generate personalized URLs that are simple and customizable. It
@@ -117,7 +117,7 @@ const Documentation = () => {
           <ContainerScroll
             titleComponent={
               <>
-                <p className="text-4xl font-semibold text-pretty text-black dark:text-white">
+                <p className="text-4xl font-semibold text-pretty text-black dark:text-gray-200 transition-colors duration-300">
                   Have You Ever Wondered How AuthorLink Has Been Personalized:
                 </p>
               </>
@@ -305,8 +305,8 @@ const Documentation = () => {
                 whileHover={{ scale: 1.08, opacity: 1 }}
               />
               <div className="flex-[1]">
-                <p className="text-lg md:text-xl ml-4 font-medium text-neutral-dark dark:text-gray-300">
-                  <span className="font-semibold text-xl md:text-2xl text-primary dark:text-blue-400">{feature.title}</span>: {feature.desc}
+                <p className="text-lg md:text-xl ml-4 font-medium text-gray-800 dark:text-gray-300 transition-colors duration-300">
+                  <span className="font-semibold text-xl md:text-2xl text-primary dark:text-blue-400 transition-colors duration-300">{feature.title}</span>: {feature.desc}
                 </p>
               </div>
             </motion.div>
@@ -318,31 +318,31 @@ const Documentation = () => {
 
         {/* How It Works Section */}
   <motion.section variants={fadeInUp} className="mb-8 bg-white/40 dark:bg-gray-800/40 shadow-lg rounded-md py-4 md:py-5 px-2 md:px-6 transition-colors duration-300">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-primary dark:text-blue-400">How It Works</h2>
-          <p className="text-base md:text-lg leading-7 text-neutral-dark dark:text-gray-300">
-            The core idea behind <b>LinkBridger</b> is to simplify the
+          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-primary dark:text-blue-400 transition-colors duration-300">How It Works</h2>
+          <p className="text-base md:text-lg leading-7 text-gray-800 dark:text-gray-300 transition-colors duration-300">
+            The core idea behind <b className="text-gray-900 dark:text-gray-100">LinkBridger</b> is to simplify the
             management of social media links. Instead of sharing long,
             hard-to-remember URLs, you create a single, personalized URL that
-            automatically redirects users to the correct platform. Here’s a
+            automatically redirects users to the correct platform. Here's a
             step-by-step guide:
           </p>
-          <ol className="list-decimal list-inside space-y-2 mt-4">
+          <ol className="list-decimal list-inside space-y-2 mt-4 text-gray-800 dark:text-gray-300 transition-colors duration-300">
             <li>
-              <b>Create an Account</b>: Sign up using your email and create an
+              <b className="text-gray-900 dark:text-gray-100">Create an Account</b>: Sign up using your email and create an
               account on LinkBridger.
             </li>
             <li>
-              <b>Choose a Username</b>: Pick a username that’s easy to remember
+              <b className="text-gray-900 dark:text-gray-100">Choose a Username</b>: Pick a username that's easy to remember
               (e.g., dpkrn). Your link will follow this format:
               `https://linkb-one.vercel.app/your-username/instagram`.
             </li>
             <li>
-              <b>Verify Your Account</b>: Complete email verification to
+              <b className="text-gray-900 dark:text-gray-100">Verify Your Account</b>: Complete email verification to
               activate your account.
             </li>
             <li>
-              <b>Create a New Link</b>:
-              <ul className="list-disc list-inside ml-6 space-y-1">
+              <b className="text-gray-900 dark:text-gray-100">Create a New Link</b>:
+              <ul className="list-disc list-inside ml-6 space-y-1 text-gray-800 dark:text-gray-300">
                 <li>
                   Enter the platform name (e.g., Instagram, LinkedIn) in
                   lowercase.
@@ -352,7 +352,7 @@ const Documentation = () => {
               </ul>
             </li>
             <li>
-              <b>Share the Link</b>: Copy and share your smart link across
+              <b className="text-gray-900 dark:text-gray-100">Share the Link</b>: Copy and share your smart link across
               various platforms.
             </li>
           </ol>
@@ -381,38 +381,38 @@ const Documentation = () => {
 
         {/* Click Tracking Section */}
   <motion.section variants={fadeInUp} className="mb-12 bg-white/40 dark:bg-gray-800/40 shadow-lg rounded-md py-4 md:py-5 px-2 md:px-4 transition-colors duration-300">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-primary dark:text-blue-400">Click Tracking</h2>
-          <p className="text-base md:text-lg leading-7 text-neutral-dark dark:text-gray-300">
-            With <b>LinkBridger</b>, you can track how many times each of your
+          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-primary dark:text-blue-400 transition-colors duration-300">Click Tracking</h2>
+          <p className="text-base md:text-lg leading-7 text-gray-800 dark:text-gray-300 transition-colors duration-300">
+            With <b className="text-gray-900 dark:text-gray-100">LinkBridger</b>, you can track how many times each of your
             links has been clicked. This allows you to monitor the engagement on
             your social media profiles across different platforms. Access the
             analytics section from your dashboard to see detailed statistics
-            about each link’s performance.
+            about each link's performance.
           </p>
   </motion.section>
 
         {/* Future Enhancements Section */}
   <motion.section variants={fadeInUp} className="mb-12 bg-white/40 dark:bg-gray-800/40 shadow-lg rounded-md py-4 md:py-5 px-2 md:px-4 transition-colors duration-300">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-primary dark:text-blue-400">Future Enhancements</h2>
-          <p className="text-base md:text-lg leading-7 text-neutral-dark dark:text-gray-300">
+          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-primary dark:text-blue-400 transition-colors duration-300">Future Enhancements</h2>
+          <p className="text-base md:text-lg leading-7 text-gray-800 dark:text-gray-300 transition-colors duration-300">
             Here are some potential features and enhancements we are planning to
-            add to <b>LinkBridger</b>:
+            add to <b className="text-gray-900 dark:text-gray-100">LinkBridger</b>:
           </p>
-          <ul className="list-disc list-inside space-y-2">
+          <ul className="list-disc list-inside space-y-2 text-gray-800 dark:text-gray-300 transition-colors duration-300">
             <li>
-              <b>Advanced Analytics</b>: See detailed reports on clicks, traffic
+              <b className="text-gray-900 dark:text-gray-100">Advanced Analytics</b>: See detailed reports on clicks, traffic
               sources, and engagement levels for each link.
             </li>
             <li>
-              <b>Custom Link Themes</b>: Add custom themes or styles to your
+              <b className="text-gray-900 dark:text-gray-100">Custom Link Themes</b>: Add custom themes or styles to your
               personalized links to match your branding or style preferences.
             </li>
             <li>
-              <b>Link Expiration</b>: Set expiration dates for temporary links,
+              <b className="text-gray-900 dark:text-gray-100">Link Expiration</b>: Set expiration dates for temporary links,
               ensuring they are only accessible for a certain period.
             </li>
             <li>
-              <b>Link Password Protection</b>: Add a layer of security by
+              <b className="text-gray-900 dark:text-gray-100">Link Password Protection</b>: Add a layer of security by
               allowing password protection on sensitive links.
             </li>
           </ul>
@@ -420,8 +420,8 @@ const Documentation = () => {
 
         {/* FAQ Section */}
         <motion.section variants={fadeInUp} className="mb-12 bg-white/40 dark:bg-gray-800/40 shadow-lg rounded-md py-4 md:py-5 px-2 md:px-4 transition-colors duration-300">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-primary dark:text-blue-400">Frequently Asked Questions (FAQ)</h2>
-          <p className="text-base md:text-lg leading-7 mb-4 text-neutral-dark dark:text-gray-300">Here are some common questions users have about <b>LinkBridger</b>:</p>
+          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-primary dark:text-blue-400 transition-colors duration-300">Frequently Asked Questions (FAQ)</h2>
+          <p className="text-base md:text-lg leading-7 mb-4 text-gray-800 dark:text-gray-300 transition-colors duration-300">Here are some common questions users have about <b className="text-gray-900 dark:text-gray-100">LinkBridger</b>:</p>
           <div className="space-y-4">
             {/* FAQ 1 */}
             <div className="border dark:border-gray-700 rounded-md p-3 bg-white/60 dark:bg-gray-700/60 cursor-pointer hover:shadow-lg transition-all" onClick={() => toggleFAQ(0)}>
@@ -467,17 +467,17 @@ const Documentation = () => {
           <h2 className="text-2xl md:text-3xl font-bold mb-4 text-primary dark:text-blue-400">What Our Users Say</h2>
           <div className="flex flex-col md:flex-row gap-8 justify-center items-center">
             <div className="bg-white dark:bg-gray-700 rounded-lg shadow p-6 max-w-sm mx-auto transition-colors duration-300">
-              <p className="text-lg italic text-neutral-dark dark:text-gray-300">"LinkBridger made sharing my profiles so much easier. The personalized links look great and are super easy to remember!"</p>
+              <p className="text-lg italic text-gray-800 dark:text-gray-300 transition-colors duration-300">"LinkBridger made sharing my profiles so much easier. The personalized links look great and are super easy to remember!"</p>
               <div className="mt-4 flex items-center justify-center gap-2">
                 <img src="profile.jpg" alt="User" className="h-10 w-10 rounded-full object-cover dark:ring-2 dark:ring-gray-600" />
-                <span className="font-semibold text-primary dark:text-blue-400">Amit S.</span>
+                <span className="font-semibold text-primary dark:text-blue-400 transition-colors duration-300">Amit S.</span>
               </div>
             </div>
             <div className="bg-white dark:bg-gray-700 rounded-lg shadow p-6 max-w-sm mx-auto transition-colors duration-300">
-              <p className="text-lg italic text-neutral-dark dark:text-gray-300">"I love the analytics and the ability to update all my links in one place. Highly recommended!"</p>
+              <p className="text-lg italic text-gray-800 dark:text-gray-300 transition-colors duration-300">"I love the analytics and the ability to update all my links in one place. Highly recommended!"</p>
               <div className="mt-4 flex items-center justify-center gap-2">
                 <img src="profile.jpg" alt="User" className="h-10 w-10 rounded-full object-cover dark:ring-2 dark:ring-gray-600" />
-                <span className="font-semibold text-primary dark:text-blue-400">Priya K.</span>
+                <span className="font-semibold text-primary dark:text-blue-400 transition-colors duration-300">Priya K.</span>
               </div>
             </div>
           </div>

@@ -9,15 +9,30 @@ const addNewSource=async(req,res)=>{
             return res.status(400).json({success:false,message:"All fields are required"})
         }
     
-        const sourceExist=await Link.findOne({userId,username,source});
+        // Normalize source to lowercase for consistency
+        // This ensures all platform names are stored in lowercase regardless of input
+        const normalizedSource = source.toLowerCase().trim();
+        
+        // Escape special regex characters to prevent regex injection
+        const escapedSource = normalizedSource.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        
+        // Use case-insensitive query to check for duplicates
+        // This prevents creating duplicates with different casing (e.g., "LinkedIn" vs "linkedin")
+        const sourceExist = await Link.findOne({
+            userId,
+            username,
+            source: { $regex: new RegExp(`^${escapedSource}$`, 'i') }
+        });
+        
         if(sourceExist){
-            return res.status(409).json({success:false,message:`${source} allready exists !`})
+            return res.status(409).json({success:false,message:`${normalizedSource} already exists !`})
         }
         
-        const doc=await Link.create({userId,username,source,destination})
+        // Store normalized source to ensure consistency
+        const doc=await Link.create({userId,username,source:normalizedSource,destination})
        
         if(doc)
-        return res.status(201).json({success:true,message:`${source} added !`,link:doc})
+        return res.status(201).json({success:true,message:`${normalizedSource} added !`,link:doc})
 
     }catch(err){
         console.log(err,"error")
@@ -104,12 +119,15 @@ const deleteLink=async(req,res)=>{
             const normalizedLinkSource = link.source.toLowerCase().trim();
             
             // If source is being changed, check for duplicates (excluding current link)
-            // Use case-insensitive comparison to detect actual platform changes
+            // Use case-insensitive query to prevent duplicates regardless of casing
             if(normalizedSource && normalizedSource !== normalizedLinkSource){
+                // Escape special regex characters to prevent regex injection
+                const escapedSource = normalizedSource.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                
                 const sourceExist = await Link.findOne({
                     userId: req.userId,
                     username: link.username,
-                    source: normalizedSource,
+                    source: { $regex: new RegExp(`^${escapedSource}$`, 'i') },
                     _id: { $ne: id } // Exclude the current link being edited
                 });
                 

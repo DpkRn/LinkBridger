@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import "./App.css"
 import AuthPage from './components/AuthPage'
 import { Routes, Route, Navigate } from 'react-router-dom'
@@ -22,6 +22,7 @@ function App() {
   const isAuthenticated = useSelector(store => store.admin.isAuthenticated);
   const user=useSelector(store=>store.admin.user)
   const darkMode = useSelector(store => store.page.darkMode);
+  const hasInitialized = useRef(false); // Track if initialization has completed
   const PrivateRoute = ({ children }) => {
     return isAuthenticated === true ? children : <Navigate to='/login' />;
   };
@@ -41,6 +42,12 @@ function App() {
   }, [darkMode]);
 
   useEffect(() => {
+    // Only run initialization once on mount
+    // Using ref to prevent re-running if user state changes after initialization
+    if (hasInitialized.current) {
+      return;
+    }
+
     const getUserInfo = async () => {
       try {
         const res = await api.post('/auth/verify', {}, { withCredentials: true });
@@ -62,6 +69,7 @@ function App() {
         }
       } finally {
         setLoading(false);
+        hasInitialized.current = true;
       }
     };
 
@@ -74,17 +82,28 @@ function App() {
       }catch(err){
        console.log(err)
        const message=err.response?.data?.message||"Server Internal Error"
-       toast.error(message)
+       // Only show error toast if it's not a 401 (unauthorized) error
+       if(err.response?.status !== 401) {
+         toast.error(message)
+       }
+      } finally {
+        // Always reset loading state after links are fetched (or failed)
+        setLoading(false);
+        hasInitialized.current = true;
       }
      }
-    if (!user) {
-      getUserInfo();
-    } else {
-      getAllLinks(user.username)
-      // toast.success(`welcome ${user.username}`)
-      setLoading(false);
-    }
-  }, []);
+    
+    // Wrap async logic in an immediately invoked async function
+    (async () => {
+      if (!user) {
+        await getUserInfo();
+      } else {
+        // Await getAllLinks to ensure loading state is managed correctly
+        await getAllLinks(user.username);
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Intentionally empty - initialization should only run once on mount
 
   if (isLoading) return <div className="flex justify-center items-center h-screen bg-white dark:bg-gray-900">
     <div className="relative flex justify-center items-center">

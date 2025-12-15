@@ -135,6 +135,9 @@ const CreateBridge = () => {
   };
 
   const handleConfirmUpdate = async () => {
+    // Set loading state BEFORE closing modal to prevent form interaction
+    // This ensures form inputs remain disabled during the async update
+    setLoading(true);
     setShowWarningModal(false);
     // Use current form state instead of stale pendingUpdate
     // This ensures any changes made while modal was open are included
