@@ -154,6 +154,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Prevents bypassing platform change validation by clicking submit while modal is open
   - Also disabled Cancel button during warning modal for consistency
   - Added disabled styling classes for better visual feedback
+  - Fixed loading state bug: Added `finally` block to `performUpdate` function
+  - Ensures loading state is always reset, even if API returns 200 with `success: false`
+  - Added explicit handling for successful HTTP responses with `success: false`
+  - Prevents UI from getting stuck in loading state
+  - Matches the pattern used in create link function for consistency
+  - User now sees error message when update fails, instead of silent failure
 
 - **Dark Mode Initialization**: Removed redundant localStorage read
   - Removed duplicate `useEffect` in `App.jsx` that was re-reading localStorage and dispatching `setDarkMode`

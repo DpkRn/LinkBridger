@@ -115,12 +115,17 @@ const CreateBridge = () => {
         setSource(updatedLink.source);
         setShowBridge(true);
         dispatch(clearEditLinkData());
-        setLoading(false);
         toast.success("Bridge has been updated successfully!");
+      } else if (res.status === 200 && !res.data.success) {
+        // Handle case where API returns 200 but success is false
+        const message = res.data.message || "Update failed";
+        toast.error(message);
       }
     } catch (err) {
       const message = err.response?.data?.message || "Server Internal Error";
       toast.error(message);
+    } finally {
+      // Always reset loading state, regardless of success or failure
       setLoading(false);
     }
   };
