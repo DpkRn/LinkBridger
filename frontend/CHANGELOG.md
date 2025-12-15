@@ -160,6 +160,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Prevents UI from getting stuck in loading state
   - Matches the pattern used in create link function for consistency
   - User now sees error message when update fails, instead of silent failure
+  - Fixed duplicate loading state reset: Removed redundant `setLoading(false)` from create link success path
+  - Create link function now only resets loading in `finally` block, matching edit path pattern
+  - Added explicit handling for create link responses with `success: false`
+  - Ensures consistent behavior between create and update operations
+  - Prevents unnecessary duplicate state updates
 
 - **Dark Mode Initialization**: Removed redundant localStorage read
   - Removed duplicate `useEffect` in `App.jsx` that was re-reading localStorage and dispatching `setDarkMode`

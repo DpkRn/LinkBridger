@@ -76,13 +76,17 @@ const CreateBridge = () => {
           setShowBridge(true)
           setPlatform('')
           setProfileLink('')
-          setLoading(false)
           toast.success("Bridge has been created successfully!")
+        } else if (res.status === 201 && !res.data.success) {
+          // Handle case where API returns 201 but success is false
+          const message = res.data.message || "Creation failed";
+          toast.error(message);
         }
       }catch(err){
         const message=err.response?.data?.message || "Server Internal Error"
         toast.error(message)
       }finally{
+        // Always reset loading state, regardless of success or failure
         setLoading(false)
       }
     }
