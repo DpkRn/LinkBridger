@@ -15,6 +15,7 @@ import Documentation from './components/Documentation'
 import LinkPage from './components/pages/LinkPage'
 import ProfilePage from './components/pages/Profile'
 import NotFound from './components/pages/NotFound'
+import AboutDeveloper from './components/pages/AboutDeveloper'
 
 function App() {
   const dispatch = useDispatch();
@@ -126,6 +127,7 @@ function App() {
         <Route path='/home' element={<PrivateRoute><DashBoard /></PrivateRoute>} />
         <Route path='/verified' element={<VerifiedPage />} />
         <Route path='/reset_password' element={<PasswordReset />} />
+        <Route path='/about-developer' element={<AboutDeveloper />} />
         <Route path='*' element={<NotFound />} />
       </Routes>
       
