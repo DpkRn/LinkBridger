@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 const Footer = () => {
   return (
@@ -12,7 +13,7 @@ const Footer = () => {
                   <span className="self-center text-2xl font-semibold whitespace-nowrap text-black dark:text-white transition-colors duration-300">Dwizard</span>
               </a>
           </div>
-          <div className="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
+          <div className="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-4">
               <div>
                   <h2 className="mb-6 text-sm font-semibold text-black dark:text-white uppercase transition-colors duration-300">Resources</h2>
                   <ul className="text-gray-500 dark:text-gray-400 font-medium">
@@ -43,6 +44,14 @@ const Footer = () => {
                       </li>
                       <li>
                           <a href="#" className="hover:underline transition-colors duration-200">Terms &amp; Conditions</a>
+                      </li>
+                  </ul>
+              </div>
+              <div>
+                  <h2 className="mb-6 text-sm font-semibold text-gray-900 dark:text-white uppercase transition-colors duration-300">About</h2>
+                  <ul className="text-gray-500 dark:text-gray-400 font-medium">
+                      <li>
+                          <Link to="/about-developer" className="hover:underline transition-colors duration-200">About Developer</Link>
                       </li>
                   </ul>
               </div>
