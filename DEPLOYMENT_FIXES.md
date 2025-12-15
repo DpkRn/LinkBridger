@@ -3,7 +3,9 @@
 ## Issues Found:
 
 ### 1. **Nginx Location Block Order** ❌
+  
    - **Problem**: The `location /` block was catching all requests, including `/app`, before the more specific `/app` location could be matched.
+  
    - **Fix**: Reordered location blocks so `/app` comes first with `^~` prefix, and backend routes are more specific.
 
 ### 2. **API Base URL Configuration** ❌

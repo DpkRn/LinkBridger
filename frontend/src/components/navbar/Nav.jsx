@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { setSidebarMenu } from "../../redux/pageSlice";
+import { setSidebarMenu, toggleDarkMode } from "../../redux/pageSlice";
 import toast from "react-hot-toast";
 import api from "../../utils/api";
 import {
@@ -11,6 +11,7 @@ import {
   setUser,
 } from "../../redux/userSlice";
 import { MdOutlineArrowDropDownCircle } from "react-icons/md";
+import { MdDarkMode, MdLightMode } from "react-icons/md";
 import Notification from "../notification/Notification";
 
 
@@ -25,7 +26,7 @@ const Nav = () => {
   const [profileMenu, setProfileMenu] = useState(false);
   const [notificationPage, setNotificationPage] = useState(false);
 
-  const { sidebarMenu } = useSelector((store) => store.page);
+  const { sidebarMenu, darkMode } = useSelector((store) => store.page);
   const username = useSelector((store) => store.admin.user.username);
   const links = useSelector((store) => store.admin.links);
   const notifications = useSelector((store) => store.admin.notifications);
@@ -92,7 +93,7 @@ const Nav = () => {
 
   const onNotificationClick = async () => {
     if (notifications === 0) {
-      toast("you have no any new clicks");
+      toast("You have no new clicks");
       return;
     }
     setNotificationPage((state) => !state);
@@ -136,7 +137,7 @@ const Nav = () => {
 
 
   return (
-  <nav className="bg-gray-800 h-[70px] sticky top-0 z-50 px-5 shadow-lg ">
+  <nav className="bg-gray-800 dark:bg-gray-900 h-[70px] sticky top-0 z-50 px-5 shadow-lg transition-colors duration-300">
       <div className="">
         <div className="relative flex h-16 items-center md:justify-between justify-end">
           {/* mobile menu icon */}
@@ -198,26 +199,26 @@ const Nav = () => {
             {/* Logo */}
             <div className="flex flex-shrink-0 mr-5  items-center">
               <img
-                className="h-10 w-auto drop-shadow-lg"
+                className="h-10 w-auto drop-shadow-lg dark:brightness-0 dark:invert transition-all duration-300"
                 src="logo.png"
                 alt="LinkBridger Logo"
               />
             </div>
 
             {/* NavMenu */}
-            <div className="hidden sm:ml-6 sm:block z-50 text-white">
+            <div className="hidden sm:ml-6 sm:block z-50 text-white dark:text-gray-100">
               <div className="flex space-x-6">
                 {/* <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" --> */}
                 <Link
                   to="/home"
-                  className={`${location.pathname=="/home"?'font-bold text-lg':"font-medium text-base"} rounded-md px-4 py-2 text-white hover:bg-primary hover:text-white transition-colors duration-200`}
+                  className={`${location.pathname=="/home"?'font-bold text-lg':"font-medium text-base"} rounded-md px-4 py-2 text-white dark:text-gray-100 hover:bg-primary hover:text-white dark:hover:bg-blue-700 transition-colors duration-200`}
                   aria-current="page"
                 >
                   Home
                 </Link>
                 <Link
                   to="/links"
-                  className={`${location.pathname=="/links"?'font-bold text-lg':"font-medium text-base"} rounded-md px-4 py-2 text-white hover:bg-primary hover:text-white transition-colors duration-200`}
+                  className={`${location.pathname=="/links"?'font-bold text-lg':"font-medium text-base"} rounded-md px-4 py-2 text-white dark:text-gray-100 hover:bg-primary hover:text-white dark:hover:bg-blue-700 transition-colors duration-200`}
                 >
                   Links
                 </Link>
@@ -229,7 +230,7 @@ const Nav = () => {
                 </Link> */}
                 <Link
                   to="/doc"
-                  className={`${location.pathname=="/doc"?'font-bold text-lg':"font-medium text-base"} rounded-md px-4 py-2 text-white hover:bg-primary hover:text-white transition-colors duration-200`}
+                  className={`${location.pathname=="/doc"?'font-bold text-lg':"font-medium text-base"} rounded-md px-4 py-2 text-white dark:text-gray-100 hover:bg-primary hover:text-white dark:hover:bg-blue-700 transition-colors duration-200`}
                 >
                   Docs
                 </Link>
@@ -237,8 +238,22 @@ const Nav = () => {
             </div>
           </div>
 
-  {/* notification */}
-          <div className="absolute inset-y-0  flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+  {/* notification and dark mode toggle */}
+          <div className="absolute inset-y-0  flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 gap-3">
+            {/* Dark Mode Toggle */}
+            <button
+              type="button"
+              onClick={() => dispatch(toggleDarkMode())}
+              className="relative rounded-full bg-gray-800 dark:bg-gray-700 p-2 text-gray-400 hover:text-white dark:hover:text-yellow-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 dark:focus:ring-offset-gray-700 transition-colors duration-200 hover:bg-gray-700 dark:hover:bg-gray-600"
+              aria-label="Toggle dark mode"
+              title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+            >
+              {darkMode ? (
+                <MdLightMode className="h-5 w-5 text-yellow-300" />
+              ) : (
+                <MdDarkMode className="h-5 w-5" />
+              )}
+            </button>
           
             <div className="relative">
               <button
@@ -301,35 +316,35 @@ const Nav = () => {
               {/* Profile Menu */}
               {profileMenu && (
                 <div
-                  className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                  className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white dark:bg-gray-800 py-1 shadow-lg ring-1 ring-black ring-opacity-5 dark:ring-gray-700 focus:outline-none transition-colors duration-200"
                   role="menu"
                   aria-orientation="vertical"
                   aria-labelledby="user-menu-button"
-                  tabindex="-1"
+                  tabIndex="-1"
                   ref={profilePageRef}
                 >
                   {/* <!-- Active: "bg-gray-100", Not Active: "" --> */}
                   <div
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-slate-300 hover:cursor-pointer"
+                    className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-slate-300 dark:hover:bg-gray-700 hover:cursor-pointer transition-colors duration-200"
                     role="menuitem"
-                    tabindex="-1"
+                    tabIndex="-1"
                     id="user-menu-item-0"
                     onClick={handleProfileClick}
                   >
                     Your Profile
                   </div>
                   <div
-                    className="block px-4 py-2 text-sm text-gray-700  hover:bg-slate-300 hover:cursor-pointer"
+                    className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-slate-300 dark:hover:bg-gray-700 hover:cursor-pointer transition-colors duration-200"
                     role="menuitem"
-                    tabindex="-1"
+                    tabIndex="-1"
                     id="user-menu-item-1"
                   >
                     Settings
                   </div>
                   <div
-                    className="block px-4 py-2 text-sm text-gray-700  hover:bg-slate-300 hover:cursor-pointer"
+                    className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-slate-300 dark:hover:bg-gray-700 hover:cursor-pointer transition-colors duration-200"
                     role="menuitem"
-                    tabindex="-1"
+                    tabIndex="-1"
                     id="user-menu-item-2"
                     onClick={handleSignOut}
                   >
@@ -342,14 +357,14 @@ const Nav = () => {
 
 
           {notificationPage && (
-                <div className=" notification-page absolute rounded-lg  top-[55px] right-2  bg-cyan-700 text-center ">
+                <div className=" notification-page absolute rounded-lg  top-[55px] right-2  bg-cyan-700 dark:bg-cyan-800 text-center transition-colors duration-200">
                   <Notification />
                   <button
-                    className="px-3 py-2 bg-slate-200 rounded-md mb-4 hover:bg-slate-400"
+                    className="px-3 py-2 bg-slate-200 dark:bg-gray-700 dark:text-white rounded-md mb-4 hover:bg-slate-400 dark:hover:bg-gray-600 transition-colors duration-200"
                     onClick={handleMarkRead}
                     ref={notificationRef}
                   >
-                    mark as read
+                    Mark as Read
                   </button>
                 </div>
               )}
@@ -358,12 +373,12 @@ const Nav = () => {
 
       {/* sidebarMenu */}
       {sidebarMenu && (
-        <div className="sm:hidden bg-black/80" id="mobile-menu">
+        <div className="sm:hidden bg-black/80 dark:bg-gray-900/95 transition-colors duration-200" id="mobile-menu">
           <div className="space-y-1 px-2 pb-3 pt-2">
             <Link
               to="/home"
               onClick={() => dispatch(setSidebarMenu(!sidebarMenu))}
-              className="block rounded-md bg-gray-900 px-3 py-2 text-base font-medium text-white"
+              className="block rounded-md bg-gray-900 dark:bg-gray-800 px-3 py-2 text-base font-medium text-white dark:text-gray-100 transition-colors duration-200"
               aria-current="page"
             >
               Home
@@ -371,21 +386,21 @@ const Nav = () => {
             <Link
               to="/links"
               onClick={() => dispatch(setSidebarMenu(!sidebarMenu))}
-              className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+              className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 dark:text-gray-300 hover:bg-gray-700 dark:hover:bg-gray-700 hover:text-white transition-colors duration-200"
             >
               Links
             </Link>
             <Link
               to="#"
               onClick={() => dispatch(setSidebarMenu(!sidebarMenu))}
-              className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+              className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 dark:text-gray-300 hover:bg-gray-700 dark:hover:bg-gray-700 hover:text-white transition-colors duration-200"
             >
               Analysis
             </Link>
             <Link
               to="/doc"
               onClick={() => dispatch(setSidebarMenu(!sidebarMenu))}
-              className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+              className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 dark:text-gray-300 hover:bg-gray-700 dark:hover:bg-gray-700 hover:text-white transition-colors duration-200"
             >
               Docs
             </Link>
