@@ -114,22 +114,32 @@ app.get('/:username',extractInfo, async (req, res) => {
 
 app.get('/:username/:source',extractInfo, async (req, res) => {
      
-     const {username,source}=req.params;
-     const doc=await Link.findOne({username,source})
-  
-     const info=await User.findOne({username},{email:1,name:1})
-     if(!info){
-      return res.render('not_exists')
-     }
-      const {email,name}=info
-     if(!doc) return res.status(404).json({success:false,message:`${source} not has been added for this user !`})
 
-     const {destination,clicked,notSeen}=doc
-     await Link.updateOne({username,source},{$set:{clicked:clicked+1,notSeen:notSeen+1}})
+  const {username,source}=req.params;
+  const linkHub=`Available link: ${req.protocol}://${req.get('host')}/${username}`
 
-     const deviceDetails=req.details
-     sendNotificationEmail(email,username,name,deviceDetails,source)
-     return res.redirect(307,destination)
+  const doc=await Link.findOne({username,source})
+
+  const info=await User.findOne({username},{email:1,name:1})
+  if(!info){
+  return res.render('not_exists',{
+    linkHub:""
+  })
+  }
+  const {email,name}=info
+  if(!doc) {
+    return res.render('not_exists',{
+    linkHub:linkHub
+    })
+  }
+  // return res.status(404).json({success:false,message:`${source} not has been added for this user !`})
+
+  const {destination,clicked,notSeen}=doc
+  await Link.updateOne({username,source},{$set:{clicked:clicked+1,notSeen:notSeen+1}})
+
+  const deviceDetails=req.details
+  sendNotificationEmail(email,username,name,deviceDetails,source)
+  return res.redirect(307,destination)
 })
 
 
