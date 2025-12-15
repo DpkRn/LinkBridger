@@ -15,7 +15,6 @@ import Documentation from './components/Documentation'
 import LinkPage from './components/pages/LinkPage'
 import ProfilePage from './components/pages/Profile'
 import NotFound from './components/pages/NotFound'
-import { setDarkMode } from './redux/pageSlice'
 
 function App() {
   const dispatch = useDispatch();
@@ -32,23 +31,14 @@ function App() {
   };
 
   useEffect(() => {
-    // Apply dark mode class to document
+    // Apply dark mode class to document based on Redux state
+    // Note: darkMode is already initialized from localStorage in pageSlice.js
     if (darkMode) {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
     }
   }, [darkMode]);
-
-  useEffect(() => {
-    // Initialize dark mode from localStorage, default to light mode
-    const stored = localStorage.getItem('darkMode');
-    if (stored !== null) {
-      dispatch(setDarkMode(stored === 'true'));
-    } else {
-      dispatch(setDarkMode(false)); // Default to light mode
-    }
-  }, [dispatch]);
 
   useEffect(() => {
     const getUserInfo = async () => {

@@ -12,9 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Removed prompt dialog for editing links
   - Edit button now populates CreateBridge form with existing link data
   - Platform field is now editable during edit mode (both platform and destination can be changed)
-  - Added warning confirmation dialog when platform name is changed (old link becomes invalid)
+  - Added custom warning modal dialog when platform name is changed (old link becomes invalid)
+  - Replaced browser prompt with professional styled modal component
+  - Modal includes warning icon, color-coded old/new links, and clear action buttons
   - Warning only appears for platform changes, not destination changes
-  - Warning shows old and new link URLs for user awareness
+  - Modal shows old and new link URLs with visual distinction (red for old, green for new)
+  - Fully styled with dark mode support and smooth transitions
   - Button text changes from "Create New" to "Update Bridge" in edit mode
   - Added "Cancel" button to exit edit mode
   - Added visual indicator showing link ID being edited
@@ -112,6 +115,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Changed to `if(err.response?.status !== 401)` to correctly skip error toasts for 401 authentication errors
   - Added proper optional chaining for `err.response?.status` since axios errors have status in response object
   - Prevents showing error toasts for expected 401 (unauthorized) errors during token verification
+
+- **Form Validation**: Fixed submit button type to enable HTML5 validation
+  - Changed submit button from `type="button"` to `type="submit"` in CreateBridge component
+  - Added `onSubmit={handleSubmit}` handler to form element (was missing, causing form not to submit)
+  - Enables native HTML5 form validation for required fields (platform and destination)
+  - Prevents form submission with empty fields, reducing unnecessary API calls
+  - Added `disabled` attribute to buttons during loading state to prevent multiple submissions
+  - Form now properly validates inputs before calling `handleSubmit` function
+
+- **Warning Modal and Update Functionality**: Fixed issues with link update and warning modal
+  - Fixed missing `onSubmit` handler on form element that prevented form submission
+  - Moved warning modal outside form element to prevent form submission interference
+  - Added `type="button"` to modal buttons to prevent accidental form submission
+  - Added `.trim()` to platform comparison and data handling for better reliability
+  - Fixed update functionality for both platform and destination changes
+  - Warning modal now properly displays when platform is changed
+  - Update now works correctly whether platform is changed or only destination is changed
+  - Fixed stale data issue: `handleConfirmUpdate` now uses current form state instead of `pendingUpdate`
+  - Prevents outdated values from being applied if user modifies form while modal is open
+  - Added input field disabling while modal is open to prevent confusion and ensure data consistency
+  - Fixed platform change detection: Normalize platform value when populating from `editLinkData`
+  - Ensures consistent case comparison even if database has mixed-case platform names (e.g., "LinkedIn")
+  - Prevents false positive warnings when only destination is being updated
+  - Platform value is now normalized to lowercase when form is populated, ensuring accurate change detection
+  - Fixed duplicate API calls: Added `disabled={loading}` to "Continue Anyway" button in warning modal
+  - Prevents multiple clicks and duplicate update requests while update is in progress
+  - Added loading state text ("Updating...") to provide user feedback
+  - Also disabled Cancel button during loading to prevent modal closure during update
+  - Added disabled styling (opacity and cursor) for better UX
+  - Fixed race condition: Made `handleConfirmUpdate` async and added `await` to `performUpdate` call
+  - Prevents modal from closing and state from clearing before API call completes
+  - Ensures proper sequencing: modal closes only after update completes
+  - Matches the pattern used in `handleSubmit` for consistency
+  - Prevents race conditions where toast messages and state updates may not display correctly
+  - Fixed submit button state: Added `showWarningModal` to disabled condition
+  - Submit button now disabled when warning modal is displayed, preventing duplicate form submissions
+  - Prevents bypassing platform change validation by clicking submit while modal is open
+  - Also disabled Cancel button during warning modal for consistency
+  - Added disabled styling classes for better visual feedback
+
+- **Dark Mode Initialization**: Removed redundant localStorage read
+  - Removed duplicate `useEffect` in `App.jsx` that was re-reading localStorage and dispatching `setDarkMode`
+  - Dark mode is already correctly initialized from localStorage in `pageSlice.js` via `getInitialDarkMode()`
+  - Eliminates redundant state updates and prevents potential visual flash on initial page load
+  - Removed unused `setDarkMode` import from `App.jsx`
+  - Dark mode class is now applied once based on the correctly initialized Redux state
 
 - **Accessibility**: Fixed label-input associations
   - Fixed `htmlFor` attribute mismatch in AuthPage signup form
