@@ -46,7 +46,6 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: function (origin, callback) {
-    // allow requests with no origin (like curl, Postman)
     if (!origin) return callback(null, true);
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
@@ -70,26 +69,34 @@ app.use(helmet.contentSecurityPolicy({
     scriptSrc: ["'self'", "https://vercel.live", "https://*.vercel.app"],  // Allow Vercel scripts
     imgSrc: ["'self'", "data:", "https://res.cloudinary.com"],  // Add your image host if needed
     styleSrc: ["'self'", "'unsafe-inline'"],  // Allow inline styles if needed
-    connectSrc: ["'self'", "https://linkb-one.vercel.app","https://linkb-one.vercel.app/*"],  // Add your API backend here
+    connectSrc: ["'self'", "https://linkb-one.vercel.app","https://linkb-one.vercel.app/*","https://clickly.cv/*"],  // Add your API backend here
     // Add more directives as needed
   }
 }));
 
 
+
+app.get('/',(req,res)=>{
+  console.log("redirecting to frontend")
+  return res.redirect(307,"https://clickly.cv/app/")
+})
+
 app.use('/auth',authRoute)
 app.use('/source',linkRoute)
 app.use('/profile',profileRoute)
 
-app.get('/',(req,res)=>{
-  return res.send('welcome to my page: Dwizard')
-})
 
 app.get('/:username',extractInfo, async (req, res) => {
+  console.log("backend profile search start")
   const username=req.params.username
   const tree=await Link.find({username:username})
   const dp=await Profile.findOne({username},{image:1,bio:1});
-  const {email,name}=await User.findOne({username},{email:1,name:1})
 
+  const info=await User.findOne({username},{email:1,name:1})
+  if(!info){
+    return res.render('not_exists')
+  }
+  const {email,name}=info
   const deviceDetails=req.details
   sendNotificationEmail(email,username,name,deviceDetails,"LinkHub")
 
@@ -100,24 +107,39 @@ app.get('/:username',extractInfo, async (req, res) => {
       dp:dp 
     })   
   }
+  
   return res.render('not_exists')
 })
 
 
 app.get('/:username/:source',extractInfo, async (req, res) => {
      
-     const {username,source}=req.params;
-     const doc=await Link.findOne({username,source})
-     const {email,name}=await User.findOne({username},{email:1,name:1})
-     
-     if(!doc) return res.status(404).json({success:false,message:`${source} not has been added for this user !`})
 
-     const {destination,clicked,notSeen}=doc
-     await Link.updateOne({username,source},{$set:{clicked:clicked+1,notSeen:notSeen+1}})
+  const {username,source}=req.params;
+  const linkHub=`Available link: ${req.protocol}://${req.get('host')}/${username}`
 
-     const deviceDetails=req.details
-     sendNotificationEmail(email,username,name,deviceDetails,source)
-     return res.redirect(307,destination)
+  const doc=await Link.findOne({username,source})
+
+  const info=await User.findOne({username},{email:1,name:1})
+  if(!info){
+  return res.render('not_exists',{
+    linkHub:""
+  })
+  }
+  const {email,name}=info
+  if(!doc) {
+    return res.render('not_exists',{
+    linkHub:linkHub
+    })
+  }
+  // return res.status(404).json({success:false,message:`${source} not has been added for this user !`})
+
+  const {destination,clicked,notSeen}=doc
+  await Link.updateOne({username,source},{$set:{clicked:clicked+1,notSeen:notSeen+1}})
+
+  const deviceDetails=req.details
+  sendNotificationEmail(email,username,name,deviceDetails,source)
+  return res.redirect(307,destination)
 })
 
 

@@ -3,9 +3,9 @@ const bcryptjs=require('bcryptjs')
 const Otp = require("../model/otpModel");
 const verifyToken = async (req, res, next) => {
   try {
-    const token = req.cookies.token;
+    const token = req.cookies?.token;
    
-
+    console.log("token=",token)
     if (!token) {
       return res
         .status(401)
@@ -13,7 +13,6 @@ const verifyToken = async (req, res, next) => {
     }
     const auth = await jwt.verify(token, process.env.JWT_KEY);
     if (auth) {
-      
       req.userId = auth.id;
       return next();
     }

@@ -27,27 +27,27 @@ const Documentation = () => {
   const words = [
     {
       text: "LinkBridger : ",
-      className: "text-blue-500 dark:text-blue-500 text-4xl font-bold",
+      className: "text-blue-500 dark:text-blue-400 text-4xl font-bold",
     },
     {
       text: "Personalized",
-      className: "text-4xl font-bold text-black",
+      className: "text-4xl font-bold text-black dark:text-gray-200",
     },
     {
       text: "Social ",
-      className: "text-4xl font-bold text-black",
+      className: "text-4xl font-bold text-black dark:text-gray-200",
     },
     {
       text: "Profile ",
-      className: "text-4xl font-bold text-black",
+      className: "text-4xl font-bold text-black dark:text-gray-200",
     },
     {
       text: "Link ",
-      className: "text-4xl font-bold text-black",
+      className: "text-4xl font-bold text-black dark:text-gray-200",
     },
     {
       text: "Manager.",
-      className: "text-4xl font-bold text-black",
+      className: "text-4xl font-bold text-black dark:text-gray-200",
     },
   ];
   const plateforms = [
@@ -74,34 +74,34 @@ const Documentation = () => {
   };
 
   return (
-    <motion.div initial="hidden" animate="visible" variants={fadeInUp} className="min-h-screen w-full bg-gradient-to-br from-pink-200 via-sky-200 to-blue-300">
+    <motion.div initial="hidden" animate="visible" variants={fadeInUp} className="min-h-screen w-full bg-gradient-to-br from-pink-200 via-sky-200 to-blue-300 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
       {location.pathname === "/" && (
-        <div className="min-w-screen h-[70px] shadow-lg bg-neutral-100   text-right flex items-center justify-between ">
+        <div className="min-w-screen h-[70px] shadow-lg bg-neutral-100 dark:bg-gray-800 text-right flex items-center justify-between transition-colors duration-300">
           <img
-            className="h-8 w-auto ml-10 sm:ml-20"
+            className="h-8 w-auto ml-10 sm:ml-20 dark:brightness-0 dark:invert transition-all duration-300"
             src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500"
             alt="Your Company"
           />
           <button
             onClick={handleGetStarted}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md text-md sm:text-lg transition-colors mr-10 sm:mr-20 "
+            className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white font-semibold py-2 px-4 rounded-md text-md sm:text-lg transition-colors mr-10 sm:mr-20"
           >
             Get Started
           </button>
         </div>
       )}
-  <motion.div variants={fadeInUp} className={`p-2 md:p-10 `}>
+  <motion.div variants={fadeInUp} className={`p-2 md:p-10`}>
         <TypewriterEffect words={words} className="mb-8" />
         <TextRevealCard
-          className="bg-gradient-to-r  from-pink-200 to-sky-200 mb-5 "
+          className="bg-gradient-to-r from-pink-200 to-sky-200 dark:from-gray-800 dark:to-gray-700 mb-5 transition-colors duration-300"
           text="Generate Links You'll Never Forget."
           revealText="Turn Usernames into Smart Links - Quick and Simple!"
         />
         {/* Introduction Section */}
   <motion.section variants={fadeInUp} className="mb-12">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-primary">Introduction</h2>
-          <p className="text-base md:text-lg leading-7 text-neutral-dark">
-            Welcome to <b>LinkBridger</b>, a tool designed to make your social
+          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-primary dark:text-blue-400 transition-colors duration-300">Introduction</h2>
+          <p className="text-base md:text-lg leading-7 text-gray-800 dark:text-gray-300 transition-colors duration-300">
+            Welcome to <b className="text-gray-900 dark:text-gray-100">LinkBridger</b>, a tool designed to make your social
             media links easier to remember and manage. Whether you're sharing
             your Instagram, GitHub, or LinkedIn profile, LinkBridger allows you
             to generate personalized URLs that are simple and customizable. It
@@ -117,120 +117,120 @@ const Documentation = () => {
           <ContainerScroll
             titleComponent={
               <>
-                <p className="text-4xl font-semibold text-pretty text-black">
-                  Have you Ever Wondered How AuthorLink Has Been Persionalized:
+                <p className="text-4xl font-semibold text-pretty text-black dark:text-gray-200 transition-colors duration-300">
+                  Have You Ever Wondered How AuthorLink Has Been Personalized:
                 </p>
               </>
             }
           >
-            <div className="mx-auto rounded-2xl h-full  flex  justify-center items-center bg-slate-600">
-              <div className="md:mx-auto rounded-2xl h-full w-full space-y-1 flex flex-col justify-center md:items-center sm:ml-4 p-2 ">
-                <p className="text-sm md:text-base">
-                  Linkdin:
+            <div className="mx-auto rounded-2xl h-full flex justify-center items-center bg-slate-600 dark:bg-gray-700 transition-colors duration-300">
+              <div className="md:mx-auto rounded-2xl h-full w-full space-y-1 flex flex-col justify-center md:items-center sm:ml-4 p-2">
+                <p className="text-sm md:text-base text-white">
+                  LinkedIn:
                   <a
                     href="https://linkb-one.vercel.app/dpkrn/linkedin"
-                    className=" text-blue-400 underline"
+                    className="text-blue-400 underline ml-2"
                   >
                     https://linkb-one.vercel.app/dpkrn/linkedin
                   </a>
                 </p>
-                <p className="text-sm md:text-base">
-                  Github:{" "}
+                <p className="text-sm md:text-base text-white">
+                  GitHub:{" "}
                   <a
                     href="https://linkb-one.vercel.app/dpkrn/github"
-                    className="text-blue-400  underline"
+                    className="text-blue-400 underline ml-2"
                   >
                     https://linkb-one.vercel.app/dpkrn/github
                   </a>
                 </p>
-                <p className="text-sm md:text-base">
+                <p className="text-sm md:text-base text-white">
                   LeetCode:{" "}
                   <a
                     href="https://linkb-one.vercel.app/dpkrn/leetcode"
-                    className="text-blue-400  underline"
+                    className="text-blue-400 underline ml-2"
                   >
                     https://linkb-one.vercel.app/dpkrn/leetcode
                   </a>
                 </p>
-                <p className="text-sm md:text-base">
+                <p className="text-sm md:text-base text-white">
                   Portfolio:{" "}
                   <a
                     href="https://linkb-one.vercel.app/dpkrn/portfolio"
-                    className="text-blue-400  underline"
+                    className="text-blue-400 underline ml-2"
                   >
                     https://linkb-one.vercel.app/dpkrn/portfolio
                   </a>
                 </p>
-                <p className="text-sm md:text-base">
+                <p className="text-sm md:text-base text-white">
                   Instagram:{" "}
                   <a
                     href="https://linkb-one.vercel.app/dpkrn/instagram"
-                    className="text-blue-400  underline"
+                    className="text-blue-400 underline ml-2"
                   >
                     https://linkb-one.vercel.app/dpkrn/instagram
                   </a>
                 </p>
-                <p className="text-sm md:text-base">
+                <p className="text-sm md:text-base text-white">
                   Facebook:{" "}
                   <a
                     href="https://linkb-one.vercel.app/dpkrn/facebook"
-                    className="text-blue-400 underline"
+                    className="text-blue-400 underline ml-2"
                   >
                     https://linkb-one.vercel.app/dpkrn/facebook
                   </a>
                 </p>
-                <p className="text-sm md:text-base">
-                  Codeforce:{" "}
+                <p className="text-sm md:text-base text-white">
+                  Codeforces:{" "}
                   <a
                     href="https://linkb-one.vercel.app/dpkrn/codeforces"
-                    className="text-blue-400 underline"
+                    className="text-blue-400 underline ml-2"
                   >
                     https://linkb-one.vercel.app/dpkrn/codeforces
                   </a>
                 </p>
-                <p className="text-sm md:text-base">
-                  Only Plateform name has been changed..all remains same
+                <p className="text-sm md:text-base text-white">
+                  Only the platform name has been changed. All else remains the same.
                 </p>
               </div>
             </div>
           </ContainerScroll>
   </motion.div>
 
-  <motion.div variants={fadeInUp} className="mb-8 bg-white/40 shadow-lg rounded-md py-4 md:py-5 px-2 md:px-6 text-center">
+  <motion.div variants={fadeInUp} className="mb-8 bg-white/40 dark:bg-gray-800/40 shadow-lg rounded-md py-4 md:py-5 px-2 md:px-6 text-center transition-colors duration-300">
           <BackgroundBeamsWithCollision>
             <div>
                
-              <div className="relative mx-auto  w-max [filter:drop-shadow(0px_1px_3px_rgba(27,_37,_80,_0.14))]">
-                <div className="relative bg-clip-text text-transparent bg-no-repeat bg-gradient-to-r from-purple-400 via-violet-200 to-pink-500 py-4">
+              <div className="relative mx-auto w-max [filter:drop-shadow(0px_1px_3px_rgba(27,_37,_80,_0.14))]">
+                <div className="relative bg-clip-text text-transparent bg-no-repeat bg-gradient-to-r from-purple-400 via-violet-200 to-pink-500 dark:from-purple-300 dark:via-violet-100 dark:to-pink-400 py-4">
                   <span className="uppercase text-[8px] md:text-lg">
-                    It will provide special link for all your platform.
+                    It will provide a special link for all your platforms.
                   </span>
                 </div>
               </div>
-               <p className="text-sm md:text-2xl">
+               <p className="text-sm md:text-2xl dark:text-gray-200">
               <a
                 href="https://linkb-one.vercel.app/dpkrn/"
-                className="text-blue-500 underline font-mono"
+                className="text-blue-500 dark:text-blue-400 underline font-mono"
               >
                 https://linkb-one.vercel.app/dpkrn
                
               </a>
             </p>
-              <div className="relative mx-auto  w-max [filter:drop-shadow(0px_1px_3px_rgba(27,_37,_80,_0.14))]">
-                <div className="relative bg-clip-text text-transparent bg-no-repeat bg-gradient-to-r from-purple-400 via-violet-200 to-pink-500 py-4">
+              <div className="relative mx-auto w-max [filter:drop-shadow(0px_1px_3px_rgba(27,_37,_80,_0.14))]">
+                <div className="relative bg-clip-text text-transparent bg-no-repeat bg-gradient-to-r from-purple-400 via-violet-200 to-pink-500 dark:from-purple-300 dark:via-violet-100 dark:to-pink-400 py-4">
                   <span className="uppercase text-[8px] md:text-lg">
-                    Change only platform name-redirect to all profiles
+                    Change only the platform name to redirect to all profiles
                   </span>
                 </div>
               </div>
             </div>
-            <p className="text-sm md:text-2xl">
+            <p className="text-sm md:text-2xl dark:text-gray-200">
               <a
                 href="https://linkb-one.vercel.app/dpkrn/linkedin"
-                className="text-blue-500 underline font-mono"
+                className="text-blue-500 dark:text-blue-400 underline font-mono"
               >
                 https://linkb-one.vercel.app/dpkrn/
-                <FlipWords className="text-blue-500" words={plateforms} />{" "}
+                <FlipWords className="text-blue-500 dark:text-blue-400" words={plateforms} />{" "}
               </a>
             </p>
           </BackgroundBeamsWithCollision>
@@ -240,19 +240,19 @@ const Documentation = () => {
   <motion.section variants={fadeInUp} className="mb-12 text-center">
           <button
             onClick={handleGetStarted}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-md text-lg transition-colors"
+            className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white font-semibold py-2 px-6 rounded-md text-lg transition-colors"
           >
             Get Started
           </button>
-          <p className="mt-4 text-gray-500 text-sm">
+          <p className="mt-4 text-gray-500 dark:text-gray-400 text-sm">
             Create an account and start managing your personalized links today!
           </p>
   </motion.section>
 
         {/* Key Features Section */}
-  <motion.section variants={fadeInUp} className="mb-8 bg-white/40 shadow-lg rounded-md py-4 md:py-5 px-2 md:px-4">
+  <motion.section variants={fadeInUp} className="mb-8 bg-white/40 dark:bg-gray-800/40 shadow-lg rounded-md py-4 md:py-5 px-2 md:px-4 transition-colors duration-300">
     <div>
-  <h2 className="text-3xl md:text-4xl font-extrabold mb-6 text-center text-primary">Key Features</h2>
+  <h2 className="text-3xl md:text-4xl font-extrabold mb-6 text-center text-primary dark:text-blue-400">Key Features</h2>
       <div className="space-y-2 flex flex-col">
         {/* Interactive Feature Cards with alternate sides and scroll-in focus */}
         {[
@@ -301,12 +301,12 @@ const Documentation = () => {
               <motion.img
                 src={feature.img}
                 alt={feature.title}
-                className="h-[220px] w-[250px] my-8 mx-8  rounded-md flex-[1] group-hover:opacity-100 group-hover:scale-105 transition-all"
+                className="h-[220px] w-[250px] my-8 mx-8 rounded-md flex-[1] group-hover:opacity-100 group-hover:scale-105 transition-all dark:brightness-90 dark:contrast-110"
                 whileHover={{ scale: 1.08, opacity: 1 }}
               />
               <div className="flex-[1]">
-                <p className="text-lg md:text-xl ml-4 font-medium text-neutral-dark">
-                  <span className="font-semibold text-xl md:text-2xl text-primary">{feature.title}</span>: {feature.desc}
+                <p className="text-lg md:text-xl ml-4 font-medium text-gray-800 dark:text-gray-300 transition-colors duration-300">
+                  <span className="font-semibold text-xl md:text-2xl text-primary dark:text-blue-400 transition-colors duration-300">{feature.title}</span>: {feature.desc}
                 </p>
               </div>
             </motion.div>
@@ -317,32 +317,32 @@ const Documentation = () => {
   </motion.section>
 
         {/* How It Works Section */}
-  <motion.section variants={fadeInUp} className="mb-8 bg-white/40 shadow-lg rounded-md py-4 md:py-5 px-2 md:px-6">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-primary">How It Works</h2>
-          <p className="text-base md:text-lg leading-7 text-neutral-dark">
-            The core idea behind <b>LinkBridger</b> is to simplify the
+  <motion.section variants={fadeInUp} className="mb-8 bg-white/40 dark:bg-gray-800/40 shadow-lg rounded-md py-4 md:py-5 px-2 md:px-6 transition-colors duration-300">
+          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-primary dark:text-blue-400 transition-colors duration-300">How It Works</h2>
+          <p className="text-base md:text-lg leading-7 text-gray-800 dark:text-gray-300 transition-colors duration-300">
+            The core idea behind <b className="text-gray-900 dark:text-gray-100">LinkBridger</b> is to simplify the
             management of social media links. Instead of sharing long,
             hard-to-remember URLs, you create a single, personalized URL that
-            automatically redirects users to the correct platform. Here’s a
+            automatically redirects users to the correct platform. Here's a
             step-by-step guide:
           </p>
-          <ol className="list-decimal list-inside space-y-2 mt-4">
+          <ol className="list-decimal list-inside space-y-2 mt-4 text-gray-800 dark:text-gray-300 transition-colors duration-300">
             <li>
-              <b>Create an Account</b>: Sign up using your email and create an
+              <b className="text-gray-900 dark:text-gray-100">Create an Account</b>: Sign up using your email and create an
               account on LinkBridger.
             </li>
             <li>
-              <b>Choose a Username</b>: Pick a username that’s easy to remember
+              <b className="text-gray-900 dark:text-gray-100">Choose a Username</b>: Pick a username that's easy to remember
               (e.g., dpkrn). Your link will follow this format:
               `https://linkb-one.vercel.app/your-username/instagram`.
             </li>
             <li>
-              <b>Verify Your Account</b>: Complete email verification to
+              <b className="text-gray-900 dark:text-gray-100">Verify Your Account</b>: Complete email verification to
               activate your account.
             </li>
             <li>
-              <b>Create a New Link</b>:
-              <ul className="list-disc list-inside ml-6 space-y-1">
+              <b className="text-gray-900 dark:text-gray-100">Create a New Link</b>:
+              <ul className="list-disc list-inside ml-6 space-y-1 text-gray-800 dark:text-gray-300">
                 <li>
                   Enter the platform name (e.g., Instagram, LinkedIn) in
                   lowercase.
@@ -352,26 +352,26 @@ const Documentation = () => {
               </ul>
             </li>
             <li>
-              <b>Share the Link</b>: Copy and share your smart link across
+              <b className="text-gray-900 dark:text-gray-100">Share the Link</b>: Copy and share your smart link across
               various platforms.
             </li>
           </ol>
           <div className="mt-4">
-            <p className="text-lg">Example:</p>
-            <p className="text-lg">
+            <p className="text-lg dark:text-gray-300">Example:</p>
+            <p className="text-lg dark:text-gray-300">
               Instagram:{" "}
               <a
                 href="https://linkb-one.vercel.app/dpkrn/instagram"
-                className="text-blue-500 underline"
+                className="text-blue-500 dark:text-blue-400 underline"
               >
                 https://linkb-one.vercel.app/dpkrn/instagram
               </a>
             </p>
-            <p className="text-lg">
+            <p className="text-lg dark:text-gray-300">
               LeetCode:{" "}
               <a
                 href="https://linkb-one.vercel.app/dpkrn/leetcode"
-                className="text-blue-500 underline"
+                className="text-blue-500 dark:text-blue-400 underline"
               >
                 https://linkb-one.vercel.app/dpkrn/leetcode
               </a>
@@ -380,81 +380,81 @@ const Documentation = () => {
   </motion.section>
 
         {/* Click Tracking Section */}
-  <motion.section variants={fadeInUp} className="mb-12 bg-white/40 shadow-lg rounded-md py-4 md:py-5 px-2 md:px-4">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-primary">Click Tracking</h2>
-          <p className="text-base md:text-lg leading-7 text-neutral-dark">
-            With <b>LinkBridger</b>, you can track how many times each of your
+  <motion.section variants={fadeInUp} className="mb-12 bg-white/40 dark:bg-gray-800/40 shadow-lg rounded-md py-4 md:py-5 px-2 md:px-4 transition-colors duration-300">
+          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-primary dark:text-blue-400 transition-colors duration-300">Click Tracking</h2>
+          <p className="text-base md:text-lg leading-7 text-gray-800 dark:text-gray-300 transition-colors duration-300">
+            With <b className="text-gray-900 dark:text-gray-100">LinkBridger</b>, you can track how many times each of your
             links has been clicked. This allows you to monitor the engagement on
             your social media profiles across different platforms. Access the
             analytics section from your dashboard to see detailed statistics
-            about each link’s performance.
+            about each link's performance.
           </p>
   </motion.section>
 
         {/* Future Enhancements Section */}
-  <motion.section variants={fadeInUp} className="mb-12 bg-white/40 shadow-lg rounded-md py-4 md:py-5 px-2 md:px-4">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-primary">Future Enhancements</h2>
-          <p className="text-base md:text-lg leading-7 text-neutral-dark">
+  <motion.section variants={fadeInUp} className="mb-12 bg-white/40 dark:bg-gray-800/40 shadow-lg rounded-md py-4 md:py-5 px-2 md:px-4 transition-colors duration-300">
+          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-primary dark:text-blue-400 transition-colors duration-300">Future Enhancements</h2>
+          <p className="text-base md:text-lg leading-7 text-gray-800 dark:text-gray-300 transition-colors duration-300">
             Here are some potential features and enhancements we are planning to
-            add to <b>LinkBridger</b>:
+            add to <b className="text-gray-900 dark:text-gray-100">LinkBridger</b>:
           </p>
-          <ul className="list-disc list-inside space-y-2">
+          <ul className="list-disc list-inside space-y-2 text-gray-800 dark:text-gray-300 transition-colors duration-300">
             <li>
-              <b>Advanced Analytics</b>: See detailed reports on clicks, traffic
+              <b className="text-gray-900 dark:text-gray-100">Advanced Analytics</b>: See detailed reports on clicks, traffic
               sources, and engagement levels for each link.
             </li>
             <li>
-              <b>Custom Link Themes</b>: Add custom themes or styles to your
+              <b className="text-gray-900 dark:text-gray-100">Custom Link Themes</b>: Add custom themes or styles to your
               personalized links to match your branding or style preferences.
             </li>
             <li>
-              <b>Link Expiration</b>: Set expiration dates for temporary links,
+              <b className="text-gray-900 dark:text-gray-100">Link Expiration</b>: Set expiration dates for temporary links,
               ensuring they are only accessible for a certain period.
             </li>
             <li>
-              <b>Link Password Protection</b>: Add a layer of security by
+              <b className="text-gray-900 dark:text-gray-100">Link Password Protection</b>: Add a layer of security by
               allowing password protection on sensitive links.
             </li>
           </ul>
   </motion.section>
 
         {/* FAQ Section */}
-        <motion.section variants={fadeInUp} className="mb-12 bg-white/40 shadow-lg rounded-md py-4 md:py-5 px-2 md:px-4">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-primary">Frequently Asked Questions (FAQ)</h2>
-          <p className="text-base md:text-lg leading-7 mb-4 text-neutral-dark">Here are some common questions users have about <b>LinkBridger</b>:</p>
+        <motion.section variants={fadeInUp} className="mb-12 bg-white/40 dark:bg-gray-800/40 shadow-lg rounded-md py-4 md:py-5 px-2 md:px-4 transition-colors duration-300">
+          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-primary dark:text-blue-400 transition-colors duration-300">Frequently Asked Questions (FAQ)</h2>
+          <p className="text-base md:text-lg leading-7 mb-4 text-gray-800 dark:text-gray-300 transition-colors duration-300">Here are some common questions users have about <b className="text-gray-900 dark:text-gray-100">LinkBridger</b>:</p>
           <div className="space-y-4">
             {/* FAQ 1 */}
-            <div className="border rounded-md p-3 bg-white/60 cursor-pointer hover:shadow-lg transition-all" onClick={() => toggleFAQ(0)}>
-              <p className="font-semibold flex justify-between items-center">
+            <div className="border dark:border-gray-700 rounded-md p-3 bg-white/60 dark:bg-gray-700/60 cursor-pointer hover:shadow-lg transition-all" onClick={() => toggleFAQ(0)}>
+              <p className="font-semibold flex justify-between items-center dark:text-gray-200">
                 Q: Can I change my username after creating an account?
                 <span>{openFAQ[0] ? "-" : "+"}</span>
               </p>
               {openFAQ[0] && (
-                <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-2">
+                <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-2 dark:text-gray-300">
                   A: Unfortunately, usernames cannot be changed once they are set. Choose your username carefully!
                 </motion.p>
               )}
             </div>
             {/* FAQ 2 */}
-            <div className="border rounded-md p-3 bg-white/60 cursor-pointer hover:shadow-lg transition-all" onClick={() => toggleFAQ(1)}>
-              <p className="font-semibold flex justify-between items-center">
+            <div className="border dark:border-gray-700 rounded-md p-3 bg-white/60 dark:bg-gray-700/60 cursor-pointer hover:shadow-lg transition-all" onClick={() => toggleFAQ(1)}>
+              <p className="font-semibold flex justify-between items-center dark:text-gray-200">
                 Q: How do I track my link clicks?
                 <span>{openFAQ[1] ? "-" : "+"}</span>
               </p>
               {openFAQ[1] && (
-                <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-2">
+                <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-2 dark:text-gray-300">
                   A: Click tracking is available through your dashboard. You can view the number of clicks for each link, and advanced analytics will be added soon.
                 </motion.p>
               )}
             </div>
             {/* FAQ 3 */}
-            <div className="border rounded-md p-3 bg-white/60 cursor-pointer hover:shadow-lg transition-all" onClick={() => toggleFAQ(2)}>
-              <p className="font-semibold flex justify-between items-center">
+            <div className="border dark:border-gray-700 rounded-md p-3 bg-white/60 dark:bg-gray-700/60 cursor-pointer hover:shadow-lg transition-all" onClick={() => toggleFAQ(2)}>
+              <p className="font-semibold flex justify-between items-center dark:text-gray-200">
                 Q: Can I use custom platforms other than the popular ones (Instagram, LinkedIn, etc.)?
                 <span>{openFAQ[2] ? "-" : "+"}</span>
               </p>
               {openFAQ[2] && (
-                <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-2">
+                <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-2 dark:text-gray-300">
                   A: Yes! You can add any platform as long as you provide the correct profile URL.
                 </motion.p>
               )}
@@ -463,29 +463,29 @@ const Documentation = () => {
         </motion.section>
 
         {/* Testimonials Section - now at bottom */}
-        <motion.section variants={fadeInUp} className="mb-12 bg-white/60 shadow-lg rounded-md py-8 px-4 md:px-10 text-center">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-primary">What Our Users Say</h2>
+        <motion.section variants={fadeInUp} className="mb-12 bg-white/60 dark:bg-gray-800/60 shadow-lg rounded-md py-8 px-4 md:px-10 text-center transition-colors duration-300">
+          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-primary dark:text-blue-400">What Our Users Say</h2>
           <div className="flex flex-col md:flex-row gap-8 justify-center items-center">
-            <div className="bg-white rounded-lg shadow p-6 max-w-sm mx-auto">
-              <p className="text-lg italic text-neutral-dark">“LinkBridger made sharing my profiles so much easier. The personalized links look great and are super easy to remember!”</p>
+            <div className="bg-white dark:bg-gray-700 rounded-lg shadow p-6 max-w-sm mx-auto transition-colors duration-300">
+              <p className="text-lg italic text-gray-800 dark:text-gray-300 transition-colors duration-300">"LinkBridger made sharing my profiles so much easier. The personalized links look great and are super easy to remember!"</p>
               <div className="mt-4 flex items-center justify-center gap-2">
-                <img src="profile.jpg" alt="User" className="h-10 w-10 rounded-full object-cover" />
-                <span className="font-semibold text-primary">Amit S.</span>
+                <img src="profile.jpg" alt="User" className="h-10 w-10 rounded-full object-cover dark:ring-2 dark:ring-gray-600" />
+                <span className="font-semibold text-primary dark:text-blue-400 transition-colors duration-300">Amit S.</span>
               </div>
             </div>
-            <div className="bg-white rounded-lg shadow p-6 max-w-sm mx-auto">
-              <p className="text-lg italic text-neutral-dark">“I love the analytics and the ability to update all my links in one place. Highly recommended!”</p>
+            <div className="bg-white dark:bg-gray-700 rounded-lg shadow p-6 max-w-sm mx-auto transition-colors duration-300">
+              <p className="text-lg italic text-gray-800 dark:text-gray-300 transition-colors duration-300">"I love the analytics and the ability to update all my links in one place. Highly recommended!"</p>
               <div className="mt-4 flex items-center justify-center gap-2">
-                <img src="profile.jpg" alt="User" className="h-10 w-10 rounded-full object-cover" />
-                <span className="font-semibold text-primary">Priya K.</span>
+                <img src="profile.jpg" alt="User" className="h-10 w-10 rounded-full object-cover dark:ring-2 dark:ring-gray-600" />
+                <span className="font-semibold text-primary dark:text-blue-400 transition-colors duration-300">Priya K.</span>
               </div>
             </div>
           </div>
         </motion.section>
         {/* Footer Section */}
         <Footer />
-        <footer className="text-center py-6 border-t mt-12">
-          <motion.p variants={fadeInUp} className="text-lg">
+        <footer className="text-center py-6 border-t dark:border-gray-700 mt-12 transition-colors duration-300">
+          <motion.p variants={fadeInUp} className="text-lg dark:text-gray-300">
             &copy; 2024 LinkBridger. All Rights Reserved.
           </motion.p>
         </footer>

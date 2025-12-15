@@ -121,8 +121,8 @@ const fileInputRef=useRef(null)
 
   return (
     <div className="">
-    <div className="min-h-screen flex-col gap-1 bg-gradient-to-br  from-pink-300 via-sky-300 to-blue-800 flex md:flex-row flex-nowrap   justify-center p-6">
-      <div className="bg-white/40 shadow-lg rounded-lg p-6 md:p-12 flex-shrink-0 max-w-md w-full flex-[1]">
+    <div className="min-h-screen flex-col gap-1 bg-gradient-to-br from-pink-300 via-sky-300 to-blue-800 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex md:flex-row flex-nowrap justify-center p-6 transition-colors duration-300">
+      <div className="bg-white/40 dark:bg-gray-800/40 shadow-lg rounded-lg p-6 md:p-12 flex-shrink-0 max-w-md w-full flex-[1] transition-colors duration-300">
         {/* Profile Picture */}
         <div className="flex justify-center mb-6 relative">
          <div className="relative rounded-full w-32 h-32 border-2 overflow-hidden  border-indigo-500 " 
@@ -161,16 +161,16 @@ const fileInputRef=useRef(null)
         <div className="text-center space-y-4">
           <input
             type="text"
-            className={`${isEditable?"":"border-none"} block  bg-transparent w-full text-center text-2xl font-semibold text-gray-800 border-b border-gray-300 focus:outline-none focus:border-indigo-500"`}
+            className={`${isEditable?"":"border-none"} block bg-transparent w-full text-center text-2xl font-semibold text-gray-800 dark:text-gray-200 border-b border-gray-300 dark:border-gray-600 focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-400 transition-colors duration-200`}
             value={name}
             placeholder="Name"
             disabled={!isEditable}
             onChange={(e) => setName(e.target.value)}
           />
-          @<span className="font-thin text-sm">{username}</span>
+          @<span className="font-thin text-sm dark:text-gray-400">{username}</span>
           <input
             type="text"
-            className={`${isEditable?"":"border-none"} block w-full bg-transparent text-center text-gray-500 border-b border-gray-300 focus:outline-none focus:border-indigo-500`}
+            className={`${isEditable?"":"border-none"} block w-full bg-transparent text-center text-gray-500 dark:text-gray-300 border-b border-gray-300 dark:border-gray-600 focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-400 transition-colors duration-200`}
             value={location}
             placeholder="Location"
             disabled={!isEditable}
@@ -178,7 +178,7 @@ const fileInputRef=useRef(null)
           />
           <input
             type="text"
-            className={`${isEditable?"":"border-none"} block w-full bg-transparent text-center text-sm text-gray-400 border-b border-gray-300 focus:outline-none focus:border-indigo-500`}
+            className={`${isEditable?"":"border-none"} block w-full bg-transparent text-center text-sm text-gray-400 dark:text-gray-400 border-b border-gray-300 dark:border-gray-600 focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-400 transition-colors duration-200`}
             value={passion}
             placeholder="Passion"
             disabled={!isEditable}
@@ -189,7 +189,7 @@ const fileInputRef=useRef(null)
         {/* Bio Section */}
         <div className="mt-6 text-center">
           <textarea
-            className={`${isEditable?"":"border-none"} w-full text-center bg-transparent text-gray-600 border border-gray-300 rounded-md p-2 focus:outline-none focus:border-indigo-500`}
+            className={`${isEditable?"":"border-none"} w-full text-center bg-transparent text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-md p-2 focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-400 transition-colors duration-200`}
             rows="4"
             value={bio}
             placeholder="Bio"
@@ -201,10 +201,10 @@ const fileInputRef=useRef(null)
         {/* Save Button */}
         <div className="mt-6 flex justify-center">
           <button
-            className="px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-600 focus:outline-none flex justify-center items-center"
+            className="px-4 py-2 bg-indigo-500 dark:bg-indigo-600 text-white rounded hover:bg-indigo-600 dark:hover:bg-indigo-700 focus:outline-none flex justify-center items-center transition-colors duration-200"
             onClick={() => handleSaveEditClick()}
           >
-           {loader&&<svg aria-hidden="true" role="status" class="inline w-4 h-4 me-3 text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+           {loader&&<svg aria-hidden="true" role="status" className="inline w-4 h-4 me-3 text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="#E5E7EB"/>
 <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentColor"/>
 </svg>} {isEditable?"Save":"Edit"}
@@ -257,7 +257,7 @@ const fileInputRef=useRef(null)
           </a>
         </div>
       </div>
-      <div className="flex-[2] bg-white/30 flex items-center justify-center  rounded-md"> not completed yet</div>
+      <div className="flex-[2] bg-white/30 dark:bg-gray-800/30 flex items-center justify-center rounded-md text-gray-700 dark:text-gray-300 transition-colors duration-300">Not completed yet</div>
     </div>
     </div>
   );
