@@ -20,8 +20,6 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules
-    environment:
-      - VITE_API_URL=https://clickly.cv
     depends_on:
       - backend
 

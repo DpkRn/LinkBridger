@@ -4,8 +4,8 @@ import axios from 'axios';
 const api = axios.create({
  
   // baseURL: 'http://localhost:8080', // Replace with your API base URL
-  baseURL: import.meta.env.VITE_API_URL || 'https://clickly.cv',
-  withCredentials: true,
-  // baseURL:'https://backend:8080'
+  // baseURL: import.meta.env.VITE_API_URL || 'https://clickly.cv',
+  // withCredentials: true,
+  baseURL:'https://backend:8080'
 });
 export default api;
