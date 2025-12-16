@@ -244,7 +244,7 @@ const CreateBridge = () => {
         {showBridge&&<div className="">
           <div className="px-4 py-2 bg-black/30 dark:bg-gray-700/50 text-white dark:text-gray-200 rounded-md flex items-center break-words gap-3 transition-colors duration-300">
             <span className="break-all font-mono" ref={linkRef}>
-              {`https://linkb-one.vercel.app/${username}/${source}`}
+              {`https://clickly.cv/${username}/${source}`}
             </span>
             <span>
               <MdContentCopy
@@ -280,13 +280,13 @@ const CreateBridge = () => {
                 <div>
                   <p className="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-1">Old Link (will become invalid):</p>
                   <p className="text-sm font-mono text-red-600 dark:text-red-400 break-all">
-                    https://linkb-one.vercel.app/{username}/{editLinkData.source}
+                    https://clickly.cv/{username}/{editLinkData.source}
                   </p>
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-1">New Link:</p>
                   <p className="text-sm font-mono text-green-600 dark:text-green-400 break-all">
-                    https://linkb-one.vercel.app/{username}/{platform.toLowerCase()}
+                    https://clickly.cv/{username}/{platform.toLowerCase()}
                   </p>
                 </div>
               </div>

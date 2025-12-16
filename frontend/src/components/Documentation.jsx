@@ -128,64 +128,64 @@ const Documentation = () => {
                 <p className="text-sm md:text-base text-white">
                   LinkedIn:
                   <a
-                    href="https://linkb-one.vercel.app/dpkrn/linkedin"
+                    href="https://clickly.cv/dpkrn/linkedin"
                     className="text-blue-400 underline ml-2"
                   >
-                    https://linkb-one.vercel.app/dpkrn/linkedin
+                    https://clickly.cv/dpkrn/linkedin
                   </a>
                 </p>
                 <p className="text-sm md:text-base text-white">
                   GitHub:{" "}
                   <a
-                    href="https://linkb-one.vercel.app/dpkrn/github"
+                    href="https://clickly.cv/dpkrn/github"
                     className="text-blue-400 underline ml-2"
                   >
-                    https://linkb-one.vercel.app/dpkrn/github
+                    https://clickly.cv/dpkrn/github
                   </a>
                 </p>
                 <p className="text-sm md:text-base text-white">
                   LeetCode:{" "}
                   <a
-                    href="https://linkb-one.vercel.app/dpkrn/leetcode"
+                    href="https://clickly.cv/dpkrn/leetcode"
                     className="text-blue-400 underline ml-2"
                   >
-                    https://linkb-one.vercel.app/dpkrn/leetcode
+                    https://clickly.cv/dpkrn/leetcode
                   </a>
                 </p>
                 <p className="text-sm md:text-base text-white">
                   Portfolio:{" "}
                   <a
-                    href="https://linkb-one.vercel.app/dpkrn/portfolio"
+                    href="https://clickly.cv/dpkrn/portfolio"
                     className="text-blue-400 underline ml-2"
                   >
-                    https://linkb-one.vercel.app/dpkrn/portfolio
+                    https://clickly.cv/dpkrn/portfolio
                   </a>
                 </p>
                 <p className="text-sm md:text-base text-white">
                   Instagram:{" "}
                   <a
-                    href="https://linkb-one.vercel.app/dpkrn/instagram"
+                    href="https://clickly.cv/dpkrn/instagram"
                     className="text-blue-400 underline ml-2"
                   >
-                    https://linkb-one.vercel.app/dpkrn/instagram
+                    https://clickly.cv/dpkrn/instagram
                   </a>
                 </p>
                 <p className="text-sm md:text-base text-white">
                   Facebook:{" "}
                   <a
-                    href="https://linkb-one.vercel.app/dpkrn/facebook"
+                    href="https://clickly.cv/dpkrn/facebook"
                     className="text-blue-400 underline ml-2"
                   >
-                    https://linkb-one.vercel.app/dpkrn/facebook
+                    https://clickly.cv/dpkrn/facebook
                   </a>
                 </p>
                 <p className="text-sm md:text-base text-white">
                   Codeforces:{" "}
                   <a
-                    href="https://linkb-one.vercel.app/dpkrn/codeforces"
+                    href="https://clickly.cv/dpkrn/codeforces"
                     className="text-blue-400 underline ml-2"
                   >
-                    https://linkb-one.vercel.app/dpkrn/codeforces
+                    https://clickly.cv/dpkrn/codeforces
                   </a>
                 </p>
                 <p className="text-sm md:text-base text-white">
@@ -209,10 +209,10 @@ const Documentation = () => {
               </div>
                <p className="text-sm md:text-2xl dark:text-gray-200">
               <a
-                href="https://linkb-one.vercel.app/dpkrn/"
+                href="https://clickly.cv/dpkrn/"
                 className="text-blue-500 dark:text-blue-400 underline font-mono"
               >
-                https://linkb-one.vercel.app/dpkrn
+                https://clickly.cv/dpkrn
                
               </a>
             </p>
@@ -226,10 +226,10 @@ const Documentation = () => {
             </div>
             <p className="text-sm md:text-2xl dark:text-gray-200">
               <a
-                href="https://linkb-one.vercel.app/dpkrn/linkedin"
+                href="https://clickly.cv/dpkrn/linkedin"
                 className="text-blue-500 dark:text-blue-400 underline font-mono"
               >
-                https://linkb-one.vercel.app/dpkrn/
+                https://clickly.cv/dpkrn/
                 <FlipWords className="text-blue-500 dark:text-blue-400" words={plateforms} />{" "}
               </a>
             </p>
@@ -264,7 +264,7 @@ const Documentation = () => {
            {
             img: "logo.png",
             title: "All links at one place",
-            desc: "Get a single special link for all your platforms, just like Linktree. Share one URL (e.g., https://linkb-one.vercel.app/username) and let your audience access all your profiles from one place.",
+            desc: "Get a single special link for all your platforms, just like Linktree. Share one URL (e.g., https://clickly.cv/username) and let your audience access all your profiles from one place.",
           },
           {
             img: "update.webp",
@@ -334,7 +334,7 @@ const Documentation = () => {
             <li>
               <b className="text-gray-900 dark:text-gray-100">Choose a Username</b>: Pick a username that's easy to remember
               (e.g., dpkrn). Your link will follow this format:
-              `https://linkb-one.vercel.app/your-username/instagram`.
+              `https://clickly.cv/your-username/instagram`.
             </li>
             <li>
               <b className="text-gray-900 dark:text-gray-100">Verify Your Account</b>: Complete email verification to
@@ -361,19 +361,19 @@ const Documentation = () => {
             <p className="text-lg dark:text-gray-300">
               Instagram:{" "}
               <a
-                href="https://linkb-one.vercel.app/dpkrn/instagram"
+                href="https://clickly.cv/dpkrn/instagram"
                 className="text-blue-500 dark:text-blue-400 underline"
               >
-                https://linkb-one.vercel.app/dpkrn/instagram
+                https://clickly.cv/dpkrn/instagram
               </a>
             </p>
             <p className="text-lg dark:text-gray-300">
               LeetCode:{" "}
               <a
-                href="https://linkb-one.vercel.app/dpkrn/leetcode"
+                href="https://clickly.cv/dpkrn/leetcode"
                 className="text-blue-500 dark:text-blue-400 underline"
               >
-                https://linkb-one.vercel.app/dpkrn/leetcode
+                https://clickly.cv/dpkrn/leetcode
               </a>
             </p>
           </div>

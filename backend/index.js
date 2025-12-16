@@ -69,7 +69,7 @@ app.use(helmet.contentSecurityPolicy({
     scriptSrc: ["'self'", "https://vercel.live", "https://*.vercel.app"],  // Allow Vercel scripts
     imgSrc: ["'self'", "data:", "https://res.cloudinary.com"],  // Add your image host if needed
     styleSrc: ["'self'", "'unsafe-inline'"],  // Allow inline styles if needed
-    connectSrc: ["'self'", "https://linkb-one.vercel.app","https://linkb-one.vercel.app/*","https://clickly.cv/*"],  // Add your API backend here
+    connectSrc: ["'self'", "https://clickly.cv","https://clickly.cv/*"],  // Add your API backend here
     // Add more directives as needed
   }
 }));

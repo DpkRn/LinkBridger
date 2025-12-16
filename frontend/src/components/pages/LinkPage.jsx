@@ -72,7 +72,7 @@ const LinkPage = () => {
       <span className="mt-8 font-bold text-red-600 dark:text-red-400 mx-1 transition-colors duration-300">Your linktree is live on:</span> 
       <div className="px-4 py-2 mx-1 bg-black/80 dark:bg-gray-800 text-white dark:text-gray-200 rounded-md flex items-center break-words gap-3 transition-colors duration-300">
       <span className="break-all font-mono" ref={linkRef}>
-        {`https://linkb-one.vercel.app/${username}`}
+        {`https://clickly.cv/${username}`}
       </span>
       <span>
         <MdContentCopy

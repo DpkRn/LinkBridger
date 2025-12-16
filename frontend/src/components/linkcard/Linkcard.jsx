@@ -95,7 +95,7 @@ const Linkcard = ({ sources }) => {
         <div className="">
           <div className="px-4 py-2 bg-black/80 dark:bg-gray-800 text-white dark:text-gray-200 rounded-md flex items-center break-words gap-3 transition-colors duration-300">
             <span className="break-all font-mono" ref={linkRef}>
-              {`https://linkb-one.vercel.app/${username}/${source}`}
+              {`https://clickly.cv/${username}/${source}`}
             </span>
             <span>
               <MdContentCopy
