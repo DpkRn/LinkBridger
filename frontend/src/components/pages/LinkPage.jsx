@@ -184,7 +184,7 @@ const LinkPage = () => {
                     </p>
                   </div>
                 </div>
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 bg-gray-800/90 dark:bg-gray-800/30 rounded-2xl border border-gray-700/50 dark:border-white/10">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 bg-gray-800/40 dark:bg-gray-800/30 rounded-2xl border border-gray-700/30 dark:border-white/10">
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-gray-300 dark:text-gray-500 mb-2 font-semibold">
                       Hub Link:

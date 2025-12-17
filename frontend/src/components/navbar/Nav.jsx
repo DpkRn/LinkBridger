@@ -151,7 +151,7 @@ const Nav = () => {
   ];
 
   return (
-    <nav className="sticky top-0 z-50 backdrop-blur-xl bg-white/10 dark:bg-gray-900/50 border-b border-white/20 dark:border-gray-700/50 shadow-lg">
+    <nav className="sticky top-0 z-50 backdrop-blur-xl bg-gray-800/95 dark:bg-gray-900/50 border-b border-gray-700/50 dark:border-gray-700/50 shadow-lg">
       {/* Interactive Background Gradient */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div
@@ -239,8 +239,8 @@ const Nav = () => {
                     to={link.to}
                     className={`relative px-4 py-2 rounded-lg font-medium text-sm md:text-base transition-all duration-200 ${
                       isActive
-                        ? "text-white bg-gradient-to-r from-purple-600/30 via-pink-600/30 to-blue-600/30"
-                        : "text-gray-300 hover:text-white hover:bg-white/10"
+                        ? "text-white dark:text-white bg-gradient-to-r from-purple-600/30 via-pink-600/30 to-blue-600/30"
+                        : "text-white dark:text-gray-300 hover:text-white dark:hover:text-white hover:bg-white/10 dark:hover:bg-white/10"
                     }`}
                   >
                     <span className="flex items-center gap-2">
@@ -309,10 +309,10 @@ const Nav = () => {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -10, scale: 0.95 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute right-0 mt-2 w-80 md:w-96 origin-top-right rounded-2xl bg-white/10 dark:bg-gray-900/90 backdrop-blur-xl border border-white/20 dark:border-gray-700/50 shadow-2xl overflow-hidden"
+                    className="absolute right-0 z-[100] mt-2 w-80 md:w-96 origin-top-right rounded-2xl bg-gray-800/95 dark:bg-gray-900/90 backdrop-blur-xl border border-gray-700/50 dark:border-gray-700/50 shadow-2xl overflow-hidden"
                   >
-                    <div className="p-4 border-b border-white/10 dark:border-gray-700/50">
-                      <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                    <div className="p-4 border-b border-gray-600/30 dark:border-gray-700/50">
+                      <h3 className="text-lg font-bold text-white dark:text-white flex items-center gap-2">
                         <FaBell className="text-purple-400" />
                         Notifications
                         {notifications > 0 && (
@@ -326,7 +326,7 @@ const Nav = () => {
                       <Notification />
                     </div>
                     {notifications > 0 && (
-                      <div className="p-4 border-t border-white/10 dark:border-gray-700/50">
+                      <div className="p-4 border-t border-gray-600/30 dark:border-gray-700/50">
                         <motion.button
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
@@ -371,17 +371,17 @@ const Nav = () => {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -10, scale: 0.95 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-2xl bg-white/10 dark:bg-gray-900/90 backdrop-blur-xl border border-white/20 dark:border-gray-700/50 shadow-2xl overflow-hidden"
+                    className="absolute right-0 z-[100] mt-2 w-56 origin-top-right rounded-2xl bg-gray-800/95 dark:bg-gray-900/90 backdrop-blur-xl border border-gray-700/50 dark:border-gray-700/50 shadow-2xl overflow-hidden"
                     role="menu"
                   >
                     <div className="p-2">
-                      <div className="px-4 py-3 border-b border-white/10 dark:border-gray-700/50">
-                        <p className="text-sm font-semibold text-white uppercase">{username}</p>
-                        <p className="text-xs text-gray-400 mt-1">Welcome back!</p>
+                      <div className="px-4 py-3 border-b border-gray-600/30 dark:border-gray-700/50">
+                        <p className="text-sm font-semibold text-white dark:text-white uppercase">{username}</p>
+                        <p className="text-xs text-gray-300 dark:text-gray-400 mt-1">Welcome back!</p>
                       </div>
                       <motion.div
                         whileHover={{ x: 5 }}
-                        className="flex items-center gap-3 px-4 py-3 text-sm text-gray-200 hover:text-white hover:bg-white/10 dark:hover:bg-gray-800/50 rounded-lg cursor-pointer transition-colors duration-200"
+                        className="flex items-center gap-3 px-4 py-3 text-sm text-white dark:text-gray-200 hover:text-white dark:hover:text-white hover:bg-white/10 dark:hover:bg-gray-800/50 rounded-lg cursor-pointer transition-colors duration-200"
                         role="menuitem"
                         onClick={handleProfileClick}
                       >
@@ -390,7 +390,7 @@ const Nav = () => {
                       </motion.div>
                       <motion.div
                         whileHover={{ x: 5 }}
-                        className="flex items-center gap-3 px-4 py-3 text-sm text-gray-200 hover:text-white hover:bg-white/10 dark:hover:bg-gray-800/50 rounded-lg cursor-pointer transition-colors duration-200"
+                        className="flex items-center gap-3 px-4 py-3 text-sm text-white dark:text-gray-200 hover:text-white dark:hover:text-white hover:bg-white/10 dark:hover:bg-gray-800/50 rounded-lg cursor-pointer transition-colors duration-200"
                         role="menuitem"
                       >
                         <FaCog className="w-4 h-4 text-blue-400" />
@@ -398,7 +398,7 @@ const Nav = () => {
                       </motion.div>
                       <motion.div
                         whileHover={{ x: 5 }}
-                        className="flex items-center gap-3 px-4 py-3 text-sm text-red-300 hover:text-red-400 hover:bg-red-500/10 rounded-lg cursor-pointer transition-colors duration-200"
+                        className="flex items-center gap-3 px-4 py-3 text-sm text-red-300 dark:text-red-300 hover:text-red-200 dark:hover:text-red-400 hover:bg-red-500/10 rounded-lg cursor-pointer transition-colors duration-200"
                         role="menuitem"
                         onClick={handleSignOut}
                       >
@@ -421,7 +421,7 @@ const Nav = () => {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -300 }}
               transition={{ duration: 0.3 }}
-              className="sm:hidden fixed inset-y-0 left-0 w-64 z-50 bg-white/10 dark:bg-gray-900/95 backdrop-blur-xl border-r border-white/20 dark:border-gray-700/50 shadow-2xl"
+              className="sm:hidden fixed inset-y-0 left-0 w-64 z-50 bg-gray-800/95 dark:bg-gray-900/95 backdrop-blur-xl border-r border-gray-700/50 dark:border-gray-700/50 shadow-2xl"
               id="mobile-menu"
             >
               <div className="p-4 space-y-2">
@@ -435,8 +435,8 @@ const Nav = () => {
                       onClick={() => dispatch(setSidebarMenu(false))}
                       className={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all duration-200 ${
                         isActive
-                          ? "text-white bg-gradient-to-r from-purple-600/30 via-pink-600/30 to-blue-600/30"
-                          : "text-gray-300 hover:text-white hover:bg-white/10"
+                          ? "text-white dark:text-white bg-gradient-to-r from-purple-600/30 via-pink-600/30 to-blue-600/30"
+                          : "text-white dark:text-gray-300 hover:text-white dark:hover:text-white hover:bg-white/10 dark:hover:bg-white/10"
                       }`}
                     >
                       <Icon className="w-5 h-5" />

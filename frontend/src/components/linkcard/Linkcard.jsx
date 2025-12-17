@@ -118,7 +118,7 @@ const Linkcard = ({ sources }) => {
             </div>
 
             {/* Personalized Link */}
-            <div className="p-4 bg-gray-900/50 dark:bg-gray-800/30 rounded-2xl border border-gray-600/30 dark:border-white/10">
+            <div className="p-4 bg-gray-800/40 dark:bg-gray-800/30 rounded-2xl border border-gray-700/30 dark:border-white/10">
               <p className="text-xs text-gray-300 dark:text-gray-500 mb-2 font-semibold">
                 Your Personalized Link:
               </p>

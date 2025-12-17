@@ -20,10 +20,10 @@ const Notification = () => {
             <FaMousePointer className="w-8 h-8 text-purple-400" />
           </div>
           <div>
-            <p className="text-gray-300 dark:text-gray-400 font-semibold text-lg mb-1">
+            <p className="text-gray-900 dark:text-gray-400 font-semibold text-lg mb-1">
               No New Activity
             </p>
-            <p className="text-gray-400 dark:text-gray-500 text-sm">
+            <p className="text-gray-700 dark:text-gray-500 text-sm">
               You're all caught up! Check back later for new clicks.
             </p>
           </div>
@@ -42,7 +42,7 @@ const Notification = () => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 20 }}
             transition={{ duration: 0.3, delay: index * 0.1 }}
-            className="mb-3 p-4 rounded-xl bg-white/5 dark:bg-gray-800/30 hover:bg-white/10 dark:hover:bg-gray-700/50 border border-white/10 dark:border-gray-700/50 transition-all duration-200 group"
+            className="mb-3 p-4 rounded-xl bg-gray-700/30 dark:bg-gray-800/30 hover:bg-gray-700/40 dark:hover:bg-gray-700/50 border border-gray-600/30 dark:border-gray-700/50 transition-all duration-200 group"
           >
             <div className="flex items-start gap-3">
               {/* Icon */}
@@ -56,14 +56,14 @@ const Notification = () => {
               {/* Content */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-white font-semibold text-sm">
+                  <span className="text-white dark:text-white font-semibold text-sm">
                     {link.notSeen} {link.notSeen === 1 ? 'New Click' : 'New Clicks'}
                   </span>
-                  <span className="px-2 py-0.5 rounded-full bg-gradient-to-r from-purple-500/30 to-pink-500/30 text-xs font-bold text-purple-300 border border-purple-400/30">
+                  <span className="px-2 py-0.5 rounded-full bg-gradient-to-r from-purple-500/30 to-pink-500/30 text-xs font-bold text-purple-300 dark:text-purple-300 border border-purple-400/30">
                     {link.source.toUpperCase()}
                   </span>
                 </div>
-                <p className="text-gray-400 dark:text-gray-500 text-xs flex items-center gap-2">
+                <p className="text-gray-300 dark:text-gray-500 text-xs flex items-center gap-2">
                   <FaLink className="w-3 h-3" />
                   <span className="truncate">
                     {link.destination || 'Your personalized link'}

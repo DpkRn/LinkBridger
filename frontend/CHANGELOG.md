@@ -46,10 +46,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Better spacing and typography for improved readability
   - Consistent design language with the rest of the application
 
-+- **LinkPage Light Mode Dark Link Containers**: Added darker containers only for link sections in light mode
-  - Kept main card backgrounds as `bg-white/10` (reverted from dark containers)
-  - Only link containers (inner divs showing actual links) use `bg-gray-800/90` in light mode
-  - Link text uses white color for better readability on dark link containers
++- **Nav Component Light Mode Visibility**: Improved navigation links and navbar visibility in light mode
+  - Changed navbar background from `bg-white/10` to `bg-gray-800/95` in light mode for better visibility
+  - Updated navbar border from `border-white/20` to `border-gray-700/50` in light mode
+  - Desktop nav links: Changed inactive links from `text-gray-300` to `text-gray-900 dark:text-gray-300` for better contrast
+  - Desktop nav links: Updated active link text to `text-white dark:text-white` for consistency
+  - Mobile sidebar: Changed background from `bg-white/10` to `bg-gray-800/95` in light mode
+  - Mobile sidebar links: Updated to `text-white dark:text-gray-300` for better visibility
+  - Maintained all dark mode styles unchanged
+
++- **Notification and Profile Menu Z-Index and Light Mode Visibility**: Fixed overlapping issues and improved visibility
+  - Increased z-index from `z-10` to `z-[100]` for both notification dropdown and profile menu to appear above other elements
+  - Changed notification dropdown background from `bg-white/10` to `bg-gray-800/95` in light mode (95% opacity for better visibility)
+  - Changed profile menu background from `bg-white/10` to `bg-gray-800/95` in light mode
+  - Updated borders from `border-white/20` to `border-gray-700/50` in light mode for better definition
+  - Updated notification item backgrounds to `bg-gray-700/30` in light mode for better contrast
+  - Changed all text colors to white/light colors for readability on dark backgrounds in light mode
+  - Maintained all dark mode styles unchanged
+  - Fixed overlapping with Create Bridge button and other page elements
+
++- **Notification and Profile Menu Light Mode Text Visibility**: Improved text visibility in light mode
+  - Notification empty state: Changed `text-gray-300` to `text-gray-900` and `text-gray-400` to `text-gray-700`
+  - Notification items: Changed count text from `text-white` to `text-gray-900 dark:text-white`
+  - Notification badge: Changed `text-purple-300` to `text-purple-600 dark:text-purple-300` for better contrast
+  - Notification destination: Changed `text-gray-400` to `text-gray-700` for better readability
+  - Profile menu dropdown: Changed username from `text-white` to `text-gray-900 dark:text-white`
+  - Profile menu welcome text: Changed `text-gray-400` to `text-gray-700 dark:text-gray-400`
+  - Profile menu items: Changed `text-gray-200` to `text-gray-900 dark:text-gray-200` for better visibility
+  - Profile menu sign out: Changed `text-red-300` to `text-red-600 dark:text-red-300` for better contrast
+  - Notification dropdown header: Changed title from `text-white` to `text-gray-900 dark:text-white`
+  - Maintained all dark mode styles unchanged
+
++- **LinkPage Light Mode Transparent Link Containers**: Made link containers more transparent and less dark
+  - Reduced link container opacity from `bg-gray-800/90` to `bg-gray-800/40` in light mode for better transparency
+  - Reduced border opacity from `border-gray-700/50` to `border-gray-700/30` for lighter appearance
+  - Link text remains white for readability on semi-transparent dark containers
   - Maintained all dark mode styles unchanged
   - Applied to Hub Link container and Personalized Link containers in Linkcard components
 
