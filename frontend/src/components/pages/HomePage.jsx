@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useTransform, useInView } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { toggleDarkMode } from '../../redux/pageSlice';
 import { TypewriterEffect, TypewriterEffectSmooth } from '../ui/typewriter-effect';
 import { FlipWords } from '../ui/flip-words';
 import { BackgroundBeamsWithCollision } from '../ui/background-beams-with-collision';
@@ -30,6 +31,7 @@ import {
   SiYoutube,
   SiX
 } from 'react-icons/si';
+import { MdDarkMode, MdLightMode } from 'react-icons/md';
 
 // AnimatedCounter component moved outside to prevent recreation on every parent re-render
 const AnimatedCounter = ({ end, duration = 2000, suffix = "", statsInView }) => {
@@ -97,7 +99,9 @@ const AnimatedCounter = ({ end, duration = 2000, suffix = "", statsInView }) => 
 const HomePage = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
   const isAuthenticated = useSelector(store => store.admin.isAuthenticated);
+  const darkMode = useSelector(store => store.page.darkMode);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const heroRef = useRef(null);
   const statsRef = useRef(null);
@@ -303,14 +307,14 @@ const HomePage = () => {
   ];
 
   return (
-    <div className="min-h-screen w-full overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen w-full overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 dark:from-gray-950 dark:via-purple-950 dark:to-gray-950">
       {/* Navigation Header for Non-Authenticated Users */}
       {!isAuthenticated && location.pathname === '/' && (
         <motion.nav
           initial={{ y: -100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.6 }}
-          className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 shadow-lg"
+          className="fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 shadow-lg"
         >
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16">
@@ -320,24 +324,41 @@ const HomePage = () => {
                 onClick={() => navigate('/')}
               >
                 <img
-                  className="h-10 w-auto dark:brightness-0 dark:invert transition-all duration-300"
+                  className="h-10 w-auto transition-all duration-300"
                   src="logo.png"
                   alt="LinkBridger Logo"
                   onError={(e) => {
                     e.target.src = 'https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500';
                   }}
                 />
-                <span className="hidden sm:inline text-lg sm:text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                <span className="hidden sm:inline text-lg sm:text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 dark:from-purple-600 dark:to-pink-600 bg-clip-text text-transparent">
                   LinkBridger
                 </span>
               </motion.div>
               
               <div className="flex items-center gap-2 sm:gap-4">
+                {/* Dark Mode Toggle */}
+                <motion.button
+                  type="button"
+                  whileHover={{ scale: 1.1, rotate: 15 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => dispatch(toggleDarkMode())}
+                  className="relative rounded-lg bg-white/90 dark:bg-gray-800/50 backdrop-blur-sm p-2.5 text-gray-800 dark:text-gray-300 hover:text-purple-600 dark:hover:text-yellow-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-transparent transition-all duration-200 hover:bg-white dark:hover:bg-gray-700/50 border border-gray-300 dark:border-gray-700/50 shadow-md"
+                  aria-label="Toggle dark mode"
+                  title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+                >
+                  {darkMode ? (
+                    <MdLightMode className="h-5 w-5 text-yellow-300" />
+                  ) : (
+                    <MdDarkMode className="h-5 w-5 text-gray-800" />
+                  )}
+                </motion.button>
+                
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => navigate('/doc')}
-                  className="px-3 py-1.5 sm:px-4 sm:py-2 text-sm sm:text-base text-gray-700 dark:text-gray-300 font-medium hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
+                  className="px-3 py-1.5 sm:px-4 sm:py-2 text-sm sm:text-base text-gray-800 dark:text-gray-300 font-medium hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
                 >
                   Docs
                 </motion.button>
@@ -363,7 +384,7 @@ const HomePage = () => {
       >
         {/* Animated Background */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-pink-500/10 to-blue-500/10 dark:from-purple-500/20 dark:via-pink-500/20 dark:to-blue-500/20" />
+          <div className="absolute inset-0 bg-gradient-to-br from-purple-50/60 via-pink-50/60 to-blue-50/60 dark:from-purple-500/20 dark:via-pink-500/20 dark:to-blue-500/20" />
           <motion.div
             className="absolute inset-0"
             animate={{
@@ -374,7 +395,7 @@ const HomePage = () => {
             }}
             transition={{ duration: 0.5 }}
             style={{
-              backgroundImage: `radial-gradient(circle at ${mousePosition.x}% ${mousePosition.y}%, rgba(147, 51, 234, 0.15), transparent 50%)`,
+              backgroundImage: `radial-gradient(circle at ${mousePosition.x}% ${mousePosition.y}%, rgba(147, 51, 234, 0.08), transparent 50%)`,
             }}
           />
         </div>
@@ -395,7 +416,7 @@ const HomePage = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.3 }}
-              className="text-2xl md:text-4xl font-semibold text-gray-700 dark:text-gray-300 mb-4"
+              className="text-2xl md:text-4xl font-semibold text-gray-800 dark:text-gray-300 mb-4"
             >
               Create personalized links for your{' '}
               <span className="inline-block">
@@ -446,7 +467,7 @@ const HomePage = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => navigate('/doc')}
-                className="px-6 py-3 sm:px-8 sm:py-4 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 font-bold text-base sm:text-lg rounded-full shadow-xl border-2 border-purple-600 dark:border-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all duration-300 w-full sm:w-auto"
+                className="px-6 py-3 sm:px-8 sm:py-4 bg-white dark:bg-gray-800 backdrop-blur-sm text-gray-800 dark:text-gray-200 font-bold text-base sm:text-lg rounded-full shadow-xl border-2 border-purple-600 dark:border-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all duration-300 w-full sm:w-auto"
               >
                 Learn More
               </motion.button>
@@ -459,7 +480,7 @@ const HomePage = () => {
               transition={{ duration: 0.8, delay: 0.9 }}
               className="mt-16"
             >
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">Works with all platforms</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">Works with all platforms</p>
               <div className="flex flex-wrap justify-center gap-6">
                 {platforms.map((platform, index) => (
                   <motion.div
@@ -500,7 +521,7 @@ const HomePage = () => {
       </motion.section>
 
       {/* Statistics Section */}
-      <section ref={statsRef} className="py-20 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
+      <section ref={statsRef} className="py-20 bg-gradient-to-br from-purple-50/80 via-pink-50/80 to-blue-50/80 dark:bg-transparent backdrop-blur-sm">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -526,7 +547,7 @@ const HomePage = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 whileHover={{ scale: 1.05, y: -5 }}
-                className="text-center p-4 sm:p-6 rounded-xl sm:rounded-2xl bg-gradient-to-br from-purple-50 to-pink-50 dark:from-gray-700 dark:to-gray-800 border border-purple-200 dark:border-purple-800 shadow-lg hover:shadow-xl transition-all"
+                className="text-center p-4 sm:p-6 rounded-xl sm:rounded-2xl bg-white/90 dark:bg-gray-900/50 backdrop-blur-xl border border-purple-200/60 dark:border-gray-700/50 shadow-lg hover:shadow-xl hover:border-purple-300/80 transition-all"
               >
                 <div className="text-3xl md:text-4xl mb-2 text-purple-600 dark:text-purple-400 flex justify-center">
                   {stat.icon}
@@ -548,7 +569,7 @@ const HomePage = () => {
       </section>
 
       {/* Features Section */}
-      <section ref={featuresRef} className="py-20 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      <section ref={featuresRef} className="py-20 bg-gradient-to-br from-blue-50/80 via-purple-50/80 to-pink-50/80 dark:bg-transparent backdrop-blur-sm">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -574,7 +595,7 @@ const HomePage = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: feature.delay }}
                 whileHover={{ y: -10, scale: 1.02 }}
-                className="group relative p-6 sm:p-8 rounded-xl sm:rounded-2xl bg-white dark:bg-gray-800 border-2 border-transparent hover:border-purple-500 dark:hover:border-purple-400 shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden"
+                className="group relative p-6 sm:p-8 rounded-xl sm:rounded-2xl bg-white/90 dark:bg-gray-900/50 backdrop-blur-xl border border-purple-200/60 dark:border-gray-700/50 hover:border-purple-400 dark:hover:border-purple-400 shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden"
               >
                 <div className={`absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`} />
                 <div className={`relative text-5xl mb-4 bg-gradient-to-r ${feature.color} bg-clip-text text-transparent`}>
@@ -596,7 +617,7 @@ const HomePage = () => {
       </section>
 
       {/* Benefits Section */}
-      <section ref={benefitsRef} className="py-20 bg-white dark:bg-gray-900">
+      <section ref={benefitsRef} className="py-20 bg-white/80 dark:bg-transparent backdrop-blur-sm">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}

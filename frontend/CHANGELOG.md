@@ -7,6 +7,49 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - 2024-12-19
++- **HomePage Background Gradients for Card Effects**: Added subtle gradients to section backgrounds to enhance card visual appeal
+  - Statistics section: Added gradient background (`from-purple-50/80 via-pink-50/80 to-blue-50/80`) in light mode
+  - Features section: Added gradient background (`from-blue-50/80 via-purple-50/80 to-pink-50/80`) in light mode
+  - Benefits section: Added gradient background (`from-blue-50/80 via-indigo-50/80 to-purple-50/80`) in light mode
+  - Hero section: Updated gradient to lighter tones (`from-purple-50/60 via-pink-50/60 to-blue-50/60`) in light mode
+  - Statistics cards: Updated to `bg-white/90` with purple-tinted borders (`border-purple-200/60`) for better contrast
+  - Features cards: Updated to `bg-white/90` with purple-tinted borders (`border-purple-200/60`) for better contrast
+  - Added hover effects on card borders for better interactivity
+  - Reduced radial gradient opacity in hero section for subtler effect
+  - All gradients use low opacity (80% or 60%) to maintain readability while adding visual depth
+  - Dark mode remains unchanged with transparent backgrounds
+
++- **HomePage Light Mode Visibility Improvements**: Improved visibility in light mode with lighter backgrounds and better text contrast
+  - Changed main background from dark (`from-slate-900 via-purple-900 to-slate-900`) to light (`from-slate-50 via-blue-50 to-purple-50`) in light mode
+  - Statistics section: Added light background (`bg-white/80`) in light mode with backdrop blur
+  - Features section: Added light gradient background (`from-blue-50 via-purple-50 to-pink-50`) in light mode
+  - Benefits section: Added light background (`bg-white/80`) in light mode with backdrop blur
+  - Updated all text colors: headings use `text-gray-800` in light mode, body text uses `text-gray-600`
+  - Statistics cards: Changed from glassmorphism to solid white background (`bg-white`) in light mode
+  - Features cards: Changed from glassmorphism to solid white background (`bg-white`) in light mode
+  - Updated navigation bar: Changed to white background (`bg-white/95`) in light mode for better visibility
+  - Updated dark mode toggle button: Changed to white background (`bg-white/90`) with dark text in light mode
+  - Updated hero section background: Lighter gradient (`from-purple-100/50 via-pink-100/50 to-blue-100/50`) in light mode
+  - All sections now have proper contrast and visibility in both light and dark modes
+  - Dark mode remains unchanged with dark backgrounds and light text
+
++- **HomePage Dark Mode Toggle Button**: Added dark mode/light mode toggle button to HomePage
+  - Added dark mode toggle button in the navigation header (similar to Nav component)
+  - Imported `useDispatch` and `toggleDarkMode` from Redux
+  - Imported `MdDarkMode` and `MdLightMode` icons from react-icons
+  - Toggle button positioned between logo and navigation links
+  - Button has hover effects (scale and rotate) and smooth transitions
+  - Shows sun icon (MdLightMode) in dark mode and moon icon (MdDarkMode) in light mode
+  - Button styled with glassmorphism design matching the application theme
+  - HomePage now defaults to dark mode background (`from-slate-900 via-purple-900 to-slate-900`)
+  - Updated all text colors to work properly in both light and dark modes
+  - Updated navigation bar background to dark (`bg-gray-800/95`) in light mode for consistency
+  - All sections (Statistics, Features, Benefits) now use transparent backgrounds to inherit dark theme
+  - Updated all text colors: headings use `text-white dark:text-gray-200`, body text uses `text-gray-300 dark:text-gray-400`
+  - Cards use glassmorphism with `bg-white/10` backgrounds for proper contrast
+  - Maintains responsive design and all animations
+
 ### Fixed - 2024-12-19
 +- **Nav Component Complete Redesign**: Completely redesigned the navigation bar with modern interactive design
   - Implemented glassmorphism design with backdrop blur and gradient borders
