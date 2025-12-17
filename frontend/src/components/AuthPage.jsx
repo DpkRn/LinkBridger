@@ -18,12 +18,21 @@ const AuthPage = () => {
   const [isShow, setShow] = useState(false);
   const [isShowSignup, setShowSignup] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const isMountedRef = useRef(true);
 
   const [loginemail, setLoginEmail] = useState("");
   const [loginpassword, setLoginPassword] = useState("");
   const [signinemail, setSigninEmail] = useState("");
   const [signinpassword, setSigninPassword] = useState("");
   const [username, setUsername] = useState("");
+
+  // Track component mount status
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   // Mouse tracking for interactive background
   useEffect(() => {
@@ -48,6 +57,10 @@ const AuthPage = () => {
       );
       if (res.status === 201 && res.data.success) {
         toast.success(res.data.message);
+        // Set loading to false before navigation to prevent state update on unmounted component
+        if (isMountedRef.current) {
+          setLoading(false);
+        }
         navigate("/verify", {
           state: {
             username: username,
@@ -55,16 +68,25 @@ const AuthPage = () => {
             password: signinpassword,
           },
         });
+        return; // Exit early to prevent finally block from executing
       }
     } catch (err) {
       console.log(err);
       const message = err.response?.data?.message || "Network Slow ! Try again";
       toast.error(message);
       if (err.status === 409) {
+        // Set loading to false before navigation
+        if (isMountedRef.current) {
+          setLoading(false);
+        }
         navigate("/login");
+        return; // Exit early to prevent finally block from executing
       }
     } finally {
-      setLoading(false);
+      // Only update loading state if component is still mounted
+      if (isMountedRef.current) {
+        setLoading(false);
+      }
     }
   };
 
@@ -83,14 +105,22 @@ const AuthPage = () => {
         setLoginEmail("");
         setLoginPassword("");
         toast.success(`Welcome ${res.data.user.username}!`);
+        // Set loading to false before navigation to prevent state update on unmounted component
+        if (isMountedRef.current) {
+          setLoading(false);
+        }
         navigate("/home", { replace: true });
+        return; // Exit early to prevent finally block from executing
       }
     } catch (err) {
       console.log(err);
       const message = err.response?.data?.message || "Network Slow ! Try again";
       toast.error(message);
     } finally {
-      setLoading(false);
+      // Only update loading state if component is still mounted
+      if (isMountedRef.current) {
+        setLoading(false);
+      }
     }
   };
 

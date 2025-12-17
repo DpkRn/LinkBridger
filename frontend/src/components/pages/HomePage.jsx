@@ -37,49 +37,52 @@ const AnimatedCounter = ({ end, duration = 2000, suffix = "", statsInView }) => 
   const countRef = useRef(null);
   const animationFrameRef = useRef(null);
   const isMountedRef = useRef(true);
+  const hasAnimatedRef = useRef(false);
 
   useEffect(() => {
-    if (!statsInView) return;
-    isMountedRef.current = true;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && isMountedRef.current) {
-          let startTime = null;
-          const animate = (currentTime) => {
-            if (!isMountedRef.current) {
-              // Component unmounted, stop animation
-              return;
-            }
-            
-            if (!startTime) startTime = currentTime;
-            const progress = Math.min((currentTime - startTime) / duration, 1);
-            const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-            
-            if (isMountedRef.current) {
-              setCount(Math.floor(easeOutQuart * end));
-            }
-            
-            if (progress < 1 && isMountedRef.current) {
-              animationFrameRef.current = requestAnimationFrame(animate);
-            } else {
-              animationFrameRef.current = null;
-            }
-          };
-          animationFrameRef.current = requestAnimationFrame(animate);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (countRef.current) {
-      observer.observe(countRef.current);
+    // Reset animation state when end or duration changes
+    if (hasAnimatedRef.current) {
+      setCount(0);
+      hasAnimatedRef.current = false;
+      // Cancel any pending animation
+      if (animationFrameRef.current !== null) {
+        cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
+      }
     }
+
+    // Only start animation if element is in view
+    if (!statsInView) return;
+    
+    isMountedRef.current = true;
+    hasAnimatedRef.current = true;
+
+    let startTime = null;
+    const animate = (currentTime) => {
+      if (!isMountedRef.current) {
+        // Component unmounted, stop animation
+        return;
+      }
+      
+      if (!startTime) startTime = currentTime;
+      const progress = Math.min((currentTime - startTime) / duration, 1);
+      const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+      
+      if (isMountedRef.current) {
+        setCount(Math.floor(easeOutQuart * end));
+      }
+      
+      if (progress < 1 && isMountedRef.current) {
+        animationFrameRef.current = requestAnimationFrame(animate);
+      } else {
+        animationFrameRef.current = null;
+      }
+    };
+    
+    animationFrameRef.current = requestAnimationFrame(animate);
 
     return () => {
       isMountedRef.current = false;
-      observer.disconnect();
       // Cancel any pending animation frame
       if (animationFrameRef.current !== null) {
         cancelAnimationFrame(animationFrameRef.current);

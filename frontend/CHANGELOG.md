@@ -8,6 +8,232 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed - 2024-12-19
++- **Nav Component Complete Redesign**: Completely redesigned the navigation bar with modern interactive design
+  - Implemented glassmorphism design with backdrop blur and gradient borders
+  - Added interactive mouse-tracking gradient orb background
+  - Redesigned logo section with hover effects and gradient text
+  - Enhanced navigation links with active state indicators using Framer Motion `layoutId`
+  - Added icons to navigation links (FaHome, FaLink, FaBook)
+  - Redesigned dark mode toggle with smooth animations and hover effects
+  - Enhanced notification button with animated badge and modern dropdown
+  - Redesigned profile menu with glassmorphism, icons (FaUser, FaCog, FaSignOutAlt), and smooth animations
+  - Improved mobile menu with slide-in animation and modern styling
+  - Added AnimatePresence for smooth transitions on dropdowns and mobile menu
+  - Consistent gradient color scheme (purple, pink, blue) matching the rest of the application
+  - Improved accessibility with proper ARIA labels and focus states
+
++- **Footer Component Complete Redesign**: Completely redesigned the footer with modern interactive design
+  - Implemented glassmorphism design with backdrop blur and gradient borders
+  - Added interactive mouse-tracking gradient orbs background
+  - Added animated grid pattern for visual depth
+  - Redesigned brand section with hover effects and gradient text
+  - Enhanced footer links with hover animations (translate-x effect) and rocket icons
+  - Redesigned social media icons with hover effects, glassmorphism cards, and smooth animations
+  - Added "Made with ❤️" section with animated heart icon
+  - Improved responsive design with better grid layout
+  - Added Framer Motion animations for scroll-triggered reveals
+  - Consistent gradient color scheme matching the application theme
+  - Improved visual hierarchy and spacing
+
++- **Notification Component Complete Redesign**: Completely redesigned the notification component with improved text and styling
+  - Enhanced notification cards with glassmorphism design and gradient borders
+  - Added icons (FaChartLine, FaLink, FaMousePointer) for better visual communication
+  - Improved text: Changed from "X clicks on Y" to "X New Click(s)" with platform badge
+  - Added empty state with friendly message and icon
+  - Implemented staggered entry animations using Framer Motion
+  - Added hover effects and smooth transitions
+  - Enhanced visual hierarchy with gradient badges and progress indicators
+  - Better spacing and typography for improved readability
+  - Consistent design language with the rest of the application
+
++- **LinkPage Light Mode Dark Link Containers**: Added darker containers only for link sections in light mode
+  - Kept main card backgrounds as `bg-white/10` (reverted from dark containers)
+  - Only link containers (inner divs showing actual links) use `bg-gray-800/90` in light mode
+  - Link text uses white color for better readability on dark link containers
+  - Maintained all dark mode styles unchanged
+  - Applied to Hub Link container and Personalized Link containers in Linkcard components
+
++- **LinkPage Light Mode Text Visibility**: Improved text visibility in light mode for LinkPage and Linkcard components
+  - Changed text colors from `text-white` to `text-gray-900 dark:text-white` for headings and important text
+  - Changed `text-gray-300` to `text-gray-700` for body text in light mode
+  - Changed `text-gray-400` to `text-gray-700` for labels and secondary text in light mode
+  - Maintained all dark mode styles unchanged
+  - Improved contrast and readability across all text elements in light mode
+
++- **CreateBridge and LinkPage Excessive Gap**: Fixed excessive spacing between CreateBridge and LinkPage components
+  - Removed `min-h-screen` from both components since they're sections within Dashboard, not standalone pages
+  - Removed duplicate background containers (Dashboard now provides the background)
+  - Changed padding from `min-h-screen p-4` to `py-8 md:py-12 px-4` for more reasonable section spacing
+  - Components now flow seamlessly as sections within the Dashboard without forced full-screen heights
+  - Maintains all interactive background effects while eliminating excessive gaps
+
++- **Content.jsx Design Consistency**: Fixed visual inconsistency between Content, CreateBridge, and LinkPage components
+  - Updated Dashboard background to match dark theme (`from-slate-900 via-purple-900 to-slate-900`)
+  - Removed duplicate background container from Content.jsx to allow seamless flow with Dashboard
+  - Standardized gradient orbs pattern to match CreateBridge and LinkPage (purple, pink, blue with /20 opacity)
+  - Updated animated grid pattern to match other components
+  - Adjusted text colors and icon opacity to work consistently across all sections
+  - All three sections (Content, CreateBridge, LinkPage) now appear as one cohesive page with seamless transitions
+  - Maintains interactive mouse-tracking background effects across all sections
+
++- **linktree.ejs Profile Picture Centering**: Fixed profile picture alignment
+  - Profile picture was appearing on the left instead of being horizontally centered
+  - Added `text-align: center` to `.profile` class in styles.css
+  - Profile picture wrapper (inline-block) now centers properly within the profile card
+  - Also centers username, bio, and other text content for better visual balance
+
++- **linktree.ejs CSS Linter Error**: Fixed red line/linter error on EJS template syntax
+  - CSS linter was complaining about EJS syntax `<%= index * 0.1 %>` inside inline style attribute
+  - Changed from inline style with EJS to data attribute `data-delay`
+  - Updated JavaScript to read `data-delay` attribute and apply animation delay programmatically
+  - Eliminates CSS linter false positive while maintaining the same functionality
+  - Animation delay is now applied both via CSS `animationDelay` and JavaScript `setTimeout` timing
+
++- **SVG Attribute Warnings (Nav & Footer)**: Fixed React DOM property warnings for SVG attributes
+  - Converted kebab-case SVG attributes to camelCase as required by React
+  - Fixed `stroke-width` → `strokeWidth` in Nav.jsx (3 occurrences)
+  - Fixed `stroke-linecap` → `strokeLinecap` in Nav.jsx (3 occurrences)
+  - Fixed `stroke-linejoin` → `strokeLinejoin` in Nav.jsx (3 occurrences)
+  - Fixed `fill-rule` → `fillRule` in Footer.jsx (4 occurrences)
+  - Eliminates all React warnings about invalid DOM properties in SVG elements
+
++- **Content Component Icon Import Error**: Fixed `FaSparkles` import error
+  - `FaSparkles` is not exported from `react-icons/fa`
+  - Replaced with `HiSparkles` from `react-icons/hi2` to match usage in other components
+  - Resolves "The requested module does not provide an export named 'FaSparkles'" error
+
++- **AnimatedCounter IntersectionObserver Conflict**: Fixed frozen counter display when props change
+  - Removed redundant internal `IntersectionObserver` that conflicted with parent's `useInView` hook
+  - The component was using both `statsInView` (from parent) and its own observer, causing issues when `end` or `duration` props changed
+  - When props changed, the effect would re-run, disconnect the observer, but the new observer wouldn't fire because `useInView` already triggered with `once: true`
+  - Now uses `statsInView` directly to trigger animation, eliminating the conflict
+  - Added `hasAnimatedRef` to track animation state and properly restart animation when props change
+  - Animation now correctly restarts when `end` or `duration` changes, even if element is already in view
+  - Prevents frozen counter display on subsequent prop updates
+
++- **Content Component Complete Redesign**: Completely redesigned the Content component with modern interactive design
+  - Added interactive mouse-tracking gradient orbs that follow cursor movement
+  - Implemented animated grid pattern background with parallax effect
+  - Redesigned logo/title with gradient text effect and glowing backdrop
+  - Added floating decorative icons (FaLink, FaSparkles, FaRocket) with pulse animations
+  - Enhanced taglines with gradient text highlights and improved typography
+  - Added scroll-triggered animations using Framer Motion's `useInView` hook
+  - Implemented smooth spring animations for all elements
+  - Added decorative wave effect at the bottom
+  - Improved responsive design for all screen sizes
+  - Matches the modern glassmorphism and interactive style of other redesigned pages
+  - Maintains dark mode support with proper color transitions
+
++- **State Update on Unmounted Component (AuthPage)**: Fixed React warnings about state updates on unmounted components
++  - Added `isMountedRef` to track component mount status
++  - Modified `handleSignUp` and `handleLogin` to check `isMountedRef.current` before calling `setLoading(false)` in finally block
++  - Set loading to false before navigation in success paths to prevent finally block from executing after unmount
++  - Added early returns after navigation to prevent finally block execution
++  - Properly handles cleanup in useEffect to set `isMountedRef.current = false` on unmount
++  - Eliminates React warnings about memory leaks and state updates on unmounted components
+
++- **React Hooks Rules Violation (Documentation)**: Fixed hooks being called inside map loop
++  - `useRef()` and `useInView()` were being called inside `features.map()` loop, violating React's Rules of Hooks
++  - Created separate `FeatureCard` component that properly uses hooks at the top level
++  - Each feature card now has its own component instance with proper hook usage
++  - Maintains all animations and functionality while following React best practices
++  - Prevents potential errors when number of features changes between renders
+
++- **CreateBridge Component Complete Redesign**: Completely redesigned the bridge creation/editing component with modern animations
++  - Added interactive mouse-tracking gradient orbs that follow cursor movement
++  - Implemented glassmorphism design with backdrop blur effects throughout
++  - Enhanced form with modern input fields featuring icons and better visual hierarchy
++  - Redesigned header with gradient icon and animated title
++  - Added edit mode indicator with animated badge
++  - Improved input fields with icon indicators (Link icon for platform, Globe icon for URL)
++  - Enhanced action buttons with gradient backgrounds and loading states
++  - Redesigned generated link display with animated entrance and gradient background
++  - Modernized warning modal with glassmorphism, gradient backgrounds, and better visual hierarchy
++  - Added smooth animations for form elements using Framer Motion
++  - Improved visual feedback for all interactions
++  - Fully responsive design optimized for all screen sizes
++  - Better spacing, typography, and color scheme
++  - Maintained all original functionality (create, edit, warning modal, etc.)
+
++- **LinkPage Complete Redesign**: Completely redesigned the user's link management page with modern animations
++  - Added interactive mouse-tracking gradient orbs that follow cursor movement
++  - Implemented glassmorphism design with backdrop blur effects throughout
++  - Enhanced header section with gradient text and modern typography
++  - Redesigned hub link card with icon, better layout, and hover effects
++  - Added stats summary cards showing total links, total clicks, and hub page status
++  - Improved empty state with animated icon and call-to-action button
++  - Enhanced link cards with staggered animations on load
++  - Fully responsive design optimized for all screen sizes
++  - Smooth scroll animations using Framer Motion
++  - Modern gradient buttons with hover effects
++  - Animated grid background pattern for depth
+
++- **Linkcard Component Redesign**: Completely redesigned individual link cards
++  - Modern glassmorphism card design with gradient borders
++  - Redesigned click counter with gradient icon and better visual hierarchy
++  - Enhanced action buttons with gradient backgrounds and hover animations
++  - Added "Open" button to directly visit the link
++  - Improved mobile responsiveness with separate mobile click counter
++  - Better spacing and typography throughout
++  - Smooth hover effects with scale and translate animations
++  - Gradient text for platform names
++  - Modern copy button with gradient background
+
++- **Public Linktree Page Fixes and Enhancements**: Fixed issues and enhanced the public linktree page (linktree.ejs)
++  - **Fixed Mouse Tracking Performance**: Improved mouse tracking with requestAnimationFrame and percentage-based calculations
++    - Changed from direct pixel calculations to percentage-based for better responsiveness
++    - Implemented RAF loop for smooth animations instead of updating on every mousemove
++    - Added proper cleanup to prevent memory leaks
++    - Better performance on all devices
++  - **Fixed Image Loading**: Added fallback image with SVG placeholder if profile image fails to load
+    - Shows user's initial letter in a gradient circle if image is missing
+    - Prevents broken image icons
++  - **Fixed Empty State**: Added proper handling for when user has no links
++    - Shows friendly message instead of empty space
++    - Styled empty state with dashed border
++  - **Enhanced Script Execution**: Improved JavaScript with proper DOM ready checks
++    - Wrapped code in IIFE for better scope management
++    - Added proper event listener cleanup
++    - Prevents errors if elements don't exist
++  - **Added Ripple Effect**: Added click ripple animation on buttons for better feedback
++    - Creates visual feedback when links are clicked
++    - Smooth animation that fades out
++  - **Improved Accessibility**: Added better accessibility features
++    - Added focus states for keyboard navigation
+    - Added proper alt text for images
++    - Added rel="noopener noreferrer" for security
++    - Added meta description for SEO
++  - **Touch Device Optimizations**: Added specific styles for touch devices
++    - Removed hover effects on touch devices
++    - Better active states for mobile
++    - Improved tap targets
++  - **Performance Improvements**: Added will-change properties for better animation performance
++    - Smooth scrolling enabled
++    - Better browser optimization hints
++  - **Enhanced Responsive Design**: Improved mobile experience
++    - Better spacing on very small screens
++    - Adjusted font sizes and letter spacing
++    - Improved button sizes for touch
++  - **Better Error Handling**: Added null checks and error handling throughout
++    - Prevents JavaScript errors if elements are missing
++    - Graceful degradation
+
++- **Public Linktree Page Redesign**: Completely redesigned the public linktree page (linktree.ejs)
++  - Modern glassmorphism design with backdrop blur effects
++  - Interactive mouse-tracking gradient orbs (purple, blue, orange) that follow cursor
++  - Animated grid background pattern for depth
++  - Enhanced profile picture with glowing effect and pulse animation
++  - Gradient username text with animated underline
++  - Modern link buttons with hover effects, scale animations, and shimmer effect
+-  - Smooth fade-in animations for all elements
++  - Smooth fade-in animations for all elements with staggered delays
++  - Arrow indicators on buttons that animate on hover
++  - Heart animation in footer
++  - Fully responsive design for mobile, tablet, and desktop
++  - Updated typography with Poppins and Montserrat fonts
++  - Modern CSS with smooth transitions and animations
++  - Improved accessibility and user experience
+
 +- **Added Missing Features to HomePage and Documentation**: Added two important features that were missing
 +  - **All Links at One Place**: Added feature highlighting the hub link functionality
 +    - Users can access all their links by visiting https://clickly.cv/username (without platform name)

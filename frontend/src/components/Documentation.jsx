@@ -1,6 +1,65 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useInView } from "framer-motion";
 import { motion, AnimatePresence } from "framer-motion";
+
+// Feature Card Component - Separate component to allow hooks usage
+const FeatureCard = ({ feature, idx, hoveredFeature, setHoveredFeature }) => {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-100px" });
+  const IconComponent = feature.icon;
+  const isLeft = idx % 2 === 0;
+
+  return (
+    <motion.div
+      key={feature.title}
+      ref={ref}
+      initial={{ opacity: 0, x: isLeft ? -80 : 80 }}
+      animate={inView ? { opacity: 1, x: 0 } : {}}
+      transition={{ duration: 0.7, type: "spring" }}
+      onHoverStart={() => setHoveredFeature(idx)}
+      onHoverEnd={() => setHoveredFeature(null)}
+      className={`group relative bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-6 md:p-10 overflow-hidden ${
+        isLeft ? "" : "md:flex-row-reverse"
+      } flex flex-col md:flex-row items-center gap-6 md:gap-8 cursor-pointer transition-all duration-300 ${
+        hoveredFeature === idx ? "scale-105" : "scale-100"
+      }`}
+    >
+      {/* Gradient Background on Hover */}
+      <motion.div
+        className={`absolute inset-0 bg-gradient-to-r ${feature.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}
+      />
+      
+      {/* Icon */}
+      <motion.div
+        className={`relative bg-gradient-to-r ${feature.gradient} p-6 rounded-2xl shadow-lg`}
+        whileHover={{ scale: 1.1, rotate: 5 }}
+      >
+        <IconComponent className="text-4xl md:text-5xl text-white" />
+      </motion.div>
+
+      {/* Image */}
+      <motion.img
+        src={feature.img}
+        alt={feature.title}
+        className="h-48 w-48 md:h-64 md:w-64 rounded-2xl object-cover flex-shrink-0 shadow-lg"
+        whileHover={{ scale: 1.1, rotate: 2 }}
+        transition={{ type: "spring", stiffness: 300 }}
+      />
+
+      {/* Content */}
+      <div className="flex-1 text-center md:text-left">
+        <motion.h3
+          className={`text-2xl md:text-3xl font-bold mb-4 bg-gradient-to-r ${feature.gradient} bg-clip-text text-transparent`}
+        >
+          {feature.title}
+        </motion.h3>
+        <motion.p className="text-base md:text-lg text-gray-300 dark:text-gray-400 leading-relaxed">
+          {feature.desc}
+        </motion.p>
+      </div>
+    </motion.div>
+  );
+};
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { TypewriterEffect } from "./ui/typewriter-effect";
@@ -487,63 +546,15 @@ const Documentation = () => {
               Key Features
             </motion.h2>
             <div className="space-y-8 md:space-y-12">
-              {features.map((feature, idx) => {
-                const ref = useRef(null);
-                const inView = useInView(ref, { once: true, margin: "-100px" });
-                const IconComponent = feature.icon;
-                const isLeft = idx % 2 === 0;
-
-                return (
-                  <motion.div
-                    key={feature.title}
-                    ref={ref}
-                    initial={{ opacity: 0, x: isLeft ? -80 : 80 }}
-                    animate={inView ? { opacity: 1, x: 0 } : {}}
-                    transition={{ duration: 0.7, type: "spring" }}
-                    onHoverStart={() => setHoveredFeature(idx)}
-                    onHoverEnd={() => setHoveredFeature(null)}
-                    className={`group relative bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-6 md:p-10 overflow-hidden ${
-                      isLeft ? "" : "md:flex-row-reverse"
-                    } flex flex-col md:flex-row items-center gap-6 md:gap-8 cursor-pointer transition-all duration-300 ${
-                      hoveredFeature === idx ? "scale-105" : "scale-100"
-                    }`}
-                  >
-                    {/* Gradient Background on Hover */}
-                    <motion.div
-                      className={`absolute inset-0 bg-gradient-to-r ${feature.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}
-                    />
-                    
-                    {/* Icon */}
-                    <motion.div
-                      className={`relative bg-gradient-to-r ${feature.gradient} p-6 rounded-2xl shadow-lg`}
-                      whileHover={{ scale: 1.1, rotate: 5 }}
-                    >
-                      <IconComponent className="text-4xl md:text-5xl text-white" />
-                    </motion.div>
-
-                    {/* Image */}
-                    <motion.img
-                      src={feature.img}
-                      alt={feature.title}
-                      className="h-48 w-48 md:h-64 md:w-64 rounded-2xl object-cover flex-shrink-0 shadow-lg"
-                      whileHover={{ scale: 1.1, rotate: 2 }}
-                      transition={{ type: "spring", stiffness: 300 }}
-                    />
-
-                    {/* Content */}
-                    <div className="flex-1 text-center md:text-left">
-                      <motion.h3
-                        className={`text-2xl md:text-3xl font-bold mb-4 bg-gradient-to-r ${feature.gradient} bg-clip-text text-transparent`}
-                      >
-                        {feature.title}
-                      </motion.h3>
-                      <motion.p className="text-base md:text-lg text-gray-300 dark:text-gray-400 leading-relaxed">
-                        {feature.desc}
-                      </motion.p>
-                    </div>
-                  </motion.div>
-                );
-              })}
+              {features.map((feature, idx) => (
+                <FeatureCard
+                  key={feature.title}
+                  feature={feature}
+                  idx={idx}
+                  hoveredFeature={hoveredFeature}
+                  setHoveredFeature={setHoveredFeature}
+                />
+              ))}
             </div>
           </motion.section>
 

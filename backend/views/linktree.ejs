@@ -1,37 +1,187 @@
-<!-- views/profile.ejs -->
+<!-- views/linktree.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="<%=username.toUpperCase()%>'s LinkBridger profile - Connect with all my social media profiles">
     <link rel="icon" type="image/svg+xml" href="<%=dp.image%>" />
-    <title><%=username.toUpperCase()%></title>
+    <title><%=username.toUpperCase()%> - LinkBridger</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div class="background">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+        <div class="grid-pattern"></div>
+    </div>
+    
     <div class="container">
         <div class="profile">
-            <div class="profile-pic">
-                <img src="<%=dp.image%>" alt="Profile Picture">
-            </div>
-            <p class="bio"><%=dp.bio||"bio not available"%></p>
-           
-            <div class="title">
-                <h1><%= username.toUpperCase() %></h1>
+            <div class="profile-pic-wrapper">
+                <div class="profile-pic-glow"></div>
+                <img src="<%=dp.image%>" alt="<%=username.toUpperCase()%>'s Profile Picture" class="profile-pic" onerror="handleImageError(this, '<%=username.charAt(0).toUpperCase()%>')">
             </div>
             
-
-            <div class="links">
-                <%tree.forEach(item =>{
-                    %><div class="link-item">
-                    <a href="https://clickly.cv/<%=item.username%>/<%= item.source %>" class="btn">
-                        <%= item.source.toUpperCase() %>
-                    </a>
-                </div>
-                <%})%> 
+            <div class="username-wrapper">
+                <h1 class="username"><%= username.toUpperCase() %></h1>
+                <div class="username-underline"></div>
             </div>
-            <a class="website" href="https://linkbriger.vercel.app">Click here to make your own links. </a>
+            
+            <p class="bio"><%=dp.bio||"Welcome to my link hub! Explore all my profiles below."%></p>
+           
+            <div class="links">
+                <% if (tree && tree.length > 0) { %>
+                    <% tree.forEach((item, index) => { 
+                        const delay = index * 0.1;
+                    %>
+                        <div class="link-item" data-delay="<%= delay %>">
+                            <a href="https://clickly.cv/<%= item.username %>/<%= item.source %>" class="btn" rel="noopener noreferrer" target="_self">
+                                <span class="btn-text"><%= item.source.toUpperCase() %></span>
+                                <span class="btn-arrow">→</span>
+                            </a>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <div class="no-links">
+                        <p class="no-links-text">No links available yet.</p>
+                    </div>
+                <% } %>
+            </div>
+            
+            <div class="footer">
+                <a class="website" href="https://clickly.cv" rel="noopener noreferrer" target="_blank">
+                    <span>Made with</span>
+                    <span class="heart">❤️</span>
+                    <span>by LinkBridger</span>
+                </a>
+            </div>
         </div>
     </div>
+
+    <script>
+        // Wait for DOM to be fully loaded
+        (function() {
+            'use strict';
+            
+            // Handle image error with fallback
+            window.handleImageError = function(img, initial) {
+                if (img.onerror) {
+                    img.onerror = null;
+                }
+                const svg = encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><circle cx="60" cy="60" r="60" fill="#9333ea"/><text x="50%" y="50%" text-anchor="middle" dy=".3em" font-size="40" fill="white" font-weight="bold">' + initial + '</text></svg>');
+                img.src = 'data:image/svg+xml,' + svg;
+            };
+            
+            // Interactive mouse tracking for gradient orbs
+            let mouseX = 50;
+            let mouseY = 50;
+            let rafId = null;
+            
+            function updateOrbs() {
+                const orbs = document.querySelectorAll('.gradient-orb');
+                if (!orbs.length) return;
+                
+                orbs.forEach((orb, index) => {
+                    const speed = [0.5, 0.3, 0.7][index] || 0.5;
+                    // Use percentage-based positioning for better responsiveness
+                    const x = (mouseX * speed) - (200 * speed);
+                    const y = (mouseY * speed) - (200 * speed);
+                    orb.style.transform = `translate(${x}px, ${y}px)`;
+                });
+                
+                rafId = requestAnimationFrame(updateOrbs);
+            }
+            
+            function handleMouseMove(e) {
+                // Convert to percentage (0-100)
+                mouseX = (e.clientX / window.innerWidth) * 100;
+                mouseY = (e.clientY / window.innerHeight) * 100;
+                
+                // Start animation loop if not already running
+                if (!rafId) {
+                    rafId = requestAnimationFrame(updateOrbs);
+                }
+            }
+            
+            // Add mouse move listener with passive flag for better performance
+            document.addEventListener('mousemove', handleMouseMove, { passive: true });
+            
+            // Initialize orbs position
+            updateOrbs();
+            
+            // Add hover effects to links with smooth transitions
+            document.querySelectorAll('.btn').forEach(btn => {
+                btn.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px) scale(1.02)';
+                });
+                btn.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+                
+                // Add click animation
+                btn.addEventListener('click', function(e) {
+                    // Create ripple effect
+                    const ripple = document.createElement('span');
+                    ripple.style.position = 'absolute';
+                    ripple.style.borderRadius = '50%';
+                    ripple.style.background = 'rgba(255, 255, 255, 0.3)';
+                    ripple.style.width = '0px';
+                    ripple.style.height = '0px';
+                    ripple.style.left = (e.offsetX) + 'px';
+                    ripple.style.top = (e.offsetY) + 'px';
+                    ripple.style.pointerEvents = 'none';
+                    ripple.style.transition = 'width 0.6s, height 0.6s, opacity 0.6s';
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.style.width = '300px';
+                        ripple.style.height = '300px';
+                        ripple.style.left = (e.offsetX - 150) + 'px';
+                        ripple.style.top = (e.offsetY - 150) + 'px';
+                        ripple.style.opacity = '0';
+                    }, 10);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+                });
+            });
+
+            // Animate profile pic on load
+            window.addEventListener('load', () => {
+                const profilePic = document.querySelector('.profile-pic');
+                if (profilePic) {
+                    profilePic.style.animation = 'fadeInScale 0.8s ease-out';
+                }
+                
+                // Animate links with stagger
+                const linkItems = document.querySelectorAll('.link-item');
+                linkItems.forEach((item) => {
+                    const delay = parseFloat(item.getAttribute('data-delay')) || 0;
+                    item.style.animationDelay = delay + 's';
+                    item.style.opacity = '0';
+                    item.style.transform = 'translateY(20px)';
+                    setTimeout(() => {
+                        item.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+                        item.style.opacity = '1';
+                        item.style.transform = 'translateY(0)';
+                    }, delay * 1000 + 300);
+                });
+            });
+            
+            // Cleanup on page unload
+            window.addEventListener('beforeunload', () => {
+                if (rafId) {
+                    cancelAnimationFrame(rafId);
+                }
+                document.removeEventListener('mousemove', handleMouseMove);
+            });
+        })();
+    </script>
 </body>
 </html>
