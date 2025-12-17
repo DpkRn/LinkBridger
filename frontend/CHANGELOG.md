@@ -7,7 +7,185 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed - 2024-12-19
+### Fixed - 2024-12-19
++- **Added Missing Features to HomePage and Documentation**: Added two important features that were missing
++  - **All Links at One Place**: Added feature highlighting the hub link functionality
++    - Users can access all their links by visiting https://clickly.cv/username (without platform name)
++    - Creates a beautiful landing page showing all profiles in one place
++    - Perfect for sharing in bios, resumes, and business cards
++    - Added to HomePage features section with FaHome icon
++    - Updated in Documentation page with enhanced description
++  - **Real-Time Email Notifications**: Added email notification feature
++    - Get instant email notifications every time someone visits your links
++    - Stay informed about who's checking out your profiles in real-time
++    - Perfect for tracking engagement and knowing when potential clients or employers view your links
++    - Added to HomePage features section with FaEnvelope icon
++    - Added to Documentation page features section
++    - Mentioned in "How It Works" section for better visibility
+
++- **Documentation Page Complete Redesign**: Completely redesigned documentation page with modern animations and interactive elements
++  - Added interactive mouse-tracking gradient orbs that follow cursor movement
++  - Implemented glassmorphism design with backdrop blur effects throughout
++  - Enhanced all sections with smooth scroll animations using Framer Motion
++  - Redesigned feature cards with gradient icons, hover effects, and scale animations
++  - Added interactive FAQ section with smooth expand/collapse animations
++  - Enhanced "How It Works" section with step-by-step cards and icons
++  - Redesigned testimonials with star ratings and hover effects
++  - Added gradient buttons with hover animations
++  - Improved visual hierarchy with gradient text headings
++  - Added animated grid background pattern for depth
++  - Enhanced all links with hover effects and smooth transitions
++  - Redesigned future enhancements section with gradient cards
++  - Improved spacing, typography, and responsive design
++  - Added icon components from react-icons for better visual appeal
++  - Maintained all original content and functionality
++  - Fully responsive design optimized for all screen sizes
++  - **NEW: Use Cases Section**: Added comprehensive use cases for different user types
++    - Job Seekers, Content Creators, Developers, Students, Businesses, and Freelancers
++    - Each use case includes description, icon, gradient styling, and example applications
++    - Interactive cards with hover effects and smooth animations
++  - **NEW: Best Practices Section**: Added best practices guide for optimal LinkBridger usage
++    - Six key best practices with icons and detailed explanations
+    - Tips on username selection, platform naming, link updates, analytics, testing, and sharing
++  - **NEW: Platform Support Section**: Added comprehensive list of supported platforms
++    - Visual grid showcasing 30+ supported platforms (LinkedIn, GitHub, Instagram, etc.)
++    - Interactive platform cards with hover effects
++    - Emphasizes that any platform with a URL can be supported
++  - **NEW: Security & Privacy Section**: Added security and privacy information
++    - Four key security features: Secure Authentication, Privacy First, HTTPS Encryption, Secure Infrastructure
++    - Gradient icon cards with detailed explanations
++    - Builds user trust and confidence
++  - **NEW: Troubleshooting Section**: Added comprehensive troubleshooting guide
++    - Six common issues with detailed solutions
++    - Color-coded icons for different issue types
++    - Contact information for additional support
++    - Interactive cards with hover effects
+
++- **Mouse Position Calculation Bug**: Fixed incorrect mouse position calculation in HomePage.jsx
++  - Previous calculation `(e.clientX / window.innerWidth - 0.5) * 20` produced values in -10 to 10 pixel range
++  - These small/negative values caused incorrect gradient positioning when used in CSS `radial-gradient`
++  - Changed to percentage-based calculation: `(e.clientX / window.innerWidth) * 100` for x and `(e.clientY / window.innerHeight) * 100` for y
++  - Updated gradient to use percentages (`${mousePosition.x}% ${mousePosition.y}%`) instead of pixels
++  - Gradient now correctly follows mouse cursor across entire viewport (0% to 100%)
++  - Fixed backgroundPosition animation to use percentages with proper bounds checking
++  - Eliminates off-screen gradient placement and ensures smooth mouse tracking
+
++- **State Update on Unmounted Component**: Fixed memory leak warnings in AuthPage.jsx
++  - Removed `setLoading(false)` calls before `navigate()` in both `handleSignUp` and `handleLogin`
++  - After navigation, component unmounts, causing finally block's `setLoading(false)` to update unmounted component
++  - Now only the finally block handles `setLoading(false)`, preventing state updates on unmounted components
++  - Moved form state resets (`setLoginEmail`, `setLoginPassword`) before navigation to ensure they execute
++  - Eliminates React warnings about memory leaks and state updates on unmounted components
+
++- **AuthPage Complete Redesign**: Completely redesigned login/signup page with modern animations
++  - Removed old CSS-based design that had z-index conflicts preventing input clicks
++  - Created new modern design with glassmorphism effects and gradient backgrounds
++  - Added interactive mouse-tracking gradient orbs that follow cursor movement
++  - Implemented smooth form transitions with Framer Motion AnimatePresence
++  - Added animated toggle buttons with layoutId for smooth tab switching
++  - Modern input fields with icons, focus states, and proper z-index hierarchy
++  - Gradient buttons with hover animations and loading states
++  - Animated grid background pattern for depth
++  - Feature pills showcasing key benefits
++  - Fully responsive design for all screen sizes
++  - All input fields now properly clickable and functional
++  - Maintained all original authentication logic and functionality
++  - Added password visibility toggles with eye icons
++  - Username availability indicator with animated icons
++  - Smooth entrance animations for all form elements
+
++- **Mouse Position Throttling Logic Bug**: Fixed incorrect throttle timestamp update in RAF callback
++  - `lastUpdateTime` was being updated inside RAF callback, causing continuous unnecessary RAF scheduling
++  - When RAF was scheduled, `lastUpdateTime` remained old, so subsequent mousemove events would see `now - lastUpdateTime < throttleDelay` as true
++  - This caused multiple RAFs to be scheduled unnecessarily, even though `rafId === null` check prevented duplicates
++  - Fixed by updating `lastUpdateTime` immediately when scheduling RAF, not inside the callback
++  - Now subsequent mousemove events correctly see we're still within throttle window
++  - Prevents unnecessary RAF scheduling and improves performance
+
++- **Mouse Position Throttling Bug**: Fixed stale mouse position in RAF callback
++  - RAF callback was capturing event coordinates from first mousemove event via closure
++  - When multiple mousemove events fired before RAF executed, it used stale coordinates
++  - Added `latestMousePositionRef` to store latest position, updated on every mousemove
++  - RAF callback now reads from ref at execution time, ensuring latest position is used
++  - Eliminates lag in mouse tracking gradient effect
++  - Mouse tracking now smoothly follows actual cursor movement
+
++- **AuthPage Functionality**: Fixed login and signup forms not working properly
++  - Added Font Awesome CDN link to index.html for icon support
++  - Changed button types from "button" to "submit" for proper form submission
++  - Added `onSubmit` handlers to forms instead of `onClick` on buttons
++  - Added form validation with `required` and `minLength` attributes
++  - Added `disabled` state to buttons during loading to prevent multiple submissions
++  - Improved user experience with proper form validation and loading states
++  - Fixed email input types to use `type="email"` for better validation
+
++- **AuthPage CSS Overlap Issue**: Fixed login page overlapping HomePage
++  - Scoped all AuthPage CSS classes to `.auth-container` to prevent global style conflicts
++  - Added `isolation: isolate` to create new stacking context for AuthPage
++  - Updated all `.container` references in App.css to `.auth-container` to prevent affecting other pages
++  - Scoped form, input-field, panel, button, and animation styles to AuthPage only
++  - Prevents AuthPage styles from leaking to HomePage and other components
++  - Ensures proper z-index isolation between pages
++
++- **AnimatedCounter Performance Issue**: Fixed component recreation on every parent re-render
++  - Moved `AnimatedCounter` component outside of `HomePage` to prevent recreation on re-renders
++  - `AnimatedCounter` was being recreated on every `mousePosition` state update, causing unmount/remount cycles
++  - This interrupted animations and canceled pending `requestAnimationFrame` calls
++  - Component is now stable and only re-renders when its own props change
++  - Added `statsInView` as a prop instead of using closure to maintain proper dependency tracking
++  - Optimized mouse position updates with throttling (16ms delay, ~60fps) to reduce unnecessary re-renders
++  - Added `passive: true` to mouse event listener for better performance
++  - Proper cleanup of `requestAnimationFrame` in mouse handler cleanup function
++
++- **AnimatedCounter Memory Leak**: Fixed memory leak in AnimatedCounter component
++  - Added proper cleanup for `requestAnimationFrame` using `cancelAnimationFrame`
++  - Added `isMountedRef` to prevent state updates on unmounted components
++  - Stored animation frame ID in `animationFrameRef` for proper cancellation
++  - Prevents React warnings about updating state on unmounted components
++  - Eliminates memory leaks when component unmounts during animation
++
++- **Twitter Icon Import Error**: Fixed import error for Twitter icon
++  - Changed `SiTwitter` to `SiX` from `react-icons/si` (Twitter rebranded to X)
++  - Resolves "does not provide an export named 'SiTwitter'" error
++  - Updated to use correct export name for X/Twitter icon
++
++### Added - 2024-12-19
++- **Interactive Home Page**: Completely redesigned landing page with modern animations and investor-friendly content
++  - Hero section with typewriter effect and gradient text animations
++  - Flip words animation for platform names (LinkedIn, GitHub, Instagram, etc.)
++  - Mouse-tracking background effects for interactive experience
++  - Animated scroll indicator with smooth transitions
++  - Platform icons showcase with hover animations
++  - Statistics section with animated counters (10,000+ users, 50,000+ links, 1M+ clicks, 99% uptime)
++  - Interactive feature cards with gradient icons and hover effects
++  - Benefits section for three target audiences (Professionals, Creators, Developers)
++  - Final CTA section with gradient background
++  - Navigation header for non-authenticated users with logo and action buttons
++  - Fully responsive design optimized for mobile, tablet, and desktop devices
++    - Mobile-first approach with breakpoints: sm (640px), md (768px), lg (1024px)
++    - Responsive text sizes: text-2xl sm:text-3xl md:text-4xl lg:text-5xl
++    - Flexible grid layouts: grid-cols-2 md:grid-cols-4 for stats, md:grid-cols-2 lg:grid-cols-3 for features
++    - Responsive padding and spacing: px-4 sm:px-6 lg:px-8, gap-4 sm:gap-6 md:gap-8
++    - Mobile-optimized buttons: full-width on mobile, auto-width on larger screens
++    - Responsive navigation: logo text hidden on very small screens, compact button sizes
++    - Touch-friendly interactive elements with appropriate sizing for mobile devices
++  - Dark mode support throughout all sections
++  - Smooth scroll animations using Framer Motion
++  - Performance optimized with `useInView` hooks for scroll-triggered animations
++
++- **Enhanced Typography**: Upgraded font system for better visual appeal
++  - Added Poppins font family for body text (weights 300-900)
++  - Added Montserrat font family for headings (weights 300-900)
++  - Maintained Inter font as fallback
++  - Improved font weights and letter spacing for better readability
++  - Enhanced typography hierarchy across the application
++
++- **Routing Updates**: Updated App.jsx to use new HomePage as landing page
++  - Changed root route (`/`) to display new interactive HomePage
++  - HomePage now serves as the primary landing experience for non-authenticated users
++  - Maintains existing Documentation page at `/doc` route
++
++### Changed - 2024-12-19
 - **Edit Link Functionality**: Redesigned edit link feature to reuse CreateBridge component
   - Removed prompt dialog for editing links
   - Edit button now populates CreateBridge form with existing link data
