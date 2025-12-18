@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - **HomePage Dark Mode Background Reverted**: Reverted the dark mode main background gradient from `dark:from-gray-950 dark:via-purple-950 dark:to-gray-950` back to the original `dark:from-slate-900 dark:via-purple-900 dark:to-slate-900` to restore the original dark mode appearance. Light mode improvements remain unchanged.
+- **HomePage Card Edge Animations Finalized**: Implemented final animation styles for card borders:
+  - **"Trusted by Thousands" section**: Rotating conic gradient border (3s rotation) with pulsing glow effect (3s cycle) and 8 animated dots/orbs moving around the border perimeter continuously
+  - **"Perfect for Everyone" section**: Added 8 animated dots/orbs moving around the border perimeter of each benefit card
+  - **"Powerful Features" section**: Kept pulsing glow border animation, made all cards consistent height using flexbox layout (`h-full flex flex-col`) to prevent odd-looking card size variations
+  - Dots animation: 8 dots move clockwise around card perimeter with staggered delays (0.15s between each), pulsing scale and opacity effects
 - **HomePage Animated Edge Borders on Cards**: Added continuous rotating edge animations to cards in "Trusted by Thousands" and "Powerful Features" sections:
   - Implemented rotating conic gradient borders that continuously animate around card edges
   - Uses Framer Motion's `animate` with `rotate` from 0 to 360 degrees

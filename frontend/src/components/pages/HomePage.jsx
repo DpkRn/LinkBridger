@@ -538,7 +538,7 @@ const HomePage = () => {
             <h2 className="text-4xl md:text-5xl font-bold text-gray-800 dark:text-white mb-4 dark:bg-gradient-to-r dark:from-purple-300 dark:via-pink-300 dark:to-blue-300 dark:bg-clip-text dark:text-transparent">
               Trusted by Thousands
             </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300">
+            <p className="text-xl text-gray-600 dark:text-gray-300 mb-[120px]">
               Join the community of professionals, creators, and developers
             </p>
           </motion.div>
@@ -554,7 +554,7 @@ const HomePage = () => {
                 whileHover={{ scale: 1.05, y: -5 }}
                 className="relative group p-[2px] rounded-xl sm:rounded-2xl"
               >
-                {/* Animated edge border */}
+                {/* Rotating gradient border with glow */}
                 <motion.div
                   className="absolute inset-0 rounded-xl sm:rounded-2xl"
                   animate={{
@@ -567,6 +567,22 @@ const HomePage = () => {
                   }}
                   style={{
                     background: "conic-gradient(from 0deg, #9333ea, #ec4899, #3b82f6, #9333ea)",
+                  }}
+                />
+                <motion.div
+                  className="absolute inset-0 rounded-xl sm:rounded-2xl"
+                  animate={{
+                    boxShadow: [
+                      "0 0 15px rgba(147, 51, 234, 0.4), inset 0 0 15px rgba(147, 51, 234, 0.2)",
+                      "0 0 25px rgba(236, 72, 153, 0.6), inset 0 0 25px rgba(236, 72, 153, 0.3)",
+                      "0 0 15px rgba(59, 130, 246, 0.4), inset 0 0 15px rgba(59, 130, 246, 0.2)",
+                      "0 0 15px rgba(147, 51, 234, 0.4), inset 0 0 15px rgba(147, 51, 234, 0.2)",
+                    ],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "easeInOut",
                   }}
                 />
                 <div className="relative text-center p-4 sm:p-6 rounded-xl sm:rounded-2xl bg-white/90 dark:bg-gradient-to-br dark:from-gray-800/80 dark:via-gray-900/80 dark:to-gray-800/80 backdrop-blur-xl dark:shadow-[0_0_20px_rgba(147,51,234,0.15)] shadow-lg hover:shadow-xl dark:hover:shadow-[0_0_30px_rgba(147,51,234,0.25)] transition-all overflow-hidden">
@@ -647,17 +663,17 @@ const HomePage = () => {
                     background: "linear-gradient(135deg, #9333ea, #ec4899, #3b82f6)",
                   }}
                 />
-                <div className="relative p-6 sm:p-8 rounded-xl sm:rounded-2xl bg-white/90 dark:bg-gradient-to-br dark:from-gray-800/80 dark:via-gray-900/80 dark:to-gray-800/80 backdrop-blur-xl border-2 border-transparent dark:shadow-[0_0_20px_rgba(147,51,234,0.15)] hover:border-purple-400 dark:hover:border-purple-400/60 dark:hover:shadow-[0_0_30px_rgba(147,51,234,0.25)] shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden">
+                <div className="relative p-6 sm:p-8 rounded-xl sm:rounded-2xl bg-white/90 dark:bg-gradient-to-br dark:from-gray-800/80 dark:via-gray-900/80 dark:to-gray-800/80 backdrop-blur-xl border-2 border-transparent dark:shadow-[0_0_20px_rgba(147,51,234,0.15)] hover:border-purple-400 dark:hover:border-purple-400/60 dark:hover:shadow-[0_0_30px_rgba(147,51,234,0.25)] shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden h-full flex flex-col">
                   {/* Dark mode gradient overlay on hover */}
                   <div className={`hidden dark:block absolute inset-0 bg-gradient-to-br ${feature.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`} />
-                  <div className="relative z-10">
+                  <div className="relative z-10 flex flex-col h-full">
                     <div className={`text-5xl mb-4 bg-gradient-to-r ${feature.color} bg-clip-text text-transparent dark:drop-shadow-[0_0_12px_rgba(147,51,234,0.4)]`}>
                       {feature.icon}
                     </div>
                     <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-3 dark:bg-gradient-to-r dark:from-purple-200 dark:via-pink-200 dark:to-blue-200 dark:bg-clip-text dark:text-transparent">
                       {feature.title}
                     </h3>
-                    <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                    <p className="text-gray-600 dark:text-gray-300 leading-relaxed flex-grow">
                       {feature.description}
                     </p>
                     <motion.div
