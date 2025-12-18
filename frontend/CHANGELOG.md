@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **HomePage Dark Mode Background Reverted**: Reverted the dark mode main background gradient from `dark:from-gray-950 dark:via-purple-950 dark:to-gray-950` back to the original `dark:from-slate-900 dark:via-purple-900 dark:to-slate-900` to restore the original dark mode appearance. Light mode improvements remain unchanged.
+- **HomePage Animated Edge Borders on Cards**: Added continuous rotating edge animations to cards in "Trusted by Thousands" and "Powerful Features" sections:
+  - Implemented rotating conic gradient borders that continuously animate around card edges
+  - Uses Framer Motion's `animate` with `rotate` from 0 to 360 degrees
+  - 3-second rotation duration with infinite repeat and linear easing
+  - Gradient colors: purple (#9333ea), pink (#ec4899), blue (#3b82f6)
+  - Animation runs automatically without mouse interaction
+  - Applied to both statistics cards and feature cards
+- **HomePage Statistics and Features Sections Dark Mode Redesign**: Enhanced the "Trusted by Thousands" and "Powerful Features" sections specifically for dark mode with:
+  - Added gradient backgrounds (`dark:from-purple-950/40 dark:via-slate-900/60 dark:to-blue-950/40` for stats, `dark:from-slate-900/60 dark:via-purple-950/40 dark:to-pink-950/40` for features)
+  - Decorative background blur orbs for visual depth
+  - Enhanced card designs with gradient backgrounds (`dark:from-gray-800/80 dark:via-gray-900/80 dark:to-gray-800/80`)
+  - Improved borders with purple glow effects (`dark:border-purple-500/30` with `dark:shadow-[0_0_20px_rgba(147,51,234,0.15)]`)
+  - Gradient text effects for headings and numbers in dark mode
+  - Hover effects with enhanced shadows and border glows
+  - Icon drop shadows for better visibility
+  - Gradient overlays on hover for interactive feedback
+  - Light mode remains completely unchanged
+
 ### Fixed
 - **AuthPage Axios Error Status Check**: Fixed the 409 conflict detection in `handleSignUp` function. Changed `err.status === 409` to `err.response?.status === 409` to correctly access the HTTP status code from axios error objects. This ensures username conflict handling (redirecting to login) works properly.
 - **Documentation Page DOM Nesting Warning**: Fixed React DOM nesting warning where `<div>` (from `FlipWords` component) was appearing as a descendant of `<p>`. Changed the parent `<motion.p>` to `<motion.div>` to allow proper nesting of block-level elements.
