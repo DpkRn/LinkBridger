@@ -1,9 +1,29 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { toggleDarkMode } from '../../redux/pageSlice';
+import { MdDarkMode, MdLightMode } from 'react-icons/md';
+import profile from '../../assets/profile.png';
 
 const AboutDeveloper = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const dispatch = useDispatch();
+  const darkMode = useSelector(store => store.page.darkMode);
+  const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 });
+
+  // Mouse tracking for interactive background
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      setMousePosition({
+        x: (e.clientX / window.innerWidth) * 100,
+        y: (e.clientY / window.innerHeight) * 100,
+      });
+    };
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
 
   const fadeInUp = {
     hidden: { opacity: 0, y: 40 },
@@ -72,13 +92,121 @@ const AboutDeveloper = () => {
   ];
 
   return (
-    <motion.div
-      initial="hidden"
-      animate="visible"
-      variants={staggerContainer}
-      className="min-h-screen bg-gradient-to-br from-pink-200 via-sky-200 to-blue-300 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300 py-12 px-4"
-    >
-      <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-pink-200 via-sky-200 to-blue-300 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
+      {/* Navigation Bar */}
+      <motion.nav
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6, type: "spring" }}
+        className="relative z-50 w-full h-[70px] shadow-lg bg-white/95 dark:bg-gray-900/50 backdrop-blur-xl flex items-center justify-between border-b border-gray-200 dark:border-white/10 transition-colors duration-300 px-4 sm:px-6 md:px-10 lg:px-12"
+      >
+        {/* Animated Background Glow */}
+        <motion.div
+          className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-blue-500/10 opacity-0"
+          animate={{
+            opacity: [0, 0.3, 0],
+          }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+        
+        {/* Logo */}
+        <motion.div
+          className="flex items-center gap-4 cursor-pointer relative z-10"
+          onClick={() => navigate("/")}
+          whileHover={{ scale: 1.05 }}
+        >
+          <motion.img
+            className="h-8 w-auto dark:brightness-0 dark:invert transition-all duration-300"
+            src="logo.png"
+            alt="LinkBridger Logo"
+            onError={(e) => {
+              e.target.src = 'https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500';
+            }}
+            whileHover={{ scale: 1.1, rotateZ: 5 }}
+          />
+          <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent">
+            LinkBridger
+          </span>
+        </motion.div>
+
+        {/* Navigation Items */}
+        <div className="flex items-center gap-4 md:gap-6 relative z-10">
+          {/* Navigation Links */}
+          <div className="hidden md:flex items-center gap-6">
+            <motion.button
+              onClick={() => navigate("/")}
+              className="relative text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 font-medium transition-colors overflow-hidden group"
+              whileHover={{ scale: 1.1, y: -2 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <span className="relative z-10">Home</span>
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20"
+                initial={{ x: "-100%" }}
+                whileHover={{ x: "100%" }}
+                transition={{ duration: 0.5 }}
+              />
+            </motion.button>
+            <motion.button
+              onClick={() => navigate("/doc")}
+              className="relative text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 font-medium transition-colors overflow-hidden group"
+              whileHover={{ scale: 1.1, y: -2 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <span className="relative z-10">Documentation</span>
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20"
+                initial={{ x: "-100%" }}
+                whileHover={{ x: "100%" }}
+                transition={{ duration: 0.5 }}
+              />
+            </motion.button>
+            <motion.button
+              onClick={() => navigate("/login")}
+              className="relative text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 font-medium transition-colors overflow-hidden group"
+              whileHover={{ scale: 1.1, y: -2 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <span className="relative z-10">Login</span>
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20"
+                initial={{ x: "-100%" }}
+                whileHover={{ x: "100%" }}
+                transition={{ duration: 0.5 }}
+              />
+            </motion.button>
+          </div>
+
+          {/* Dark Mode Toggle */}
+          <motion.button
+            type="button"
+            whileHover={{ scale: 1.1, rotate: 15 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={() => dispatch(toggleDarkMode())}
+            className="relative rounded-lg bg-white/10 dark:bg-gray-800/50 backdrop-blur-sm p-2.5 text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-yellow-300 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-200 hover:bg-white/20 dark:hover:bg-gray-700/50 border border-gray-200/20 dark:border-gray-700/50"
+            aria-label="Toggle dark mode"
+            title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            {darkMode ? (
+              <MdLightMode className="h-5 w-5 text-yellow-300" />
+            ) : (
+              <MdDarkMode className="h-5 w-5" />
+            )}
+          </motion.button>
+        </div>
+      </motion.nav>
+
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={staggerContainer}
+        className="py-12 px-4"
+      >
+        <div className="max-w-6xl mx-auto">
         {/* Header Section */}
         <motion.div variants={fadeInUp} className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold text-gray-800 dark:text-white mb-4 transition-colors duration-300">
@@ -102,7 +230,7 @@ const AboutDeveloper = () => {
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full blur-lg opacity-50"></div>
                 <img
-                  src="/profile.jpg"
+                  src={profile}
                   alt="Deepak Kumar"
                   className="relative w-48 h-48 md:w-56 md:h-56 rounded-full object-cover border-4 border-white dark:border-gray-700 shadow-xl"
                   onError={(e) => {
@@ -237,8 +365,9 @@ const AboutDeveloper = () => {
             Go Back
           </button>
         </motion.div>
-      </div>
-    </motion.div>
+        </div>
+      </motion.div>
+    </div>
   );
 };
 

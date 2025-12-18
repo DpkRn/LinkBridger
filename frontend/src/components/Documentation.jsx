@@ -1111,7 +1111,7 @@ const Documentation = () => {
             variants={itemVariants}
             className="mb-6 md:mb-8"
           >
-            <MagneticCard intensity={0.05}>
+            <MagneticCard intensity={0.15}>
               <div
                 className="relative bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-6 md:p-10 lg:p-12 overflow-hidden group"
                 style={{ 
@@ -1122,9 +1122,9 @@ const Documentation = () => {
               >
                 {/* Animated Background Glow */}
                 <motion.div
-                  className="absolute inset-0 rounded-3xl pointer-events-none"
+                  className="absolute inset-0 rounded-3xl pointer-events-none z-0"
                   animate={{
-                    opacity: [0.2, 0.4, 0.2],
+                    opacity: [0.3, 0.6, 0.3],
                   }}
                   transition={{
                     duration: 3,
@@ -1132,38 +1132,67 @@ const Documentation = () => {
                     ease: "easeInOut",
                   }}
                   style={{
-                    background: "radial-gradient(circle at 50% 50%, rgba(147, 51, 234, 0.15), rgba(236, 72, 153, 0.1), rgba(59, 130, 246, 0.1), transparent 70%)",
+                    background: "radial-gradient(circle at 50% 50%, rgba(147, 51, 234, 0.25), rgba(236, 72, 153, 0.2), rgba(59, 130, 246, 0.2), transparent 70%)",
                   }}
                 />
                 
                 {/* Corner Glow Effects */}
-                <div
-                  className="absolute top-0 left-0 w-32 h-32 rounded-full pointer-events-none opacity-40 blur-2xl"
+                <motion.div
+                  className="absolute top-0 left-0 w-40 h-40 rounded-full pointer-events-none blur-3xl z-0"
+                  animate={{
+                    opacity: [0.3, 0.6, 0.3],
+                    scale: [1, 1.2, 1],
+                  }}
+                  transition={{
+                    duration: 4,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
                   style={{
-                    background: "radial-gradient(circle, rgba(147, 51, 234, 0.4), transparent 70%)",
+                    background: "radial-gradient(circle, rgba(147, 51, 234, 0.5), transparent 70%)",
                     transform: "translate(-50%, -50%)",
                   }}
                 />
-                <div
-                  className="absolute bottom-0 right-0 w-32 h-32 rounded-full pointer-events-none opacity-40 blur-2xl"
+                <motion.div
+                  className="absolute bottom-0 right-0 w-40 h-40 rounded-full pointer-events-none blur-3xl z-0"
+                  animate={{
+                    opacity: [0.3, 0.6, 0.3],
+                    scale: [1, 1.2, 1],
+                  }}
+                  transition={{
+                    duration: 4,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: 1,
+                  }}
                   style={{
-                    background: "radial-gradient(circle, rgba(236, 72, 153, 0.4), transparent 70%)",
+                    background: "radial-gradient(circle, rgba(236, 72, 153, 0.5), transparent 70%)",
                     transform: "translate(50%, 50%)",
                   }}
                 />
-                <div
-                  className="absolute top-1/2 right-0 w-24 h-24 rounded-full pointer-events-none opacity-30 blur-xl"
+                <motion.div
+                  className="absolute top-1/2 right-0 w-32 h-32 rounded-full pointer-events-none blur-2xl z-0"
+                  animate={{
+                    opacity: [0.2, 0.5, 0.2],
+                    scale: [1, 1.15, 1],
+                  }}
+                  transition={{
+                    duration: 3.5,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: 0.5,
+                  }}
                   style={{
-                    background: "radial-gradient(circle, rgba(59, 130, 246, 0.3), transparent 70%)",
+                    background: "radial-gradient(circle, rgba(59, 130, 246, 0.4), transparent 70%)",
                     transform: "translate(50%, -50%)",
                   }}
                 />
                 
                 {/* Animated Border Glow */}
                 <motion.div
-                  className="absolute -inset-[1px] rounded-3xl pointer-events-none"
+                  className="absolute -inset-[2px] rounded-3xl pointer-events-none z-0"
                   animate={{
-                    opacity: [0.3, 0.5, 0.3],
+                    opacity: [0.4, 0.7, 0.4],
                   }}
                   transition={{
                     duration: 2.5,
@@ -1171,19 +1200,20 @@ const Documentation = () => {
                     ease: "easeInOut",
                   }}
                   style={{
-                    background: "linear-gradient(135deg, rgba(147, 51, 234, 0.3), rgba(236, 72, 153, 0.25), rgba(59, 130, 246, 0.25), rgba(147, 51, 234, 0.3))",
-                    filter: "blur(8px)",
-                    zIndex: -1,
+                    background: "linear-gradient(135deg, rgba(147, 51, 234, 0.4), rgba(236, 72, 153, 0.35), rgba(59, 130, 246, 0.35), rgba(147, 51, 234, 0.4))",
+                    filter: "blur(10px)",
                   }}
                 />
                 
                 {/* Hover Glow Effect */}
-                <div
-                  className="absolute inset-0 rounded-3xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                <motion.div
+                  className="absolute inset-0 rounded-3xl pointer-events-none z-0"
+                  initial={{ opacity: 0 }}
+                  whileHover={{ opacity: 0.3 }}
+                  transition={{ duration: 0.3 }}
                   style={{
-                    background: "radial-gradient(circle at center, rgba(147, 51, 234, 0.1), transparent 70%)",
-                    filter: "blur(20px)",
-                    willChange: "opacity",
+                    background: "radial-gradient(circle at center, rgba(147, 51, 234, 0.2), rgba(236, 72, 153, 0.15), transparent 70%)",
+                    filter: "blur(25px)",
                   }}
                 />
                 
@@ -1191,7 +1221,7 @@ const Documentation = () => {
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent relative"
+                  className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent relative z-10"
                   transition={{
                     opacity: { duration: 0.6, ease: "easeOut" },
                     y: { duration: 0.6, ease: "easeOut" },
@@ -1368,7 +1398,7 @@ const Documentation = () => {
                     className="text-lg md:text-2xl lg:text-3xl text-center"
                   >
                     <a
-                      href="https://clickly.cv/dpkrn/linkedin"
+                      href="https://clickly.cv/dpkrn/"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-400 dark:text-blue-300 underline font-mono hover:text-blue-300 transition-colors"
