@@ -68,8 +68,8 @@ const Footer = () => {
       {/* Animated Grid Pattern */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:24px_24px] opacity-50" />
 
-      <div className="relative z-10 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-12 md:py-16">
-        <div className="grid grid-cols-2 gap-8 md:grid-cols-4 md:gap-12">
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-4 md:py-6">
+        <div className="grid grid-cols-2 gap-6 md:grid-cols-4 md:gap-8">
           {/* Brand Section */}
           <div className="col-span-2 md:col-span-1">
             <motion.div
@@ -82,7 +82,7 @@ const Footer = () => {
                 href="https://deepak-aryan.vercel.app/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-3 group mb-6"
+                className="flex items-center gap-3 group mb-3"
               >
                 <motion.div
                   whileHover={{ scale: 1.1, rotate: 5 }}
@@ -99,7 +99,7 @@ const Footer = () => {
                   Dwizard
                 </span>
               </a>
-              <p className="text-gray-400 dark:text-gray-500 text-sm leading-relaxed max-w-xs">
+              <p className="text-gray-700 dark:text-gray-500 text-sm leading-normal max-w-xs">
                 Building innovative solutions to simplify digital life and empower users worldwide.
               </p>
             </motion.div>
@@ -114,10 +114,10 @@ const Footer = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
-              <h2 className="mb-6 text-sm font-bold text-white dark:text-gray-200 uppercase tracking-wider">
+              <h2 className="mb-2 text-sm font-bold text-gray-900 dark:text-gray-200 uppercase tracking-wider">
                 {title}
               </h2>
-              <ul className="space-y-3">
+              <ul className="space-y-2">
                 {links.map((link, linkIndex) => (
                   <li key={linkIndex}>
                     {link.external ? (
@@ -125,7 +125,7 @@ const Footer = () => {
                         href={link.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-gray-400 dark:text-gray-500 hover:text-white dark:hover:text-gray-300 transition-colors duration-200 text-sm flex items-center gap-2 group"
+                        className="text-gray-700 dark:text-gray-500 hover:text-purple-600 dark:hover:text-gray-300 transition-colors duration-200 text-sm flex items-center gap-2 group"
                       >
                         <span className="group-hover:translate-x-1 transition-transform duration-200">
                           {link.label}
@@ -135,7 +135,7 @@ const Footer = () => {
                     ) : link.to ? (
                       <Link
                         to={link.to}
-                        className="text-gray-400 dark:text-gray-500 hover:text-white dark:hover:text-gray-300 transition-colors duration-200 text-sm flex items-center gap-2 group"
+                        className="text-gray-700 dark:text-gray-500 hover:text-purple-600 dark:hover:text-gray-300 transition-colors duration-200 text-sm flex items-center gap-2 group"
                       >
                         <span className="group-hover:translate-x-1 transition-transform duration-200">
                           {link.label}
@@ -145,7 +145,7 @@ const Footer = () => {
                     ) : (
                       <a
                         href={link.href}
-                        className="text-gray-400 dark:text-gray-500 hover:text-white dark:hover:text-gray-300 transition-colors duration-200 text-sm flex items-center gap-2 group"
+                        className="text-gray-700 dark:text-gray-500 hover:text-purple-600 dark:hover:text-gray-300 transition-colors duration-200 text-sm flex items-center gap-2 group"
                       >
                         <span className="group-hover:translate-x-1 transition-transform duration-200">
                           {link.label}
@@ -166,17 +166,17 @@ const Footer = () => {
           whileInView={{ opacity: 1, scaleX: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="my-8 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"
+          className="my-4 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"
         />
 
         {/* Bottom Section */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <motion.span
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="text-sm text-gray-400 dark:text-gray-500 text-center sm:text-left"
+            className="text-sm text-gray-700 dark:text-gray-500 text-center sm:text-left"
           >
             © 2024{' '}
             <a
@@ -206,7 +206,7 @@ const Footer = () => {
                   rel={social.href !== '#' ? 'noopener noreferrer' : undefined}
                   whileHover={{ scale: 1.2, y: -3 }}
                   whileTap={{ scale: 0.9 }}
-                  className={`text-gray-400 dark:text-gray-500 ${social.color} transition-colors duration-200 p-2 rounded-lg bg-white/5 hover:bg-white/10 backdrop-blur-sm border border-white/10 dark:border-gray-700/50`}
+                  className={`text-gray-700 dark:text-gray-500 ${social.color} transition-colors duration-200 p-2 rounded-lg bg-white/5 hover:bg-white/10 backdrop-blur-sm border border-white/10 dark:border-gray-700/50`}
                   aria-label={social.label}
                 >
                   <Icon className="w-5 h-5" />
@@ -222,9 +222,9 @@ const Footer = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.5 }}
-          className="mt-8 text-center"
+          className="mt-4 text-center"
         >
-          <p className="text-sm text-gray-500 dark:text-gray-600 flex items-center justify-center gap-2">
+          <p className="text-sm text-gray-700 dark:text-gray-600 flex items-center justify-center gap-2">
             Made with
             <motion.span
               animate={{ scale: [1, 1.2, 1] }}

@@ -2,62 +2,205 @@ import React, { useState, useRef, useEffect } from "react";
 import { useInView } from "framer-motion";
 import { motion, AnimatePresence } from "framer-motion";
 
-// Feature Card Component - Separate component to allow hooks usage
+// Floating Particle Component
+const FloatingParticle = ({ delay = 0, duration = 20, size = 4, color = "purple" }) => {
+  const colors = {
+    purple: "bg-purple-400/30",
+    pink: "bg-pink-400/30",
+    blue: "bg-blue-400/30",
+    cyan: "bg-cyan-400/30",
+  };
+
+  return (
+    <motion.div
+      className={`absolute ${colors[color]} rounded-full blur-sm`}
+      style={{
+        width: `${size}px`,
+        height: `${size}px`,
+        left: `${Math.random() * 100}%`,
+        top: `${Math.random() * 100}%`,
+      }}
+      animate={{
+        y: [0, -30, 0],
+        x: [0, Math.random() * 20 - 10, 0],
+        opacity: [0.3, 0.8, 0.3],
+        scale: [1, 1.5, 1],
+      }}
+      transition={{
+        duration: duration + Math.random() * 10,
+        repeat: Infinity,
+        delay: delay,
+        ease: "easeInOut",
+      }}
+    />
+  );
+};
+
+// 3D Card Component with Magnetic Hover
+const MagneticCard = ({ children, className = "", intensity = 0.3 }) => {
+  const cardRef = useRef(null);
+  const [rotate, setRotate] = useState({ x: 0, y: 0 });
+
+  const handleMouseMove = (e) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const x = (e.clientX - centerX) / (rect.width / 2);
+    const y = (e.clientY - centerY) / (rect.height / 2);
+    setRotate({ x: y * intensity, y: -x * intensity });
+  };
+
+  const handleMouseLeave = () => {
+    setRotate({ x: 0, y: 0 });
+  };
+
+  return (
+    <motion.div
+      ref={cardRef}
+      className={className}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      animate={{
+        rotateX: rotate.x,
+        rotateY: rotate.y,
+      }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      style={{ transformStyle: "preserve-3d", perspective: "1000px" }}
+    >
+      {children}
+    </motion.div>
+  );
+};
+
+// Feature Card Component - Enhanced with 3D and Magnetic Effects
 const FeatureCard = ({ feature, idx, hoveredFeature, setHoveredFeature }) => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-100px" });
   const IconComponent = feature.icon;
   const isLeft = idx % 2 === 0;
+  const [cardHover, setCardHover] = useState(false);
 
   return (
-    <motion.div
-      key={feature.title}
-      ref={ref}
-      initial={{ opacity: 0, x: isLeft ? -80 : 80 }}
-      animate={inView ? { opacity: 1, x: 0 } : {}}
-      transition={{ duration: 0.7, type: "spring" }}
-      onHoverStart={() => setHoveredFeature(idx)}
-      onHoverEnd={() => setHoveredFeature(null)}
-      className={`group relative bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-6 md:p-10 overflow-hidden ${
-        isLeft ? "" : "md:flex-row-reverse"
-      } flex flex-col md:flex-row items-center gap-6 md:gap-8 cursor-pointer transition-all duration-300 ${
-        hoveredFeature === idx ? "scale-105" : "scale-100"
-      }`}
-    >
-      {/* Gradient Background on Hover */}
+    <MagneticCard intensity={0.15}>
       <motion.div
-        className={`absolute inset-0 bg-gradient-to-r ${feature.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}
-      />
-      
-      {/* Icon */}
-      <motion.div
-        className={`relative bg-gradient-to-r ${feature.gradient} p-6 rounded-2xl shadow-lg`}
-        whileHover={{ scale: 1.1, rotate: 5 }}
+        key={feature.title}
+        ref={ref}
+        initial={{ opacity: 0, x: isLeft ? -100 : 100, rotateY: isLeft ? -15 : 15 }}
+        animate={inView ? { opacity: 1, x: 0, rotateY: 0 } : {}}
+        transition={{ duration: 0.8, type: "spring", stiffness: 100 }}
+        onHoverStart={() => {
+          setHoveredFeature(idx);
+          setCardHover(true);
+        }}
+        onHoverEnd={() => {
+          setHoveredFeature(null);
+          setCardHover(false);
+        }}
+        className={`group relative bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-6 md:p-10 overflow-hidden ${
+          isLeft ? "" : "md:flex-row-reverse"
+        } flex flex-col md:flex-row items-center gap-6 md:gap-8 cursor-pointer transition-all duration-300`}
+        whileHover={{ scale: 1.02, z: 50 }}
+        style={{ transformStyle: "preserve-3d" }}
       >
-        <IconComponent className="text-4xl md:text-5xl text-white" />
-      </motion.div>
+        {/* Animated Gradient Background */}
+        <motion.div
+          className={`absolute inset-0 bg-gradient-to-r ${feature.gradient} opacity-0`}
+          animate={{
+            opacity: cardHover ? 0.15 : 0,
+          }}
+          transition={{ duration: 0.3 }}
+        />
+        
+        {/* Shimmer Effect */}
+        <motion.div
+          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+          initial={{ x: "-100%" }}
+          animate={cardHover ? { x: "200%" } : { x: "-100%" }}
+          transition={{ duration: 0.8, repeat: cardHover ? Infinity : 0, repeatDelay: 0.5 }}
+          style={{ transform: "skewX(-20deg)" }}
+        />
 
-      {/* Image */}
-      <motion.img
-        src={feature.img}
-        alt={feature.title}
-        className="h-48 w-48 md:h-64 md:w-64 rounded-2xl object-cover flex-shrink-0 shadow-lg"
-        whileHover={{ scale: 1.1, rotate: 2 }}
-        transition={{ type: "spring", stiffness: 300 }}
-      />
-
-      {/* Content */}
-      <div className="flex-1 text-center md:text-left">
-        <motion.h3
-          className={`text-2xl md:text-3xl font-bold mb-4 bg-gradient-to-r ${feature.gradient} bg-clip-text text-transparent`}
+        {/* Floating Particles Around Card */}
+        {cardHover && (
+          <>
+            {[...Array(6)].map((_, i) => (
+              <FloatingParticle
+                key={i}
+                delay={i * 0.2}
+                duration={3 + Math.random() * 2}
+                size={3 + Math.random() * 3}
+                color={["purple", "pink", "blue"][i % 3]}
+              />
+            ))}
+          </>
+        )}
+        
+        {/* Icon with 3D Rotation */}
+        <motion.div
+          className={`relative bg-gradient-to-r ${feature.gradient} p-6 rounded-2xl shadow-lg`}
+          whileHover={{ scale: 1.15, rotateZ: 5, rotateY: 10 }}
+          animate={cardHover ? { rotateY: [0, 5, -5, 0] } : {}}
+          transition={{ duration: 2, repeat: cardHover ? Infinity : 0 }}
+          style={{ transformStyle: "preserve-3d" }}
         >
-          {feature.title}
-        </motion.h3>
-        <motion.p className="text-base md:text-lg text-gray-700 dark:text-gray-400 leading-relaxed">
-          {feature.desc}
-        </motion.p>
-      </div>
-    </motion.div>
+          <motion.div
+            animate={cardHover ? { rotate: 360 } : {}}
+            transition={{ duration: 3, repeat: cardHover ? Infinity : 0, ease: "linear" }}
+          >
+            <IconComponent className="text-4xl md:text-5xl text-white" />
+          </motion.div>
+          {/* Glow Effect */}
+          <motion.div
+            className={`absolute inset-0 bg-gradient-to-r ${feature.gradient} rounded-2xl blur-xl opacity-0`}
+            animate={{ opacity: cardHover ? 0.5 : 0 }}
+            transition={{ duration: 0.3 }}
+          />
+        </motion.div>
+
+        {/* Image with Parallax Effect */}
+        <motion.div
+          className="relative"
+          style={{ transformStyle: "preserve-3d" }}
+        >
+          <motion.img
+            src={feature.img}
+            alt={feature.title}
+            className="h-48 w-48 md:h-64 md:w-64 rounded-2xl object-cover flex-shrink-0 shadow-lg"
+            whileHover={{ scale: 1.1, rotateZ: 2, rotateY: 5 }}
+            transition={{ type: "spring", stiffness: 300 }}
+            style={{ transformStyle: "preserve-3d" }}
+          />
+          {/* Image Glow */}
+          <motion.div
+            className="absolute inset-0 rounded-2xl bg-gradient-to-r from-purple-500/20 to-pink-500/20 blur-2xl -z-10"
+            animate={{
+              scale: cardHover ? [1, 1.2, 1] : 1,
+              opacity: cardHover ? [0.3, 0.6, 0.3] : 0.3,
+            }}
+            transition={{ duration: 2, repeat: cardHover ? Infinity : 0 }}
+          />
+        </motion.div>
+
+        {/* Content */}
+        <div className="flex-1 text-center md:text-left" style={{ transform: "translateZ(20px)" }}>
+          <motion.h3
+            className={`text-2xl md:text-3xl font-bold mb-4 bg-gradient-to-r ${feature.gradient} bg-clip-text text-transparent`}
+            animate={cardHover ? { scale: [1, 1.05, 1] } : {}}
+            transition={{ duration: 1.5, repeat: cardHover ? Infinity : 0 }}
+          >
+            {feature.title}
+          </motion.h3>
+          <motion.p 
+            className="text-base md:text-lg text-gray-700 dark:text-gray-400 leading-relaxed"
+            animate={cardHover ? { x: [0, 5, 0] } : {}}
+            transition={{ duration: 2, repeat: cardHover ? Infinity : 0 }}
+          >
+            {feature.desc}
+          </motion.p>
+        </div>
+      </motion.div>
+    </MagneticCard>
   );
 };
 import { useSelector, useDispatch } from "react-redux";
@@ -266,106 +409,334 @@ const Documentation = () => {
 
   return (
     <div className="min-h-screen w-full overflow-hidden relative">
-      {/* Animated Background */}
+      {/* Enhanced Animated Background with Particles */}
       <div className="absolute inset-0 overflow-hidden">
-        {/* Gradient Orbs */}
+        {/* Dynamic Gradient Orbs with Morphing */}
         <motion.div
           className="absolute w-96 h-96 bg-purple-500/20 rounded-full blur-3xl"
           animate={{
             x: mousePosition.x * 0.5 - 200,
             y: mousePosition.y * 0.5 - 200,
+            scale: [1, 1.2, 1],
+            opacity: [0.2, 0.4, 0.2],
           }}
-          transition={{ type: "spring", stiffness: 50, damping: 20 }}
+          transition={{ 
+            x: { type: "spring", stiffness: 50, damping: 20 },
+            y: { type: "spring", stiffness: 50, damping: 20 },
+            scale: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+            opacity: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+          }}
         />
         <motion.div
           className="absolute w-96 h-96 bg-pink-500/20 rounded-full blur-3xl"
           animate={{
             x: mousePosition.x * 0.3 - 200,
             y: mousePosition.y * 0.3 - 200,
+            scale: [1, 1.3, 1],
+            opacity: [0.2, 0.35, 0.2],
           }}
-          transition={{ type: "spring", stiffness: 50, damping: 20 }}
+          transition={{ 
+            x: { type: "spring", stiffness: 50, damping: 20 },
+            y: { type: "spring", stiffness: 50, damping: 20 },
+            scale: { duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.5 },
+            opacity: { duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.5 },
+          }}
         />
         <motion.div
           className="absolute w-96 h-96 bg-blue-500/20 rounded-full blur-3xl"
           animate={{
             x: mousePosition.x * 0.7 - 200,
             y: mousePosition.y * 0.7 - 200,
+            scale: [1, 1.15, 1],
+            opacity: [0.2, 0.3, 0.2],
           }}
-          transition={{ type: "spring", stiffness: 50, damping: 20 }}
+          transition={{ 
+            x: { type: "spring", stiffness: 50, damping: 20 },
+            y: { type: "spring", stiffness: 50, damping: 20 },
+            scale: { duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 },
+            opacity: { duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 },
+          }}
         />
         
-        {/* Animated Grid */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]" />
+        {/* Additional Floating Orbs */}
+        {[...Array(5)].map((_, i) => (
+          <motion.div
+            key={i}
+            className={`absolute w-64 h-64 ${
+              i % 3 === 0 ? "bg-cyan-500/10" : i % 3 === 1 ? "bg-violet-500/10" : "bg-rose-500/10"
+            } rounded-full blur-3xl`}
+            animate={{
+              x: [0, Math.random() * 200 - 100, 0],
+              y: [0, Math.random() * 200 - 100, 0],
+              scale: [1, 1.5, 1],
+              opacity: [0.1, 0.3, 0.1],
+            }}
+            transition={{
+              duration: 8 + Math.random() * 4,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: i * 0.8,
+            }}
+            style={{
+              left: `${20 + i * 15}%`,
+              top: `${10 + i * 20}%`,
+            }}
+          />
+        ))}
+        
+        {/* Floating Particles Layer */}
+        <div className="absolute inset-0">
+          {[...Array(30)].map((_, i) => (
+            <FloatingParticle
+              key={i}
+              delay={i * 0.3}
+              duration={15 + Math.random() * 10}
+              size={2 + Math.random() * 4}
+              color={["purple", "pink", "blue", "cyan"][i % 4]}
+            />
+          ))}
+        </div>
+        
+        {/* Animated Grid with Wave Effect */}
+        <motion.div 
+          className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]"
+          animate={{
+            opacity: [0.3, 0.6, 0.3],
+          }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+        
+        {/* Rotating Gradient Rings */}
+        {[...Array(3)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute inset-0 flex items-center justify-center"
+            style={{
+              background: `conic-gradient(from ${i * 120}deg, transparent, ${
+                i === 0 ? "rgba(147, 51, 234, 0.1)" : i === 1 ? "rgba(236, 72, 153, 0.1)" : "rgba(59, 130, 246, 0.1)"
+              }, transparent)`,
+              maskImage: "radial-gradient(circle, transparent 60%, black 100%)",
+              WebkitMaskImage: "radial-gradient(circle, transparent 60%, black 100%)",
+            }}
+            animate={{
+              rotate: 360,
+            }}
+            transition={{
+              duration: 20 + i * 5,
+              repeat: Infinity,
+              ease: "linear",
+            }}
+          />
+        ))}
       </div>
 
-      {/* Navigation Header */}
+      {/* Enhanced Navigation Header with Glow Effects */}
       <motion.div
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6 }}
+        transition={{ duration: 0.6, type: "spring" }}
         className="relative z-50 w-full h-[70px] shadow-lg bg-white/95 dark:bg-gray-900/50 backdrop-blur-xl flex items-center justify-between border-b border-gray-200 dark:border-white/10 transition-colors duration-300 px-4 sm:px-6 md:px-10 lg:px-12"
       >
-        {/* Logo */}
+        {/* Animated Background Glow */}
         <motion.div
-          className="flex items-center gap-4 cursor-pointer"
+          className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-blue-500/10 opacity-0"
+          animate={{
+            opacity: [0, 0.3, 0],
+          }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+        
+        {/* Logo with 3D Rotation */}
+        <motion.div
+          className="flex items-center gap-4 cursor-pointer relative z-10"
           onClick={() => navigate("/")}
-          whileHover={{ scale: 1.05 }}
+          whileHover={{ scale: 1.05, rotateY: 5 }}
+          style={{ transformStyle: "preserve-3d" }}
         >
-          <motion.img
-            className="h-8 w-auto dark:brightness-0 dark:invert transition-all duration-300"
-            src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500"
-            alt="LinkBridger Logo"
-          />
-          <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent">
+          <motion.div
+            animate={{
+              rotateY: [0, 360],
+            }}
+            transition={{
+              duration: 20,
+              repeat: Infinity,
+              ease: "linear",
+            }}
+            style={{ transformStyle: "preserve-3d" }}
+          >
+            <motion.img
+              className="h-8 w-auto dark:brightness-0 dark:invert transition-all duration-300"
+              src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500"
+              alt="LinkBridger Logo"
+              whileHover={{ scale: 1.2, rotateZ: 15 }}
+            />
+          </motion.div>
+          <motion.span 
+            className="text-xl md:text-2xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent relative"
+            animate={{
+              backgroundPosition: ["0%", "100%", "0%"],
+            }}
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              ease: "linear",
+            }}
+            style={{
+              backgroundSize: "200% 100%",
+            }}
+          >
             LinkBridger
-          </span>
+            {/* Text Glow */}
+            <motion.span
+              className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent blur-sm opacity-50"
+              animate={{
+                opacity: [0.3, 0.7, 0.3],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            >
+              LinkBridger
+            </motion.span>
+          </motion.span>
         </motion.div>
 
-        {/* Navigation Items */}
-        <div className="flex items-center gap-4 md:gap-6">
-          {/* Navigation Links */}
+        {/* Enhanced Navigation Items */}
+        <div className="flex items-center gap-4 md:gap-6 relative z-10">
+          {/* Navigation Links with Magnetic Effect */}
           <div className="hidden md:flex items-center gap-6">
             <motion.button
               onClick={() => navigate("/")}
-              className="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 font-medium transition-colors"
-              whileHover={{ scale: 1.05 }}
+              className="relative text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 font-medium transition-colors overflow-hidden group"
+              whileHover={{ scale: 1.1, y: -2 }}
+              whileTap={{ scale: 0.95 }}
             >
-              Home
+              <span className="relative z-10">Home</span>
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20"
+                initial={{ x: "-100%" }}
+                whileHover={{ x: "100%" }}
+                transition={{ duration: 0.5 }}
+              />
             </motion.button>
             <motion.button
               onClick={() => navigate("/login")}
-              className="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 font-medium transition-colors"
-              whileHover={{ scale: 1.05 }}
+              className="relative text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 font-medium transition-colors overflow-hidden group"
+              whileHover={{ scale: 1.1, y: -2 }}
+              whileTap={{ scale: 0.95 }}
             >
-              Login
+              <span className="relative z-10">Login</span>
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20"
+                initial={{ x: "-100%" }}
+                whileHover={{ x: "100%" }}
+                transition={{ duration: 0.5 }}
+              />
             </motion.button>
           </div>
 
-          {/* Dark Mode Toggle */}
+          {/* Enhanced Dark Mode Toggle with Glow */}
           <motion.button
             onClick={() => dispatch(toggleDarkMode())}
-            whileHover={{ scale: 1.1 }}
+            whileHover={{ scale: 1.15, rotate: 15 }}
             whileTap={{ scale: 0.9 }}
-            className="p-2.5 rounded-xl bg-white/90 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 text-gray-800 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700/50 transition-all duration-300 shadow-md hover:shadow-lg"
+            className="relative p-2.5 rounded-xl bg-white/90 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 text-gray-800 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700/50 transition-all duration-300 shadow-md hover:shadow-lg overflow-hidden group"
             title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
           >
-            {darkMode ? (
-              <MdLightMode className="text-xl" />
-            ) : (
-              <MdDarkMode className="text-xl" />
-            )}
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-r from-purple-500/30 to-pink-500/30 opacity-0 group-hover:opacity-100"
+              transition={{ duration: 0.3 }}
+            />
+            <motion.div
+              className="relative z-10"
+              animate={{
+                rotate: [0, 360],
+              }}
+              transition={{
+                duration: 20,
+                repeat: Infinity,
+                ease: "linear",
+              }}
+            >
+              {darkMode ? (
+                <MdLightMode className="text-xl" />
+              ) : (
+                <MdDarkMode className="text-xl" />
+              )}
+            </motion.div>
           </motion.button>
 
-          {/* Get Started Button */}
+          {/* Enhanced Get Started Button with Particle Effect */}
           <motion.button
             onClick={handleGetStarted}
-            whileHover={{ scale: 1.05 }}
+            whileHover={{ scale: 1.1, y: -3 }}
             whileTap={{ scale: 0.95 }}
-            className="bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 text-white font-semibold py-2.5 px-4 md:px-6 rounded-xl text-sm md:text-lg transition-all shadow-lg hover:shadow-xl flex items-center gap-2"
+            className="relative bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 text-white font-semibold py-2.5 px-4 md:px-6 rounded-xl text-sm md:text-lg transition-all shadow-lg hover:shadow-2xl flex items-center gap-2 overflow-hidden group"
           >
-            <span className="hidden sm:inline">Get Started</span>
-            <span className="sm:hidden">Start</span>
-            <FaArrowRight />
+            {/* Animated Gradient Background */}
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600"
+              animate={{
+                backgroundPosition: ["0%", "100%", "0%"],
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                ease: "linear",
+              }}
+              style={{
+                backgroundSize: "200% 100%",
+              }}
+            />
+            
+            {/* Shimmer Effect */}
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+              initial={{ x: "-100%" }}
+              animate={{
+                x: ["-100%", "200%"],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                repeatDelay: 1,
+                ease: "linear",
+              }}
+              style={{ transform: "skewX(-20deg)" }}
+            />
+            
+            {/* Button Content */}
+            <span className="relative z-10 hidden sm:inline">Get Started</span>
+            <span className="relative z-10 sm:hidden">Start</span>
+            <motion.span
+              className="relative z-10"
+              animate={{
+                x: [0, 5, 0],
+              }}
+              transition={{
+                duration: 1.5,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            >
+              <FaArrowRight />
+            </motion.span>
+            
+            {/* Glow Effect */}
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 blur-xl opacity-0 group-hover:opacity-50"
+              transition={{ duration: 0.3 }}
+            />
           </motion.button>
         </div>
       </motion.div>
@@ -378,9 +749,9 @@ const Documentation = () => {
           className="p-4 sm:p-6 md:p-10 lg:p-12"
         >
           {/* Hero Section */}
-          <motion.section variants={itemVariants} className="mb-12 md:mb-16 text-center">
-            <div className="mb-8">
-              <TypewriterEffect words={words} className="mb-6" />
+          <motion.section variants={itemVariants} className="mb-6 md:mb-8 text-center">
+            <div className="mb-4">
+              <TypewriterEffect words={words} className="mb-4" />
             </div>
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
@@ -388,47 +759,134 @@ const Documentation = () => {
               transition={{ delay: 0.3, duration: 0.6 }}
             >
               <TextRevealCard
-                className="bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl border border-white/20 dark:border-gray-700/50 mb-8 transition-colors duration-300"
+                className="bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl border border-white/20 dark:border-gray-700/50 mb-4 transition-colors duration-300"
                 text="Generate Links You'll Never Forget."
                 revealText="Turn Usernames into Smart Links - Quick and Simple!"
               />
             </motion.div>
           </motion.section>
 
-          {/* Introduction Section */}
+          {/* Enhanced Introduction Section with 3D Effects */}
           <motion.section
             variants={itemVariants}
-            className="mb-12 md:mb-16"
+            className="mb-6 md:mb-8"
           >
-            <motion.div
-              className="bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-6 md:p-10 lg:p-12"
-              whileHover={{ scale: 1.01 }}
-              transition={{ duration: 0.3 }}
-            >
-              <motion.h2
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
+            <MagneticCard intensity={0.1}>
+              <motion.div
+                className="relative bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-6 md:p-10 lg:p-12 overflow-hidden group"
+                whileHover={{ scale: 1.02, z: 20 }}
+                transition={{ duration: 0.3 }}
+                style={{ transformStyle: "preserve-3d" }}
               >
-                Introduction
-              </motion.h2>
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.2 }}
-                className="text-base md:text-lg lg:text-xl leading-8 text-gray-700 dark:text-gray-300"
-              >
-                Welcome to <b className="text-gray-900 dark:text-gray-100">LinkBridger</b>, a tool designed to make your social
-                media links easier to remember and manage. Whether you're sharing
-                your Instagram, GitHub, or LinkedIn profile, LinkBridger allows you
-                to generate personalized URLs that are simple and customizable. Access all your links at one place by visiting <b className="text-gray-900 dark:text-white">https://clickly.cv/yourname</b> (without any platform name) - it creates a beautiful landing page showing all your profiles. Plus, get real-time email notifications every time someone visits your links! It
-                also tracks how often your links are clicked and allows centralized
-                updating, so any changes you make will reflect across all platforms
-                instantly.
-              </motion.p>
-            </motion.div>
+                {/* Animated Border Glow */}
+                <motion.div
+                  className="absolute inset-0 rounded-3xl"
+                  style={{
+                    background: "linear-gradient(45deg, transparent, rgba(147, 51, 234, 0.3), transparent)",
+                    backgroundSize: "200% 200%",
+                  }}
+                  animate={{
+                    backgroundPosition: ["0% 0%", "200% 200%", "0% 0%"],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "linear",
+                  }}
+                />
+                
+                {/* Floating Particles */}
+                {[...Array(5)].map((_, i) => (
+                  <FloatingParticle
+                    key={i}
+                    delay={i * 0.5}
+                    duration={4 + Math.random() * 2}
+                    size={2 + Math.random() * 3}
+                    color={["purple", "pink", "blue"][i % 3]}
+                  />
+                ))}
+                
+                <motion.h2
+                  initial={{ opacity: 0, x: -20, rotateY: -10 }}
+                  whileInView={{ opacity: 1, x: 0, rotateY: 0 }}
+                  viewport={{ once: true }}
+                  className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent relative"
+                  animate={{
+                    backgroundPosition: ["0%", "100%", "0%"],
+                  }}
+                  transition={{
+                    opacity: { duration: 0.8, type: "spring" },
+                    x: { duration: 0.8, type: "spring" },
+                    rotateY: { duration: 0.8, type: "spring" },
+                    backgroundPosition: { duration: 3, repeat: Infinity, ease: "linear" },
+                  }}
+                  style={{
+                    transformStyle: "preserve-3d",
+                    backgroundSize: "200% 100%",
+                  }}
+                >
+                  Introduction
+                  {/* Text Shadow Glow */}
+                  <motion.span
+                    className="absolute inset-0 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent blur-xl opacity-50"
+                    animate={{
+                      opacity: [0.3, 0.7, 0.3],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }}
+                  >
+                    Introduction
+                  </motion.span>
+                </motion.h2>
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.2 }}
+                  className="text-base md:text-lg lg:text-xl leading-8 text-gray-700 dark:text-gray-300 relative z-10"
+                  style={{ transform: "translateZ(10px)" }}
+                >
+                  Welcome to <motion.b 
+                    className="text-gray-900 dark:text-gray-100"
+                    animate={{
+                      textShadow: [
+                        "0 0 0px rgba(147, 51, 234, 0)",
+                        "0 0 10px rgba(147, 51, 234, 0.5)",
+                        "0 0 0px rgba(147, 51, 234, 0)",
+                      ],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }}
+                  >LinkBridger</motion.b>, a tool designed to make your social
+                  media links easier to remember and manage. Whether you're sharing
+                  your Instagram, GitHub, or LinkedIn profile, LinkBridger allows you
+                  to generate personalized URLs that are simple and customizable. Access all your links at one place by visiting <motion.b 
+                    className="text-gray-900 dark:text-white"
+                    animate={{
+                      color: [
+                        "rgb(17, 24, 39)",
+                        "rgb(147, 51, 234)",
+                        "rgb(17, 24, 39)",
+                      ],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }}
+                  >https://clickly.cv/yourname</motion.b> (without any platform name) - it creates a beautiful landing page showing all your profiles. Plus, get real-time email notifications every time someone visits your links! It
+                  also tracks how often your links are clicked and allows centralized
+                  updating, so any changes you make will reflect across all platforms
+                  instantly.
+                </motion.p>
+              </motion.div>
+            </MagneticCard>
           </motion.section>
 
           {/* Example Links Section */}
@@ -558,28 +1016,141 @@ const Documentation = () => {
             </motion.div>
           </motion.section>
 
-          {/* Get Started CTA */}
-          <motion.section variants={itemVariants} className="mb-12 md:mb-16 text-center">
+          {/* Enhanced Get Started CTA with 3D Effects */}
+          <motion.section variants={itemVariants} className="mb-6 md:mb-8 text-center">
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 30, rotateX: -15 }}
+              whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
               viewport={{ once: true }}
+              transition={{ duration: 0.8, type: "spring" }}
               className="space-y-6"
+              style={{ transformStyle: "preserve-3d", perspective: "1000px" }}
             >
-              <motion.button
-                onClick={handleGetStarted}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 text-white font-bold py-4 px-8 rounded-xl text-lg md:text-xl transition-all shadow-lg hover:shadow-2xl flex items-center gap-3 mx-auto"
-              >
-                Get Started <FaRocket />
-              </motion.button>
+              <MagneticCard intensity={0.2}>
+                <motion.button
+                  onClick={handleGetStarted}
+                  whileHover={{ scale: 1.1, y: -5, z: 50 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="relative bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 text-white font-bold py-4 px-8 rounded-xl text-lg md:text-xl transition-all shadow-lg hover:shadow-2xl flex items-center gap-3 mx-auto overflow-hidden group"
+                  style={{ transformStyle: "preserve-3d" }}
+                >
+                  {/* Animated Background */}
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600"
+                    animate={{
+                      backgroundPosition: ["0%", "100%", "0%"],
+                    }}
+                    transition={{
+                      duration: 3,
+                      repeat: Infinity,
+                      ease: "linear",
+                    }}
+                    style={{
+                      backgroundSize: "200% 100%",
+                    }}
+                  />
+                  
+                  {/* Shimmer */}
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent"
+                    initial={{ x: "-100%" }}
+                    animate={{
+                      x: ["-100%", "200%"],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      repeatDelay: 0.5,
+                      ease: "linear",
+                    }}
+                    style={{ transform: "skewX(-20deg)" }}
+                  />
+                  
+                  {/* Content */}
+                  <span className="relative z-10">Get Started</span>
+                  <motion.span
+                    className="relative z-10"
+                    animate={{
+                      rotate: [0, 15, -15, 0],
+                      y: [0, -3, 0],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }}
+                  >
+                    <FaRocket />
+                  </motion.span>
+                  
+                  {/* Glow Effect */}
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 blur-2xl opacity-0 group-hover:opacity-60 -z-10"
+                    animate={{
+                      scale: [1, 1.2, 1],
+                      opacity: [0, 0.6, 0],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }}
+                  />
+                  
+                  {/* Floating Particles on Hover */}
+                  <motion.div
+                    className="absolute inset-0 pointer-events-none"
+                    initial={false}
+                    whileHover="hover"
+                  >
+                    <motion.div
+                      variants={{
+                        hover: {
+                          transition: {
+                            staggerChildren: 0.1,
+                          },
+                        },
+                      }}
+                    >
+                      {[...Array(8)].map((_, i) => (
+                        <motion.div
+                          key={i}
+                          className="absolute w-2 h-2 bg-white rounded-full"
+                          variants={{
+                            hover: {
+                              opacity: [0, 1, 0],
+                              scale: [0, 1, 0],
+                              x: Math.cos((i / 8) * Math.PI * 2) * 50,
+                              y: Math.sin((i / 8) * Math.PI * 2) * 50,
+                            },
+                          }}
+                          transition={{
+                            duration: 1,
+                            delay: i * 0.1,
+                          }}
+                          style={{
+                            left: "50%",
+                            top: "50%",
+                          }}
+                        />
+                      ))}
+                    </motion.div>
+                  </motion.div>
+                </motion.button>
+              </MagneticCard>
+              
               <motion.p
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: 0.2 }}
-                className="text-gray-400 dark:text-gray-500 text-sm md:text-base"
+                className="text-gray-600 dark:text-gray-500 text-sm md:text-base"
+                animate={{
+                  opacity: [0.7, 1, 0.7],
+                }}
+                transition={{
+                  opacity: { duration: 2, repeat: Infinity, ease: "easeInOut" },
+                  y: { delay: 0.2 },
+                }}
               >
                 Create an account and start managing your personalized links today!
               </motion.p>
@@ -592,11 +1163,11 @@ const Documentation = () => {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-12 text-center bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
+              className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 md:mb-8 text-center bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
             >
               Key Features
             </motion.h2>
-            <div className="space-y-8 md:space-y-12">
+            <div className="space-y-4 md:space-y-6">
               {features.map((feature, idx) => (
                 <FeatureCard
                   key={feature.title}
@@ -619,7 +1190,7 @@ const Documentation = () => {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
+                className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
               >
                 How It Works
               </motion.h2>
@@ -628,7 +1199,7 @@ const Documentation = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.1 }}
-                className="text-base md:text-lg lg:text-xl leading-8 text-gray-700 dark:text-gray-300 mb-8"
+                className="text-base md:text-lg lg:text-xl leading-8 text-gray-700 dark:text-gray-300 mb-4 md:mb-6"
               >
                 The core idea behind <b className="text-gray-900 dark:text-white">LinkBridger</b> is to simplify the
                 management of social media links. Instead of sharing long,
@@ -779,7 +1350,7 @@ const Documentation = () => {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-12 text-center bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
+              className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 md:mb-8 text-center bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
             >
               Future Enhancements
             </motion.h2>
@@ -825,7 +1396,7 @@ const Documentation = () => {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-12 text-center bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
+              className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 md:mb-8 text-center bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
             >
               Use Cases
             </motion.h2>
@@ -922,7 +1493,7 @@ const Documentation = () => {
               className="bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-6 md:p-10 lg:p-12"
               whileHover={{ scale: 1.01 }}
             >
-              <motion.div className="flex items-center gap-4 mb-8">
+              <motion.div className="flex items-center gap-4 mb-4 md:mb-6">
                 <motion.div
                   className="bg-gradient-to-r from-yellow-500 to-orange-500 p-4 rounded-xl"
                   whileHover={{ scale: 1.1, rotate: 5 }}
@@ -1014,7 +1585,7 @@ const Documentation = () => {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-12 text-center bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
+              className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 md:mb-8 text-center bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
             >
               Supported Platforms
             </motion.h2>
@@ -1024,7 +1595,7 @@ const Documentation = () => {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
             >
-              <p className="text-lg md:text-xl text-gray-300 dark:text-gray-400 mb-8 text-center">
+              <p className="text-lg md:text-xl text-gray-700 dark:text-gray-400 mb-4 md:mb-6 text-center">
                 LinkBridger supports <b className="text-gray-900 dark:text-white">any platform</b> you can think of! Just provide the destination URL and we'll create your personalized link.
               </p>
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
@@ -1055,7 +1626,7 @@ const Documentation = () => {
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.5 }}
-                className="text-center text-gray-400 dark:text-gray-500 mt-6 text-sm md:text-base"
+                className="text-center text-gray-600 dark:text-gray-500 mt-6 text-sm md:text-base"
               >
                 And many more! If you can share a URL, we can create a personalized link for it.
               </motion.p>
@@ -1068,7 +1639,7 @@ const Documentation = () => {
               className="bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-6 md:p-10 lg:p-12"
               whileHover={{ scale: 1.01 }}
             >
-              <motion.div className="flex items-center gap-4 mb-8">
+              <motion.div className="flex items-center gap-4 mb-4 md:mb-6">
                 <motion.div
                   className="bg-gradient-to-r from-green-500 to-emerald-500 p-4 rounded-xl"
                   whileHover={{ scale: 1.1, rotate: 5 }}
@@ -1148,7 +1719,7 @@ const Documentation = () => {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-12 text-center bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
+              className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 md:mb-8 text-center bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
             >
               Troubleshooting
             </motion.h2>
@@ -1211,7 +1782,7 @@ const Documentation = () => {
                           <IconComponent className="text-xl text-white" />
                         </motion.div>
                         <div className="flex-1">
-                          <h4 className="text-lg md:text-xl font-bold text-white mb-2">
+                          <h4 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white mb-2">
                             {item.issue}
                           </h4>
                           <p className="text-gray-700 dark:text-gray-400 leading-relaxed">
@@ -1254,7 +1825,7 @@ const Documentation = () => {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-12 text-center bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
+              className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 md:mb-8 text-center bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
             >
               Frequently Asked Questions
             </motion.h2>
@@ -1287,7 +1858,7 @@ const Documentation = () => {
                     className="p-6 flex justify-between items-center"
                     whileHover={{ backgroundColor: "rgba(255,255,255,0.05)" }}
                   >
-                    <p className="font-semibold text-lg md:text-xl text-white dark:text-gray-200 flex-1">
+                    <p className="font-semibold text-lg md:text-xl text-gray-900 dark:text-gray-200 flex-1">
                       Q: {faq.q}
                     </p>
                     <motion.div
@@ -1331,7 +1902,7 @@ const Documentation = () => {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-12 text-center bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
+              className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 md:mb-8 text-center bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
             >
               What Our Users Say
             </motion.h2>
@@ -1384,16 +1955,6 @@ const Documentation = () => {
 
           {/* Footer */}
           <Footer />
-          <motion.footer
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="text-center py-8 border-t border-white/10 mt-12"
-          >
-            <motion.p className="text-lg text-gray-600 dark:text-gray-500">
-              &copy; 2024 LinkBridger. All Rights Reserved.
-            </motion.p>
-          </motion.footer>
         </motion.div>
       </div>
     </div>
