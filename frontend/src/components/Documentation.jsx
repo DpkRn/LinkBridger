@@ -1320,27 +1320,169 @@ const Documentation = () => {
                     ))}
                   </div>
 
-                  {/* Bottom Note */}
+                  {/* Interactive Matrix Card */}
                   <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
+                    initial={{ opacity: 0, y: 30, scale: 0.9 }}
+                    whileInView={{ opacity: 1, y: 0, scale: 1 }}
                     viewport={{ once: true }}
-                    transition={{ delay: 0.8 }}
-                    className="mt-6 md:mt-8 text-center"
+                    transition={{ delay: 0.8, duration: 0.6 }}
+                    className="mt-8 md:mt-12 relative"
                   >
-                    <motion.p
-                      className="text-sm md:text-base text-gray-700 dark:text-gray-400 font-medium"
-                      animate={{
-                        opacity: [0.7, 1, 0.7],
-                      }}
-                      transition={{
-                        duration: 2,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                      }}
-                    >
-                      ✨ Only the platform name changes. All else remains the same. ✨
-                    </motion.p>
+                    <MagneticCard intensity={0.1}>
+                      <motion.div
+                        className="relative bg-gradient-to-br from-purple-900/40 via-pink-900/40 to-blue-900/40 dark:from-purple-950/60 dark:via-pink-950/60 dark:to-blue-950/60 backdrop-blur-xl rounded-2xl md:rounded-3xl shadow-2xl border border-purple-500/30 dark:border-purple-400/20 p-6 md:p-8 overflow-hidden group"
+                        whileHover={{ scale: 1.02, y: -5 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        {/* Matrix Background Effect */}
+                        <div className="absolute inset-0 opacity-20 dark:opacity-30 pointer-events-none">
+                          {[...Array(50)].map((_, i) => (
+                            <motion.div
+                              key={i}
+                              className="absolute text-green-400 dark:text-green-300 font-mono text-xs md:text-sm"
+                              style={{
+                                left: `${(i * 7) % 100}%`,
+                                top: `${(i * 11) % 100}%`,
+                              }}
+                              animate={{
+                                y: [0, -100, 0],
+                                opacity: [0, 1, 0],
+                              }}
+                              transition={{
+                                duration: 3 + Math.random() * 2,
+                                repeat: Infinity,
+                                delay: Math.random() * 2,
+                                ease: "linear",
+                              }}
+                            >
+                              {String.fromCharCode(0x30A0 + Math.random() * 96)}
+                            </motion.div>
+                          ))}
+                        </div>
+
+                        {/* Animated Border Glow */}
+                        <motion.div
+                          className="absolute -inset-[2px] rounded-2xl md:rounded-3xl pointer-events-none z-0"
+                          animate={{
+                            opacity: [0.4, 0.8, 0.4],
+                          }}
+                          transition={{
+                            duration: 2.5,
+                            repeat: Infinity,
+                            ease: "easeInOut",
+                          }}
+                          style={{
+                            background: "linear-gradient(135deg, rgba(147, 51, 234, 0.5), rgba(236, 72, 153, 0.5), rgba(59, 130, 246, 0.5), rgba(147, 51, 234, 0.5))",
+                            filter: "blur(8px)",
+                          }}
+                        />
+
+                        {/* Floating Particles */}
+                        {[...Array(8)].map((_, i) => (
+                          <motion.div
+                            key={i}
+                            className="absolute w-2 h-2 rounded-full bg-purple-400/40 dark:bg-purple-300/40"
+                            style={{
+                              left: `${20 + i * 10}%`,
+                              top: `${10 + (i % 3) * 30}%`,
+                            }}
+                            animate={{
+                              y: [0, -20, 0],
+                              x: [0, Math.sin(i) * 10, 0],
+                              scale: [1, 1.5, 1],
+                              opacity: [0.3, 0.8, 0.3],
+                            }}
+                            transition={{
+                              duration: 2 + i * 0.3,
+                              repeat: Infinity,
+                              delay: i * 0.2,
+                              ease: "easeInOut",
+                            }}
+                          />
+                        ))}
+
+                        {/* Content */}
+                        <div className="relative z-10 text-center">
+                          <motion.div
+                            className="flex items-center justify-center gap-2 mb-4"
+                            animate={{
+                              scale: [1, 1.1, 1],
+                            }}
+                            transition={{
+                              duration: 2,
+                              repeat: Infinity,
+                              ease: "easeInOut",
+                            }}
+                          >
+                            <motion.span
+                              className="text-2xl md:text-3xl"
+                              animate={{
+                                rotate: [0, 360],
+                              }}
+                              transition={{
+                                duration: 3,
+                                repeat: Infinity,
+                                ease: "linear",
+                              }}
+                            >
+                              ✨
+                            </motion.span>
+                            <motion.h3
+                              className="text-xl md:text-2xl font-bold bg-gradient-to-r from-purple-300 via-pink-300 to-blue-300 dark:from-purple-200 dark:via-pink-200 dark:to-blue-200 bg-clip-text text-transparent"
+                              animate={{
+                                backgroundPosition: ["0%", "100%", "0%"],
+                              }}
+                              transition={{
+                                duration: 3,
+                                repeat: Infinity,
+                                ease: "linear",
+                              }}
+                              style={{
+                                backgroundSize: "200% 100%",
+                              }}
+                            >
+                              Only the platform name changes
+                            </motion.h3>
+                            <motion.span
+                              className="text-2xl md:text-3xl"
+                              animate={{
+                                rotate: [360, 0],
+                              }}
+                              transition={{
+                                duration: 3,
+                                repeat: Infinity,
+                                ease: "linear",
+                              }}
+                            >
+                              ✨
+                            </motion.span>
+                          </motion.div>
+                          
+                          <motion.p
+                            className="text-base md:text-lg text-gray-200 dark:text-gray-300 font-medium"
+                            animate={{
+                              opacity: [0.8, 1, 0.8],
+                            }}
+                            transition={{
+                              duration: 2,
+                              repeat: Infinity,
+                              ease: "easeInOut",
+                            }}
+                          >
+                            All else remains the same
+                          </motion.p>
+
+                          {/* Interactive Glow on Hover */}
+                          <motion.div
+                            className="absolute inset-0 rounded-2xl md:rounded-3xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                            style={{
+                              background: "radial-gradient(circle at center, rgba(147, 51, 234, 0.3), rgba(236, 72, 153, 0.2), transparent 70%)",
+                              filter: "blur(20px)",
+                            }}
+                          />
+                        </div>
+                      </motion.div>
+                    </MagneticCard>
                   </motion.div>
                 </div>
               </div>
