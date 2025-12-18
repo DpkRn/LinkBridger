@@ -1,8 +1,436 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useInView } from "framer-motion";
-import { motion } from "framer-motion";
-import { useSelector } from "react-redux";
+import { motion, AnimatePresence } from "framer-motion";
+
+// Floating Particle Component
+const FloatingParticle = ({ delay = 0, duration = 20, size = 4, color = "purple" }) => {
+  const colors = {
+    purple: "bg-purple-400/30",
+    pink: "bg-pink-400/30",
+    blue: "bg-blue-400/30",
+    cyan: "bg-cyan-400/30",
+  };
+
+  return (
+    <motion.div
+      className={`absolute ${colors[color]} rounded-full blur-sm`}
+      style={{
+        width: `${size}px`,
+        height: `${size}px`,
+        left: `${Math.random() * 100}%`,
+        top: `${Math.random() * 100}%`,
+      }}
+      animate={{
+        y: [0, -30, 0],
+        x: [0, Math.random() * 20 - 10, 0],
+        opacity: [0.3, 0.8, 0.3],
+        scale: [1, 1.5, 1],
+      }}
+      transition={{
+        duration: duration + Math.random() * 10,
+        repeat: Infinity,
+        delay: delay,
+        ease: "easeInOut",
+      }}
+    />
+  );
+};
+
+// 3D Card Component with Magnetic Hover
+const MagneticCard = ({ children, className = "", intensity = 0.3 }) => {
+  const cardRef = useRef(null);
+  const [rotate, setRotate] = useState({ x: 0, y: 0 });
+
+  const handleMouseMove = (e) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const x = (e.clientX - centerX) / (rect.width / 2);
+    const y = (e.clientY - centerY) / (rect.height / 2);
+    setRotate({ x: y * intensity, y: -x * intensity });
+  };
+
+  const handleMouseLeave = () => {
+    setRotate({ x: 0, y: 0 });
+  };
+
+  return (
+    <motion.div
+      ref={cardRef}
+      className={className}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      animate={{
+        rotateX: rotate.x,
+        rotateY: rotate.y,
+      }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      style={{ transformStyle: "preserve-3d", perspective: "1000px" }}
+    >
+      {children}
+    </motion.div>
+  );
+};
+
+// Animated Link Card Component
+const AnimatedLinkCard = ({ link, idx }) => {
+  const [isHovered, setIsHovered] = useState(false);
+  const cardRef = useRef(null);
+  const inView = useInView(cardRef, { once: true, margin: "-50px" });
+
+  return (
+    <motion.div
+      animate={inView ? {
+        y: [0, -10, 0],
+      } : {}}
+      transition={{
+        duration: 3,
+        repeat: Infinity,
+        ease: "easeInOut",
+        delay: idx * 0.2 + 0.8,
+      }}
+    >
+      <MagneticCard intensity={0.2}>
+        <motion.a
+          ref={cardRef}
+          href={link.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          onHoverStart={() => setIsHovered(true)}
+          onHoverEnd={() => setIsHovered(false)}
+          initial={{ opacity: 0, rotateY: -20, scale: 0.8 }}
+          animate={inView ? {
+            opacity: 1,
+            rotateY: 0,
+            scale: 1,
+          } : { opacity: 0 }}
+          transition={{
+            opacity: { duration: 0.6, delay: idx * 0.1 },
+            rotateY: { duration: 0.6, delay: idx * 0.1 },
+            scale: { duration: 0.6, delay: idx * 0.1 },
+          }}
+          whileHover={{ 
+            scale: 1.1, 
+            y: -15,
+            z: 50,
+            rotateY: 5,
+          }}
+          className={`relative group bg-gradient-to-br ${link.color} p-6 rounded-2xl shadow-2xl overflow-hidden cursor-pointer min-h-[180px] flex flex-col justify-between`}
+          style={{ transformStyle: "preserve-3d" }}
+        >
+
+        {/* Animated Background Gradient */}
+        <motion.div
+          className={`absolute inset-0 bg-gradient-to-br ${link.color} opacity-90`}
+          animate={isHovered ? {
+            opacity: [0.9, 1, 0.9],
+            scale: [1, 1.1, 1],
+          } : {
+            opacity: [0.7, 0.9, 0.7],
+          }}
+          transition={{
+            duration: 2,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+
+        {/* Card Glow Animation */}
+        <motion.div
+          className="absolute inset-0 rounded-2xl"
+          animate={{
+            boxShadow: [
+              "0 0 20px rgba(255, 255, 255, 0.1)",
+              "0 0 40px rgba(255, 255, 255, 0.3)",
+              "0 0 20px rgba(255, 255, 255, 0.1)",
+            ],
+          }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+
+        {/* Shimmer Effect */}
+        <motion.div
+          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+          initial={{ x: "-100%" }}
+          animate={isHovered ? { x: "200%" } : { x: "-100%" }}
+          transition={{
+            duration: 1,
+            repeat: isHovered ? Infinity : 0,
+            repeatDelay: 0.5,
+            ease: "linear",
+          }}
+          style={{ transform: "skewX(-20deg)" }}
+        />
+
+        {/* Content */}
+        <div className="relative z-10" style={{ transform: "translateZ(20px)" }}>
+          {/* Platform Icon with Glow Effect */}
+          <div className="flex justify-center mb-3 relative h-16">
+            {/* Icon with Continuous Animation and Glow */}
+            <motion.div
+              className="text-4xl relative z-10 flex items-center justify-center"
+              animate={{
+                rotate: [0, 10, -10, 0],
+                scale: [1, 1.1, 1],
+                y: [0, -5, 0],
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            >
+              {/* Glow Effect - moves with icon */}
+              <motion.div
+                className="absolute inset-0 flex items-center justify-center pointer-events-none"
+                animate={{
+                  scale: [1, 1.3, 1],
+                  opacity: [0.3, 0.6, 0.3],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              >
+                <div className="w-16 h-16 bg-white/20 rounded-full blur-xl" />
+              </motion.div>
+              
+              {/* Floating Particles - Centered with Icon */}
+              <AnimatePresence>
+                {isHovered && (
+                  <>
+                    {[...Array(6)].map((_, i) => (
+                      <motion.div
+                        key={i}
+                        className="absolute w-2 h-2 bg-white rounded-full pointer-events-none"
+                        initial={{ opacity: 0, scale: 0 }}
+                        animate={{
+                          opacity: [0, 1, 0],
+                          scale: [0, 1, 0],
+                          x: `${Math.cos((i / 6) * Math.PI * 2) * 60}px`,
+                          y: `${Math.sin((i / 6) * Math.PI * 2) * 60}px`,
+                        }}
+                        exit={{ opacity: 0 }}
+                        transition={{
+                          duration: 1,
+                          delay: i * 0.1,
+                          repeat: Infinity,
+                        }}
+                      />
+                    ))}
+                  </>
+                )}
+              </AnimatePresence>
+              
+              {/* Icon */}
+              <span className="relative z-10">{link.icon}</span>
+            </motion.div>
+          </div>
+
+          {/* Platform Name */}
+          <motion.h3
+            className="text-xl md:text-2xl font-bold text-white mb-2 text-center"
+            animate={isHovered ? {
+              scale: [1, 1.05, 1],
+            } : {}}
+            transition={{
+              duration: 1.5,
+              repeat: isHovered ? Infinity : 0,
+            }}
+          >
+            {link.platform}
+          </motion.h3>
+
+          {/* URL - Tightened with full text visible */}
+          <motion.p
+            className="text-[10px] md:text-xs text-white/90 font-mono text-center px-1"
+            style={{ letterSpacing: '-0.3px', wordSpacing: '-1px' }}
+            animate={isHovered ? {
+              x: [0, 5, 0],
+            } : {}}
+            transition={{
+              duration: 2,
+              repeat: isHovered ? Infinity : 0,
+            }}
+          >
+            {link.url}
+          </motion.p>
+
+          {/* Arrow Indicator */}
+          <motion.div
+            className="absolute bottom-4 right-4 text-white/80"
+            animate={isHovered ? {
+              x: [0, 5, 0],
+              opacity: [0.8, 1, 0.8],
+            } : {}}
+            transition={{
+              duration: 1,
+              repeat: isHovered ? Infinity : 0,
+            }}
+          >
+            <FaArrowRight className="w-5 h-5" />
+          </motion.div>
+        </div>
+
+        {/* Glow Effect */}
+        <motion.div
+          className={`absolute inset-0 bg-gradient-to-br ${link.color} blur-2xl opacity-0`}
+          animate={{
+            opacity: isHovered ? [0, 0.6, 0] : 0,
+            scale: isHovered ? [1, 1.3, 1] : 1,
+          }}
+          transition={{
+            duration: 2,
+            repeat: isHovered ? Infinity : 0,
+            ease: "easeInOut",
+          }}
+        />
+      </motion.a>
+      </MagneticCard>
+    </motion.div>
+  );
+};
+
+// Feature Card Component - Enhanced with 3D and Magnetic Effects
+const FeatureCard = ({ feature, idx, hoveredFeature, setHoveredFeature }) => {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: "-100px" });
+  const IconComponent = feature.icon;
+  const isLeft = idx % 2 === 0;
+  const [cardHover, setCardHover] = useState(false);
+
+  return (
+    <MagneticCard intensity={0.15}>
+      <motion.div
+        key={feature.title}
+        ref={ref}
+        initial={{ opacity: 0, x: isLeft ? -100 : 100, rotateY: isLeft ? -15 : 15 }}
+        animate={inView ? { opacity: 1, x: 0, rotateY: 0 } : {}}
+        transition={{ duration: 0.8, type: "spring", stiffness: 100 }}
+        onHoverStart={() => {
+          setHoveredFeature(idx);
+          setCardHover(true);
+        }}
+        onHoverEnd={() => {
+          setHoveredFeature(null);
+          setCardHover(false);
+        }}
+        className={`group relative bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-6 md:p-10 overflow-hidden ${
+          isLeft ? "" : "md:flex-row-reverse"
+        } flex flex-col md:flex-row items-center gap-6 md:gap-8 cursor-pointer transition-all duration-300`}
+        whileHover={{ scale: 1.02, z: 50 }}
+        style={{ transformStyle: "preserve-3d" }}
+      >
+        {/* Animated Gradient Background */}
+        <motion.div
+          className={`absolute inset-0 bg-gradient-to-r ${feature.gradient} opacity-0`}
+          animate={{
+            opacity: cardHover ? 0.15 : 0,
+          }}
+          transition={{ duration: 0.3 }}
+        />
+        
+        {/* Shimmer Effect */}
+        <motion.div
+          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+          initial={{ x: "-100%" }}
+          animate={cardHover ? { x: "200%" } : { x: "-100%" }}
+          transition={{ duration: 0.8, repeat: cardHover ? Infinity : 0, repeatDelay: 0.5 }}
+          style={{ transform: "skewX(-20deg)" }}
+        />
+
+        {/* Floating Particles Around Card */}
+        {cardHover && (
+          <>
+            {[...Array(6)].map((_, i) => (
+              <FloatingParticle
+                key={i}
+                delay={i * 0.2}
+                duration={3 + Math.random() * 2}
+                size={3 + Math.random() * 3}
+                color={["purple", "pink", "blue"][i % 3]}
+              />
+            ))}
+          </>
+        )}
+        
+        {/* Icon with 3D Rotation */}
+        <motion.div
+          className={`relative bg-gradient-to-r ${feature.gradient} p-6 rounded-2xl shadow-lg`}
+          whileHover={{ scale: 1.15, rotateZ: 5, rotateY: 10 }}
+          animate={cardHover ? { rotateY: [0, 5, -5, 0] } : {}}
+          transition={{ duration: 2, repeat: cardHover ? Infinity : 0 }}
+          style={{ transformStyle: "preserve-3d" }}
+        >
+          <motion.div
+            animate={cardHover ? { rotate: 360 } : {}}
+            transition={{ duration: 3, repeat: cardHover ? Infinity : 0, ease: "linear" }}
+          >
+            <IconComponent className="text-4xl md:text-5xl text-white" />
+          </motion.div>
+          {/* Glow Effect */}
+          <motion.div
+            className={`absolute inset-0 bg-gradient-to-r ${feature.gradient} rounded-2xl blur-xl opacity-0`}
+            animate={{ opacity: cardHover ? 0.5 : 0 }}
+            transition={{ duration: 0.3 }}
+          />
+        </motion.div>
+
+        {/* Image with Parallax Effect */}
+        <motion.div
+          className="relative"
+          style={{ transformStyle: "preserve-3d" }}
+        >
+          <motion.img
+            src={feature.img}
+            alt={feature.title}
+            className="h-48 w-48 md:h-64 md:w-64 rounded-2xl object-cover flex-shrink-0 shadow-lg"
+            whileHover={{ scale: 1.1, rotateZ: 2, rotateY: 5 }}
+            transition={{ type: "spring", stiffness: 300 }}
+            style={{ transformStyle: "preserve-3d" }}
+          />
+          {/* Image Glow */}
+          <motion.div
+            className="absolute inset-0 rounded-2xl bg-gradient-to-r from-purple-500/20 to-pink-500/20 blur-2xl -z-10"
+            animate={{
+              scale: cardHover ? [1, 1.2, 1] : 1,
+              opacity: cardHover ? [0.3, 0.6, 0.3] : 0.3,
+            }}
+            transition={{ duration: 2, repeat: cardHover ? Infinity : 0 }}
+          />
+        </motion.div>
+
+        {/* Content */}
+        <div className="flex-1 text-center md:text-left" style={{ transform: "translateZ(20px)" }}>
+          <motion.h3
+            className={`text-2xl md:text-3xl font-bold mb-4 bg-gradient-to-r ${feature.gradient} bg-clip-text text-transparent`}
+            animate={cardHover ? { scale: [1, 1.05, 1] } : {}}
+            transition={{ duration: 1.5, repeat: cardHover ? Infinity : 0 }}
+          >
+            {feature.title}
+          </motion.h3>
+          <motion.p 
+            className="text-base md:text-lg text-gray-700 dark:text-gray-400 leading-relaxed"
+            animate={cardHover ? { x: [0, 5, 0] } : {}}
+            transition={{ duration: 2, repeat: cardHover ? Infinity : 0 }}
+          >
+            {feature.desc}
+          </motion.p>
+        </div>
+      </motion.div>
+    </MagneticCard>
+  );
+};
+import { useSelector, useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
+import { toggleDarkMode } from "../redux/pageSlice";
+import { MdDarkMode, MdLightMode } from "react-icons/md";
 import { TypewriterEffect } from "./ui/typewriter-effect";
 import {
   TextRevealCard,
@@ -11,17 +439,68 @@ import {
 } from "./ui/text-reveal-card";
 import { FlipWords } from "./ui/flip-words";
 import { BackgroundBeamsWithCollision } from "./ui/background-beams-with-collision";
-import { ContainerScroll } from "./ui/container-scroll-animation";
 import Footer from "./footer/Footer";
+import { 
+  FaRocket, 
+  FaLink, 
+  FaChartLine, 
+  FaSyncAlt, 
+  FaCog, 
+  FaChevronDown,
+  FaChevronUp,
+  FaStar,
+  FaArrowRight,
+  FaCheckCircle,
+  FaLightbulb,
+  FaShieldAlt,
+  FaClock,
+  FaPalette,
+  FaBriefcase,
+  FaUserTie,
+  FaCode,
+  FaGraduationCap,
+  FaUsers,
+  FaLock,
+  FaEye,
+  FaServer,
+  FaExclamationTriangle,
+  FaQuestionCircle,
+  FaCheck,
+  FaTimes,
+  FaHome,
+  FaEnvelope
+} from "react-icons/fa";
 
 const Documentation = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const sidebarMenu = useSelector((store) => store.page.sidebarMenu);
+  const darkMode = useSelector((store) => store.page.darkMode);
+  const isAuthenticated=useSelector((store) => store.admin.isAuthenticated);
   const location = useLocation();
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [openFAQ, setOpenFAQ] = useState([false, false, false]);
+  const [openFeature, setOpenFeature] = useState(null);
+  const [hoveredFeature, setHoveredFeature] = useState(null);
 
-  // Function to navigate to the register page
+  // Mouse tracking for interactive background
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      setMousePosition({
+        x: (e.clientX / window.innerWidth) * 100,
+        y: (e.clientY / window.innerHeight) * 100,
+      });
+    };
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
+
   const handleGetStarted = () => {
-    navigate("/login"); // Assuming your registration page route is /register
+    navigate("/login");
+  };
+
+  const toggleFAQ = (idx) => {
+    setOpenFAQ((prev) => prev.map((v, i) => (i === idx ? !v : v)));
   };
 
   const words = [
@@ -31,466 +510,1863 @@ const Documentation = () => {
     },
     {
       text: "Personalized",
-      className: "text-4xl font-bold text-black dark:text-gray-200",
+      className: "text-4xl font-bold text-gray-900 dark:text-gray-200",
     },
     {
       text: "Social ",
-      className: "text-4xl font-bold text-black dark:text-gray-200",
+      className: "text-4xl font-bold text-gray-900 dark:text-gray-200",
     },
     {
       text: "Profile ",
-      className: "text-4xl font-bold text-black dark:text-gray-200",
+      className: "text-4xl font-bold text-gray-900 dark:text-gray-200",
     },
     {
       text: "Link ",
-      className: "text-4xl font-bold text-black dark:text-gray-200",
+      className: "text-4xl font-bold text-gray-900 dark:text-gray-200",
     },
     {
       text: "Manager.",
-      className: "text-4xl font-bold text-black dark:text-gray-200",
+      className: "text-4xl font-bold text-gray-900 dark:text-gray-200",
     },
   ];
-  const plateforms = [
+
+  const platforms = [
     "linkedin",
     "github",
     "leetcode",
     "portfolio",
     "instagram",
-    "facebook",
     "codeforce",
   ];
-  // Animation variants
-  const fadeInUp = {
-    hidden: { opacity: 0, y: 40 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+
+  const features = [
+    {
+      img: "easy-to-remember.webp",
+      title: "Personalized Smart Links",
+      desc: "Generate easy-to-remember links for your social profiles using your username and platform names.",
+      icon: FaLink,
+      gradient: "from-blue-500 to-cyan-500",
+    },
+    {
+      img: "logo.png",
+      title: "All Links at One Place",
+      desc: "Access all your profiles with a single hub link. Simply visit https://clickly.cv/yourname (without any platform name) to see all your links in one beautiful, organized page. Perfect for sharing in bios, resumes, and business cards.",
+      icon: FaHome,
+      gradient: "from-violet-500 to-purple-500",
+    },
+    {
+      img: "update.webp",
+      title: "Centralized Link Management",
+      desc: "Update your social profile links in one place, and the change reflects everywhere.",
+      icon: FaSyncAlt,
+      gradient: "from-green-500 to-emerald-500",
+    },
+    {
+      img: "click.webp",
+      title: "Real-Time Email Notifications",
+      desc: "Get instant email notifications every time someone visits your links. Stay informed about who's checking out your profiles in real-time. Perfect for tracking engagement and knowing when potential clients or employers view your links.",
+      icon: FaEnvelope,
+      gradient: "from-cyan-500 to-blue-500",
+    },
+    {
+      img: "click.webp",
+      title: "Click Tracking",
+      desc: "Keep track of how many times your social profile links are clicked.",
+      icon: FaChartLine,
+      gradient: "from-orange-500 to-red-500",
+    },
+    {
+      img: "easysetup.webp",
+      title: "Easy to Setup",
+      desc: "No complicated setup; just choose your username, add the platform, and you're ready to go!",
+      icon: FaCog,
+      gradient: "from-indigo-500 to-purple-500",
+    },
+  ];
+
+  const futureFeatures = [
+    {
+      title: "Advanced Analytics",
+      desc: "See detailed reports on clicks, traffic sources, and engagement levels for each link.",
+      icon: FaChartLine,
+      gradient: "from-blue-500 to-cyan-500",
+    },
+    {
+      title: "Custom Link Themes",
+      desc: "Add custom themes or styles to your personalized links to match your branding or style preferences.",
+      icon: FaPalette,
+      gradient: "from-purple-500 to-pink-500",
+    },
+    {
+      title: "Link Expiration",
+      desc: "Set expiration dates for temporary links, ensuring they are only accessible for a certain period.",
+      icon: FaClock,
+      gradient: "from-orange-500 to-red-500",
+    },
+    {
+      title: "Link Password Protection",
+      desc: "Add a layer of security by allowing password protection on sensitive links.",
+      icon: FaShieldAlt,
+      gradient: "from-green-500 to-emerald-500",
+    },
+  ];
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
   };
 
-  // FAQ collapse state
-  const [openFAQ, setOpenFAQ] = useState([false, false, false]);
-  // For Key Features expand/collapse
-  const [openFeature, setOpenFeature] = useState(null);
-  const toggleFAQ = (idx) => {
-    setOpenFAQ((prev) => prev.map((v, i) => (i === idx ? !v : v)));
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6 },
+    },
   };
 
   return (
-    <motion.div initial="hidden" animate="visible" variants={fadeInUp} className="min-h-screen w-full bg-gradient-to-br from-pink-200 via-sky-200 to-blue-300 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
-      {location.pathname === "/" && (
-        <div className="min-w-screen h-[70px] shadow-lg bg-neutral-100 dark:bg-gray-800 text-right flex items-center justify-between transition-colors duration-300">
-          <img
-            className="h-8 w-auto ml-10 sm:ml-20 dark:brightness-0 dark:invert transition-all duration-300"
-            src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500"
-            alt="Your Company"
-          />
-          <button
-            onClick={handleGetStarted}
-            className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white font-semibold py-2 px-4 rounded-md text-md sm:text-lg transition-colors mr-10 sm:mr-20"
-          >
-            Get Started
-          </button>
-        </div>
-      )}
-  <motion.div variants={fadeInUp} className={`p-2 md:p-10`}>
-        <TypewriterEffect words={words} className="mb-8" />
-        <TextRevealCard
-          className="bg-gradient-to-r from-pink-200 to-sky-200 dark:from-gray-800 dark:to-gray-700 mb-5 transition-colors duration-300"
-          text="Generate Links You'll Never Forget."
-          revealText="Turn Usernames into Smart Links - Quick and Simple!"
+    <div className="min-h-screen w-full overflow-hidden relative">
+      {/* Enhanced Animated Background with Particles */}
+      <div className="absolute inset-0 overflow-hidden">
+        {/* Dynamic Gradient Orbs with Morphing */}
+        <motion.div
+          className="absolute w-96 h-96 bg-purple-500/20 rounded-full blur-3xl"
+          animate={{
+            x: mousePosition.x * 0.5 - 200,
+            y: mousePosition.y * 0.5 - 200,
+            scale: [1, 1.2, 1],
+            opacity: [0.2, 0.4, 0.2],
+          }}
+          transition={{ 
+            x: { type: "spring", stiffness: 50, damping: 20 },
+            y: { type: "spring", stiffness: 50, damping: 20 },
+            scale: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+            opacity: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+          }}
         />
-        {/* Introduction Section */}
-  <motion.section variants={fadeInUp} className="mb-12">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-primary dark:text-blue-400 transition-colors duration-300">Introduction</h2>
-          <p className="text-base md:text-lg leading-7 text-gray-800 dark:text-gray-300 transition-colors duration-300">
-            Welcome to <b className="text-gray-900 dark:text-gray-100">LinkBridger</b>, a tool designed to make your social
-            media links easier to remember and manage. Whether you're sharing
-            your Instagram, GitHub, or LinkedIn profile, LinkBridger allows you
-            to generate personalized URLs that are simple and customizable. It
-            also tracks how often your links are clicked and allows centralized
-            updating, so any changes you make will reflect across all platforms
-            instantly.
-          </p>
-  </motion.section>
+        <motion.div
+          className="absolute w-96 h-96 bg-pink-500/20 rounded-full blur-3xl"
+          animate={{
+            x: mousePosition.x * 0.3 - 200,
+            y: mousePosition.y * 0.3 - 200,
+            scale: [1, 1.3, 1],
+            opacity: [0.2, 0.35, 0.2],
+          }}
+          transition={{ 
+            x: { type: "spring", stiffness: 50, damping: 20 },
+            y: { type: "spring", stiffness: 50, damping: 20 },
+            scale: { duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.5 },
+            opacity: { duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.5 },
+          }}
+        />
+        <motion.div
+          className="absolute w-96 h-96 bg-blue-500/20 rounded-full blur-3xl"
+          animate={{
+            x: mousePosition.x * 0.7 - 200,
+            y: mousePosition.y * 0.7 - 200,
+            scale: [1, 1.15, 1],
+            opacity: [0.2, 0.3, 0.2],
+          }}
+          transition={{ 
+            x: { type: "spring", stiffness: 50, damping: 20 },
+            y: { type: "spring", stiffness: 50, damping: 20 },
+            scale: { duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 },
+            opacity: { duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 },
+          }}
+        />
+        
+        {/* Additional Floating Orbs */}
+        {[...Array(5)].map((_, i) => (
+          <motion.div
+            key={i}
+            className={`absolute w-64 h-64 ${
+              i % 3 === 0 ? "bg-cyan-500/10" : i % 3 === 1 ? "bg-violet-500/10" : "bg-rose-500/10"
+            } rounded-full blur-3xl`}
+            animate={{
+              x: [0, Math.random() * 200 - 100, 0],
+              y: [0, Math.random() * 200 - 100, 0],
+              scale: [1, 1.5, 1],
+              opacity: [0.1, 0.3, 0.1],
+            }}
+            transition={{
+              duration: 8 + Math.random() * 4,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: i * 0.8,
+            }}
+            style={{
+              left: `${20 + i * 15}%`,
+              top: `${10 + i * 20}%`,
+            }}
+          />
+        ))}
+        
+        {/* Floating Particles Layer */}
+        <div className="absolute inset-0">
+          {[...Array(30)].map((_, i) => (
+            <FloatingParticle
+              key={i}
+              delay={i * 0.3}
+              duration={15 + Math.random() * 10}
+              size={2 + Math.random() * 4}
+              color={["purple", "pink", "blue", "cyan"][i % 4]}
+            />
+          ))}
+        </div>
+        
+        {/* Animated Grid with Wave Effect */}
+        <motion.div 
+          className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]"
+          animate={{
+            opacity: [0.3, 0.6, 0.3],
+          }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+        
+        {/* Rotating Gradient Rings */}
+        {[...Array(3)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute inset-0 flex items-center justify-center"
+            style={{
+              background: `conic-gradient(from ${i * 120}deg, transparent, ${
+                i === 0 ? "rgba(147, 51, 234, 0.1)" : i === 1 ? "rgba(236, 72, 153, 0.1)" : "rgba(59, 130, 246, 0.1)"
+              }, transparent)`,
+              maskImage: "radial-gradient(circle, transparent 60%, black 100%)",
+              WebkitMaskImage: "radial-gradient(circle, transparent 60%, black 100%)",
+            }}
+            animate={{
+              rotate: 360,
+            }}
+            transition={{
+              duration: 20 + i * 5,
+              repeat: Infinity,
+              ease: "linear",
+            }}
+          />
+        ))}
 
-  
-
-  <motion.div variants={fadeInUp} className="mt-10 mb-0">
-          <ContainerScroll
-            titleComponent={
-              <>
-                <p className="text-4xl font-semibold text-pretty text-black dark:text-gray-200 transition-colors duration-300">
-                  Have You Ever Wondered How AuthorLink Has Been Personalized:
-                </p>
-              </>
-            }
+        {/* Pulsing Glow Rings */}
+        {[...Array(4)].map((_, i) => (
+          <motion.div
+            key={`glow-ring-${i}`}
+            className="absolute inset-0 flex items-center justify-center pointer-events-none"
+            animate={{
+              scale: [1, 1.5 + i * 0.3, 1],
+              opacity: [0.1, 0.3, 0.1],
+            }}
+            transition={{
+              duration: 4 + i * 0.5,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: i * 0.5,
+            }}
           >
-            <div className="mx-auto rounded-2xl h-full flex justify-center items-center bg-slate-600 dark:bg-gray-700 transition-colors duration-300">
-              <div className="md:mx-auto rounded-2xl h-full w-full space-y-1 flex flex-col justify-center md:items-center sm:ml-4 p-2">
-                <p className="text-sm md:text-base text-white">
-                  LinkedIn:
-                  <a
-                    href="https://linkb-one.vercel.app/dpkrn/linkedin"
-                    className="text-blue-400 underline ml-2"
-                  >
-                    https://linkb-one.vercel.app/dpkrn/linkedin
-                  </a>
-                </p>
-                <p className="text-sm md:text-base text-white">
-                  GitHub:{" "}
-                  <a
-                    href="https://linkb-one.vercel.app/dpkrn/github"
-                    className="text-blue-400 underline ml-2"
-                  >
-                    https://linkb-one.vercel.app/dpkrn/github
-                  </a>
-                </p>
-                <p className="text-sm md:text-base text-white">
-                  LeetCode:{" "}
-                  <a
-                    href="https://linkb-one.vercel.app/dpkrn/leetcode"
-                    className="text-blue-400 underline ml-2"
-                  >
-                    https://linkb-one.vercel.app/dpkrn/leetcode
-                  </a>
-                </p>
-                <p className="text-sm md:text-base text-white">
-                  Portfolio:{" "}
-                  <a
-                    href="https://linkb-one.vercel.app/dpkrn/portfolio"
-                    className="text-blue-400 underline ml-2"
-                  >
-                    https://linkb-one.vercel.app/dpkrn/portfolio
-                  </a>
-                </p>
-                <p className="text-sm md:text-base text-white">
-                  Instagram:{" "}
-                  <a
-                    href="https://linkb-one.vercel.app/dpkrn/instagram"
-                    className="text-blue-400 underline ml-2"
-                  >
-                    https://linkb-one.vercel.app/dpkrn/instagram
-                  </a>
-                </p>
-                <p className="text-sm md:text-base text-white">
-                  Facebook:{" "}
-                  <a
-                    href="https://linkb-one.vercel.app/dpkrn/facebook"
-                    className="text-blue-400 underline ml-2"
-                  >
-                    https://linkb-one.vercel.app/dpkrn/facebook
-                  </a>
-                </p>
-                <p className="text-sm md:text-base text-white">
-                  Codeforces:{" "}
-                  <a
-                    href="https://linkb-one.vercel.app/dpkrn/codeforces"
-                    className="text-blue-400 underline ml-2"
-                  >
-                    https://linkb-one.vercel.app/dpkrn/codeforces
-                  </a>
-                </p>
-                <p className="text-sm md:text-base text-white">
-                  Only the platform name has been changed. All else remains the same.
-                </p>
-              </div>
-            </div>
-          </ContainerScroll>
-  </motion.div>
+            <div
+              className={`w-96 h-96 rounded-full border-2 ${
+                i % 4 === 0 ? "border-purple-500/30" :
+                i % 4 === 1 ? "border-pink-500/30" :
+                i % 4 === 2 ? "border-blue-500/30" :
+                "border-cyan-500/30"
+              } blur-xl`}
+              style={{
+                boxShadow: `0 0 ${40 + i * 20}px ${
+                  i % 4 === 0 ? "rgba(147, 51, 234, 0.3)" :
+                  i % 4 === 1 ? "rgba(236, 72, 153, 0.3)" :
+                  i % 4 === 2 ? "rgba(59, 130, 246, 0.3)" :
+                  "rgba(6, 182, 212, 0.3)"
+                }`,
+              }}
+            />
+          </motion.div>
+        ))}
 
-  <motion.div variants={fadeInUp} className="mb-8 bg-white/40 dark:bg-gray-800/40 shadow-lg rounded-md py-4 md:py-5 px-2 md:px-6 text-center transition-colors duration-300">
-          <BackgroundBeamsWithCollision>
-            <div>
-               
-              <div className="relative mx-auto w-max [filter:drop-shadow(0px_1px_3px_rgba(27,_37,_80,_0.14))]">
-                <div className="relative bg-clip-text text-transparent bg-no-repeat bg-gradient-to-r from-purple-400 via-violet-200 to-pink-500 dark:from-purple-300 dark:via-violet-100 dark:to-pink-400 py-4">
-                  <span className="uppercase text-[8px] md:text-lg">
-                    It will provide a special link for all your platforms.
-                  </span>
-                </div>
-              </div>
-               <p className="text-sm md:text-2xl dark:text-gray-200">
-              <a
-                href="https://linkb-one.vercel.app/dpkrn/"
-                className="text-blue-500 dark:text-blue-400 underline font-mono"
-              >
-                https://linkb-one.vercel.app/dpkrn
-               
-              </a>
-            </p>
-              <div className="relative mx-auto w-max [filter:drop-shadow(0px_1px_3px_rgba(27,_37,_80,_0.14))]">
-                <div className="relative bg-clip-text text-transparent bg-no-repeat bg-gradient-to-r from-purple-400 via-violet-200 to-pink-500 dark:from-purple-300 dark:via-violet-100 dark:to-pink-400 py-4">
-                  <span className="uppercase text-[8px] md:text-lg">
-                    Change only the platform name to redirect to all profiles
-                  </span>
-                </div>
-              </div>
-            </div>
-            <p className="text-sm md:text-2xl dark:text-gray-200">
-              <a
-                href="https://linkb-one.vercel.app/dpkrn/linkedin"
-                className="text-blue-500 dark:text-blue-400 underline font-mono"
-              >
-                https://linkb-one.vercel.app/dpkrn/
-                <FlipWords className="text-blue-500 dark:text-blue-400" words={plateforms} />{" "}
-              </a>
-            </p>
-          </BackgroundBeamsWithCollision>
-  </motion.div>
+        {/* Animated Glowing Waves */}
+        <motion.div
+          className="absolute inset-0 opacity-20"
+          style={{
+            background: "linear-gradient(90deg, transparent, rgba(147, 51, 234, 0.2), transparent)",
+            backgroundSize: "200% 100%",
+          }}
+          animate={{
+            backgroundPosition: ["0% 0%", "200% 0%", "0% 0%"],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "linear",
+          }}
+        />
+        <motion.div
+          className="absolute inset-0 opacity-15"
+          style={{
+            background: "linear-gradient(180deg, transparent, rgba(236, 72, 153, 0.2), transparent)",
+            backgroundSize: "100% 200%",
+          }}
+          animate={{
+            backgroundPosition: ["0% 0%", "0% 200%", "0% 0%"],
+          }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+            ease: "linear",
+            delay: 1,
+          }}
+        />
 
-        {/* Get Started Button */}
-  <motion.section variants={fadeInUp} className="mb-12 text-center">
-          <button
-            onClick={handleGetStarted}
-            className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white font-semibold py-2 px-6 rounded-md text-lg transition-colors"
+        {/* Radial Glow Effects */}
+        {[...Array(6)].map((_, i) => (
+          <motion.div
+            key={`radial-glow-${i}`}
+            className="absolute rounded-full blur-3xl"
+            style={{
+              width: `${200 + i * 100}px`,
+              height: `${200 + i * 100}px`,
+              left: `${(i * 15) % 80}%`,
+              top: `${(i * 20) % 80}%`,
+              background: `radial-gradient(circle, ${
+                i % 3 === 0 ? "rgba(147, 51, 234, 0.2)" :
+                i % 3 === 1 ? "rgba(236, 72, 153, 0.2)" :
+                "rgba(59, 130, 246, 0.2)"
+              }, transparent)`,
+            }}
+            animate={{
+              scale: [1, 1.3, 1],
+              opacity: [0.1, 0.4, 0.1],
+              x: [0, Math.sin(i) * 50, 0],
+              y: [0, Math.cos(i) * 50, 0],
+            }}
+            transition={{
+              duration: 6 + i * 0.5,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: i * 0.3,
+            }}
+          />
+        ))}
+
+        {/* Glowing Grid Lines */}
+        <motion.div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `
+              linear-gradient(to right, rgba(147, 51, 234, 0.1) 1px, transparent 1px),
+              linear-gradient(to bottom, rgba(236, 72, 153, 0.1) 1px, transparent 1px)
+            `,
+            backgroundSize: "50px 50px",
+          }}
+          animate={{
+            opacity: [0.2, 0.5, 0.2],
+          }}
+          transition={{
+            duration: 4,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+
+        {/* Animated Glow Spots */}
+        {[...Array(8)].map((_, i) => (
+          <motion.div
+            key={`glow-spot-${i}`}
+            className="absolute rounded-full blur-2xl"
+            style={{
+              width: "150px",
+              height: "150px",
+              left: `${(i * 12.5) % 100}%`,
+              top: `${(i * 15) % 100}%`,
+              background: `radial-gradient(circle, ${
+                i % 4 === 0 ? "rgba(147, 51, 234, 0.3)" :
+                i % 4 === 1 ? "rgba(236, 72, 153, 0.3)" :
+                i % 4 === 2 ? "rgba(59, 130, 246, 0.3)" :
+                "rgba(6, 182, 212, 0.3)"
+              }, transparent)`,
+            }}
+            animate={{
+              scale: [0.8, 1.5, 0.8],
+              opacity: [0.2, 0.6, 0.2],
+              x: [0, Math.sin(i * 0.5) * 30, 0],
+              y: [0, Math.cos(i * 0.5) * 30, 0],
+            }}
+            transition={{
+              duration: 5 + Math.random() * 2,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: i * 0.2,
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Enhanced Navigation Header with Glow Effects */}
+      {!isAuthenticated && (
+      <motion.div
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6, type: "spring" }}
+        className="relative z-50 w-full h-[70px] shadow-lg bg-white/95 dark:bg-gray-900/50 backdrop-blur-xl flex items-center justify-between border-b border-gray-200 dark:border-white/10 transition-colors duration-300 px-4 sm:px-6 md:px-10 lg:px-12"
+      >
+        {/* Animated Background Glow */}
+        <motion.div
+          className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-blue-500/10 opacity-0"
+          animate={{
+            opacity: [0, 0.3, 0],
+          }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+        
+        {/* Logo with 3D Rotation */}
+        <motion.div
+          className="flex items-center gap-4 cursor-pointer relative z-10"
+          onClick={() => navigate("/")}
+          whileHover={{ scale: 1.05, rotateY: 5 }}
+          style={{ transformStyle: "preserve-3d" }}
+        >
+          <motion.div
+            animate={{
+              rotateY: [0, 360],
+            }}
+            transition={{
+              duration: 20,
+              repeat: Infinity,
+              ease: "linear",
+            }}
+            style={{ transformStyle: "preserve-3d" }}
           >
-            Get Started
-          </button>
-          <p className="mt-4 text-gray-500 dark:text-gray-400 text-sm">
-            Create an account and start managing your personalized links today!
-          </p>
-  </motion.section>
-
-        {/* Key Features Section */}
-  <motion.section variants={fadeInUp} className="mb-8 bg-white/40 dark:bg-gray-800/40 shadow-lg rounded-md py-4 md:py-5 px-2 md:px-4 transition-colors duration-300">
-    <div>
-  <h2 className="text-3xl md:text-4xl font-extrabold mb-6 text-center text-primary dark:text-blue-400">Key Features</h2>
-      <div className="space-y-2 flex flex-col">
-        {/* Interactive Feature Cards with alternate sides and scroll-in focus */}
-        {[
-          {
-            img: "easy-to-remember.webp",
-            title: "Personalized Smart Links",
-            desc: "Generate easy-to-remember links for your social profiles using your username and platform names.",
-          },
-           {
-            img: "logo.png",
-            title: "All links at one place",
-            desc: "Get a single special link for all your platforms, just like Linktree. Share one URL (e.g., https://linkb-one.vercel.app/username) and let your audience access all your profiles from one place.",
-          },
-          {
-            img: "update.webp",
-            title: "Centralized Link Management",
-            desc: "Update your social profile links in one place, and the change reflects everywhere.",
-          },
-          {
-            img: "click.webp",
-            title: "Click Tracking",
-            desc: "Keep track of how many times your social profile links are clicked.",
-          },
-          {
-            img: "easysetup.webp",
-            title: "Easy to Setup",
-            desc: "No complicated setup; just choose your username, add the platform, and you're ready to go!",
-          },
-         
-        ].map((feature, idx) => {
-          const ref = useRef(null);
-          const inView = useInView(ref, { once: true, margin: "-100px" });
-          const isLeft = idx % 2 === 0;
-          return (
-            <motion.div
-              key={feature.title}
-              ref={ref}
-              initial={{ opacity: 0, x: isLeft ? -80 : 80 }}
-              animate={inView ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.7, type: "spring" }}
-              whileHover={{ scale: 1.03, boxShadow: "0 8px 32px rgba(0,0,0,0.12)" }}
-              className={`group relative text-center flex-col md:text-left flex md:flex-row ${isLeft ? "" : "md:flex-row-reverse"} md:justify-around items-center gap-4 flex-wrap cursor-pointer`}
-              onClick={() => setOpenFeature(idx)}
-              // style={{ marginLeft: inView ? "" : "none", outlineOffset: inView ? "2px" : "0" }}
+            <motion.img
+              className="h-8 w-auto dark:brightness-0 dark:invert transition-all duration-300"
+              src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500"
+              alt="LinkBridger Logo"
+              whileHover={{ scale: 1.2, rotateZ: 15 }}
+            />
+          </motion.div>
+          <motion.span 
+            className="text-xl md:text-2xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent relative"
+            animate={{
+              backgroundPosition: ["0%", "100%", "0%"],
+            }}
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              ease: "linear",
+            }}
+            style={{
+              backgroundSize: "200% 100%",
+            }}
+          >
+            LinkBridger
+            {/* Text Glow */}
+            <motion.span
+              className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent blur-sm opacity-50"
+              animate={{
+                opacity: [0.3, 0.7, 0.3],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
             >
-              <motion.img
-                src={feature.img}
-                alt={feature.title}
-                className="h-[220px] w-[250px] my-8 mx-8 rounded-md flex-[1] group-hover:opacity-100 group-hover:scale-105 transition-all dark:brightness-90 dark:contrast-110"
-                whileHover={{ scale: 1.08, opacity: 1 }}
+              LinkBridger
+            </motion.span>
+          </motion.span>
+        </motion.div>
+
+        {/* Enhanced Navigation Items */}
+        <div className="flex items-center gap-4 md:gap-6 relative z-10">
+          {/* Navigation Links with Magnetic Effect */}
+          <div className="hidden md:flex items-center gap-6">
+            <motion.button
+              onClick={() => navigate("/")}
+              className="relative text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 font-medium transition-colors overflow-hidden group"
+              whileHover={{ scale: 1.1, y: -2 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <span className="relative z-10">Home</span>
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20"
+                initial={{ x: "-100%" }}
+                whileHover={{ x: "100%" }}
+                transition={{ duration: 0.5 }}
               />
-              <div className="flex-[1]">
-                <p className="text-lg md:text-xl ml-4 font-medium text-gray-800 dark:text-gray-300 transition-colors duration-300">
-                  <span className="font-semibold text-xl md:text-2xl text-primary dark:text-blue-400 transition-colors duration-300">{feature.title}</span>: {feature.desc}
-                </p>
+            </motion.button>
+            <motion.button
+              onClick={() => navigate("/login")}
+              className="relative text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 font-medium transition-colors overflow-hidden group"
+              whileHover={{ scale: 1.1, y: -2 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <span className="relative z-10">Login</span>
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20"
+                initial={{ x: "-100%" }}
+                whileHover={{ x: "100%" }}
+                transition={{ duration: 0.5 }}
+              />
+            </motion.button>
+          </div>
+
+          {/* Enhanced Dark Mode Toggle with Glow */}
+          <motion.button
+            onClick={() => dispatch(toggleDarkMode())}
+            whileHover={{ scale: 1.15, rotate: 15 }}
+            whileTap={{ scale: 0.9 }}
+            className="relative p-2.5 rounded-xl bg-white/90 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 text-gray-800 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700/50 transition-all duration-300 shadow-md hover:shadow-lg overflow-hidden group"
+            title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-r from-purple-500/30 to-pink-500/30 opacity-0 group-hover:opacity-100"
+              transition={{ duration: 0.3 }}
+            />
+            <motion.div
+              className="relative z-10"
+              animate={{
+                rotate: [0, 360],
+              }}
+              transition={{
+                duration: 20,
+                repeat: Infinity,
+                ease: "linear",
+              }}
+            >
+              {darkMode ? (
+                <MdLightMode className="text-xl" />
+              ) : (
+                <MdDarkMode className="text-xl" />
+              )}
+            </motion.div>
+          </motion.button>
+
+          {/* Enhanced Get Started Button with Particle Effect */}
+          <motion.button
+            onClick={handleGetStarted}
+            whileHover={{ scale: 1.1, y: -3 }}
+            whileTap={{ scale: 0.95 }}
+            className="relative bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 text-white font-semibold py-2.5 px-4 md:px-6 rounded-xl text-sm md:text-lg transition-all shadow-lg hover:shadow-2xl flex items-center gap-2 overflow-hidden group"
+          >
+            {/* Animated Gradient Background */}
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600"
+              animate={{
+                backgroundPosition: ["0%", "100%", "0%"],
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                ease: "linear",
+              }}
+              style={{
+                backgroundSize: "200% 100%",
+              }}
+            />
+            
+            {/* Shimmer Effect */}
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+              initial={{ x: "-100%" }}
+              animate={{
+                x: ["-100%", "200%"],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                repeatDelay: 1,
+                ease: "linear",
+              }}
+              style={{ transform: "skewX(-20deg)" }}
+            />
+            
+            {/* Button Content */}
+            <span className="relative z-10 hidden sm:inline">Get Started</span>
+            <span className="relative z-10 sm:hidden">Start</span>
+            <motion.span
+              className="relative z-10"
+              animate={{
+                x: [0, 5, 0],
+              }}
+              transition={{
+                duration: 1.5,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            >
+              <FaArrowRight />
+            </motion.span>
+            
+            {/* Glow Effect */}
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 blur-xl opacity-0 group-hover:opacity-50"
+              transition={{ duration: 0.3 }}
+            />
+          </motion.button>
+        </div>
+      </motion.div>
+      )}
+
+      <div className="relative z-10">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="p-4 sm:p-6 md:p-10 lg:p-12"
+        >
+          {/* Hero Section */}
+          <motion.section variants={itemVariants} className="mb-6 md:mb-8 text-center">
+            <div className="mb-4">
+              <TypewriterEffect words={words} className="mb-4" />
+            </div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.3, duration: 0.6 }}
+            >
+              <TextRevealCard
+                className="bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl border border-white/20 dark:border-gray-700/50 mb-4 transition-colors duration-300"
+                text="Generate Links You'll Never Forget."
+                revealText="Turn Usernames into Smart Links - Quick and Simple!"
+              />
+            </motion.div>
+          </motion.section>
+
+          {/* Enhanced Introduction Section with 3D Effects */}
+          <motion.section
+            variants={itemVariants}
+            className="mb-6 md:mb-8"
+          >
+            <MagneticCard intensity={0.1}>
+              <motion.div
+                className="relative bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-6 md:p-10 lg:p-12 overflow-hidden group"
+                whileHover={{ scale: 1.02, z: 20 }}
+                transition={{ duration: 0.3 }}
+                style={{ transformStyle: "preserve-3d" }}
+              >
+                {/* Animated Border Glow */}
+                <motion.div
+                  className="absolute inset-0 rounded-3xl"
+                  style={{
+                    background: "linear-gradient(45deg, transparent, rgba(147, 51, 234, 0.3), transparent)",
+                    backgroundSize: "200% 200%",
+                  }}
+                  animate={{
+                    backgroundPosition: ["0% 0%", "200% 200%", "0% 0%"],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "linear",
+                  }}
+                />
+                
+                {/* Floating Particles */}
+                {[...Array(5)].map((_, i) => (
+                  <FloatingParticle
+                    key={i}
+                    delay={i * 0.5}
+                    duration={4 + Math.random() * 2}
+                    size={2 + Math.random() * 3}
+                    color={["purple", "pink", "blue"][i % 3]}
+                  />
+                ))}
+                
+                <motion.h2
+                  initial={{ opacity: 0, x: -20, rotateY: -10 }}
+                  whileInView={{ opacity: 1, x: 0, rotateY: 0 }}
+                  viewport={{ once: true }}
+                  className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent relative"
+                  animate={{
+                    backgroundPosition: ["0%", "100%", "0%"],
+                  }}
+                  transition={{
+                    opacity: { duration: 0.8, type: "spring" },
+                    x: { duration: 0.8, type: "spring" },
+                    rotateY: { duration: 0.8, type: "spring" },
+                    backgroundPosition: { duration: 3, repeat: Infinity, ease: "linear" },
+                  }}
+                  style={{
+                    transformStyle: "preserve-3d",
+                    backgroundSize: "200% 100%",
+                  }}
+                >
+                  Introduction
+                  {/* Text Shadow Glow */}
+                  <motion.span
+                    className="absolute inset-0 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent blur-xl opacity-50"
+                    animate={{
+                      opacity: [0.3, 0.7, 0.3],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }}
+                  >
+                    Introduction
+                  </motion.span>
+                </motion.h2>
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.2 }}
+                  className="text-base md:text-lg lg:text-xl leading-8 text-gray-700 dark:text-gray-300 relative z-10"
+                  style={{ transform: "translateZ(10px)" }}
+                >
+                  Welcome to <motion.b 
+                    className="text-gray-900 dark:text-gray-100"
+                    animate={{
+                      textShadow: [
+                        "0 0 0px rgba(147, 51, 234, 0)",
+                        "0 0 10px rgba(147, 51, 234, 0.5)",
+                        "0 0 0px rgba(147, 51, 234, 0)",
+                      ],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }}
+                  >LinkBridger</motion.b>, a tool designed to make your social
+                  media links easier to remember and manage. Whether you're sharing
+                  your Instagram, GitHub, or LinkedIn profile, LinkBridger allows you
+                  to generate personalized URLs that are simple and customizable. Access all your links at one place by visiting <motion.b 
+                    className="text-gray-900 dark:text-white"
+                    animate={{
+                      color: [
+                        "rgb(17, 24, 39)",
+                        "rgb(147, 51, 234)",
+                        "rgb(17, 24, 39)",
+                      ],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }}
+                  >https://clickly.cv/yourname</motion.b> (without any platform name) - it creates a beautiful landing page showing all your profiles. Plus, get real-time email notifications every time someone visits your links! It
+                  also tracks how often your links are clicked and allows centralized
+                  updating, so any changes you make will reflect across all platforms
+                  instantly.
+                </motion.p>
+              </motion.div>
+            </MagneticCard>
+          </motion.section>
+
+          {/* Enhanced Example Links Section with 3D Floating Cards */}
+          <motion.section variants={itemVariants} className="mb-6 md:mb-8">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="relative"
+            >
+              {/* Animated Title */}
+              <motion.h2
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                className="text-3xl md:text-4xl lg:text-5xl font-bold text-center mb-8 md:mb-10 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
+                animate={{
+                  backgroundPosition: ["0%", "100%", "0%"],
+                }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  ease: "linear",
+                }}
+                style={{
+                  backgroundSize: "200% 100%",
+                }}
+              >
+                Have You Ever Wondered How AuthorLink Has Been Personalized:
+              </motion.h2>
+
+              {/* 3D Floating Cards Container */}
+              <div className="relative min-h-[400px] md:min-h-[500px] flex items-center justify-center py-8">
+                {/* Background Glow Effects */}
+                <motion.div
+                  className="absolute inset-0 flex items-center justify-center pointer-events-none"
+                  animate={{
+                    scale: [1, 1.1, 1],
+                    opacity: [0.3, 0.5, 0.3],
+                  }}
+                  transition={{
+                    duration: 4,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
+                >
+                  <div className="w-full h-full max-w-4xl bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-blue-500/10 rounded-3xl blur-3xl" />
+                </motion.div>
+
+                {/* Floating Link Cards in 3D Space */}
+                <div className="relative z-10 w-full max-w-6xl mx-auto px-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                    {[
+                      { platform: "LinkedIn", url: "https://clickly.cv/dpkrn/linkedin", color: "from-blue-500 to-cyan-500", icon: "💼" },
+                      { platform: "GitHub", url: "https://clickly.cv/dpkrn/github", color: "from-gray-600 to-gray-800", icon: "🐙" },
+                      { platform: "LeetCode", url: "https://clickly.cv/dpkrn/leetcode", color: "from-orange-500 to-yellow-500", icon: "💻" },
+                      { platform: "Portfolio", url: "https://clickly.cv/dpkrn/portfolio", color: "from-purple-500 to-pink-500", icon: "🎨" },
+                      { platform: "Instagram", url: "https://clickly.cv/dpkrn/instagram", color: "from-pink-500 to-rose-500", icon: "📸" },
+                      { platform: "Codeforces", url: "https://clickly.cv/dpkrn/codeforces", color: "from-red-500 to-orange-500", icon: "⚔️" },
+                    ].map((link, idx) => (
+                      <AnimatedLinkCard key={link.platform} link={link} idx={idx} />
+                    ))}
+                  </div>
+
+                  {/* Bottom Note */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.8 }}
+                    className="mt-6 md:mt-8 text-center"
+                  >
+                    <motion.p
+                      className="text-sm md:text-base text-gray-700 dark:text-gray-400 font-medium"
+                      animate={{
+                        opacity: [0.7, 1, 0.7],
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                      }}
+                    >
+                      ✨ Only the platform name changes. All else remains the same. ✨
+                    </motion.p>
+                  </motion.div>
+                </div>
               </div>
             </motion.div>
-          );
-        })}
+          </motion.section>
+
+          {/* Special Link Section */}
+          <motion.section variants={itemVariants} className="mb-12 md:mb-16">
+            <motion.div
+              className="bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-6 md:p-10 overflow-hidden relative"
+              whileHover={{ scale: 1.01 }}
+            >
+              <BackgroundBeamsWithCollision>
+                <div className="space-y-6">
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="relative mx-auto w-max"
+                  >
+                    <div className="relative bg-clip-text text-transparent bg-no-repeat bg-gradient-to-r from-purple-400 via-violet-200 to-pink-500 dark:from-purple-300 dark:via-violet-100 dark:to-pink-400 py-4">
+                      <span className="uppercase text-sm md:text-xl font-bold">
+                        It will provide a special link for all your platforms.
+                      </span>
+                    </div>
+                  </motion.div>
+                  <motion.p
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    className="text-lg md:text-2xl lg:text-3xl text-center"
+                  >
+                    <a
+                      href="https://clickly.cv/dpkrn/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-400 dark:text-blue-300 underline font-mono hover:text-blue-300 transition-colors"
+                    >
+                      https://clickly.cv/dpkrn
+                    </a>
+                  </motion.p>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.2 }}
+                    className="relative mx-auto w-max"
+                  >
+                    <div className="relative bg-clip-text text-transparent bg-no-repeat bg-gradient-to-r from-purple-400 via-violet-200 to-pink-500 dark:from-purple-300 dark:via-violet-100 dark:to-pink-400 py-4">
+                      <span className="uppercase text-sm md:text-xl font-bold">
+                        Change only the platform name to redirect to all profiles
+                      </span>
+                    </div>
+                  </motion.div>
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.3 }}
+                    className="text-lg md:text-2xl lg:text-3xl text-center"
+                  >
+                    <a
+                      href="https://clickly.cv/dpkrn/linkedin"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-400 dark:text-blue-300 underline font-mono hover:text-blue-300 transition-colors"
+                    >
+                      https://clickly.cv/dpkrn/
+                      <FlipWords className="text-blue-400 dark:text-blue-300" words={platforms} />
+                    </a>
+                  </motion.div>
+                </div>
+              </BackgroundBeamsWithCollision>
+            </motion.div>
+          </motion.section>
+
+          {/* Enhanced Get Started CTA with 3D Effects */}
+          <motion.section variants={itemVariants} className="mb-6 md:mb-8 text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 30, rotateX: -15 }}
+              whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, type: "spring" }}
+              className="space-y-6"
+              style={{ transformStyle: "preserve-3d", perspective: "1000px" }}
+            >
+              <MagneticCard intensity={0.2}>
+                <motion.button
+                  onClick={handleGetStarted}
+                  whileHover={{ scale: 1.1, y: -5, z: 50 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="relative bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 text-white font-bold py-4 px-8 rounded-xl text-lg md:text-xl transition-all shadow-lg hover:shadow-2xl flex items-center gap-3 mx-auto overflow-hidden group"
+                  style={{ transformStyle: "preserve-3d" }}
+                >
+                  {/* Animated Background */}
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600"
+                    animate={{
+                      backgroundPosition: ["0%", "100%", "0%"],
+                    }}
+                    transition={{
+                      duration: 3,
+                      repeat: Infinity,
+                      ease: "linear",
+                    }}
+                    style={{
+                      backgroundSize: "200% 100%",
+                    }}
+                  />
+                  
+                  {/* Shimmer */}
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent"
+                    initial={{ x: "-100%" }}
+                    animate={{
+                      x: ["-100%", "200%"],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      repeatDelay: 0.5,
+                      ease: "linear",
+                    }}
+                    style={{ transform: "skewX(-20deg)" }}
+                  />
+                  
+                  {/* Content */}
+                  <span className="relative z-10">Get Started</span>
+                  <motion.span
+                    className="relative z-10"
+                    animate={{
+                      rotate: [0, 15, -15, 0],
+                      y: [0, -3, 0],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }}
+                  >
+                    <FaRocket />
+                  </motion.span>
+                  
+                  {/* Glow Effect */}
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 blur-2xl opacity-0 group-hover:opacity-60 -z-10"
+                    animate={{
+                      scale: [1, 1.2, 1],
+                      opacity: [0, 0.6, 0],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }}
+                  />
+                  
+                  {/* Floating Particles on Hover */}
+                  <motion.div
+                    className="absolute inset-0 pointer-events-none"
+                    initial={false}
+                    whileHover="hover"
+                  >
+                    <motion.div
+                      variants={{
+                        hover: {
+                          transition: {
+                            staggerChildren: 0.1,
+                          },
+                        },
+                      }}
+                    >
+                      {[...Array(8)].map((_, i) => (
+                        <motion.div
+                          key={i}
+                          className="absolute w-2 h-2 bg-white rounded-full"
+                          variants={{
+                            hover: {
+                              opacity: [0, 1, 0],
+                              scale: [0, 1, 0],
+                              x: Math.cos((i / 8) * Math.PI * 2) * 50,
+                              y: Math.sin((i / 8) * Math.PI * 2) * 50,
+                            },
+                          }}
+                          transition={{
+                            duration: 1,
+                            delay: i * 0.1,
+                          }}
+                          style={{
+                            left: "50%",
+                            top: "50%",
+                          }}
+                        />
+                      ))}
+                    </motion.div>
+                  </motion.div>
+                </motion.button>
+              </MagneticCard>
+              
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="text-gray-600 dark:text-gray-500 text-sm md:text-base"
+                animate={{
+                  opacity: [0.7, 1, 0.7],
+                }}
+                transition={{
+                  opacity: { duration: 2, repeat: Infinity, ease: "easeInOut" },
+                  y: { delay: 0.2 },
+                }}
+              >
+                Create an account and start managing your personalized links today!
+              </motion.p>
+            </motion.div>
+          </motion.section>
+
+          {/* Key Features Section */}
+          <motion.section variants={itemVariants} className="mb-12 md:mb-16">
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 md:mb-8 text-center bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
+            >
+              Key Features
+            </motion.h2>
+            <div className="space-y-4 md:space-y-6">
+              {features.map((feature, idx) => (
+                <FeatureCard
+                  key={feature.title}
+                  feature={feature}
+                  idx={idx}
+                  hoveredFeature={hoveredFeature}
+                  setHoveredFeature={setHoveredFeature}
+                />
+              ))}
+            </div>
+          </motion.section>
+
+          {/* How It Works Section */}
+          <motion.section variants={itemVariants} className="mb-12 md:mb-16">
+            <motion.div
+              className="bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-6 md:p-10 lg:p-12"
+              whileHover={{ scale: 1.01 }}
+            >
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
+              >
+                How It Works
+              </motion.h2>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 }}
+                className="text-base md:text-lg lg:text-xl leading-8 text-gray-700 dark:text-gray-300 mb-4 md:mb-6"
+              >
+                The core idea behind <b className="text-gray-900 dark:text-white">LinkBridger</b> is to simplify the
+                management of social media links. Instead of sharing long,
+                hard-to-remember URLs, you create a single, personalized URL that
+                automatically redirects users to the correct platform. Access all your links at one place by visiting <b className="text-gray-900 dark:text-white">https://clickly.cv/yourname</b> (without any platform name). Plus, get real-time email notifications every time someone visits your links!
+              </motion.p>
+              
+              <div className="space-y-6">
+                {[
+                  {
+                    step: "1",
+                    title: "Create an Account",
+                    desc: "Sign up using your email and create an account on LinkBridger.",
+                    icon: FaRocket,
+                  },
+                  {
+                    step: "2",
+                    title: "Choose a Username",
+                    desc: "Pick a username that's easy to remember (e.g., dpkrn). Your link will follow this format: https://clickly.cv/your-username/instagram.",
+                    icon: FaLink,
+                  },
+                  {
+                    step: "3",
+                    title: "Verify Your Account",
+                    desc: "Complete email verification to activate your account.",
+                    icon: FaCheckCircle,
+                  },
+                  {
+                    step: "4",
+                    title: "Create a New Link",
+                    desc: "Enter the platform name (e.g., Instagram, LinkedIn) in lowercase. Paste your profile URL in the 'Destination URL' field. Click 'Create Link' to generate your personalized link.",
+                    icon: FaCog,
+                  },
+                  {
+                    step: "5",
+                    title: "Share the Link",
+                    desc: "Copy and share your smart link across various platforms. Share your hub link (https://clickly.cv/yourname) to let visitors see all your profiles in one place.",
+                    icon: FaSyncAlt,
+                  },
+                  {
+                    step: "6",
+                    title: "Get Real-Time Notifications",
+                    desc: "Receive instant email notifications every time someone visits your links. Stay informed about engagement and track who's viewing your profiles in real-time.",
+                    icon: FaEnvelope,
+                  },
+                ].map((item, idx) => {
+                  const IconComponent = item.icon;
+                  return (
+                    <motion.div
+                      key={item.step}
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: idx * 0.1 }}
+                      className="flex items-start gap-4 p-6 bg-white/5 dark:bg-gray-800/30 rounded-2xl border border-white/10 hover:border-white/20 transition-all group"
+                    >
+                      <motion.div
+                        className="bg-gradient-to-r from-purple-600 to-pink-600 p-4 rounded-xl flex-shrink-0"
+                        whileHover={{ scale: 1.1, rotate: 5 }}
+                      >
+                        <IconComponent className="text-2xl text-white" />
+                      </motion.div>
+                      <div className="flex-1">
+                        <h4 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                          {item.step}. {item.title}
+                        </h4>
+                        <p className="text-gray-700 dark:text-gray-400 leading-relaxed">
+                          {item.desc}
+                        </p>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.6 }}
+                className="mt-8 p-6 bg-white/5 dark:bg-gray-800/30 rounded-2xl border border-white/10"
+              >
+                <p className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Example:</p>
+                <div className="space-y-2">
+                  <motion.a
+                    href="https://clickly.cv/dpkrn/instagram"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    whileHover={{ scale: 1.02, x: 5 }}
+                    className="block text-blue-400 hover:text-blue-300 underline font-mono text-base md:text-lg"
+                  >
+                    Instagram: https://clickly.cv/dpkrn/instagram
+                  </motion.a>
+                  <motion.a
+                    href="https://clickly.cv/dpkrn/leetcode"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    whileHover={{ scale: 1.02, x: 5 }}
+                    className="block text-blue-400 hover:text-blue-300 underline font-mono text-base md:text-lg"
+                  >
+                    LeetCode: https://clickly.cv/dpkrn/leetcode
+                  </motion.a>
+                </div>
+              </motion.div>
+            </motion.div>
+          </motion.section>
+
+          {/* Click Tracking Section */}
+          <motion.section variants={itemVariants} className="mb-12 md:mb-16">
+            <motion.div
+              className="bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-6 md:p-10 lg:p-12"
+              whileHover={{ scale: 1.01 }}
+            >
+              <motion.div className="flex items-center gap-4 mb-6">
+                <motion.div
+                  className="bg-gradient-to-r from-orange-500 to-red-500 p-4 rounded-xl"
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                >
+                  <FaChartLine className="text-3xl text-white" />
+                </motion.div>
+                <motion.h2
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  className="text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent"
+                >
+                  Click Tracking
+                </motion.h2>
+              </motion.div>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="text-base md:text-lg lg:text-xl leading-8 text-gray-800 dark:text-gray-300"
+              >
+                With <b className="text-gray-900 dark:text-white">LinkBridger</b>, you can track how many times each of your
+                links has been clicked. This allows you to monitor the engagement on
+                your social media profiles across different platforms. Access the
+                analytics section from your dashboard to see detailed statistics
+                about each link's performance.
+              </motion.p>
+            </motion.div>
+          </motion.section>
+
+          {/* Future Enhancements Section */}
+          <motion.section variants={itemVariants} className="mb-12 md:mb-16">
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 md:mb-8 text-center bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
+            >
+              Future Enhancements
+            </motion.h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+              {futureFeatures.map((feature, idx) => {
+                const IconComponent = feature.icon;
+                return (
+                  <motion.div
+                    key={feature.title}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: idx * 0.1 }}
+                    whileHover={{ scale: 1.05, y: -5 }}
+                    className="bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-6 md:p-8 relative overflow-hidden group"
+                  >
+                    <motion.div
+                      className={`absolute inset-0 bg-gradient-to-r ${feature.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}
+                    />
+                    <div className="relative z-10">
+                      <motion.div
+                        className={`bg-gradient-to-r ${feature.gradient} p-4 rounded-xl w-fit mb-4`}
+                        whileHover={{ scale: 1.1, rotate: 5 }}
+                      >
+                        <IconComponent className="text-2xl text-white" />
+                      </motion.div>
+                      <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-3">
+                        {feature.title}
+                      </h3>
+                      <p className="text-gray-700 dark:text-gray-400 leading-relaxed">
+                        {feature.desc}
+                      </p>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </motion.section>
+
+          {/* Use Cases Section */}
+          <motion.section variants={itemVariants} className="mb-12 md:mb-16">
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 md:mb-8 text-center bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
+            >
+              Use Cases
+            </motion.h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+              {[
+                {
+                  title: "Job Seekers",
+                  desc: "Create professional links for your resume, LinkedIn, portfolio, and GitHub. Share one memorable link with recruiters.",
+                  icon: FaBriefcase,
+                  gradient: "from-blue-500 to-cyan-500",
+                  examples: ["Resume sharing", "Interview preparation", "Professional networking"],
+                },
+                {
+                  title: "Content Creators",
+                  desc: "Manage all your social media profiles from one place. Share your LinkBridger link in bio and watch engagement grow.",
+                  icon: FaUserTie,
+                  gradient: "from-purple-500 to-pink-500",
+                  examples: ["Instagram bio links", "YouTube descriptions", "TikTok profiles"],
+                },
+                {
+                  title: "Developers",
+                  desc: "Showcase your GitHub, portfolio, blog, and coding profiles. Perfect for developer portfolios and tech resumes.",
+                  icon: FaCode,
+                  gradient: "from-green-500 to-emerald-500",
+                  examples: ["Portfolio websites", "GitHub profiles", "Tech blogs"],
+                },
+                {
+                  title: "Students",
+                  desc: "Share academic profiles, LinkedIn, research papers, and project portfolios. Great for college applications and networking.",
+                  icon: FaGraduationCap,
+                  gradient: "from-orange-500 to-red-500",
+                  examples: ["College applications", "Academic networking", "Project showcases"],
+                },
+                {
+                  title: "Businesses",
+                  desc: "Create branded links for your company's social media presence. Manage multiple team member profiles efficiently.",
+                  icon: FaUsers,
+                  gradient: "from-indigo-500 to-purple-500",
+                  examples: ["Team profiles", "Brand consistency", "Social media management"],
+                },
+                {
+                  title: "Freelancers",
+                  desc: "Consolidate your work samples, client testimonials, and contact information in one professional link.",
+                  icon: FaRocket,
+                  gradient: "from-pink-500 to-rose-500",
+                  examples: ["Client proposals", "Portfolio sharing", "Service showcases"],
+                },
+              ].map((useCase, idx) => {
+                const IconComponent = useCase.icon;
+                return (
+                  <motion.div
+                    key={useCase.title}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: idx * 0.1 }}
+                    whileHover={{ scale: 1.05, y: -5 }}
+                    className="bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-6 md:p-8 relative overflow-hidden group"
+                  >
+                    <motion.div
+                      className={`absolute inset-0 bg-gradient-to-r ${useCase.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}
+                    />
+                    <div className="relative z-10">
+                      <motion.div
+                        className={`bg-gradient-to-r ${useCase.gradient} p-4 rounded-xl w-fit mb-4`}
+                        whileHover={{ scale: 1.1, rotate: 5 }}
+                      >
+                        <IconComponent className="text-3xl text-white" />
+                      </motion.div>
+                      <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-3">
+                        {useCase.title}
+                      </h3>
+                      <p className="text-gray-700 dark:text-gray-400 leading-relaxed mb-4">
+                        {useCase.desc}
+                      </p>
+                      <div className="space-y-2">
+                        {useCase.examples.map((example, i) => (
+                          <div key={i} className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-400">
+                            <FaCheckCircle className="text-green-600 dark:text-green-400 text-xs" />
+                            <span>{example}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </motion.section>
+
+          {/* Best Practices Section */}
+          <motion.section variants={itemVariants} className="mb-12 md:mb-16">
+            <motion.div
+              className="bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-6 md:p-10 lg:p-12"
+              whileHover={{ scale: 1.01 }}
+            >
+              <motion.div className="flex items-center gap-4 mb-4 md:mb-6">
+                <motion.div
+                  className="bg-gradient-to-r from-yellow-500 to-orange-500 p-4 rounded-xl"
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                >
+                  <FaLightbulb className="text-3xl text-white" />
+                </motion.div>
+                <motion.h2
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  className="text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent"
+                >
+                  Best Practices
+                </motion.h2>
+              </motion.div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {[
+                  {
+                    title: "Choose a Memorable Username",
+                    desc: "Pick a username that's easy to remember and spell. Avoid numbers and special characters when possible. Your username becomes part of your brand identity.",
+                    icon: FaCheck,
+                    color: "text-green-400",
+                  },
+                  {
+                    title: "Keep Platform Names Consistent",
+                    desc: "Use lowercase and consistent naming (e.g., 'linkedin' not 'LinkedIn' or 'linked-in'). This makes your links predictable and easy to remember.",
+                    icon: FaCheck,
+                    color: "text-green-400",
+                  },
+                  {
+                    title: "Update Links Regularly",
+                    desc: "Keep your destination URLs up to date. Since all your shared links automatically update, you only need to change them once in your dashboard.",
+                    icon: FaSyncAlt,
+                    color: "text-blue-400",
+                  },
+                  {
+                    title: "Use Analytics to Optimize",
+                    desc: "Monitor which links get the most clicks. Use this data to prioritize which platforms to feature prominently in your profile.",
+                    icon: FaChartLine,
+                    color: "text-purple-400",
+                  },
+                  {
+                    title: "Test Your Links",
+                    desc: "Always test your links after creating or updating them. Make sure they redirect correctly to the intended destination.",
+                    icon: FaCheckCircle,
+                    color: "text-cyan-400",
+                  },
+                  {
+                    title: "Share Your Hub Link",
+                    desc: "Prominently feature your main hub link (username) in your email signature, business cards, and social media bios for maximum visibility.",
+                    icon: FaRocket,
+                    color: "text-pink-400",
+                  },
+                ].map((practice, idx) => {
+                  const IconComponent = practice.icon;
+                  return (
+                    <motion.div
+                      key={practice.title}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: idx * 0.1 }}
+                      className="flex items-start gap-4 p-6 bg-white/5 dark:bg-gray-800/30 rounded-2xl border border-white/10 hover:border-white/20 transition-all group"
+                    >
+                      <motion.div
+                        className="flex-shrink-0 mt-1"
+                        whileHover={{ scale: 1.2, rotate: 10 }}
+                      >
+                        <IconComponent className={`text-2xl ${practice.color}`} />
+                      </motion.div>
+                      <div className="flex-1">
+                        <h4 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white mb-2">
+                          {practice.title}
+                        </h4>
+                        <p className="text-gray-700 dark:text-gray-400 leading-relaxed">
+                          {practice.desc}
+                        </p>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </motion.div>
+          </motion.section>
+
+          {/* Platform Support Section */}
+          <motion.section variants={itemVariants} className="mb-12 md:mb-16">
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 md:mb-8 text-center bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
+            >
+              Supported Platforms
+            </motion.h2>
+            <motion.div
+              className="bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-6 md:p-10"
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+            >
+              <p className="text-lg md:text-xl text-gray-700 dark:text-gray-400 mb-4 md:mb-6 text-center">
+                LinkBridger supports <b className="text-gray-900 dark:text-white">any platform</b> you can think of! Just provide the destination URL and we'll create your personalized link.
+              </p>
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                {[
+                  "LinkedIn", "GitHub", "Instagram", "Facebook", "Twitter/X", "YouTube",
+                  "TikTok", "Snapchat", "Pinterest", "Reddit", "Discord", "Telegram",
+                  "WhatsApp", "Medium", "Dev.to", "Behance", "Dribbble", "Figma",
+                  "Portfolio", "Blog", "Website", "Email", "Resume", "LeetCode",
+                  "Codeforces", "HackerRank", "CodeChef", "Stack Overflow", "Quora", "Tumblr"
+                ].map((platform, idx) => (
+                  <motion.div
+                    key={platform}
+                    initial={{ opacity: 0, scale: 0 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: idx * 0.03, type: "spring" }}
+                    whileHover={{ scale: 1.1, y: -3 }}
+                    className="bg-gradient-to-br from-purple-600/20 to-pink-600/20 backdrop-blur-sm rounded-xl p-4 text-center border border-purple-200/50 dark:border-white/10 hover:border-purple-300/80 dark:hover:border-white/30 transition-all cursor-pointer"
+                  >
+                    <p className="text-sm md:text-base font-semibold text-gray-900 dark:text-white">
+                      {platform}
+                    </p>
+                  </motion.div>
+                ))}
+              </div>
+              <motion.p
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.5 }}
+                className="text-center text-gray-600 dark:text-gray-500 mt-6 text-sm md:text-base"
+              >
+                And many more! If you can share a URL, we can create a personalized link for it.
+              </motion.p>
+            </motion.div>
+          </motion.section>
+
+          {/* Security & Privacy Section */}
+          <motion.section variants={itemVariants} className="mb-12 md:mb-16">
+            <motion.div
+              className="bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-6 md:p-10 lg:p-12"
+              whileHover={{ scale: 1.01 }}
+            >
+              <motion.div className="flex items-center gap-4 mb-4 md:mb-6">
+                <motion.div
+                  className="bg-gradient-to-r from-green-500 to-emerald-500 p-4 rounded-xl"
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                >
+                  <FaLock className="text-3xl text-white" />
+                </motion.div>
+                <motion.h2
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  className="text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent"
+                >
+                  Security & Privacy
+                </motion.h2>
+              </motion.div>
+              <div className="space-y-6">
+                {[
+                  {
+                    title: "Secure Authentication",
+                    desc: "All user accounts are protected with secure password hashing. We use industry-standard encryption to keep your data safe.",
+                    icon: FaShieldAlt,
+                    gradient: "from-blue-500 to-cyan-500",
+                  },
+                  {
+                    title: "Privacy First",
+                    desc: "We respect your privacy. Your personal information and link data are stored securely and never shared with third parties without your consent.",
+                    icon: FaEye,
+                    gradient: "from-purple-500 to-pink-500",
+                  },
+                  {
+                    title: "HTTPS Encryption",
+                    desc: "All connections to LinkBridger are encrypted using HTTPS, ensuring your data is protected during transmission.",
+                    icon: FaLock,
+                    gradient: "from-green-500 to-emerald-500",
+                  },
+                  {
+                    title: "Secure Server Infrastructure",
+                    desc: "Our servers are hosted on secure, reliable infrastructure with regular security updates and monitoring.",
+                    icon: FaServer,
+                    gradient: "from-orange-500 to-red-500",
+                  },
+                ].map((item, idx) => {
+                  const IconComponent = item.icon;
+                  return (
+                    <motion.div
+                      key={item.title}
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: idx * 0.1 }}
+                      className="flex items-start gap-4 p-6 bg-white/5 dark:bg-gray-800/30 rounded-2xl border border-white/10 hover:border-white/20 transition-all group"
+                    >
+                      <motion.div
+                        className={`bg-gradient-to-r ${item.gradient} p-4 rounded-xl flex-shrink-0`}
+                        whileHover={{ scale: 1.1, rotate: 5 }}
+                      >
+                        <IconComponent className="text-2xl text-white" />
+                      </motion.div>
+                      <div className="flex-1">
+                        <h4 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                          {item.title}
+                        </h4>
+                        <p className="text-gray-700 dark:text-gray-400 leading-relaxed">
+                          {item.desc}
+                        </p>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </motion.div>
+          </motion.section>
+
+          {/* Troubleshooting Section */}
+          <motion.section variants={itemVariants} className="mb-12 md:mb-16">
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 md:mb-8 text-center bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
+            >
+              Troubleshooting
+            </motion.h2>
+            <div className="space-y-4">
+              {[
+                {
+                  issue: "My link is not redirecting correctly",
+                  solution: "Double-check that your destination URL is correct and includes the full protocol (https://). Make sure the URL is accessible and not behind a login wall.",
+                  icon: FaExclamationTriangle,
+                  color: "from-red-500 to-orange-500",
+                },
+                {
+                  issue: "I forgot my password",
+                  solution: "Use the 'Forgot Password' link on the login page to reset your password. You'll receive an email with instructions to create a new password.",
+                  icon: FaQuestionCircle,
+                  color: "from-blue-500 to-cyan-500",
+                },
+                {
+                  issue: "My username is already taken",
+                  solution: "Usernames must be unique. Try adding numbers or variations to your desired username. Remember, usernames cannot be changed once created.",
+                  icon: FaTimes,
+                  color: "from-yellow-500 to-orange-500",
+                },
+                {
+                  issue: "I'm not receiving verification emails",
+                  solution: "Check your spam/junk folder. Make sure you entered the correct email address. If the issue persists, contact support for assistance.",
+                  icon: FaExclamationTriangle,
+                  color: "from-purple-500 to-pink-500",
+                },
+                {
+                  issue: "My click count seems incorrect",
+                  solution: "Click tracking may take a few moments to update. Refresh your dashboard. Note that clicks from the same IP within a short time may be filtered to prevent spam.",
+                  icon: FaChartLine,
+                  color: "from-green-500 to-emerald-500",
+                },
+                {
+                  issue: "I want to delete my account",
+                  solution: "Contact our support team to request account deletion. We'll process your request and ensure all your data is permanently removed from our systems.",
+                  icon: FaUserTie,
+                  color: "from-indigo-500 to-purple-500",
+                },
+              ].map((item, idx) => {
+                const IconComponent = item.icon;
+                return (
+                  <motion.div
+                    key={idx}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: idx * 0.1 }}
+                    whileHover={{ scale: 1.02 }}
+                    className="bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-2xl border border-white/20 dark:border-gray-700/50 overflow-hidden group"
+                  >
+                    <motion.div className="p-6">
+                      <div className="flex items-start gap-4">
+                        <motion.div
+                          className={`bg-gradient-to-r ${item.color} p-3 rounded-xl flex-shrink-0`}
+                          whileHover={{ scale: 1.1, rotate: 5 }}
+                        >
+                          <IconComponent className="text-xl text-white" />
+                        </motion.div>
+                        <div className="flex-1">
+                          <h4 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white mb-2">
+                            {item.issue}
+                          </h4>
+                          <p className="text-gray-700 dark:text-gray-400 leading-relaxed">
+                            <span className="font-semibold text-green-600 dark:text-green-400">Solution: </span>
+                            {item.solution}
+                          </p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  </motion.div>
+                );
+              })}
+            </div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.6 }}
+              className="mt-8 p-6 bg-gradient-to-r from-purple-600/20 to-pink-600/20 backdrop-blur-sm rounded-2xl border border-purple-400/30 dark:border-purple-400/30 text-center"
+            >
+              <p className="text-lg md:text-xl text-gray-900 dark:text-white mb-2">
+                Still need help?
+              </p>
+              <p className="text-gray-700 dark:text-gray-400">
+                Contact our support team at{" "}
+                <a
+                  href="mailto:d.wizard.techno@gmail.com"
+                  className="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 underline"
+                >
+                  d.wizard.techno@gmail.com
+                </a>
+                {" "}and we'll be happy to assist you!
+              </p>
+            </motion.div>
+          </motion.section>
+
+          {/* FAQ Section */}
+          <motion.section variants={itemVariants} className="mb-12 md:mb-16">
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 md:mb-8 text-center bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
+            >
+              Frequently Asked Questions
+            </motion.h2>
+            <div className="space-y-4">
+              {[
+                {
+                  q: "Can I change my username after creating an account?",
+                  a: "Unfortunately, usernames cannot be changed once they are set. Choose your username carefully!",
+                },
+                {
+                  q: "How do I track my link clicks?",
+                  a: "Click tracking is available through your dashboard. You can view the number of clicks for each link, and advanced analytics will be added soon.",
+                },
+                {
+                  q: "Can I use custom platforms other than the popular ones (Instagram, LinkedIn, etc.)?",
+                  a: "Yes! You can add any platform as long as you provide the correct profile URL.",
+                },
+              ].map((faq, idx) => (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.1 }}
+                  whileHover={{ scale: 1.02 }}
+                  className="bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-2xl border border-white/20 dark:border-gray-700/50 overflow-hidden cursor-pointer group"
+                  onClick={() => toggleFAQ(idx)}
+                >
+                  <motion.div
+                    className="p-6 flex justify-between items-center"
+                    whileHover={{ backgroundColor: "rgba(255,255,255,0.05)" }}
+                  >
+                    <p className="font-semibold text-lg md:text-xl text-gray-900 dark:text-gray-200 flex-1">
+                      Q: {faq.q}
+                    </p>
+                    <motion.div
+                      animate={{ rotate: openFAQ[idx] ? 180 : 0 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      {openFAQ[idx] ? (
+                        <FaChevronUp className="text-purple-600 dark:text-purple-400 text-xl" />
+                      ) : (
+                        <FaChevronDown className="text-purple-600 dark:text-purple-400 text-xl" />
+                      )}
+                    </motion.div>
+                  </motion.div>
+                  <AnimatePresence>
+                    {openFAQ[idx] && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="overflow-hidden"
+                      >
+                        <motion.p
+                          initial={{ y: -10 }}
+                          animate={{ y: 0 }}
+                          className="px-6 pb-6 text-gray-700 dark:text-gray-400 text-base md:text-lg leading-relaxed"
+                        >
+                          A: {faq.a}
+                        </motion.p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              ))}
+            </div>
+          </motion.section>
+
+          {/* Testimonials Section */}
+          <motion.section variants={itemVariants} className="mb-12 md:mb-16">
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 md:mb-8 text-center bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
+            >
+              What Our Users Say
+            </motion.h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+              {[
+                {
+                  text: "LinkBridger made sharing my profiles so much easier. The personalized links look great and are super easy to remember!",
+                  author: "Amit S.",
+                },
+                {
+                  text: "I love the analytics and the ability to update all my links in one place. Highly recommended!",
+                  author: "Priya K.",
+                },
+              ].map((testimonial, idx) => (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.2 }}
+                  whileHover={{ scale: 1.05, y: -5 }}
+                  className="bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-6 md:p-8 relative overflow-hidden group"
+                >
+                  <motion.div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-pink-600/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="relative z-10">
+                    <div className="flex gap-2 mb-4">
+                      {[...Array(5)].map((_, i) => (
+                        <FaStar key={i} className="text-yellow-400 text-lg" />
+                      ))}
+                    </div>
+                    <p className="text-lg md:text-xl italic text-gray-700 dark:text-gray-300 mb-6 leading-relaxed">
+                      "{testimonial.text}"
+                    </p>
+                    <div className="flex items-center gap-3">
+                      <motion.img
+                        src="profile.jpg"
+                        alt={testimonial.author}
+                        className="h-12 w-12 rounded-full object-cover border-2 border-purple-400"
+                        whileHover={{ scale: 1.1 }}
+                      />
+                      <span className="font-semibold text-gray-900 dark:text-white text-lg">
+                        {testimonial.author}
+                      </span>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.section>
+
+          {/* Footer */}
+          <Footer />
+        </motion.div>
       </div>
     </div>
-  </motion.section>
-
-        {/* How It Works Section */}
-  <motion.section variants={fadeInUp} className="mb-8 bg-white/40 dark:bg-gray-800/40 shadow-lg rounded-md py-4 md:py-5 px-2 md:px-6 transition-colors duration-300">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-primary dark:text-blue-400 transition-colors duration-300">How It Works</h2>
-          <p className="text-base md:text-lg leading-7 text-gray-800 dark:text-gray-300 transition-colors duration-300">
-            The core idea behind <b className="text-gray-900 dark:text-gray-100">LinkBridger</b> is to simplify the
-            management of social media links. Instead of sharing long,
-            hard-to-remember URLs, you create a single, personalized URL that
-            automatically redirects users to the correct platform. Here's a
-            step-by-step guide:
-          </p>
-          <ol className="list-decimal list-inside space-y-2 mt-4 text-gray-800 dark:text-gray-300 transition-colors duration-300">
-            <li>
-              <b className="text-gray-900 dark:text-gray-100">Create an Account</b>: Sign up using your email and create an
-              account on LinkBridger.
-            </li>
-            <li>
-              <b className="text-gray-900 dark:text-gray-100">Choose a Username</b>: Pick a username that's easy to remember
-              (e.g., dpkrn). Your link will follow this format:
-              `https://linkb-one.vercel.app/your-username/instagram`.
-            </li>
-            <li>
-              <b className="text-gray-900 dark:text-gray-100">Verify Your Account</b>: Complete email verification to
-              activate your account.
-            </li>
-            <li>
-              <b className="text-gray-900 dark:text-gray-100">Create a New Link</b>:
-              <ul className="list-disc list-inside ml-6 space-y-1 text-gray-800 dark:text-gray-300">
-                <li>
-                  Enter the platform name (e.g., Instagram, LinkedIn) in
-                  lowercase.
-                </li>
-                <li>Paste your profile URL in the "Destination URL" field.</li>
-                <li>Click "Create Link" to generate your personalized link.</li>
-              </ul>
-            </li>
-            <li>
-              <b className="text-gray-900 dark:text-gray-100">Share the Link</b>: Copy and share your smart link across
-              various platforms.
-            </li>
-          </ol>
-          <div className="mt-4">
-            <p className="text-lg dark:text-gray-300">Example:</p>
-            <p className="text-lg dark:text-gray-300">
-              Instagram:{" "}
-              <a
-                href="https://linkb-one.vercel.app/dpkrn/instagram"
-                className="text-blue-500 dark:text-blue-400 underline"
-              >
-                https://linkb-one.vercel.app/dpkrn/instagram
-              </a>
-            </p>
-            <p className="text-lg dark:text-gray-300">
-              LeetCode:{" "}
-              <a
-                href="https://linkb-one.vercel.app/dpkrn/leetcode"
-                className="text-blue-500 dark:text-blue-400 underline"
-              >
-                https://linkb-one.vercel.app/dpkrn/leetcode
-              </a>
-            </p>
-          </div>
-  </motion.section>
-
-        {/* Click Tracking Section */}
-  <motion.section variants={fadeInUp} className="mb-12 bg-white/40 dark:bg-gray-800/40 shadow-lg rounded-md py-4 md:py-5 px-2 md:px-4 transition-colors duration-300">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-primary dark:text-blue-400 transition-colors duration-300">Click Tracking</h2>
-          <p className="text-base md:text-lg leading-7 text-gray-800 dark:text-gray-300 transition-colors duration-300">
-            With <b className="text-gray-900 dark:text-gray-100">LinkBridger</b>, you can track how many times each of your
-            links has been clicked. This allows you to monitor the engagement on
-            your social media profiles across different platforms. Access the
-            analytics section from your dashboard to see detailed statistics
-            about each link's performance.
-          </p>
-  </motion.section>
-
-        {/* Future Enhancements Section */}
-  <motion.section variants={fadeInUp} className="mb-12 bg-white/40 dark:bg-gray-800/40 shadow-lg rounded-md py-4 md:py-5 px-2 md:px-4 transition-colors duration-300">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-primary dark:text-blue-400 transition-colors duration-300">Future Enhancements</h2>
-          <p className="text-base md:text-lg leading-7 text-gray-800 dark:text-gray-300 transition-colors duration-300">
-            Here are some potential features and enhancements we are planning to
-            add to <b className="text-gray-900 dark:text-gray-100">LinkBridger</b>:
-          </p>
-          <ul className="list-disc list-inside space-y-2 text-gray-800 dark:text-gray-300 transition-colors duration-300">
-            <li>
-              <b className="text-gray-900 dark:text-gray-100">Advanced Analytics</b>: See detailed reports on clicks, traffic
-              sources, and engagement levels for each link.
-            </li>
-            <li>
-              <b className="text-gray-900 dark:text-gray-100">Custom Link Themes</b>: Add custom themes or styles to your
-              personalized links to match your branding or style preferences.
-            </li>
-            <li>
-              <b className="text-gray-900 dark:text-gray-100">Link Expiration</b>: Set expiration dates for temporary links,
-              ensuring they are only accessible for a certain period.
-            </li>
-            <li>
-              <b className="text-gray-900 dark:text-gray-100">Link Password Protection</b>: Add a layer of security by
-              allowing password protection on sensitive links.
-            </li>
-          </ul>
-  </motion.section>
-
-        {/* FAQ Section */}
-        <motion.section variants={fadeInUp} className="mb-12 bg-white/40 dark:bg-gray-800/40 shadow-lg rounded-md py-4 md:py-5 px-2 md:px-4 transition-colors duration-300">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-primary dark:text-blue-400 transition-colors duration-300">Frequently Asked Questions (FAQ)</h2>
-          <p className="text-base md:text-lg leading-7 mb-4 text-gray-800 dark:text-gray-300 transition-colors duration-300">Here are some common questions users have about <b className="text-gray-900 dark:text-gray-100">LinkBridger</b>:</p>
-          <div className="space-y-4">
-            {/* FAQ 1 */}
-            <div className="border dark:border-gray-700 rounded-md p-3 bg-white/60 dark:bg-gray-700/60 cursor-pointer hover:shadow-lg transition-all" onClick={() => toggleFAQ(0)}>
-              <p className="font-semibold flex justify-between items-center dark:text-gray-200">
-                Q: Can I change my username after creating an account?
-                <span>{openFAQ[0] ? "-" : "+"}</span>
-              </p>
-              {openFAQ[0] && (
-                <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-2 dark:text-gray-300">
-                  A: Unfortunately, usernames cannot be changed once they are set. Choose your username carefully!
-                </motion.p>
-              )}
-            </div>
-            {/* FAQ 2 */}
-            <div className="border dark:border-gray-700 rounded-md p-3 bg-white/60 dark:bg-gray-700/60 cursor-pointer hover:shadow-lg transition-all" onClick={() => toggleFAQ(1)}>
-              <p className="font-semibold flex justify-between items-center dark:text-gray-200">
-                Q: How do I track my link clicks?
-                <span>{openFAQ[1] ? "-" : "+"}</span>
-              </p>
-              {openFAQ[1] && (
-                <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-2 dark:text-gray-300">
-                  A: Click tracking is available through your dashboard. You can view the number of clicks for each link, and advanced analytics will be added soon.
-                </motion.p>
-              )}
-            </div>
-            {/* FAQ 3 */}
-            <div className="border dark:border-gray-700 rounded-md p-3 bg-white/60 dark:bg-gray-700/60 cursor-pointer hover:shadow-lg transition-all" onClick={() => toggleFAQ(2)}>
-              <p className="font-semibold flex justify-between items-center dark:text-gray-200">
-                Q: Can I use custom platforms other than the popular ones (Instagram, LinkedIn, etc.)?
-                <span>{openFAQ[2] ? "-" : "+"}</span>
-              </p>
-              {openFAQ[2] && (
-                <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-2 dark:text-gray-300">
-                  A: Yes! You can add any platform as long as you provide the correct profile URL.
-                </motion.p>
-              )}
-            </div>
-          </div>
-        </motion.section>
-
-        {/* Testimonials Section - now at bottom */}
-        <motion.section variants={fadeInUp} className="mb-12 bg-white/60 dark:bg-gray-800/60 shadow-lg rounded-md py-8 px-4 md:px-10 text-center transition-colors duration-300">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4 text-primary dark:text-blue-400">What Our Users Say</h2>
-          <div className="flex flex-col md:flex-row gap-8 justify-center items-center">
-            <div className="bg-white dark:bg-gray-700 rounded-lg shadow p-6 max-w-sm mx-auto transition-colors duration-300">
-              <p className="text-lg italic text-gray-800 dark:text-gray-300 transition-colors duration-300">"LinkBridger made sharing my profiles so much easier. The personalized links look great and are super easy to remember!"</p>
-              <div className="mt-4 flex items-center justify-center gap-2">
-                <img src="profile.jpg" alt="User" className="h-10 w-10 rounded-full object-cover dark:ring-2 dark:ring-gray-600" />
-                <span className="font-semibold text-primary dark:text-blue-400 transition-colors duration-300">Amit S.</span>
-              </div>
-            </div>
-            <div className="bg-white dark:bg-gray-700 rounded-lg shadow p-6 max-w-sm mx-auto transition-colors duration-300">
-              <p className="text-lg italic text-gray-800 dark:text-gray-300 transition-colors duration-300">"I love the analytics and the ability to update all my links in one place. Highly recommended!"</p>
-              <div className="mt-4 flex items-center justify-center gap-2">
-                <img src="profile.jpg" alt="User" className="h-10 w-10 rounded-full object-cover dark:ring-2 dark:ring-gray-600" />
-                <span className="font-semibold text-primary dark:text-blue-400 transition-colors duration-300">Priya K.</span>
-              </div>
-            </div>
-          </div>
-        </motion.section>
-        {/* Footer Section */}
-        <Footer />
-        <footer className="text-center py-6 border-t dark:border-gray-700 mt-12 transition-colors duration-300">
-          <motion.p variants={fadeInUp} className="text-lg dark:text-gray-300">
-            &copy; 2024 LinkBridger. All Rights Reserved.
-          </motion.p>
-        </footer>
-      </motion.div>
-    </motion.div>
   );
 };
 

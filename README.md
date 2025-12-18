@@ -14,7 +14,7 @@
 
 **Transform your social media presence with memorable, personalized links that never expire**
 
-[🚀 Live Demo](https://linkb-one.vercel.app) • [📖 Documentation](./frontend/src/components/Documentation.jsx) • [🐛 Report Bug](https://github.com/DpkRn/LinkBridger/issues) • [💡 Request Feature](https://github.com/DpkRn/LinkBridger/issues) • [💬 Discuss](https://github.com/DpkRn/LinkBridger/discussions)
+[🚀 Live Demo](https://clickly.cv) • [📖 Documentation](./frontend/src/components/Documentation.jsx) • [🐛 Report Bug](https://github.com/DpkRn/LinkBridger/issues) • [💡 Request Feature](https://github.com/DpkRn/LinkBridger/issues) • [💬 Discuss](https://github.com/DpkRn/LinkBridger/discussions)
 
 ![LinkBridger Banner](https://via.placeholder.com/1200x400/4F46E5/FFFFFF?text=LinkBridger+-+Your+Personalized+Link+Manager)
 
@@ -63,7 +63,7 @@ In today's digital-first world, professionals, creators, and developers manage m
 
 LinkBridger bridges this gap by providing:
 
-- 🎯 **Personalized URLs** using your username and platform name (e.g., `linkb-one.vercel.app/yourname/linkedin`)
+- 🎯 **Personalized URLs** using your username and platform name (e.g., `clickly.cv/yourname/linkedin`)
 - 🌐 **Single Hub Link** that acts as a landing page for all your profiles
 - 📊 **Built-in Analytics** to track clicks and understand your audience
 - 🔄 **Centralized Updates** that reflect instantly across all platforms
@@ -76,7 +76,7 @@ LinkBridger bridges this gap by providing:
 
 1. **Sign Up**: Create an account with your email and choose a username
 2. **Add Platforms**: Add any social media platform with its destination URL
-3. **Get Your Links**: Receive personalized links like `linkb-one.vercel.app/username/platform`
+3. **Get Your Links**: Receive personalized links like `clickly.cv/username/platform`
 4. **Share Everywhere**: Use your links on resumes, business cards, email signatures, and social media
 5. **Update Anytime**: Change destination URLs anytime - all your shared links update automatically
 6. **Track Performance**: Monitor clicks and engagement through the dashboard
@@ -127,13 +127,13 @@ LinkBridger bridges this gap by providing:
 ### 1. **Memorable & Professional Links** 🎯
 
 **Before**: `https://www.linkedin.com/in/john-doe-software-engineer-123456789/`  
-**After**: `https://linkb-one.vercel.app/johndoe/linkedin`
+**After**: `https://clickly.cv/johndoe/linkedin`
 
 Your audience will remember it! The pattern is simple: `domain/username/platform`. Once someone knows your username, they can easily guess your other platform links.
 
 ### 2. **Single Hub for All Profiles** 🌐
 
-Share one link (`https://linkb-one.vercel.app/yourname`) that acts as a beautiful landing page for all your social profiles. Visitors can browse and choose which platform to visit, creating a professional digital business card.
+Share one link (`https://clickly.cv/yourname`) that acts as a beautiful landing page for all your social profiles. Visitors can browse and choose which platform to visit, creating a professional digital business card.
 
 **Benefits:**
 - One link to remember instead of dozens
@@ -300,7 +300,7 @@ Getting started is simple:
 ### Why LinkBridger is Superior
 
 #### 1. **Brand Identity** 🎯
-Your links become part of your brand identity, not generic shortened URLs. When someone sees `linkb-one.vercel.app/yourname/linkedin`, they immediately know it's your link and can easily remember the pattern for other platforms.
+Your links become part of your brand identity, not generic shortened URLs. When someone sees `clickly.cv/yourname/linkedin`, they immediately know it's your link and can easily remember the pattern for other platforms.
 
 #### 2. **User Trust** 🤝
 Transparent, readable URLs build more trust than mysterious short codes. Users can see where the link will take them before clicking, reducing phishing concerns.
@@ -355,18 +355,18 @@ See LinkBridger in action with these real-world examples:
 
 **Single Hub Link** (Access all profiles - acts as a digital business card):
 ```
-https://linkb-one.vercel.app/dpkrn
+https://clickly.cv/dpkrn
 ```
 Visit this link to see a beautiful landing page with all social profiles!
 
 **Individual Platform Links** (Direct redirects to specific platforms):
-- **LinkedIn**: [`https://linkb-one.vercel.app/dpkrn/linkedin`](https://linkb-one.vercel.app/dpkrn/linkedin)
-- **GitHub**: [`https://linkb-one.vercel.app/dpkrn/github`](https://linkb-one.vercel.app/dpkrn/github)
-- **LeetCode**: [`https://linkb-one.vercel.app/dpkrn/leetcode`](https://linkb-one.vercel.app/dpkrn/leetcode)
-- **Portfolio**: [`https://linkb-one.vercel.app/dpkrn/portfolio`](https://linkb-one.vercel.app/dpkrn/portfolio)
-- **Instagram**: [`https://linkb-one.vercel.app/dpkrn/instagram`](https://linkb-one.vercel.app/dpkrn/instagram)
-- **Facebook**: [`https://linkb-one.vercel.app/dpkrn/facebook`](https://linkb-one.vercel.app/dpkrn/facebook)
-- **Codeforces**: [`https://linkb-one.vercel.app/dpkrn/codeforces`](https://linkb-one.vercel.app/dpkrn/codeforces)
+- **LinkedIn**: [`https://clickly.cv/dpkrn/linkedin`](https://clickly.cv/dpkrn/linkedin)
+- **GitHub**: [`https://clickly.cv/dpkrn/github`](https://clickly.cv/dpkrn/github)
+- **LeetCode**: [`https://clickly.cv/dpkrn/leetcode`](https://clickly.cv/dpkrn/leetcode)
+- **Portfolio**: [`https://clickly.cv/dpkrn/portfolio`](https://clickly.cv/dpkrn/portfolio)
+- **Instagram**: [`https://clickly.cv/dpkrn/instagram`](https://clickly.cv/dpkrn/instagram)
+- **Facebook**: [`https://clickly.cv/dpkrn/facebook`](https://clickly.cv/dpkrn/facebook)
+- **Codeforces**: [`https://clickly.cv/dpkrn/codeforces`](https://clickly.cv/dpkrn/codeforces)
 
 **Notice**: Only the platform name changes; the username remains consistent across all links! This makes it incredibly easy to remember and share.
 
@@ -814,7 +814,7 @@ Contributors will be:
 [![GitHub](https://img.shields.io/badge/GitHub-DpkRn-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/DpkRn)
 [![Email](https://img.shields.io/badge/Email-d.wizard.techno@gmail.com-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:d.wizard.techno@gmail.com)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Profile-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/dpkrn)
-[![Portfolio](https://img.shields.io/badge/Portfolio-Website-FF6B6B?style=for-the-badge&logo=firefox&logoColor=white)](https://linkb-one.vercel.app/dpkrn)
+[![Portfolio](https://img.shields.io/badge/Portfolio-Website-FF6B6B?style=for-the-badge&logo=firefox&logoColor=white)](https://clickly.cv/dpkrn)
 
 **Passionate about building innovative solutions and contributing to open source**
 
@@ -844,14 +844,14 @@ To create tools that simplify digital life and empower users to build their onli
 **Professional Links:**
 - 💼 **LinkedIn**: [Connect on LinkedIn](https://www.linkedin.com/in/dpkrn) - Let's network!
 - 🐙 **GitHub**: [@DpkRn](https://github.com/DpkRn) - Check out my other projects
-- 🌐 **Portfolio**: [View Portfolio](https://linkb-one.vercel.app/dpkrn) - See my work
+- 🌐 **Portfolio**: [View Portfolio](https://clickly.cv/dpkrn) - See my work
 - 📧 **Email**: [d.wizard.techno@gmail.com](mailto:d.wizard.techno@gmail.com) - Let's collaborate!
 
 **Social Media:**
-- 📸 **Instagram**: [Follow on Instagram](https://linkb-one.vercel.app/dpkrn/instagram) (if available)
-- 👨‍💻 **GitHub Profile**: [View GitHub Profile](https://linkb-one.vercel.app/dpkrn/github)
-- 💻 **LeetCode**: [LeetCode Profile](https://linkb-one.vercel.app/dpkrn/leetcode) (if available)
-- 🎯 **Codeforces**: [Codeforces Profile](https://linkb-one.vercel.app/dpkrn/codeforces) (if available)
+- 📸 **Instagram**: [Follow on Instagram](https://clickly.cv/dpkrn/instagram) (if available)
+- 👨‍💻 **GitHub Profile**: [View GitHub Profile](https://clickly.cv/dpkrn/github)
+- 💻 **LeetCode**: [LeetCode Profile](https://clickly.cv/dpkrn/leetcode) (if available)
+- 🎯 **Codeforces**: [Codeforces Profile](https://clickly.cv/dpkrn/codeforces) (if available)
 
 ### 🎓 Learning & Growth
 
@@ -950,7 +950,7 @@ To everyone who:
 
 ### 🚀 Ready to Get Started?
 
-[**Try LinkBridger Now**](https://linkb-one.vercel.app) • [**View Documentation**](./frontend/src/components/Documentation.jsx) • [**Contribute**](#-contributing)
+[**Try LinkBridger Now**](https://clickly.cv) • [**View Documentation**](./frontend/src/components/Documentation.jsx) • [**Contribute**](#-contributing)
 
 **Questions?** [Email us](mailto:d.wizard.techno@gmail.com) - We're here to help! 💬
 

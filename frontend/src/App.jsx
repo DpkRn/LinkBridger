@@ -12,6 +12,7 @@ import Nav from './components/navbar/Nav'
 import VerifiedPage from './components/VerifiedPage'
 import PasswordReset from './components/PasswordReset'
 import Documentation from './components/Documentation'
+import HomePage from './components/pages/HomePage'
 import LinkPage from './components/pages/LinkPage'
 import ProfilePage from './components/pages/Profile'
 import NotFound from './components/pages/NotFound'
@@ -122,7 +123,7 @@ function App() {
         <Route path='/login' element={<AuthRoute><AuthPage /></AuthRoute>}/>
         <Route path='/verify' element={<VerificationPage />} />
         <Route path='/links' element={<PrivateRoute><LinkPage/></PrivateRoute>} />
-        <Route path='/' element={<AuthRoute><Documentation/></AuthRoute>} />
+        <Route path='/' element={<AuthRoute><HomePage/></AuthRoute>} />
         <Route path='/profile' element={<PrivateRoute><ProfilePage/></PrivateRoute>} />
         <Route path='/home' element={<PrivateRoute><DashBoard /></PrivateRoute>} />
         <Route path='/verified' element={<VerifiedPage />} />

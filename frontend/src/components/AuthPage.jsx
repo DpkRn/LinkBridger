@@ -1,69 +1,51 @@
 import React, { useRef, useEffect, useState } from "react";
-import "../App.css";
+import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 import api from "../utils/api";
 import { useDispatch } from "react-redux";
 import { setAuthenticated, setUser } from "../redux/userSlice";
 import { Link, useNavigate } from "react-router-dom";
 import { GiSkullCrossedBones } from "react-icons/gi";
-import { FaCheck } from "react-icons/fa";
+import { FaCheck, FaEnvelope, FaLock, FaUser, FaEye, FaEyeSlash } from "react-icons/fa";
+import { HiSparkles } from "react-icons/hi2";
 
 const AuthPage = () => {
-  //redux thing
   const dispatch = useDispatch();
-
   const navigate = useNavigate();
-
   const [loading, setLoading] = useState(false);
-
-  // Create references for the elements you want to manipulate
-  const signInBtnRef = useRef(null);
-  const signUpBtnRef = useRef(null);
-  const containerRef = useRef(null);
-
+  const [isSignUpMode, setIsSignUpMode] = useState(false);
   const [isAvailable, setAvailable] = useState(false);
   const [isShow, setShow] = useState(false);
   const [isShowSignup, setShowSignup] = useState(false);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const isMountedRef = useRef(true);
 
   const [loginemail, setLoginEmail] = useState("");
   const [loginpassword, setLoginPassword] = useState("");
-
   const [signinemail, setSigninEmail] = useState("");
   const [signinpassword, setSigninPassword] = useState("");
   const [username, setUsername] = useState("");
 
-  // Using useEffect to set up the event listeners after rendering
+  // Track component mount status
   useEffect(() => {
-    const signInBtn = signInBtnRef.current;
-    const signUpBtn = signUpBtnRef.current;
-    const container = containerRef.current;
-
-    const handleSignUpClick = () => {
-      container.classList.add("sign-up-mode");
-    };
-
-    const handleSignInClick = () => {
-      container.classList.remove("sign-up-mode");
-    };
-
-    // Add event listeners
-    if (signUpBtn && signInBtn) {
-      signUpBtn.addEventListener("click", handleSignUpClick);
-      signInBtn.addEventListener("click", handleSignInClick);
-    }
-
-    // Clean up event listeners on component unmount
+    isMountedRef.current = true;
     return () => {
-      if (signUpBtn && signInBtn) {
-        signUpBtn.removeEventListener("click", handleSignUpClick);
-        signInBtn.removeEventListener("click", handleSignInClick);
-      }
+      isMountedRef.current = false;
     };
   }, []);
 
-  const validateSpace = () => {};
+  // Mouse tracking for interactive background
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      setMousePosition({
+        x: (e.clientX / window.innerWidth) * 100,
+        y: (e.clientY / window.innerHeight) * 100,
+      });
+    };
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
 
-  //Authentication
   const handleSignUp = async (e) => {
     e.preventDefault();
     try {
@@ -75,7 +57,10 @@ const AuthPage = () => {
       );
       if (res.status === 201 && res.data.success) {
         toast.success(res.data.message);
-        setLoading(false);
+        // Set loading to false before navigation to prevent state update on unmounted component
+        if (isMountedRef.current) {
+          setLoading(false);
+        }
         navigate("/verify", {
           state: {
             username: username,
@@ -83,23 +68,31 @@ const AuthPage = () => {
             password: signinpassword,
           },
         });
+        return; // Exit early to prevent finally block from executing
       }
     } catch (err) {
       console.log(err);
       const message = err.response?.data?.message || "Network Slow ! Try again";
       toast.error(message);
-      if (err.status === 409) {
+      if (err.response?.status === 409) {
+        // Set loading to false before navigation
+        if (isMountedRef.current) {
+          setLoading(false);
+        }
         navigate("/login");
+        return; // Exit early to prevent finally block from executing
       }
     } finally {
-      setLoading(false);
+      // Only update loading state if component is still mounted
+      if (isMountedRef.current) {
+        setLoading(false);
+      }
     }
   };
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      
       setLoading(true);
       const res = await api.post(
         "/auth/signin",
@@ -107,273 +100,535 @@ const AuthPage = () => {
         { withCredentials: true }
       );
       if (res.status === 200 && res.data.success) {
-        // console.log(res.data.user.username)
         dispatch(setUser(res.data.user));
         dispatch(setAuthenticated(true));
-        navigate("/home", { replace: true });
-        setLoading(false);
         setLoginEmail("");
         setLoginPassword("");
-        toast.success(`welcome ${res.data.user.username}`);
+        toast.success(`Welcome ${res.data.user.username}!`);
+        // Set loading to false before navigation to prevent state update on unmounted component
+        if (isMountedRef.current) {
+          setLoading(false);
+        }
+        navigate("/home", { replace: true });
+        return; // Exit early to prevent finally block from executing
       }
     } catch (err) {
       console.log(err);
-
       const message = err.response?.data?.message || "Network Slow ! Try again";
       toast.error(message);
     } finally {
-      setLoading(false);
+      // Only update loading state if component is still mounted
+      if (isMountedRef.current) {
+        setLoading(false);
+      }
     }
   };
 
   const checkAvailablity = async (usrnm) => {
-    if (usrnm.length < 5) return;
+    if (usrnm.length < 5) {
+      setAvailable(false);
+      return;
+    }
     try {
       const res = await api.post("/auth/checkavailablity", { username: usrnm });
       if (res.status === 209 && res.data.success) {
-        console.log("not available");
         setAvailable(false);
       }
       if (res.status === 200 && res.data.success) {
-        console.log("available");
         setAvailable(true);
       }
     } catch (err) {
       console.log(err);
       setAvailable(false);
-      const message = err.response?.data?.message || "Server Internal Error !";
     }
   };
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        duration: 0.6,
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5 },
+    },
+  };
+
   return (
-    <>
-      <div className="container min-w-screen " ref={containerRef}>
-        <div className="forms-container ">
-          <div className="signin-signup  shadow-lg">
-            {/* Sign-in form */}
-            <form className="sign-in-form dark:bg-gray-800/50">
-              <h2 className="title dark:text-white">Log in</h2>
-              <div className="input-field">
-                <i className="fas fa-user"></i>
-
-                <input
-                  type="text"
-                  placeholder="Email"
-                  value={loginemail}
-                  onChange={(e) => {
-                    if (e.target.value.includes(" ")) {
-                      toast.error("space not allowed");
-                      return;
-                    }
-                    setLoginEmail(e.target.value);
-                  }}
-                />
-              </div>
-              <div className="input-field">
-                <i className="fas fa-lock"></i>
-                <input
-                  type={isShow ? "text" : "password"}
-                  placeholder="Password"
-                  value={loginpassword}
-                  onChange={(e) => {
-                    if (e.target.value.includes(" ")) {
-                      toast.error("space not allowed");
-                      return;
-                    }
-                    setLoginPassword(e.target.value);
-                  }}
-                />
-              </div>
-              <div className="flex items-start">
-                <div className="flex items-center h-5">
-                  <input
-                    id="remember"
-                    aria-describedby="remember"
-                    type="checkbox"
-                    checked={isShow}
-                    className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
-                    required=""
-                    onChange={() => {
-                      setShow((state) => !state);
-                    }}
-                  />
-                </div>
-                <div className="ml-3 text-sm">
-                  <label
-                    htmlFor="remember"
-                    className="text-gray-500 dark:text-gray-300"
-                  >
-                    Show Password
-                  </label>
-                </div>
-              </div>
-              <button  type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-bold rounded-3xl text-sm px-10 py-2.5 text-center me-2 mt-3 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex items-center transition-colors duration-200" onClick={handleLogin}>
-{loading&&<svg aria-hidden="true" role="status" class="inline w-4 h-4 me-3 text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="#E5E7EB"/>
-<path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentColor"/>
-</svg>}
-Login
-</button>
-              <p className="social-text dark:text-gray-300">Or Sign in with social platforms</p>
-              <Link
-                to="/reset_password"
-                className="text-blue-500 dark:text-blue-400 cursor-pointer hover:underline transition-colors duration-200"
-              >
-                Forgot password?
-              </Link>
-              {/* <div className="social-media">
-                <a href="#" className="social-icon">
-                  <i className="fab fa-facebook-f"></i>
-                </a>
-                <a href="#" className="social-icon">
-                  <i className="fab fa-twitter"></i>
-                </a>
-                <a href="#" className="social-icon">
-                  <i className="fab fa-google"></i>
-                </a>
-                <a href="#" className="social-icon">
-                  <i className="fab fa-linkedin-in"></i>
-                </a>
-              </div> */}
-            </form>
-
-            {/* Sign-up form */}
-            <form className="sign-up-form dark:bg-gray-800/50">
-              <h2 className="title dark:text-white">Sign up</h2>
-
-              <div className="input-field px-5 flex items-center justify-around">
-                <input
-                  type="text"
-                  placeholder="Username"
-                  className="mr-5 w-[80%]"
-                  value={username}
-                  onChange={(e) => {
-                    if (e.target.value.includes(" ")) {
-                      toast.error("space not allowed");
-                      return;
-                    }
-                    checkAvailablity(e.target.value);
-                    setUsername(e.target.value);
-                  }}
-                />
-                {!isAvailable ? (
-                  <GiSkullCrossedBones className="text-red-900" />
-                ) : (
-                  <FaCheck className="text-green-900" />
-                )}
-              </div>
-
-              <div className="input-field flex items-center pl-5 justify-between">
-                <input
-                  type="email"
-                  placeholder="Email"
-                  value={signinemail}
-                  onChange={(e) => {
-                    if (e.target.value.includes(" ")) {
-                      toast.error("space not allowed");
-                      return;
-                    }
-                    setSigninEmail(e.target.value);
-                  }}
-                />
-              </div>
-
-              <div className="input-field flex items-center pl-5 justify-between">
-                <input
-                  type={isShowSignup?"text":"password"}
-                  placeholder="Password"
-                  value={signinpassword}
-                  onChange={(e) => {
-                    if (e.target.value.includes(" ")) {
-                      toast.error("space not allowed");
-                      return;
-                    }
-                    setSigninPassword(e.target.value);
-                  }}
-                />
-              </div>
-              <div className="flex items-start">
-                <div className="flex items-center h-5">
-                  <input
-                    id="signupCheck"
-                    type="checkbox"
-                    checked={isShowSignup}
-                    className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
-                    required=""
-                    onChange={() => {
-                      setShowSignup((state) => !state);
-                    }}
-                  />
-                </div>
-                <div className="ml-3 text-sm">
-                  <label
-                    htmlFor="signupCheck"
-                    className="text-gray-500 dark:text-gray-300 transition-colors duration-200"
-                  >
-                    Show Password
-                  </label>
-                </div>
-              </div>
-
-              <button  type="button" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-bold rounded-3xl text-sm px-10 py-2.5 text-center me-2 mt-3 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 inline-flex items-center transition-colors duration-200" onClick={handleSignUp}>
-{loading&&<svg aria-hidden="true" role="status" class="inline w-4 h-4 me-3 text-white animate-spin" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="#E5E7EB"/>
-<path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentColor"/>
-</svg>}
-Signup
-</button>
-              <p className="social-text dark:text-gray-300">Or Sign up with social platforms</p>
-
-              {/* <div className="social-media">
-                <a href="#" className="social-icon">
-                  <i className="fab fa-facebook-f"></i>
-                </a>
-                <a href="#" className="social-icon">
-                  <i className="fab fa-twitter"></i>
-                </a>
-                <a href="#" className="social-icon">
-                  <i className="fab fa-google"></i>
-                </a>
-                <a href="#" className="social-icon">
-                  <i className="fab fa-linkedin-in"></i>
-                </a>
-              </div> */}
-            </form>
-          </div>
-        </div>
-
-        {/* Panels */}
-        <div className="panels-container">
-          <div className="panel left-panel">
-            <div className="content">
-              <h3>New here ?</h3>
-              <p>Generate Links You'll Never Forget - Get Started!</p>
-              <button
-                className="btn transparent"
-                ref={signUpBtnRef}
-                id="sign-up-btn"
-              >
-                Sign up
-              </button>
-            </div>
-            <img src="img/log.svg" className="image" alt="" />
-          </div>
-          <div className="panel right-panel">
-            <div className="content">
-              <h3>One of us ?</h3>
-              <p>Turn Usernames into Smart Links - Quick and Simple!</p>
-              <button
-                className="btn transparent"
-                ref={signInBtnRef}
-                id="sign-in-btn"
-              >
-                Log in
-              </button>
-            </div>
-            <img src="img/register.svg" className="image" alt="" />
-          </div>
-        </div>
+    <div className="min-h-screen w-full overflow-hidden relative bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 dark:from-gray-950 dark:via-purple-950 dark:to-gray-950">
+      {/* Animated Background */}
+      <div className="absolute inset-0 overflow-hidden">
+        {/* Gradient Orbs */}
+        <motion.div
+          className="absolute w-96 h-96 bg-purple-500/30 rounded-full blur-3xl"
+          animate={{
+            x: mousePosition.x * 0.5 - 200,
+            y: mousePosition.y * 0.5 - 200,
+          }}
+          transition={{ type: "spring", stiffness: 50, damping: 20 }}
+        />
+        <motion.div
+          className="absolute w-96 h-96 bg-pink-500/30 rounded-full blur-3xl"
+          animate={{
+            x: mousePosition.x * 0.3 - 200,
+            y: mousePosition.y * 0.3 - 200,
+          }}
+          transition={{ type: "spring", stiffness: 50, damping: 20 }}
+        />
+        <motion.div
+          className="absolute w-96 h-96 bg-blue-500/30 rounded-full blur-3xl"
+          animate={{
+            x: mousePosition.x * 0.7 - 200,
+            y: mousePosition.y * 0.7 - 200,
+          }}
+          transition={{ type: "spring", stiffness: 50, damping: 20 }}
+        />
+        
+        {/* Animated Grid */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]" />
       </div>
-    </>
+
+      <div className="relative z-10 min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="w-full max-w-5xl"
+        >
+          <div className="grid md:grid-cols-2 gap-6 md:gap-8 items-center">
+            {/* Left Side - Welcome Content */}
+            <motion.div
+              variants={itemVariants}
+              className="flex flex-col items-center justify-center text-center space-y-4 md:space-y-6 p-4 md:p-8 mb-6 md:mb-0"
+            >
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.2 }}
+                className="relative"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full blur-2xl opacity-50 animate-pulse" />
+                <div className="relative bg-gradient-to-br from-purple-600 to-pink-600 p-4 sm:p-6 rounded-2xl shadow-2xl">
+                  <HiSparkles className="text-4xl sm:text-5xl md:text-6xl text-white" />
+                </div>
+              </motion.div>
+              
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
+              >
+                Welcome to LinkBridger
+              </motion.h1>
+              
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+                className="text-sm sm:text-base md:text-lg text-gray-300 dark:text-gray-400 max-w-md"
+              >
+                Transform your social media presence with personalized, memorable links that never expire.
+              </motion.p>
+
+              {/* Feature Pills */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.8 }}
+                className="flex flex-wrap gap-2 sm:gap-3 justify-center mt-4 md:mt-6"
+              >
+                {["Personalized Links", "Analytics", "Free Forever"].map((feature, idx) => (
+                  <motion.div
+                    key={feature}
+                    initial={{ opacity: 0, scale: 0 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.9 + idx * 0.1, type: "spring" }}
+                    className="px-3 py-1.5 sm:px-4 sm:py-2 bg-white/10 backdrop-blur-md rounded-full text-xs sm:text-sm text-white border border-white/20"
+                  >
+                    {feature}
+                  </motion.div>
+                ))}
+              </motion.div>
+            </motion.div>
+
+            {/* Right Side - Auth Forms */}
+            <motion.div
+              variants={itemVariants}
+              className="w-full"
+            >
+              <div className="relative">
+                {/* Form Container */}
+                <motion.div
+                  className="relative bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-6 sm:p-8 md:p-10 overflow-hidden"
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {/* Animated Border Gradient */}
+                  <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 opacity-0 hover:opacity-20 transition-opacity duration-500 -z-10 blur-xl" />
+                  
+                  {/* Toggle Buttons */}
+                  <div className="flex gap-2 mb-8 p-1 bg-white/5 dark:bg-gray-800/50 rounded-xl backdrop-blur-sm">
+                    <motion.button
+                      type="button"
+                      onClick={() => setIsSignUpMode(false)}
+                      className={`flex-1 py-3 px-4 rounded-lg font-semibold text-sm transition-all duration-300 relative ${
+                        !isSignUpMode
+                          ? "text-white"
+                          : "text-gray-400 dark:text-gray-500"
+                      }`}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      {!isSignUpMode && (
+                        <motion.div
+                          layoutId="activeTab"
+                          className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg"
+                          transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                        />
+                      )}
+                      <span className="relative z-10">Sign In</span>
+                    </motion.button>
+                    
+                    <motion.button
+                      type="button"
+                      onClick={() => setIsSignUpMode(true)}
+                      className={`flex-1 py-3 px-4 rounded-lg font-semibold text-sm transition-all duration-300 relative ${
+                        isSignUpMode
+                          ? "text-white"
+                          : "text-gray-400 dark:text-gray-500"
+                      }`}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      {isSignUpMode && (
+                        <motion.div
+                          layoutId="activeTab"
+                          className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg"
+                          transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                        />
+                      )}
+                      <span className="relative z-10">Sign Up</span>
+                    </motion.button>
+                  </div>
+
+                  {/* Forms */}
+                  <AnimatePresence mode="wait">
+                    {!isSignUpMode ? (
+                      <motion.form
+                        key="login"
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 20 }}
+                        transition={{ duration: 0.3 }}
+                        onSubmit={handleLogin}
+                        className="space-y-6"
+                      >
+                        <motion.h2
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="text-3xl font-bold text-white mb-6 text-center"
+                        >
+                          Welcome Back
+                        </motion.h2>
+
+                        <motion.div
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.1 }}
+                          className="relative group"
+                        >
+                          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-purple-400 transition-colors z-10">
+                            <FaEnvelope className="w-5 h-5" />
+                          </div>
+                          <input
+                            type="email"
+                            placeholder="Email"
+                            value={loginemail}
+                            required
+                            onChange={(e) => {
+                              if (e.target.value.includes(" ")) {
+                                toast.error("Space not allowed");
+                                return;
+                              }
+                              setLoginEmail(e.target.value);
+                            }}
+                            className="w-full pl-12 pr-4 py-4 bg-white/10 dark:bg-gray-800/50 border border-white/20 dark:border-gray-700 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 backdrop-blur-sm"
+                          />
+                        </motion.div>
+
+                        <motion.div
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.2 }}
+                          className="relative group"
+                        >
+                          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-purple-400 transition-colors z-10">
+                            <FaLock className="w-5 h-5" />
+                          </div>
+                          <input
+                            type={isShow ? "text" : "password"}
+                            placeholder="Password"
+                            value={loginpassword}
+                            required
+                            minLength={6}
+                            onChange={(e) => {
+                              if (e.target.value.includes(" ")) {
+                                toast.error("Space not allowed");
+                                return;
+                              }
+                              setLoginPassword(e.target.value);
+                            }}
+                            className="w-full pl-12 pr-12 py-4 bg-white/10 dark:bg-gray-800/50 border border-white/20 dark:border-gray-700 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 backdrop-blur-sm"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShow(!isShow)}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-purple-400 transition-colors z-10"
+                          >
+                            {isShow ? <FaEyeSlash className="w-5 h-5" /> : <FaEye className="w-5 h-5" />}
+                          </button>
+                        </motion.div>
+
+                        <motion.div
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.3 }}
+                          className="flex items-center justify-between"
+                        >
+                          <label className="flex items-center gap-2 text-gray-300 dark:text-gray-400 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={isShow}
+                              onChange={() => setShow(!isShow)}
+                              className="w-4 h-4 rounded border-gray-400 text-purple-600 focus:ring-purple-500"
+                            />
+                            <span className="text-sm">Show Password</span>
+                          </label>
+                          <Link
+                            to="/reset_password"
+                            className="text-sm text-purple-400 hover:text-purple-300 transition-colors"
+                          >
+                            Forgot password?
+                          </Link>
+                        </motion.div>
+
+                        <motion.button
+                          type="submit"
+                          disabled={loading}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.4 }}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          className="w-full py-4 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group"
+                        >
+                          <span className="relative z-10 flex items-center justify-center gap-2">
+                            {loading ? (
+                              <>
+                                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                </svg>
+                                Signing In...
+                              </>
+                            ) : (
+                              "Sign In"
+                            )}
+                          </span>
+                          <motion.div
+                            className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                            initial={{ x: "-100%" }}
+                            whileHover={{ x: "100%" }}
+                            transition={{ duration: 0.6 }}
+                          />
+                        </motion.button>
+                      </motion.form>
+                    ) : (
+                      <motion.form
+                        key="signup"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        transition={{ duration: 0.3 }}
+                        onSubmit={handleSignUp}
+                        className="space-y-6"
+                      >
+                        <motion.h2
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="text-3xl font-bold text-white mb-6 text-center"
+                        >
+                          Create Account
+                        </motion.h2>
+
+                        <motion.div
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.1 }}
+                          className="relative group"
+                        >
+                          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-purple-400 transition-colors z-10">
+                            <FaUser className="w-5 h-5" />
+                          </div>
+                          <input
+                            type="text"
+                            placeholder="Username (min 5 characters)"
+                            value={username}
+                            required
+                            minLength={5}
+                            onChange={(e) => {
+                              if (e.target.value.includes(" ")) {
+                                toast.error("Space not allowed");
+                                return;
+                              }
+                              checkAvailablity(e.target.value);
+                              setUsername(e.target.value);
+                            }}
+                            className="w-full pl-12 pr-12 py-4 bg-white/10 dark:bg-gray-800/50 border border-white/20 dark:border-gray-700 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 backdrop-blur-sm"
+                          />
+                          <div className="absolute right-4 top-1/2 -translate-y-1/2 z-10">
+                            {username.length >= 5 && (
+                              <motion.div
+                                initial={{ scale: 0 }}
+                                animate={{ scale: 1 }}
+                                transition={{ type: "spring" }}
+                              >
+                                {isAvailable ? (
+                                  <FaCheck className="w-5 h-5 text-green-400" />
+                                ) : (
+                                  <GiSkullCrossedBones className="w-5 h-5 text-red-400" />
+                                )}
+                              </motion.div>
+                            )}
+                          </div>
+                        </motion.div>
+
+                        <motion.div
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.2 }}
+                          className="relative group"
+                        >
+                          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-purple-400 transition-colors z-10">
+                            <FaEnvelope className="w-5 h-5" />
+                          </div>
+                          <input
+                            type="email"
+                            placeholder="Email"
+                            value={signinemail}
+                            required
+                            onChange={(e) => {
+                              if (e.target.value.includes(" ")) {
+                                toast.error("Space not allowed");
+                                return;
+                              }
+                              setSigninEmail(e.target.value);
+                            }}
+                            className="w-full pl-12 pr-4 py-4 bg-white/10 dark:bg-gray-800/50 border border-white/20 dark:border-gray-700 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 backdrop-blur-sm"
+                          />
+                        </motion.div>
+
+                        <motion.div
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.3 }}
+                          className="relative group"
+                        >
+                          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-purple-400 transition-colors z-10">
+                            <FaLock className="w-5 h-5" />
+                          </div>
+                          <input
+                            type={isShowSignup ? "text" : "password"}
+                            placeholder="Password (min 6 characters)"
+                            value={signinpassword}
+                            required
+                            minLength={6}
+                            onChange={(e) => {
+                              if (e.target.value.includes(" ")) {
+                                toast.error("Space not allowed");
+                                return;
+                              }
+                              setSigninPassword(e.target.value);
+                            }}
+                            className="w-full pl-12 pr-12 py-4 bg-white/10 dark:bg-gray-800/50 border border-white/20 dark:border-gray-700 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 backdrop-blur-sm"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowSignup(!isShowSignup)}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-purple-400 transition-colors z-10"
+                          >
+                            {isShowSignup ? <FaEyeSlash className="w-5 h-5" /> : <FaEye className="w-5 h-5" />}
+                          </button>
+                        </motion.div>
+
+                        <motion.div
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.4 }}
+                          className="flex items-center gap-2 text-gray-300 dark:text-gray-400"
+                        >
+                          <input
+                            type="checkbox"
+                            id="signupCheck"
+                            checked={isShowSignup}
+                            onChange={() => setShowSignup(!isShowSignup)}
+                            className="w-4 h-4 rounded border-gray-400 text-purple-600 focus:ring-purple-500"
+                          />
+                          <label htmlFor="signupCheck" className="text-sm cursor-pointer">
+                            Show Password
+                          </label>
+                        </motion.div>
+
+                        <motion.button
+                          type="submit"
+                          disabled={loading || username.length < 5 || (username.length >= 5 && !isAvailable)}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.5 }}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          className="w-full py-4 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group"
+                        >
+                          <span className="relative z-10 flex items-center justify-center gap-2">
+                            {loading ? (
+                              <>
+                                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                </svg>
+                                Creating Account...
+                              </>
+                            ) : (
+                              "Create Account"
+                            )}
+                          </span>
+                          <motion.div
+                            className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                            initial={{ x: "-100%" }}
+                            whileHover={{ x: "100%" }}
+                            transition={{ duration: 0.6 }}
+                          />
+                        </motion.button>
+                      </motion.form>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              </div>
+            </motion.div>
+          </div>
+        </motion.div>
+      </div>
+    </div>
   );
 };
 

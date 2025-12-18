@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { setSidebarMenu, toggleDarkMode } from "../../redux/pageSlice";
@@ -10,29 +11,40 @@ import {
   setNotifications,
   setUser,
 } from "../../redux/userSlice";
-import { MdOutlineArrowDropDownCircle } from "react-icons/md";
+import { MdOutlineArrowDropDownCircle, MdMenu, MdClose } from "react-icons/md";
 import { MdDarkMode, MdLightMode } from "react-icons/md";
+import { FaBell, FaUser, FaCog, FaSignOutAlt, FaHome, FaLink, FaBook } from "react-icons/fa";
 import Notification from "../notification/Notification";
-
 
 const Nav = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const notificationRef=useRef(null)
-  const profilePageRef=useRef(null)
-  const location=useLocation()
-
+  const notificationRef = useRef(null);
+  const profilePageRef = useRef(null);
+  const location = useLocation();
 
   const [profileMenu, setProfileMenu] = useState(false);
   const [notificationPage, setNotificationPage] = useState(false);
+  const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 });
 
   const { sidebarMenu, darkMode } = useSelector((store) => store.page);
   const username = useSelector((store) => store.admin.user.username);
   const links = useSelector((store) => store.admin.links);
   const notifications = useSelector((store) => store.admin.notifications);
 
+  // Mouse tracking for interactive background
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      setMousePosition({
+        x: (e.clientX / window.innerWidth) * 100,
+        y: (e.clientY / window.innerHeight) * 100,
+      });
+    };
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
+
   const handleSignOut = async (e) => {
-    // e.preventDefault();
     try {
       const res = await api.get("/auth/signout", { withCredentials: true });
       if (res.status === 200 && res.data.success) {
@@ -66,7 +78,6 @@ const Nav = () => {
   };
 
   const handleMarkRead = async () => {
-    console.log("clicked !");
     try {
       const res = await api.post(
         "/source/notifications",
@@ -77,41 +88,40 @@ const Nav = () => {
         await getAllLinks();
         dispatch(setNotifications(0));
         setNotificationPage(false);
+        toast.success("All notifications marked as read!");
       }
     } catch (err) {
       console.log(err);
     }
   };
 
-
   useEffect(() => {
     dispatch(
       setNotifications(links.reduce((acc, link) => acc + link.notSeen, 0))
     );
-    
-  }, [links, notifications]);
+  }, [links, notifications, dispatch]);
 
   const onNotificationClick = async () => {
     if (notifications === 0) {
-      toast("You have no new clicks");
+      toast("You have no new clicks", { icon: "📭" });
       return;
     }
     setNotificationPage((state) => !state);
   };
 
-// handle out side click
+  // Handle outside click
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
-        notificationRef.current && 
-        !notificationRef.current.contains(event.target) && 
+        notificationRef.current &&
+        !notificationRef.current.contains(event.target) &&
         !event.target.closest(".notification-button")
       ) {
         setNotificationPage(false);
       }
       if (
-        profilePageRef.current && 
-        !profilePageRef.current.contains(event.target) && 
+        profilePageRef.current &&
+        !profilePageRef.current.contains(event.target) &&
         !event.target.closest(".profileMenu-button")
       ) {
         setProfileMenu(false);
@@ -127,124 +137,138 @@ const Nav = () => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [notificationPage,profileMenu]);
+  }, [notificationPage, profileMenu]);
 
-  const handleProfileClick=(e)=>{
-    navigate('/profile')
-    setProfileMenu(false)
-  }
+  const handleProfileClick = (e) => {
+    navigate("/profile");
+    setProfileMenu(false);
+  };
 
-
+  const navLinks = [
+    { to: "/home", label: "Home", icon: FaHome },
+    { to: "/links", label: "Links", icon: FaLink },
+    { to: "/doc", label: "Docs", icon: FaBook },
+  ];
 
   return (
-  <nav className="bg-gray-800 dark:bg-gray-900 h-[70px] sticky top-0 z-50 px-5 shadow-lg transition-colors duration-300">
-      <div className="">
-        <div className="relative flex h-16 items-center md:justify-between justify-end">
-          {/* mobile menu icon */}
-          <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
-            {/* <!-- Mobile menu button--> */}
-            <button
+    <nav className="sticky top-0 z-50 backdrop-blur-xl bg-gray-800/95 dark:bg-gray-900/50 border-b border-gray-700/50 dark:border-gray-700/50 shadow-lg">
+      {/* Interactive Background Gradient */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div
+          className="absolute w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"
+          animate={{
+            x: mousePosition.x * 0.3 - 200,
+            y: mousePosition.y * 0.3 - 200,
+          }}
+          transition={{ type: "spring", stiffness: 50, damping: 20 }}
+        />
+      </div>
+
+      <div className="relative z-10">
+        <div className="relative flex h-16 md:h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
+          {/* Mobile menu button */}
+          <div className="flex items-center sm:hidden">
+            <motion.button
               type="button"
-              className="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              className="relative inline-flex items-center justify-center rounded-lg p-2 text-gray-300 hover:text-white bg-white/5 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-200"
               aria-controls="mobile-menu"
-              aria-expanded="false"
               onClick={() => dispatch(setSidebarMenu(!sidebarMenu))}
             >
-              <span className="absolute -inset-0.5"></span>
-              <span className="sr-only">Open main menu</span>
-              {/* <!--
-            Icon when menu is closed.
-
-            Menu open: "hidden", Menu closed: "block"
-          --> */}
-              <svg
-                className="block h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                aria-hidden="true"
-                data-slot="icon"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-                />
-              </svg>
-              {/* <!--
-            Icon when menu is open.
-
-            Menu open: "block", Menu closed: "hidden"
-          --> */}
-              <svg
-                className="hidden h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                aria-hidden="true"
-                data-slot="icon"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M6 18 18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
+              <AnimatePresence mode="wait">
+                {sidebarMenu ? (
+                  <motion.div
+                    key="close"
+                    initial={{ rotate: -90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: 90, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <MdClose className="h-6 w-6" />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="menu"
+                    initial={{ rotate: 90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: -90, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <MdMenu className="h-6 w-6" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.button>
           </div>
 
-          <div className="flex  items-center justify-center">
-            {/* Logo */}
-            <div className="flex flex-shrink-0 mr-5  items-center">
-              <img
-                className="h-10 w-auto drop-shadow-lg dark:brightness-0 dark:invert transition-all duration-300"
-                src="logo.png"
-                alt="LinkBridger Logo"
-              />
-            </div>
+          {/* Logo and Desktop Navigation */}
+          <div className="flex items-center justify-center flex-1 sm:flex-none">
+            <Link
+              to="/home"
+              className="flex items-center gap-3 group"
+            >
+              <motion.div
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                whileTap={{ scale: 0.95 }}
+                className="relative"
+              >
+                <img
+                  className="h-10 w-auto drop-shadow-lg dark:brightness-0 dark:invert transition-all duration-300"
+                  src="logo.png"
+                  alt="LinkBridger Logo"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </motion.div>
+              <motion.span
+                className="hidden sm:block text-xl md:text-2xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
+                whileHover={{ scale: 1.05 }}
+              >
+                LinkBridger
+              </motion.span>
+            </Link>
 
-            {/* NavMenu */}
-            <div className="hidden sm:ml-6 sm:block z-50 text-white dark:text-gray-100">
-              <div className="flex space-x-6">
-                {/* <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" --> */}
-                <Link
-                  to="/home"
-                  className={`${location.pathname=="/home"?'font-bold text-lg':"font-medium text-base"} rounded-md px-4 py-2 text-white dark:text-gray-100 hover:bg-primary hover:text-white dark:hover:bg-blue-700 transition-colors duration-200`}
-                  aria-current="page"
-                >
-                  Home
-                </Link>
-                <Link
-                  to="/links"
-                  className={`${location.pathname=="/links"?'font-bold text-lg':"font-medium text-base"} rounded-md px-4 py-2 text-white dark:text-gray-100 hover:bg-primary hover:text-white dark:hover:bg-blue-700 transition-colors duration-200`}
-                >
-                  Links
-                </Link>
-                {/* <Link
-                  to="#"
-                  className="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
-                >
-                  Analysis
-                </Link> */}
-                <Link
-                  to="/doc"
-                  className={`${location.pathname=="/doc"?'font-bold text-lg':"font-medium text-base"} rounded-md px-4 py-2 text-white dark:text-gray-100 hover:bg-primary hover:text-white dark:hover:bg-blue-700 transition-colors duration-200`}
-                >
-                  Docs
-                </Link>
-              </div>
+            {/* Desktop Navigation Links */}
+            <div className="hidden sm:ml-8 sm:flex sm:items-center sm:gap-2">
+              {navLinks.map((link) => {
+                const Icon = link.icon;
+                const isActive = location.pathname === link.to;
+                return (
+                  <Link
+                    key={link.to}
+                    to={link.to}
+                    className={`relative px-4 py-2 rounded-lg font-medium text-sm md:text-base transition-all duration-200 ${
+                      isActive
+                        ? "text-white dark:text-white bg-gradient-to-r from-purple-600/30 via-pink-600/30 to-blue-600/30"
+                        : "text-white dark:text-gray-300 hover:text-white dark:hover:text-white hover:bg-white/10 dark:hover:bg-white/10"
+                    }`}
+                  >
+                    <span className="flex items-center gap-2">
+                      <Icon className="w-4 h-4" />
+                      {link.label}
+                    </span>
+                    {isActive && (
+                      <motion.div
+                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400"
+                        layoutId="activeTab"
+                        transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                      />
+                    )}
+                  </Link>
+                );
+              })}
             </div>
           </div>
 
-  {/* notification and dark mode toggle */}
-          <div className="absolute inset-y-0  flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 gap-3">
+          {/* Right side actions */}
+          <div className="flex items-center gap-3">
             {/* Dark Mode Toggle */}
-            <button
+            <motion.button
               type="button"
+              whileHover={{ scale: 1.1, rotate: 15 }}
+              whileTap={{ scale: 0.9 }}
               onClick={() => dispatch(toggleDarkMode())}
-              className="relative rounded-full bg-gray-800 dark:bg-gray-700 p-2 text-gray-400 hover:text-white dark:hover:text-yellow-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 dark:focus:ring-offset-gray-700 transition-colors duration-200 hover:bg-gray-700 dark:hover:bg-gray-600"
+              className="relative rounded-lg bg-white/10 dark:bg-gray-800/50 backdrop-blur-sm p-2.5 text-gray-300 hover:text-white dark:hover:text-yellow-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-transparent transition-all duration-200 hover:bg-white/20 dark:hover:bg-gray-700/50 border border-white/10 dark:border-gray-700/50"
               aria-label="Toggle dark mode"
               title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
             >
@@ -253,160 +277,178 @@ const Nav = () => {
               ) : (
                 <MdDarkMode className="h-5 w-5" />
               )}
-            </button>
-          
+            </motion.button>
+
+            {/* Notifications */}
             <div className="relative">
-              <button
+              <motion.button
                 type="button"
-                className=" notification-button relative rounded-full  bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                className="notification-button relative rounded-lg bg-white/10 dark:bg-gray-800/50 backdrop-blur-sm p-2.5 text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-transparent transition-all duration-200 hover:bg-white/20 dark:hover:bg-gray-700/50 border border-white/10 dark:border-gray-700/50"
                 onClick={onNotificationClick}
               >
-                <span className="absolute -inset-1.5"></span>
-                <span className="sr-only">View notifications</span>
-                <svg
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  aria-hidden="true"
-                  data-slot="icon"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"
-                  />
-                </svg>
-              </button>
-              {/* notification icon */}
-              {notifications > 0 && (
-                <div className="bg-white size-5 absolute -top-2 cursor-pointer -right-2  text-black flex justify-center items-center rounded-full text-sm p-1">
-                  <span>{notifications}</span>
-                </div>
-              )}
-
-             
-            </div>
-            {/* <!-- Profile dropdown --> */}
-            <div className="relative ml-3">
-              <div>
-                <button
-                  type="button"
-                  className="relative profileMenu-button font-bold gap-1 text-white shadow-md items-center px-4 py-2 flex rounded-full uppercase bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 hover:cursor-pointer"
-                  id="user-menu-button"
-                  aria-expanded="false"
-                  aria-haspopup="true"
-                  onClick={() => {
-                    setProfileMenu((state) => !state);
-                  }}
-                >
-                  <span className="absolute -inset-1.5"></span>
-                  <span className="sr-only">Open user menu</span>
-                  {/* <img
-                    className="h-8 w-8 rounded-full"
-                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                    alt=""
-                  /> */}
-                  {username}
-                  <MdOutlineArrowDropDownCircle />
-                </button>
-              </div>
-
-              {/* Profile Menu */}
-              {profileMenu && (
-                <div
-                  className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white dark:bg-gray-800 py-1 shadow-lg ring-1 ring-black ring-opacity-5 dark:ring-gray-700 focus:outline-none transition-colors duration-200"
-                  role="menu"
-                  aria-orientation="vertical"
-                  aria-labelledby="user-menu-button"
-                  tabIndex="-1"
-                  ref={profilePageRef}
-                >
-                  {/* <!-- Active: "bg-gray-100", Not Active: "" --> */}
-                  <div
-                    className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-slate-300 dark:hover:bg-gray-700 hover:cursor-pointer transition-colors duration-200"
-                    role="menuitem"
-                    tabIndex="-1"
-                    id="user-menu-item-0"
-                    onClick={handleProfileClick}
+                <FaBell className="h-5 w-5" />
+                {notifications > 0 && (
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-lg border-2 border-white/20 dark:border-gray-900/50"
                   >
-                    Your Profile
-                  </div>
-                  <div
-                    className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-slate-300 dark:hover:bg-gray-700 hover:cursor-pointer transition-colors duration-200"
-                    role="menuitem"
-                    tabIndex="-1"
-                    id="user-menu-item-1"
-                  >
-                    Settings
-                  </div>
-                  <div
-                    className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-slate-300 dark:hover:bg-gray-700 hover:cursor-pointer transition-colors duration-200"
-                    role="menuitem"
-                    tabIndex="-1"
-                    id="user-menu-item-2"
-                    onClick={handleSignOut}
-                  >
-                    Sign out
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
+                    {notifications > 9 ? "9+" : notifications}
+                  </motion.div>
+                )}
+              </motion.button>
 
-
-          {notificationPage && (
-                <div className=" notification-page absolute rounded-lg  top-[55px] right-2  bg-cyan-700 dark:bg-cyan-800 text-center transition-colors duration-200">
-                  <Notification />
-                  <button
-                    className="px-3 py-2 bg-slate-200 dark:bg-gray-700 dark:text-white rounded-md mb-4 hover:bg-slate-400 dark:hover:bg-gray-600 transition-colors duration-200"
-                    onClick={handleMarkRead}
+              {/* Notification Dropdown */}
+              <AnimatePresence>
+                {notificationPage && (
+                  <motion.div
                     ref={notificationRef}
+                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute right-0 z-[100] mt-2 w-80 md:w-96 origin-top-right rounded-2xl bg-gray-800/95 dark:bg-gray-900/90 backdrop-blur-xl border border-gray-700/50 dark:border-gray-700/50 shadow-2xl overflow-hidden"
                   >
-                    Mark as Read
-                  </button>
-                </div>
-              )}
-        </div>
-      </div>
+                    <div className="p-4 border-b border-gray-600/30 dark:border-gray-700/50">
+                      <h3 className="text-lg font-bold text-white dark:text-white flex items-center gap-2">
+                        <FaBell className="text-purple-400" />
+                        Notifications
+                        {notifications > 0 && (
+                          <span className="ml-auto bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                            {notifications} new
+                          </span>
+                        )}
+                      </h3>
+                    </div>
+                    <div className="max-h-96 overflow-y-auto">
+                      <Notification />
+                    </div>
+                    {notifications > 0 && (
+                      <div className="p-4 border-t border-gray-600/30 dark:border-gray-700/50">
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={handleMarkRead}
+                          className="w-full py-2.5 px-4 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2"
+                        >
+                          <FaBell className="w-4 h-4" />
+                          Mark All as Read
+                        </motion.button>
+                      </div>
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
 
-      {/* sidebarMenu */}
-      {sidebarMenu && (
-        <div className="sm:hidden bg-black/80 dark:bg-gray-900/95 transition-colors duration-200" id="mobile-menu">
-          <div className="space-y-1 px-2 pb-3 pt-2">
-            <Link
-              to="/home"
-              onClick={() => dispatch(setSidebarMenu(!sidebarMenu))}
-              className="block rounded-md bg-gray-900 dark:bg-gray-800 px-3 py-2 text-base font-medium text-white dark:text-gray-100 transition-colors duration-200"
-              aria-current="page"
-            >
-              Home
-            </Link>
-            <Link
-              to="/links"
-              onClick={() => dispatch(setSidebarMenu(!sidebarMenu))}
-              className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 dark:text-gray-300 hover:bg-gray-700 dark:hover:bg-gray-700 hover:text-white transition-colors duration-200"
-            >
-              Links
-            </Link>
-            <Link
-              to="#"
-              onClick={() => dispatch(setSidebarMenu(!sidebarMenu))}
-              className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 dark:text-gray-300 hover:bg-gray-700 dark:hover:bg-gray-700 hover:text-white transition-colors duration-200"
-            >
-              Analysis
-            </Link>
-            <Link
-              to="/doc"
-              onClick={() => dispatch(setSidebarMenu(!sidebarMenu))}
-              className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 dark:text-gray-300 hover:bg-gray-700 dark:hover:bg-gray-700 hover:text-white transition-colors duration-200"
-            >
-              Docs
-            </Link>
+            {/* Profile Menu */}
+            <div className="relative ml-2">
+              <motion.button
+                type="button"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="profileMenu-button relative flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600/20 via-pink-600/20 to-blue-600/20 hover:from-purple-600/30 hover:via-pink-600/30 hover:to-blue-600/30 backdrop-blur-sm border border-white/20 dark:border-gray-700/50 text-white font-semibold text-sm uppercase focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-transparent transition-all duration-200"
+                onClick={() => setProfileMenu((state) => !state)}
+              >
+                <FaUser className="w-4 h-4" />
+                <span className="hidden sm:inline">{username}</span>
+                <motion.div
+                  animate={{ rotate: profileMenu ? 180 : 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <MdOutlineArrowDropDownCircle className="w-5 h-5" />
+                </motion.div>
+              </motion.button>
+
+              {/* Profile Dropdown */}
+              <AnimatePresence>
+                {profileMenu && (
+                  <motion.div
+                    ref={profilePageRef}
+                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute right-0 z-[100] mt-2 w-56 origin-top-right rounded-2xl bg-gray-800/95 dark:bg-gray-900/90 backdrop-blur-xl border border-gray-700/50 dark:border-gray-700/50 shadow-2xl overflow-hidden"
+                    role="menu"
+                  >
+                    <div className="p-2">
+                      <div className="px-4 py-3 border-b border-gray-600/30 dark:border-gray-700/50">
+                        <p className="text-sm font-semibold text-white dark:text-white uppercase">{username}</p>
+                        <p className="text-xs text-gray-300 dark:text-gray-400 mt-1">Welcome back!</p>
+                      </div>
+                      <motion.div
+                        whileHover={{ x: 5 }}
+                        className="flex items-center gap-3 px-4 py-3 text-sm text-white dark:text-gray-200 hover:text-white dark:hover:text-white hover:bg-white/10 dark:hover:bg-gray-800/50 rounded-lg cursor-pointer transition-colors duration-200"
+                        role="menuitem"
+                        onClick={handleProfileClick}
+                      >
+                        <FaUser className="w-4 h-4 text-purple-400" />
+                        Your Profile
+                      </motion.div>
+                      <motion.div
+                        whileHover={{ x: 5 }}
+                        className="flex items-center gap-3 px-4 py-3 text-sm text-white dark:text-gray-200 hover:text-white dark:hover:text-white hover:bg-white/10 dark:hover:bg-gray-800/50 rounded-lg cursor-pointer transition-colors duration-200"
+                        role="menuitem"
+                      >
+                        <FaCog className="w-4 h-4 text-blue-400" />
+                        Settings
+                      </motion.div>
+                      <motion.div
+                        whileHover={{ x: 5 }}
+                        className="flex items-center gap-3 px-4 py-3 text-sm text-red-300 dark:text-red-300 hover:text-red-200 dark:hover:text-red-400 hover:bg-red-500/10 rounded-lg cursor-pointer transition-colors duration-200"
+                        role="menuitem"
+                        onClick={handleSignOut}
+                      >
+                        <FaSignOutAlt className="w-4 h-4" />
+                        Sign out
+                      </motion.div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
         </div>
-      )}
+
+        {/* Mobile Sidebar Menu */}
+        <AnimatePresence>
+          {sidebarMenu && (
+            <motion.div
+              initial={{ opacity: 0, x: -300 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -300 }}
+              transition={{ duration: 0.3 }}
+              className="sm:hidden fixed inset-y-0 left-0 w-64 z-50 bg-gray-800/95 dark:bg-gray-900/95 backdrop-blur-xl border-r border-gray-700/50 dark:border-gray-700/50 shadow-2xl"
+              id="mobile-menu"
+            >
+              <div className="p-4 space-y-2">
+                {navLinks.map((link) => {
+                  const Icon = link.icon;
+                  const isActive = location.pathname === link.to;
+                  return (
+                    <Link
+                      key={link.to}
+                      to={link.to}
+                      onClick={() => dispatch(setSidebarMenu(false))}
+                      className={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all duration-200 ${
+                        isActive
+                          ? "text-white dark:text-white bg-gradient-to-r from-purple-600/30 via-pink-600/30 to-blue-600/30"
+                          : "text-white dark:text-gray-300 hover:text-white dark:hover:text-white hover:bg-white/10 dark:hover:bg-white/10"
+                      }`}
+                    >
+                      <Icon className="w-5 h-5" />
+                      {link.label}
+                    </Link>
+                  );
+                })}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </nav>
   );
 };
