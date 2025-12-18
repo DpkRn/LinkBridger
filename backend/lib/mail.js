@@ -12,8 +12,8 @@ const transport = nodemailer.createTransport({
   port: 465,
   secure: true, // true for 465, false for other ports
   auth: {
-    user: "linkbriger@gmail.com",
-    pass: "djppjsnipjufbqee",
+    user: process.env.EMAIL_USER || "linkbriger@gmail.com",
+    pass: process.env.EMAIL_PASS || "djppjsnipjufbqee",
   },
 });
 
@@ -42,8 +42,9 @@ const sendVisitEmail = async (
     emailHTML = emailHTML.replace(regex, value);
   }
 
+  const emailUser = process.env.EMAIL_USER || "linkbriger@gmail.com";
   const data = {
-    from: `"LinkBridger" <linkbriger@gmail.com>`,
+    from: `"LinkBridger" <${emailUser}>`,
     to: email,
     subject: `New Visit on Your ${platform}`,
     text: `Hello ${name} (${username}), someone visited your ${platform} link.`,
@@ -91,8 +92,9 @@ const sendEmailVerification = async (
   username,
   AppName
 ) => {
+  const emailUser = process.env.EMAIL_USER || "linkbriger@gmail.com";
   const data = {
-    sender: `"${AppName}" <d.wizard.techno@gmail.com>`,
+    sender: `"${AppName}" <${emailUser}>`,
     reciever: email,
     subject: "Your Email Verification Link",
     text: "",
@@ -180,9 +182,15 @@ const sendEmailVerification = async (
 const sendWelcomeEmail = async (email, username, name, AppName) => {
   let html = Welcome_Email_Template.replace(/{username}/g, username);
   html = html.replace(/{name}/g, name || username);
+  const emailUser = process.env.EMAIL_USER || "linkbriger@gmail.com";
+  const supportEmail = process.env.SUPPORT_EMAIL || "support@linkbridger.com";
+  
+  // Replace support email in template
+  html = html.replace(/support@linkbridger\.com/g, supportEmail);
+  html = html.replace(/d\.wizard\.techno@gmail\.com/g, supportEmail);
   
   const data = {
-    from: `"${AppName}" <linkbriger@gmail.com>`,
+    from: `"${AppName}" <${emailUser}>`,
     to: email,
     subject: "🎉 Welcome to LinkBridger - Your Link Management Journey Begins!",
     text: `Hello ${name || username} (@${username})! Welcome to LinkBridger. Your personalized link is ready: https://clickly.cv/${username}`,
@@ -202,9 +210,10 @@ const sendWelcomeEmail = async (email, username, name, AppName) => {
 const sendNewUserOnboardingEmail = async (email, username, name, AppName) => {
   let html = Onboarding_Email_Template.replace(/{username}/g, username);
   html = html.replace(/{name}/g, name || username);
+  const emailUser = process.env.EMAIL_USER || "linkbriger@gmail.com";
   
   const data = {
-    from: `"${AppName}" <linkbriger@gmail.com>`,
+    from: `"${AppName}" <${emailUser}>`,
     to: email,
     subject: `🎉 New User Joined LinkBridger - @${username}`,
     text: `New user @${username} has joined the LinkBridger community. Profile link: https://clickly.cv/${username}`,

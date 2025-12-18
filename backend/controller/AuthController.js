@@ -45,8 +45,10 @@ const signUpController = async (req, res, next) => {
     const userinfo=await Profile.create({username,image:"/images/panda.png"});
     if (user&&userinfo) {
       console.log("user created");
-      sendWelcomeEmail(email, username, name, "LinkBridger");
-      sendNewUserOnboardingEmail(email, username, name, "LinkBridger");
+      // Use name from request body or fallback to username
+      const displayName = name || username;
+      sendWelcomeEmail(email, username, displayName, "LinkBridger");
+      sendNewUserOnboardingEmail(email, username, displayName, "LinkBridger");
       return res
         .status(201)
         .json({ success: true, message: "user registerd !", user });

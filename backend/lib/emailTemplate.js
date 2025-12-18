@@ -422,7 +422,7 @@ const Welcome_Email_Template = `
               <p style="margin-top: 20px; font-size: 12px;">
                   &copy; ${new Date().getFullYear()} LinkBridger. All rights reserved.
               </p>
-              <p>For any kind of support you can visit to our Email <a href="mailto:d.wizard.techno@gmail.com">d.wizard.techno@gmail.com</a></p>
+              <p>For any kind of support you can visit to our Email <a href="mailto:support@linkbridger.com">support@linkbridger.com</a></p>
               <p style="font-size: 12px; color: #9ca3af;">
                   This is an automated welcome email from LinkBridger.
               </p>
