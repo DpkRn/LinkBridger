@@ -518,7 +518,6 @@ const Documentation = () => {
     "leetcode",
     "portfolio",
     "instagram",
-    "facebook",
     "codeforce",
   ];
 
@@ -1152,7 +1151,6 @@ const Documentation = () => {
                       { platform: "LeetCode", url: "https://clickly.cv/dpkrn/leetcode", color: "from-orange-500 to-yellow-500", icon: "💻" },
                       { platform: "Portfolio", url: "https://clickly.cv/dpkrn/portfolio", color: "from-purple-500 to-pink-500", icon: "🎨" },
                       { platform: "Instagram", url: "https://clickly.cv/dpkrn/instagram", color: "from-pink-500 to-rose-500", icon: "📸" },
-                      { platform: "Facebook", url: "https://clickly.cv/dpkrn/facebook", color: "from-blue-600 to-blue-800", icon: "👥" },
                       { platform: "Codeforces", url: "https://clickly.cv/dpkrn/codeforces", color: "from-red-500 to-orange-500", icon: "⚔️" },
                     ].map((link, idx) => (
                       <AnimatedLinkCard key={link.platform} link={link} idx={idx} />
