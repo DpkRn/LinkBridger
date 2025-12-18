@@ -53,15 +53,17 @@ const FeatureCard = ({ feature, idx, hoveredFeature, setHoveredFeature }) => {
         >
           {feature.title}
         </motion.h3>
-        <motion.p className="text-base md:text-lg text-gray-300 dark:text-gray-400 leading-relaxed">
+        <motion.p className="text-base md:text-lg text-gray-700 dark:text-gray-400 leading-relaxed">
           {feature.desc}
         </motion.p>
       </div>
     </motion.div>
   );
 };
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
+import { toggleDarkMode } from "../redux/pageSlice";
+import { MdDarkMode, MdLightMode } from "react-icons/md";
 import { TypewriterEffect } from "./ui/typewriter-effect";
 import {
   TextRevealCard,
@@ -105,7 +107,9 @@ import {
 
 const Documentation = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const sidebarMenu = useSelector((store) => store.page.sidebarMenu);
+  const darkMode = useSelector((store) => store.page.darkMode);
   const location = useLocation();
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [openFAQ, setOpenFAQ] = useState([false, false, false]);
@@ -139,23 +143,23 @@ const Documentation = () => {
     },
     {
       text: "Personalized",
-      className: "text-4xl font-bold text-black dark:text-gray-200",
+      className: "text-4xl font-bold text-gray-900 dark:text-gray-200",
     },
     {
       text: "Social ",
-      className: "text-4xl font-bold text-black dark:text-gray-200",
+      className: "text-4xl font-bold text-gray-900 dark:text-gray-200",
     },
     {
       text: "Profile ",
-      className: "text-4xl font-bold text-black dark:text-gray-200",
+      className: "text-4xl font-bold text-gray-900 dark:text-gray-200",
     },
     {
       text: "Link ",
-      className: "text-4xl font-bold text-black dark:text-gray-200",
+      className: "text-4xl font-bold text-gray-900 dark:text-gray-200",
     },
     {
       text: "Manager.",
-      className: "text-4xl font-bold text-black dark:text-gray-200",
+      className: "text-4xl font-bold text-gray-900 dark:text-gray-200",
     },
   ];
 
@@ -261,7 +265,7 @@ const Documentation = () => {
   };
 
   return (
-    <div className="min-h-screen w-full overflow-hidden relative bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 dark:from-gray-950 dark:via-purple-950 dark:to-gray-950">
+    <div className="min-h-screen w-full overflow-hidden relative">
       {/* Animated Background */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Gradient Orbs */}
@@ -294,30 +298,77 @@ const Documentation = () => {
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]" />
       </div>
 
-      {/* Header */}
-      {location.pathname === "/" && (
+      {/* Navigation Header */}
+      <motion.div
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6 }}
+        className="relative z-50 w-full h-[70px] shadow-lg bg-white/95 dark:bg-gray-900/50 backdrop-blur-xl flex items-center justify-between border-b border-gray-200 dark:border-white/10 transition-colors duration-300 px-4 sm:px-6 md:px-10 lg:px-12"
+      >
+        {/* Logo */}
         <motion.div
-          initial={{ y: -100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.6 }}
-          className="relative z-50 min-w-screen h-[70px] shadow-lg bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl text-right flex items-center justify-between border-b border-white/10 transition-colors duration-300"
+          className="flex items-center gap-4 cursor-pointer"
+          onClick={() => navigate("/")}
+          whileHover={{ scale: 1.05 }}
         >
           <motion.img
-            className="h-8 w-auto ml-10 sm:ml-20 dark:brightness-0 dark:invert transition-all duration-300"
+            className="h-8 w-auto dark:brightness-0 dark:invert transition-all duration-300"
             src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500"
             alt="LinkBridger Logo"
-            whileHover={{ scale: 1.1 }}
           />
+          <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent">
+            LinkBridger
+          </span>
+        </motion.div>
+
+        {/* Navigation Items */}
+        <div className="flex items-center gap-4 md:gap-6">
+          {/* Navigation Links */}
+          <div className="hidden md:flex items-center gap-6">
+            <motion.button
+              onClick={() => navigate("/")}
+              className="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 font-medium transition-colors"
+              whileHover={{ scale: 1.05 }}
+            >
+              Home
+            </motion.button>
+            <motion.button
+              onClick={() => navigate("/login")}
+              className="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 font-medium transition-colors"
+              whileHover={{ scale: 1.05 }}
+            >
+              Login
+            </motion.button>
+          </div>
+
+          {/* Dark Mode Toggle */}
+          <motion.button
+            onClick={() => dispatch(toggleDarkMode())}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            className="p-2.5 rounded-xl bg-white/90 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 text-gray-800 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700/50 transition-all duration-300 shadow-md hover:shadow-lg"
+            title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            {darkMode ? (
+              <MdLightMode className="text-xl" />
+            ) : (
+              <MdDarkMode className="text-xl" />
+            )}
+          </motion.button>
+
+          {/* Get Started Button */}
           <motion.button
             onClick={handleGetStarted}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 text-white font-semibold py-2.5 px-6 rounded-xl text-md sm:text-lg transition-all mr-10 sm:mr-20 shadow-lg hover:shadow-xl flex items-center gap-2"
+            className="bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 text-white font-semibold py-2.5 px-4 md:px-6 rounded-xl text-sm md:text-lg transition-all shadow-lg hover:shadow-xl flex items-center gap-2"
           >
-            Get Started <FaArrowRight />
+            <span className="hidden sm:inline">Get Started</span>
+            <span className="sm:hidden">Start</span>
+            <FaArrowRight />
           </motion.button>
-        </motion.div>
-      )}
+        </div>
+      </motion.div>
 
       <div className="relative z-10">
         <motion.div
@@ -367,12 +418,12 @@ const Documentation = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.2 }}
-                className="text-base md:text-lg lg:text-xl leading-8 text-gray-200 dark:text-gray-300"
+                className="text-base md:text-lg lg:text-xl leading-8 text-gray-700 dark:text-gray-300"
               >
-                Welcome to <b className="text-white dark:text-gray-100">LinkBridger</b>, a tool designed to make your social
+                Welcome to <b className="text-gray-900 dark:text-gray-100">LinkBridger</b>, a tool designed to make your social
                 media links easier to remember and manage. Whether you're sharing
                 your Instagram, GitHub, or LinkedIn profile, LinkBridger allows you
-                to generate personalized URLs that are simple and customizable. Access all your links at one place by visiting <b className="text-white">https://clickly.cv/yourname</b> (without any platform name) - it creates a beautiful landing page showing all your profiles. Plus, get real-time email notifications every time someone visits your links! It
+                to generate personalized URLs that are simple and customizable. Access all your links at one place by visiting <b className="text-gray-900 dark:text-white">https://clickly.cv/yourname</b> (without any platform name) - it creates a beautiful landing page showing all your profiles. Plus, get real-time email notifications every time someone visits your links! It
                 also tracks how often your links are clicked and allows centralized
                 updating, so any changes you make will reflect across all platforms
                 instantly.
@@ -388,13 +439,13 @@ const Documentation = () => {
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  className="text-3xl md:text-4xl lg:text-5xl font-bold text-white dark:text-gray-200 text-center"
+                  className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-gray-200 text-center"
                 >
                   Have You Ever Wondered How AuthorLink Has Been Personalized:
                 </motion.p>
               }
             >
-              <div className="mx-auto rounded-2xl h-full flex justify-center items-center bg-gradient-to-br from-slate-800 to-slate-900 dark:from-gray-800 dark:to-gray-900 border border-white/10 p-6 md:p-8">
+              <div className="mx-auto rounded-2xl h-full flex justify-center items-center bg-gray-800/40 dark:bg-gray-800/30 border border-gray-700/30 dark:border-white/10 p-6 md:p-8">
                 <div className="md:mx-auto rounded-2xl h-full w-full space-y-3 md:space-y-4 flex flex-col justify-center md:items-center p-4">
                   {[
                     { platform: "LinkedIn", url: "https://clickly.cv/dpkrn/linkedin" },
@@ -415,10 +466,10 @@ const Documentation = () => {
                       viewport={{ once: true }}
                       transition={{ delay: idx * 0.1 }}
                       whileHover={{ scale: 1.05, x: 10 }}
-                      className="text-sm md:text-base lg:text-lg text-white hover:text-blue-400 transition-colors w-full text-left md:text-center group"
+                      className="text-sm md:text-base lg:text-lg text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors w-full text-left md:text-center group"
                     >
                       <span className="font-semibold">{link.platform}:</span>{" "}
-                      <span className="text-blue-400 group-hover:text-blue-300 underline font-mono">
+                      <span className="text-blue-600 dark:text-blue-400 group-hover:text-blue-500 dark:group-hover:text-blue-300 underline font-mono">
                         {link.url}
                       </span>
                     </motion.a>
@@ -428,7 +479,7 @@ const Documentation = () => {
                     whileInView={{ opacity: 1 }}
                     viewport={{ once: true }}
                     transition={{ delay: 0.7 }}
-                    className="text-sm md:text-base text-gray-400 dark:text-gray-500 mt-4 text-center"
+                    className="text-sm md:text-base text-gray-600 dark:text-gray-500 mt-4 text-center"
                   >
                     Only the platform name has been changed. All else remains the same.
                   </motion.p>
@@ -485,7 +536,7 @@ const Documentation = () => {
                       </span>
                     </div>
                   </motion.div>
-                  <motion.p
+                  <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
@@ -501,7 +552,7 @@ const Documentation = () => {
                       https://clickly.cv/dpkrn/
                       <FlipWords className="text-blue-400 dark:text-blue-300" words={plateforms} />
                     </a>
-                  </motion.p>
+                  </motion.div>
                 </div>
               </BackgroundBeamsWithCollision>
             </motion.div>
@@ -577,12 +628,12 @@ const Documentation = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.1 }}
-                className="text-base md:text-lg lg:text-xl leading-8 text-gray-200 dark:text-gray-300 mb-8"
+                className="text-base md:text-lg lg:text-xl leading-8 text-gray-700 dark:text-gray-300 mb-8"
               >
-                The core idea behind <b className="text-white">LinkBridger</b> is to simplify the
+                The core idea behind <b className="text-gray-900 dark:text-white">LinkBridger</b> is to simplify the
                 management of social media links. Instead of sharing long,
                 hard-to-remember URLs, you create a single, personalized URL that
-                automatically redirects users to the correct platform. Access all your links at one place by visiting <b className="text-white">https://clickly.cv/yourname</b> (without any platform name). Plus, get real-time email notifications every time someone visits your links!
+                automatically redirects users to the correct platform. Access all your links at one place by visiting <b className="text-gray-900 dark:text-white">https://clickly.cv/yourname</b> (without any platform name). Plus, get real-time email notifications every time someone visits your links!
               </motion.p>
               
               <div className="space-y-6">
@@ -641,10 +692,10 @@ const Documentation = () => {
                         <IconComponent className="text-2xl text-white" />
                       </motion.div>
                       <div className="flex-1">
-                        <h4 className="text-xl md:text-2xl font-bold text-white mb-2">
+                        <h4 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-2">
                           {item.step}. {item.title}
                         </h4>
-                        <p className="text-gray-300 dark:text-gray-400 leading-relaxed">
+                        <p className="text-gray-700 dark:text-gray-400 leading-relaxed">
                           {item.desc}
                         </p>
                       </div>
@@ -660,7 +711,7 @@ const Documentation = () => {
                 transition={{ delay: 0.6 }}
                 className="mt-8 p-6 bg-white/5 dark:bg-gray-800/30 rounded-2xl border border-white/10"
               >
-                <p className="text-lg font-semibold text-white mb-4">Example:</p>
+                <p className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Example:</p>
                 <div className="space-y-2">
                   <motion.a
                     href="https://clickly.cv/dpkrn/instagram"
@@ -711,9 +762,9 @@ const Documentation = () => {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="text-base md:text-lg lg:text-xl leading-8 text-gray-200 dark:text-gray-300"
+                className="text-base md:text-lg lg:text-xl leading-8 text-gray-800 dark:text-gray-300"
               >
-                With <b className="text-white">LinkBridger</b>, you can track how many times each of your
+                With <b className="text-gray-900 dark:text-white">LinkBridger</b>, you can track how many times each of your
                 links has been clicked. This allows you to monitor the engagement on
                 your social media profiles across different platforms. Access the
                 analytics section from your dashboard to see detailed statistics
@@ -755,10 +806,10 @@ const Documentation = () => {
                       >
                         <IconComponent className="text-2xl text-white" />
                       </motion.div>
-                      <h3 className="text-xl md:text-2xl font-bold text-white mb-3">
+                      <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-3">
                         {feature.title}
                       </h3>
-                      <p className="text-gray-300 dark:text-gray-400 leading-relaxed">
+                      <p className="text-gray-700 dark:text-gray-400 leading-relaxed">
                         {feature.desc}
                       </p>
                     </div>
@@ -844,16 +895,16 @@ const Documentation = () => {
                       >
                         <IconComponent className="text-3xl text-white" />
                       </motion.div>
-                      <h3 className="text-xl md:text-2xl font-bold text-white mb-3">
+                      <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-3">
                         {useCase.title}
                       </h3>
-                      <p className="text-gray-300 dark:text-gray-400 leading-relaxed mb-4">
+                      <p className="text-gray-700 dark:text-gray-400 leading-relaxed mb-4">
                         {useCase.desc}
                       </p>
                       <div className="space-y-2">
                         {useCase.examples.map((example, i) => (
-                          <div key={i} className="flex items-center gap-2 text-sm text-gray-400">
-                            <FaCheckCircle className="text-green-400 text-xs" />
+                          <div key={i} className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-400">
+                            <FaCheckCircle className="text-green-600 dark:text-green-400 text-xs" />
                             <span>{example}</span>
                           </div>
                         ))}
@@ -943,10 +994,10 @@ const Documentation = () => {
                         <IconComponent className={`text-2xl ${practice.color}`} />
                       </motion.div>
                       <div className="flex-1">
-                        <h4 className="text-lg md:text-xl font-bold text-white mb-2">
+                        <h4 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white mb-2">
                           {practice.title}
                         </h4>
-                        <p className="text-gray-300 dark:text-gray-400 leading-relaxed">
+                        <p className="text-gray-700 dark:text-gray-400 leading-relaxed">
                           {practice.desc}
                         </p>
                       </div>
@@ -974,7 +1025,7 @@ const Documentation = () => {
               viewport={{ once: true }}
             >
               <p className="text-lg md:text-xl text-gray-300 dark:text-gray-400 mb-8 text-center">
-                LinkBridger supports <b className="text-white">any platform</b> you can think of! Just provide the destination URL and we'll create your personalized link.
+                LinkBridger supports <b className="text-gray-900 dark:text-white">any platform</b> you can think of! Just provide the destination URL and we'll create your personalized link.
               </p>
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
                 {[
@@ -991,9 +1042,9 @@ const Documentation = () => {
                     viewport={{ once: true }}
                     transition={{ delay: idx * 0.03, type: "spring" }}
                     whileHover={{ scale: 1.1, y: -3 }}
-                    className="bg-gradient-to-br from-purple-600/20 to-pink-600/20 backdrop-blur-sm rounded-xl p-4 text-center border border-white/10 hover:border-white/30 transition-all cursor-pointer"
+                    className="bg-gradient-to-br from-purple-600/20 to-pink-600/20 backdrop-blur-sm rounded-xl p-4 text-center border border-purple-200/50 dark:border-white/10 hover:border-purple-300/80 dark:hover:border-white/30 transition-all cursor-pointer"
                   >
-                    <p className="text-sm md:text-base font-semibold text-white">
+                    <p className="text-sm md:text-base font-semibold text-gray-900 dark:text-white">
                       {platform}
                     </p>
                   </motion.div>
@@ -1077,10 +1128,10 @@ const Documentation = () => {
                         <IconComponent className="text-2xl text-white" />
                       </motion.div>
                       <div className="flex-1">
-                        <h4 className="text-xl md:text-2xl font-bold text-white mb-2">
+                        <h4 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-2">
                           {item.title}
                         </h4>
-                        <p className="text-gray-300 dark:text-gray-400 leading-relaxed">
+                        <p className="text-gray-700 dark:text-gray-400 leading-relaxed">
                           {item.desc}
                         </p>
                       </div>
@@ -1163,8 +1214,8 @@ const Documentation = () => {
                           <h4 className="text-lg md:text-xl font-bold text-white mb-2">
                             {item.issue}
                           </h4>
-                          <p className="text-gray-300 dark:text-gray-400 leading-relaxed">
-                            <span className="font-semibold text-green-400">Solution: </span>
+                          <p className="text-gray-700 dark:text-gray-400 leading-relaxed">
+                            <span className="font-semibold text-green-600 dark:text-green-400">Solution: </span>
                             {item.solution}
                           </p>
                         </div>
@@ -1179,16 +1230,16 @@ const Documentation = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.6 }}
-              className="mt-8 p-6 bg-gradient-to-r from-purple-600/20 to-pink-600/20 backdrop-blur-sm rounded-2xl border border-purple-400/30 text-center"
+              className="mt-8 p-6 bg-gradient-to-r from-purple-600/20 to-pink-600/20 backdrop-blur-sm rounded-2xl border border-purple-400/30 dark:border-purple-400/30 text-center"
             >
-              <p className="text-lg md:text-xl text-white mb-2">
+              <p className="text-lg md:text-xl text-gray-900 dark:text-white mb-2">
                 Still need help?
               </p>
-              <p className="text-gray-300 dark:text-gray-400">
+              <p className="text-gray-700 dark:text-gray-400">
                 Contact our support team at{" "}
                 <a
                   href="mailto:d.wizard.techno@gmail.com"
-                  className="text-blue-400 hover:text-blue-300 underline"
+                  className="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 underline"
                 >
                   d.wizard.techno@gmail.com
                 </a>
@@ -1244,9 +1295,9 @@ const Documentation = () => {
                       transition={{ duration: 0.3 }}
                     >
                       {openFAQ[idx] ? (
-                        <FaChevronUp className="text-purple-400 text-xl" />
+                        <FaChevronUp className="text-purple-600 dark:text-purple-400 text-xl" />
                       ) : (
-                        <FaChevronDown className="text-purple-400 text-xl" />
+                        <FaChevronDown className="text-purple-600 dark:text-purple-400 text-xl" />
                       )}
                     </motion.div>
                   </motion.div>
@@ -1262,7 +1313,7 @@ const Documentation = () => {
                         <motion.p
                           initial={{ y: -10 }}
                           animate={{ y: 0 }}
-                          className="px-6 pb-6 text-gray-300 dark:text-gray-400 text-base md:text-lg leading-relaxed"
+                          className="px-6 pb-6 text-gray-700 dark:text-gray-400 text-base md:text-lg leading-relaxed"
                         >
                           A: {faq.a}
                         </motion.p>
@@ -1311,7 +1362,7 @@ const Documentation = () => {
                         <FaStar key={i} className="text-yellow-400 text-lg" />
                       ))}
                     </div>
-                    <p className="text-lg md:text-xl italic text-gray-200 dark:text-gray-300 mb-6 leading-relaxed">
+                    <p className="text-lg md:text-xl italic text-gray-700 dark:text-gray-300 mb-6 leading-relaxed">
                       "{testimonial.text}"
                     </p>
                     <div className="flex items-center gap-3">
@@ -1321,7 +1372,7 @@ const Documentation = () => {
                         className="h-12 w-12 rounded-full object-cover border-2 border-purple-400"
                         whileHover={{ scale: 1.1 }}
                       />
-                      <span className="font-semibold text-white text-lg">
+                      <span className="font-semibold text-gray-900 dark:text-white text-lg">
                         {testimonial.author}
                       </span>
                     </div>
@@ -1339,7 +1390,7 @@ const Documentation = () => {
             viewport={{ once: true }}
             className="text-center py-8 border-t border-white/10 mt-12"
           >
-            <motion.p className="text-lg text-gray-400 dark:text-gray-500">
+            <motion.p className="text-lg text-gray-600 dark:text-gray-500">
               &copy; 2024 LinkBridger. All Rights Reserved.
             </motion.p>
           </motion.footer>

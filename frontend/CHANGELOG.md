@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **AuthPage Axios Error Status Check**: Fixed the 409 conflict detection in `handleSignUp` function. Changed `err.status === 409` to `err.response?.status === 409` to correctly access the HTTP status code from axios error objects. This ensures username conflict handling (redirecting to login) works properly.
+- **Documentation Page DOM Nesting Warning**: Fixed React DOM nesting warning where `<div>` (from `FlipWords` component) was appearing as a descendant of `<p>`. Changed the parent `<motion.p>` to `<motion.div>` to allow proper nesting of block-level elements.
+- **AuthPage Signup Button Validation**: Fixed the signup button's `disabled` condition to properly prevent form submission with invalid usernames. Changed from `disabled={loading || (username.length >= 5 && !isAvailable)}` to `disabled={loading || username.length < 5 || (username.length >= 5 && !isAvailable)}`. The button is now correctly disabled when username length is less than 5 characters, preventing invalid form submissions.
+
+### Added
+- **Documentation Page Navigation Menu with Theme Toggle**: Added a comprehensive navigation menu to the Documentation page (`/doc`) with:
+  - Logo and brand name (clickable to navigate home)
+  - Navigation links (Home, Login) - visible on desktop
+  - Dark mode toggle button with improved visibility in light mode (`bg-white/90`, `text-gray-800`, `border-gray-300`)
+  - Get Started button with responsive text
+  - Consistent styling with `bg-white/95 dark:bg-gray-900/50` navbar background
+  - Proper z-index and backdrop blur for glassmorphism effect
+
+### Changed
+- **Documentation Page Theme Consistency**: Updated `Documentation.jsx` to match `LinkPage`'s dark mode and light mode styling. Removed explicit background gradient (now inherits from Dashboard), updated all text colors to use `text-gray-900 dark:text-white` for headings and `text-gray-700 dark:text-gray-400` for body text, updated navigation bar to `bg-white/95` in light mode, and adjusted example links container to use darker backgrounds in light mode for better visibility.
+
+### Enhanced
+- **Documentation Page Text Visibility Improvements**: Enhanced text visibility throughout the Documentation page:
+  - Updated body text colors from `text-gray-700` to `text-gray-800` for better contrast in light mode
+  - Improved FAQ chevron icon colors: `text-purple-600 dark:text-purple-400` for better visibility
+  - Enhanced example check circle colors: `text-green-600 dark:text-green-400`
+  - Updated subtitle text from `text-gray-400` to `text-gray-600` for better readability
+  - Fixed use case section heading colors to match theme consistency
+  - All text now properly adapts to both light and dark modes with improved contrast ratios
+
 ### Added - 2024-12-19
 +- **HomePage Background Gradients for Card Effects**: Added subtle gradients to section backgrounds to enhance card visual appeal
   - Statistics section: Added gradient background (`from-purple-50/80 via-pink-50/80 to-blue-50/80`) in light mode

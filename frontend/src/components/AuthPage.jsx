@@ -74,7 +74,7 @@ const AuthPage = () => {
       console.log(err);
       const message = err.response?.data?.message || "Network Slow ! Try again";
       toast.error(message);
-      if (err.status === 409) {
+      if (err.response?.status === 409) {
         // Set loading to false before navigation
         if (isMountedRef.current) {
           setLoading(false);
@@ -591,7 +591,7 @@ const AuthPage = () => {
 
                         <motion.button
                           type="submit"
-                          disabled={loading || (username.length >= 5 && !isAvailable)}
+                          disabled={loading || username.length < 5 || (username.length >= 5 && !isAvailable)}
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: 0.5 }}
