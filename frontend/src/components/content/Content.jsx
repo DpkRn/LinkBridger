@@ -64,7 +64,7 @@ const Content = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="absolute top-8 left-8 md:left-16 text-purple-400/30"
+          className="absolute top-8 left-8 md:left-16 text-purple-500/40 dark:text-purple-400/30"
         >
           <FaLink className="w-8 h-8 md:w-12 md:h-12 animate-pulse" />
         </motion.div>
@@ -72,7 +72,7 @@ const Content = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="absolute top-8 right-8 md:right-16 text-pink-400/30"
+          className="absolute top-8 right-8 md:right-16 text-pink-500/40 dark:text-pink-400/30"
         >
           <HiSparkles className="w-8 h-8 md:w-12 md:h-12 animate-pulse" />
         </motion.div>
@@ -80,7 +80,7 @@ const Content = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.6 }}
-          className="absolute bottom-8 left-12 md:left-24 text-blue-400/30"
+          className="absolute bottom-8 left-12 md:left-24 text-blue-500/40 dark:text-blue-400/30"
         >
           <FaRocket className="w-6 h-6 md:w-10 md:h-10 animate-pulse" />
         </motion.div>
@@ -113,10 +113,10 @@ const Content = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-lg md:text-2xl lg:text-3xl font-light text-gray-200 dark:text-gray-300 tracking-wide"
+            className="text-lg md:text-2xl lg:text-3xl font-light text-gray-700 dark:text-gray-300 tracking-wide"
           >
             Generate Links You'll{' '}
-            <span className="font-semibold bg-gradient-to-r from-purple-300 to-pink-300 bg-clip-text text-transparent">
+            <span className="font-semibold bg-gradient-to-r from-purple-600 to-pink-600 dark:from-purple-300 dark:to-pink-300 bg-clip-text text-transparent">
               Never Forget
             </span>
           </motion.p>
@@ -126,10 +126,10 @@ const Content = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="text-sm md:text-lg lg:text-xl font-extralight text-gray-300 dark:text-gray-400 max-w-2xl mx-auto px-4"
+            className="text-sm md:text-lg lg:text-xl font-extralight text-gray-600 dark:text-gray-400 max-w-2xl mx-auto px-4"
           >
             Turn Your Username Into{' '}
-            <span className="font-medium text-purple-300">Smart Links</span> - Quick and Simple!
+            <span className="font-medium text-purple-600 dark:text-purple-300">Smart Links</span> - Quick and Simple!
           </motion.p>
 
           {/* Decorative Elements */}
@@ -139,13 +139,13 @@ const Content = () => {
             transition={{ duration: 0.6, delay: 0.8, type: "spring" }}
             className="flex items-center justify-center gap-2 mt-6 md:mt-8"
           >
-            <div className="h-px w-16 bg-gradient-to-r from-transparent via-purple-400 to-transparent" />
+            <div className="h-px w-16 bg-gradient-to-r from-transparent via-purple-600 dark:via-purple-400 to-transparent" />
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-              className="w-2 h-2 rounded-full bg-purple-400"
+              className="w-2 h-2 rounded-full bg-purple-600 dark:bg-purple-400"
             />
-            <div className="h-px w-16 bg-gradient-to-r from-transparent via-pink-400 to-transparent" />
+            <div className="h-px w-16 bg-gradient-to-r from-transparent via-pink-600 dark:via-pink-400 to-transparent" />
           </motion.div>
         </motion.div>
       </div>

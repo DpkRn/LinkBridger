@@ -7,6 +7,60 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - 2024-12-20
+- **Welcome Email System**: Added automated welcome email functionality
+  - New `sendWelcomeEmail` function in `mail.js` that sends personalized welcome emails to new users
+  - Email includes user's personalized link, platform benefits, and getting started instructions
+  - Integrated into user registration flow in `AuthController.js`
+  - Uses `Welcome_Email_Template` from `emailTemplate.js`
+  - Automatically sent after successful user registration
+
+- **New User Onboarding Email**: Added admin notification email for new user registrations
+  - New `sendNewUserOnboardingEmail` function in `mail.js` that notifies admin of new user signups
+  - Includes new user's username, name, and profile link
+  - Integrated into user registration flow in `AuthController.js`
+  - Uses `Onboarding_Email_Template` from `emailTemplate.js`
+  - Helps track user growth and engagement
+
+### Changed - 2024-12-20
+- **Email Service Configuration**: Migrated email credentials to environment variables
+  - Changed hardcoded email credentials to use `process.env.EMAIL_USER` and `process.env.EMAIL_PASS`
+  - Updated all email sending functions to use environment variables with fallback values
+  - Improved security by removing credentials from source code
+  - Updated `sendOtpVerification`, `sendEmailVerification`, `sendVisitEmail`, `sendWelcomeEmail`, and `sendNewUserOnboardingEmail` functions
+
+- **Email Sender Address**: Standardized email sender addresses
+  - All emails now use `process.env.EMAIL_USER` for sender address
+  - Replaced hardcoded developer email with configurable email address
+  - Support email now configurable via `process.env.SUPPORT_EMAIL` environment variable
+  - Updated email templates to use configurable support email address
+
+- **Email Function Naming**: Renamed email function for clarity
+  - Renamed `sendNotificationEmail` to `sendVisitEmail` for better semantic clarity
+  - Updated all references in `index.js` and route handlers
+  - Function now clearly indicates it sends visit notification emails
+
+### Fixed - 2024-12-20
+- **User Registration Name Parameter**: Fixed missing `name` parameter in user registration
+  - Added `name` extraction from `req.body` in `signUpController` function
+  - Added fallback to use `username` if `name` is not provided
+  - Prevents `undefined` values being passed to email functions
+  - Ensures email templates render correctly with proper user information
+
+- **Email Template Support Email**: Fixed hardcoded developer email in email templates
+  - Replaced hardcoded `d.wizard.techno@gmail.com` with configurable `support@linkbridger.com`
+  - Added support email replacement logic in `sendWelcomeEmail` function
+  - Updated `emailTemplate.js` to use new support email address
+  - Support email now configurable via environment variable
+
+### Security - 2024-12-20
+- **Email Credentials Security**: Enhanced security by moving credentials to environment variables
+  - Removed hardcoded email credentials from `mail.js`
+  - Email credentials now stored in environment variables (`EMAIL_USER`, `EMAIL_PASS`)
+  - Prevents accidental exposure of credentials in version control
+  - Added fallback values for development environments
+  - Updated all email functions to use secure credential management
+
 ### Added - 2024-12-19
 - **Edit Link Endpoint**: New API endpoint for editing existing links
   - Added `editLink` function in `LinkController.js`

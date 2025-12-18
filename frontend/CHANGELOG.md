@@ -7,6 +7,115 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - 2024-12-20
+- **Logo Implementation**: Added LinkBridger logo across all navigation bars
+  - Imported logo from `assets/logo.png` in all navbar components
+  - Added rotating 3D flip animation to logo (20s infinite rotation)
+  - Implemented round logo design with proper visibility in both light and dark modes
+  - Added logo to `Nav.jsx`, `HomePage.jsx`, `Documentation.jsx`, and `AboutDeveloper.jsx`
+  - Logo includes fallback image and error handling
+  - Enhanced logo visibility with background and padding for better contrast
+
+- **Footer Component Integration**: Added Footer component to HomePage
+  - Integrated Footer component into HomePage for consistent site-wide navigation
+  - Footer includes links, social media icons, and "Made with ❤️" section
+  - Maintains consistent design language across all pages
+
+- **About Developer Page Navigation**: Added navigation bar to AboutDeveloper page
+  - Implemented full navigation bar with logo, links (Home, Documentation, Login), and dark mode toggle
+  - Navigation bar matches design pattern from Documentation page
+  - Includes animated background glow and smooth transitions
+  - Properly integrated with page content and animations
+
+- **Footer About Developer Button Animation**: Enhanced "About Developer" button with advanced animations
+  - Added pulsing background glow effects (multiple layers with different opacities)
+  - Implemented continuous text translation animation (subtle x-axis movement)
+  - Added rotating and scaling rocket icon animation
+  - Implemented shimmer effect that sweeps across the button
+  - Button now has enhanced focus and visual appeal
+
+- **Documentation Page Interactive Cards**: Enhanced documentation page with interactive card designs
+  - Replaced static "Only the platform name changes" card with interactive MagneticCard
+  - Added matrix-style falling character background (50 animated Katakana characters)
+  - Implemented floating particles animation (8 particles with position, scale, opacity animations)
+  - Added rotating sparkle emojis and animated gradient title text
+  - Enhanced "Special Link Section" card with matrix rain effects and glowing black background
+  - Cards now feature animated border glows, corner glows, and hover effects
+
+### Changed - 2024-12-20
+- **Dashboard Light Mode Background**: Updated Dashboard background for light mode
+  - Changed light mode background from dark gradient (`from-slate-900 via-purple-900 to-slate-900`) to light gradient (`from-slate-50 via-blue-50 to-purple-50`)
+  - Dark mode background remains unchanged (`dark:from-gray-950 dark:via-purple-950 dark:to-gray-950`)
+  - Dashboard now matches LinkPage light mode styling for consistency
+
+- **Content Component Light Mode**: Enhanced Content component for light mode visibility
+  - Updated text colors: `text-gray-200` → `text-gray-700`, `text-gray-300` → `text-gray-600`
+  - Updated gradient text colors to darker shades in light mode (`from-purple-600`, `to-pink-600`)
+  - Enhanced icon colors with better opacity for light mode visibility
+  - Updated decorative elements (gradient lines, dots) to darker colors in light mode
+  - All changes maintain dark mode compatibility
+
+- **CreateBridge Component Light Mode**: Completely redesigned for light mode visibility
+  - Changed form background from `bg-white/10` to `bg-white/80` for better contrast
+  - Updated all text colors: white text → `text-gray-700`/`text-gray-800` for light mode
+  - Updated input fields: `bg-white/90` with `text-gray-900` and proper borders
+  - Enhanced labels, icons, and helper text for light mode visibility
+  - Updated edit mode indicator with light background and dark text
+  - Redesigned generated link display with light backgrounds
+  - Enhanced warning modal with light backgrounds and proper text contrast
+  - Updated all buttons with appropriate colors for light mode
+  - All changes maintain dark mode compatibility
+
+- **API Configuration**: Updated API base URL configuration
+  - Changed from hardcoded `http://localhost:8080` to environment variable-based configuration
+  - Now uses `import.meta.env.VITE_API_URL || 'https://clickly.cv'`
+  - Enabled `withCredentials: true` for proper cookie handling
+  - Supports both development and production environments
+
+### Fixed - 2024-12-20
+- **VerificationPage Navigation Bug**: Fixed React Router navigation API misuse
+  - Changed `navigate("/verified", { state: "verified" }, { replace: true })` to `navigate("/verified", { state: "verified", replace: true })`
+  - Removed unused `replace` import from react-router-dom
+  - Navigation now correctly uses React Router's API with options merged into second argument
+
+- **Documentation Page SSR Safety**: Fixed potential server-side rendering issue
+  - Added safety check for `window.innerHeight` access: `(typeof window !== 'undefined' ? window.innerHeight : 800)`
+  - Prevents errors during SSR or hydration mismatches
+  - Ensures animation works correctly in client-side React environments
+
+- **Logo Visibility Issues**: Fixed logo visibility across all navigation bars
+  - Removed `dark:brightness-0 dark:invert` classes that caused white-only display
+  - Changed `object-cover` to `object-contain` for proper logo scaling
+  - Added `bg-white/10 dark:bg-gray-800/20 p-1` for subtle background and padding
+  - Logo now visible in both light and dark modes with proper contrast
+
+- **Content Component Light Mode Text Visibility**: Fixed text visibility in light mode
+  - Updated tagline text colors for better contrast
+  - Enhanced gradient text colors for light mode readability
+  - Improved icon and decorative element visibility
+
+- **CreateBridge Component Light Mode Visibility**: Fixed all visibility issues in light mode
+  - Fixed form background transparency for better readability
+  - Updated all input field colors and borders
+  - Fixed label and helper text visibility
+  - Enhanced modal and button visibility
+  - All text elements now properly visible in light mode
+
+- **Dashboard Light Mode Consistency**: Fixed Dashboard background to match LinkPage
+  - Updated Dashboard background gradient to match LinkPage light mode styling
+  - Ensures visual consistency across all dashboard sections
+  - Dark mode remains unchanged
+
+### Removed - 2024-12-20
+- **Unused Code Cleanup**: Removed unused imports and code
+  - Removed unused `axios` import from `Profile.jsx`
+  - Removed unused `resendOtp` from `AuthRoute.js`
+  - Removed unused `setDarkMode` action from `pageSlice.js`
+  - Removed unused `replace` import from `VerificationPage.jsx`
+  - Removed unused imports from `DashBoard.jsx` (useEffect, useState, toast, useDispatch, useSelector, api, setLinks, Nav, Form)
+  - Removed commented-out code and unused route handlers
+  - Cleaned up `AnalysisPage.jsx` (deleted unused file)
+
 ### Added
 - **Documentation Page Glowing Background Animations**: Added multiple glowing background animation effects:
   - **Pulsing Glow Rings**: 4 animated rings that pulse with different colors (purple, pink, blue, cyan) with blur and box-shadow effects
