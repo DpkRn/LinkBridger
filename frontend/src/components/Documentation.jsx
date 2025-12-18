@@ -73,6 +73,213 @@ const MagneticCard = ({ children, className = "", intensity = 0.3 }) => {
   );
 };
 
+// Animated Link Card Component
+const AnimatedLinkCard = ({ link, idx }) => {
+  const [isHovered, setIsHovered] = useState(false);
+  const cardRef = useRef(null);
+  const inView = useInView(cardRef, { once: true, margin: "-50px" });
+
+  return (
+    <motion.div
+      animate={inView ? {
+        y: [0, -10, 0],
+      } : {}}
+      transition={{
+        duration: 3,
+        repeat: Infinity,
+        ease: "easeInOut",
+        delay: idx * 0.2 + 0.8,
+      }}
+    >
+      <MagneticCard intensity={0.2}>
+        <motion.a
+          ref={cardRef}
+          href={link.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          onHoverStart={() => setIsHovered(true)}
+          onHoverEnd={() => setIsHovered(false)}
+          initial={{ opacity: 0, rotateY: -20, scale: 0.8 }}
+          animate={inView ? {
+            opacity: 1,
+            rotateY: 0,
+            scale: 1,
+          } : { opacity: 0 }}
+          transition={{
+            opacity: { duration: 0.6, delay: idx * 0.1 },
+            rotateY: { duration: 0.6, delay: idx * 0.1 },
+            scale: { duration: 0.6, delay: idx * 0.1 },
+          }}
+          whileHover={{ 
+            scale: 1.1, 
+            y: -15,
+            z: 50,
+            rotateY: 5,
+          }}
+          className={`relative group bg-gradient-to-br ${link.color} p-6 rounded-2xl shadow-2xl overflow-hidden cursor-pointer min-h-[180px] flex flex-col justify-between`}
+          style={{ transformStyle: "preserve-3d" }}
+        >
+
+        {/* Animated Background Gradient */}
+        <motion.div
+          className={`absolute inset-0 bg-gradient-to-br ${link.color} opacity-90`}
+          animate={isHovered ? {
+            opacity: [0.9, 1, 0.9],
+            scale: [1, 1.1, 1],
+          } : {
+            opacity: [0.7, 0.9, 0.7],
+          }}
+          transition={{
+            duration: 2,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+
+        {/* Shimmer Effect */}
+        <motion.div
+          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+          initial={{ x: "-100%" }}
+          animate={isHovered ? { x: "200%" } : { x: "-100%" }}
+          transition={{
+            duration: 1,
+            repeat: isHovered ? Infinity : 0,
+            repeatDelay: 0.5,
+            ease: "linear",
+          }}
+          style={{ transform: "skewX(-20deg)" }}
+        />
+
+        {/* Floating Particles */}
+        <AnimatePresence>
+          {isHovered && (
+            <>
+              {[...Array(6)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  className="absolute w-2 h-2 bg-white rounded-full"
+                  initial={{ opacity: 0, scale: 0, x: "50%", y: "50%" }}
+                  animate={{
+                    opacity: [0, 1, 0],
+                    scale: [0, 1, 0],
+                    x: `calc(50% + ${Math.cos((i / 6) * Math.PI * 2) * 60}px)`,
+                    y: `calc(50% + ${Math.sin((i / 6) * Math.PI * 2) * 60}px)`,
+                  }}
+                  exit={{ opacity: 0 }}
+                  transition={{
+                    duration: 1,
+                    delay: i * 0.1,
+                    repeat: Infinity,
+                  }}
+                />
+              ))}
+            </>
+          )}
+        </AnimatePresence>
+
+        {/* Content */}
+        <div className="relative z-10" style={{ transform: "translateZ(20px)" }}>
+          {/* Platform Icon with Glow Effect */}
+          <div className="flex justify-center mb-3 relative h-16">
+            {/* Icon with Continuous Animation and Glow */}
+            <motion.div
+              className="text-4xl relative z-10 flex items-center justify-center"
+              animate={{
+                rotate: [0, 10, -10, 0],
+                scale: [1, 1.1, 1],
+                y: [0, -5, 0],
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            >
+              {/* Glow Effect - moves with icon */}
+              <motion.div
+                className="absolute inset-0 flex items-center justify-center pointer-events-none"
+                animate={{
+                  scale: [1, 1.3, 1],
+                  opacity: [0.3, 0.6, 0.3],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              >
+                <div className="w-16 h-16 bg-white/20 rounded-full blur-xl" />
+              </motion.div>
+              
+              {/* Icon */}
+              <span className="relative z-10">{link.icon}</span>
+            </motion.div>
+          </div>
+
+          {/* Platform Name */}
+          <motion.h3
+            className="text-xl md:text-2xl font-bold text-white mb-2 text-center"
+            animate={isHovered ? {
+              scale: [1, 1.05, 1],
+            } : {}}
+            transition={{
+              duration: 1.5,
+              repeat: isHovered ? Infinity : 0,
+            }}
+          >
+            {link.platform}
+          </motion.h3>
+
+          {/* URL - Tightened with full text visible */}
+          <motion.p
+            className="text-[10px] md:text-xs text-white/90 font-mono text-center px-1"
+            style={{ letterSpacing: '-0.3px', wordSpacing: '-1px' }}
+            animate={isHovered ? {
+              x: [0, 5, 0],
+            } : {}}
+            transition={{
+              duration: 2,
+              repeat: isHovered ? Infinity : 0,
+            }}
+          >
+            {link.url}
+          </motion.p>
+
+          {/* Arrow Indicator */}
+          <motion.div
+            className="absolute bottom-4 right-4 text-white/80"
+            animate={isHovered ? {
+              x: [0, 5, 0],
+              opacity: [0.8, 1, 0.8],
+            } : {}}
+            transition={{
+              duration: 1,
+              repeat: isHovered ? Infinity : 0,
+            }}
+          >
+            <FaArrowRight className="w-5 h-5" />
+          </motion.div>
+        </div>
+
+        {/* Glow Effect */}
+        <motion.div
+          className={`absolute inset-0 bg-gradient-to-br ${link.color} blur-2xl opacity-0`}
+          animate={{
+            opacity: isHovered ? [0, 0.6, 0] : 0,
+            scale: isHovered ? [1, 1.3, 1] : 1,
+          }}
+          transition={{
+            duration: 2,
+            repeat: isHovered ? Infinity : 0,
+            ease: "easeInOut",
+          }}
+        />
+      </motion.a>
+      </MagneticCard>
+    </motion.div>
+  );
+};
+
 // Feature Card Component - Enhanced with 3D and Magnetic Effects
 const FeatureCard = ({ feature, idx, hoveredFeature, setHoveredFeature }) => {
   const ref = useRef(null);
@@ -215,7 +422,6 @@ import {
 } from "./ui/text-reveal-card";
 import { FlipWords } from "./ui/flip-words";
 import { BackgroundBeamsWithCollision } from "./ui/background-beams-with-collision";
-import { ContainerScroll } from "./ui/container-scroll-animation";
 import Footer from "./footer/Footer";
 import { 
   FaRocket, 
@@ -889,61 +1095,95 @@ const Documentation = () => {
             </MagneticCard>
           </motion.section>
 
-          {/* Example Links Section */}
-          <motion.section variants={itemVariants} className="mb-12 md:mb-16">
-            <ContainerScroll
-              titleComponent={
-                <motion.p
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-gray-200 text-center"
-                >
-                  Have You Ever Wondered How AuthorLink Has Been Personalized:
-                </motion.p>
-              }
+          {/* Enhanced Example Links Section with 3D Floating Cards */}
+          <motion.section variants={itemVariants} className="mb-6 md:mb-8">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="relative"
             >
-              <div className="mx-auto rounded-2xl h-full flex justify-center items-center bg-gray-800/40 dark:bg-gray-800/30 border border-gray-700/30 dark:border-white/10 p-6 md:p-8">
-                <div className="md:mx-auto rounded-2xl h-full w-full space-y-3 md:space-y-4 flex flex-col justify-center md:items-center p-4">
-                  {[
-                    { platform: "LinkedIn", url: "https://clickly.cv/dpkrn/linkedin" },
-                    { platform: "GitHub", url: "https://clickly.cv/dpkrn/github" },
-                    { platform: "LeetCode", url: "https://clickly.cv/dpkrn/leetcode" },
-                    { platform: "Portfolio", url: "https://clickly.cv/dpkrn/portfolio" },
-                    { platform: "Instagram", url: "https://clickly.cv/dpkrn/instagram" },
-                    { platform: "Facebook", url: "https://clickly.cv/dpkrn/facebook" },
-                    { platform: "Codeforces", url: "https://clickly.cv/dpkrn/codeforces" },
-                  ].map((link, idx) => (
-                    <motion.a
-                      key={link.platform}
-                      href={link.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      initial={{ opacity: 0, x: -20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: idx * 0.1 }}
-                      whileHover={{ scale: 1.05, x: 10 }}
-                      className="text-sm md:text-base lg:text-lg text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors w-full text-left md:text-center group"
-                    >
-                      <span className="font-semibold">{link.platform}:</span>{" "}
-                      <span className="text-blue-600 dark:text-blue-400 group-hover:text-blue-500 dark:group-hover:text-blue-300 underline font-mono">
-                        {link.url}
-                      </span>
-                    </motion.a>
-                  ))}
-                  <motion.p
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
+              {/* Animated Title */}
+              <motion.h2
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                className="text-3xl md:text-4xl lg:text-5xl font-bold text-center mb-8 md:mb-10 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
+                animate={{
+                  backgroundPosition: ["0%", "100%", "0%"],
+                }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  ease: "linear",
+                }}
+                style={{
+                  backgroundSize: "200% 100%",
+                }}
+              >
+                Have You Ever Wondered How AuthorLink Has Been Personalized:
+              </motion.h2>
+
+              {/* 3D Floating Cards Container */}
+              <div className="relative min-h-[400px] md:min-h-[500px] flex items-center justify-center py-8">
+                {/* Background Glow Effects */}
+                <motion.div
+                  className="absolute inset-0 flex items-center justify-center pointer-events-none"
+                  animate={{
+                    scale: [1, 1.1, 1],
+                    opacity: [0.3, 0.5, 0.3],
+                  }}
+                  transition={{
+                    duration: 4,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
+                >
+                  <div className="w-full h-full max-w-4xl bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-blue-500/10 rounded-3xl blur-3xl" />
+                </motion.div>
+
+                {/* Floating Link Cards in 3D Space */}
+                <div className="relative z-10 w-full max-w-6xl mx-auto px-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                    {[
+                      { platform: "LinkedIn", url: "https://clickly.cv/dpkrn/linkedin", color: "from-blue-500 to-cyan-500", icon: "💼" },
+                      { platform: "GitHub", url: "https://clickly.cv/dpkrn/github", color: "from-gray-600 to-gray-800", icon: "🐙" },
+                      { platform: "LeetCode", url: "https://clickly.cv/dpkrn/leetcode", color: "from-orange-500 to-yellow-500", icon: "💻" },
+                      { platform: "Portfolio", url: "https://clickly.cv/dpkrn/portfolio", color: "from-purple-500 to-pink-500", icon: "🎨" },
+                      { platform: "Instagram", url: "https://clickly.cv/dpkrn/instagram", color: "from-pink-500 to-rose-500", icon: "📸" },
+                      { platform: "Facebook", url: "https://clickly.cv/dpkrn/facebook", color: "from-blue-600 to-blue-800", icon: "👥" },
+                      { platform: "Codeforces", url: "https://clickly.cv/dpkrn/codeforces", color: "from-red-500 to-orange-500", icon: "⚔️" },
+                    ].map((link, idx) => (
+                      <AnimatedLinkCard key={link.platform} link={link} idx={idx} />
+                    ))}
+                  </div>
+
+                  {/* Bottom Note */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ delay: 0.7 }}
-                    className="text-sm md:text-base text-gray-600 dark:text-gray-500 mt-4 text-center"
+                    transition={{ delay: 0.8 }}
+                    className="mt-6 md:mt-8 text-center"
                   >
-                    Only the platform name has been changed. All else remains the same.
-                  </motion.p>
+                    <motion.p
+                      className="text-sm md:text-base text-gray-700 dark:text-gray-400 font-medium"
+                      animate={{
+                        opacity: [0.7, 1, 0.7],
+                      }}
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                      }}
+                    >
+                      ✨ Only the platform name changes. All else remains the same. ✨
+                    </motion.p>
+                  </motion.div>
                 </div>
               </div>
-            </ContainerScroll>
+            </motion.div>
           </motion.section>
 
           {/* Special Link Section */}

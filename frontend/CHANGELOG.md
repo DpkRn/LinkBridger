@@ -8,6 +8,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+- **Documentation Page Example Links Section Card Layout**: Improved card layout and text display:
+  - Centered icon horizontally with animated glow effect that moves with the icon
+  - Restored continuous icon animation (rotate, scale, and float) that was previously working
+  - Icon glow effect is now centered and moves along with the icon animation
+  - Changed URL text to show full link without ellipsis by using tighter letter spacing (`letterSpacing: '-0.3px'`) and word spacing (`wordSpacing: '-1px'`)
+  - Reduced font size to `text-[10px] md:text-xs` to ensure full link visibility
+  - Centered all text elements (icon, platform name, URL) for better visual alignment
+
+- **Documentation Page Example Links Section Animation Fix**: Fixed animation conflicts in the AnimatedLinkCard component:
+  - Separated floating animation into a wrapper motion.div to prevent conflicts with initial animations
+  - Fixed animate prop structure to ensure cards are visible and animate correctly
+  - Improved inView detection margin from "-50px" to "-100px" for better trigger timing
+  - Added proper component structure with nested motion wrappers
+  - Ensured cards have minimum height (`min-h-[180px]`) and proper flex layout
+  - Fixed title gradient to use bg-clip-text instead of inline styles for better compatibility
+
+### Changed
+- **Documentation Page Example Links Section Redesign**: Completely replaced the ContainerScroll component with a stunning new animated 3D card grid:
+  - **3D Floating Cards**: Each platform link is now displayed in a beautiful 3D floating card with magnetic hover effects
+  - **Individual Card Animations**: Each card features:
+    - Continuous floating animation (up and down movement)
+    - 3D rotation effects on hover with perspective transforms
+    - Animated gradient backgrounds that pulse and morph
+    - Shimmer effects that sweep across cards on hover
+    - 6 floating particles that explode outward on hover
+    - Platform-specific emoji icons with rotation animations
+    - Pulsing glow effects that intensify on hover
+    - Arrow indicators with animated movement
+  - **Animated Title**: Gradient text title with moving background position animation
+  - **Background Glow**: Pulsing background glow effect behind the card grid
+  - **Grid Layout**: Responsive 3-column grid (1 column mobile, 2 columns tablet, 3 columns desktop)
+  - **Color-Coded Cards**: Each platform has its own unique gradient color scheme
+  - **Enhanced Bottom Note**: Animated note text with pulsing opacity
+  - Removed ContainerScroll dependency and replaced with custom animated component
+  - Cards use MagneticCard wrapper for 3D magnetic hover effects
+  - All animations are optimized for performance with proper cleanup
+
+### Fixed
 - **Footer Vertical Height Reduction**: Significantly reduced the vertical height of the Footer component:
   - Reduced main padding from `py-8 md:py-10` to `py-4 md:py-6`
   - Reduced grid gap from `gap-8 md:gap-12` to `gap-6 md:gap-8`
