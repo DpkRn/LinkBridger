@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { toggleDarkMode } from '../../redux/pageSlice';
 import { MdDarkMode, MdLightMode } from 'react-icons/md';
 import profile from '../../assets/profile.png';
+import logo from '../../assets/logo.png';
 
 const AboutDeveloper = () => {
   const navigate = useNavigate();
@@ -117,17 +118,31 @@ const AboutDeveloper = () => {
         <motion.div
           className="flex items-center gap-4 cursor-pointer relative z-10"
           onClick={() => navigate("/")}
-          whileHover={{ scale: 1.05 }}
+          whileHover={{ scale: 1.05, rotateY: 5 }}
+          style={{ transformStyle: "preserve-3d" }}
         >
-          <motion.img
-            className="h-8 w-auto dark:brightness-0 dark:invert transition-all duration-300"
-            src="logo.png"
-            alt="LinkBridger Logo"
-            onError={(e) => {
-              e.target.src = 'https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500';
+          <motion.div
+            animate={{
+              rotateY: [0, 360],
             }}
-            whileHover={{ scale: 1.1, rotateZ: 5 }}
-          />
+            transition={{
+              duration: 20,
+              repeat: Infinity,
+              ease: "linear",
+            }}
+            style={{ transformStyle: "preserve-3d" }}
+            className="h-8 w-8 rounded-full overflow-hidden"
+          >
+            <motion.img
+              className="h-8 w-8 rounded-full object-contain bg-white/10 dark:bg-gray-800/20 p-1 transition-all duration-300"
+              src={logo}
+              alt="LinkBridger Logo"
+              onError={(e) => {
+                e.target.src = 'https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500';
+              }}
+              whileHover={{ scale: 1.2, rotateZ: 15 }}
+            />
+          </motion.div>
           <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent">
             LinkBridger
           </span>

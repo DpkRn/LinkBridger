@@ -118,43 +118,153 @@ const Footer = () => {
                 {title}
               </h2>
               <ul className="space-y-2">
-                {links.map((link, linkIndex) => (
-                  <li key={linkIndex}>
-                    {link.external ? (
-                      <a
-                        href={link.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-gray-700 dark:text-gray-500 hover:text-purple-600 dark:hover:text-gray-300 transition-colors duration-200 text-sm flex items-center gap-2 group"
-                      >
-                        <span className="group-hover:translate-x-1 transition-transform duration-200">
-                          {link.label}
-                        </span>
-                        <FaRocket className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
-                      </a>
-                    ) : link.to ? (
-                      <Link
-                        to={link.to}
-                        className="text-gray-700 dark:text-gray-500 hover:text-purple-600 dark:hover:text-gray-300 transition-colors duration-200 text-sm flex items-center gap-2 group"
-                      >
-                        <span className="group-hover:translate-x-1 transition-transform duration-200">
-                          {link.label}
-                        </span>
-                        <FaRocket className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
-                      </Link>
-                    ) : (
-                      <a
-                        href={link.href}
-                        className="text-gray-700 dark:text-gray-500 hover:text-purple-600 dark:hover:text-gray-300 transition-colors duration-200 text-sm flex items-center gap-2 group"
-                      >
-                        <span className="group-hover:translate-x-1 transition-transform duration-200">
-                          {link.label}
-                        </span>
-                        <FaRocket className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
-                      </a>
-                    )}
-                  </li>
-                ))}
+                {links.map((link, linkIndex) => {
+                  // Special styling for "About Developer" button
+                  const isAboutDeveloper = link.label === 'About Developer';
+                  
+                  return (
+                    <li key={linkIndex}>
+                      {link.external ? (
+                        <a
+                          href={link.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-gray-700 dark:text-gray-500 hover:text-purple-600 dark:hover:text-gray-300 transition-colors duration-200 text-sm flex items-center gap-2 group"
+                        >
+                          <span className="group-hover:translate-x-1 transition-transform duration-200">
+                            {link.label}
+                          </span>
+                          <FaRocket className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                        </a>
+                      ) : link.to ? (
+                        <motion.div
+                          className="relative inline-block"
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          {/* Animated Background Glow for About Developer */}
+                          {isAboutDeveloper && (
+                            <>
+                              <motion.div
+                                className="absolute -inset-1 rounded-lg bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 opacity-20 blur-sm"
+                                animate={{
+                                  opacity: [0.2, 0.4, 0.2],
+                                  scale: [1, 1.05, 1],
+                                }}
+                                transition={{
+                                  duration: 2,
+                                  repeat: Infinity,
+                                  ease: "easeInOut",
+                                }}
+                              />
+                              <motion.div
+                                className="absolute -inset-0.5 rounded-lg bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 opacity-30 blur-xs"
+                                animate={{
+                                  opacity: [0.1, 0.3, 0.1],
+                                }}
+                                transition={{
+                                  duration: 1.5,
+                                  repeat: Infinity,
+                                  ease: "easeInOut",
+                                  delay: 0.5,
+                                }}
+                              />
+                            </>
+                          )}
+                          <Link
+                            to={link.to}
+                            className={`relative text-sm flex items-center gap-2 group ${
+                              isAboutDeveloper
+                                ? 'px-3 py-1.5 rounded-lg font-semibold bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-blue-500/20 dark:from-purple-500/30 dark:via-pink-500/30 dark:to-blue-500/30 border border-purple-400/30 dark:border-purple-400/50 text-purple-700 dark:text-purple-300 hover:text-purple-600 dark:hover:text-purple-200 transition-all duration-300 shadow-lg hover:shadow-xl'
+                                : 'text-gray-700 dark:text-gray-500 hover:text-purple-600 dark:hover:text-gray-300 transition-colors duration-200'
+                            }`}
+                          >
+                            <motion.span
+                              className={`${
+                                isAboutDeveloper
+                                  ? 'group-hover:translate-x-1'
+                                  : 'group-hover:translate-x-1'
+                              } transition-transform duration-200`}
+                              animate={
+                                isAboutDeveloper
+                                  ? {
+                                      x: [0, 2, 0],
+                                    }
+                                  : {}
+                              }
+                              transition={
+                                isAboutDeveloper
+                                  ? {
+                                      duration: 2,
+                                      repeat: Infinity,
+                                      ease: "easeInOut",
+                                    }
+                                  : {}
+                              }
+                            >
+                              {link.label}
+                            </motion.span>
+                            <motion.div
+                              animate={
+                                isAboutDeveloper
+                                  ? {
+                                      rotate: [0, 10, -10, 0],
+                                      scale: [1, 1.2, 1],
+                                    }
+                                  : {}
+                              }
+                              transition={
+                                isAboutDeveloper
+                                  ? {
+                                      duration: 1.5,
+                                      repeat: Infinity,
+                                      ease: "easeInOut",
+                                    }
+                                  : {}
+                              }
+                            >
+                              <FaRocket
+                                className={`${
+                                  isAboutDeveloper
+                                    ? 'w-4 h-4 opacity-100 text-purple-500 dark:text-purple-400'
+                                    : 'w-3 h-3 opacity-0 group-hover:opacity-100'
+                                } transition-opacity duration-200`}
+                              />
+                            </motion.div>
+                            {/* Shimmer effect for About Developer */}
+                            {isAboutDeveloper && (
+                              <motion.div
+                                className="absolute inset-0 rounded-lg bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                                animate={{
+                                  x: ['-100%', '100%'],
+                                }}
+                                transition={{
+                                  duration: 2,
+                                  repeat: Infinity,
+                                  repeatDelay: 1,
+                                  ease: "easeInOut",
+                                }}
+                                style={{
+                                  background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)',
+                                }}
+                              />
+                            )}
+                          </Link>
+                        </motion.div>
+                      ) : (
+                        <a
+                          href={link.href}
+                          className="text-gray-700 dark:text-gray-500 hover:text-purple-600 dark:hover:text-gray-300 transition-colors duration-200 text-sm flex items-center gap-2 group"
+                        >
+                          <span className="group-hover:translate-x-1 transition-transform duration-200">
+                            {link.label}
+                          </span>
+                          <FaRocket className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
+                        </a>
+                      )}
+                    </li>
+                  );
+                })}
               </ul>
             </motion.div>
           ))}

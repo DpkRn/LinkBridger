@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import logo from "../../assets/logo.png";
 import { setSidebarMenu, toggleDarkMode } from "../../redux/pageSlice";
 import toast from "react-hot-toast";
 import api from "../../utils/api";
@@ -209,16 +210,33 @@ const Nav = () => {
               className="flex items-center gap-3 group"
             >
               <motion.div
-                whileHover={{ scale: 1.1, rotate: 5 }}
+                whileHover={{ scale: 1.05, rotateY: 5 }}
                 whileTap={{ scale: 0.95 }}
-                className="relative"
+                className="relative h-10 w-10 rounded-full overflow-hidden"
+                style={{ transformStyle: "preserve-3d" }}
               >
-                <img
-                  className="h-10 w-auto drop-shadow-lg dark:brightness-0 dark:invert transition-all duration-300"
-                  src="logo.png"
-                  alt="LinkBridger Logo"
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-lg blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <motion.div
+                  animate={{
+                    rotateY: [0, 360],
+                  }}
+                  transition={{
+                    duration: 20,
+                    repeat: Infinity,
+                    ease: "linear",
+                  }}
+                  style={{ transformStyle: "preserve-3d" }}
+                  className="h-full w-full"
+                >
+                  <img
+                    className="h-10 w-10 rounded-full object-contain bg-white/10 dark:bg-gray-800/20 p-1 drop-shadow-lg transition-all duration-300"
+                    src={logo}
+                    alt="LinkBridger Logo"
+                    onError={(e) => {
+                      e.target.src = 'https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500';
+                    }}
+                  />
+                </motion.div>
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </motion.div>
               <motion.span
                 className="hidden sm:block text-xl md:text-2xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"

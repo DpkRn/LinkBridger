@@ -32,6 +32,8 @@ import {
   SiX
 } from 'react-icons/si';
 import { MdDarkMode, MdLightMode } from 'react-icons/md';
+import Footer from '../footer/Footer';
+import logo from '../../assets/logo.png';
 
 // AnimatedCounter component moved outside to prevent recreation on every parent re-render
 const AnimatedCounter = ({ end, duration = 2000, suffix = "", statsInView }) => {
@@ -319,18 +321,32 @@ const HomePage = () => {
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16">
               <motion.div
-                whileHover={{ scale: 1.05 }}
-                className="flex items-center gap-3 cursor-pointer"
+                whileHover={{ scale: 1.05, rotateY: 5 }}
+                className="flex items-center gap-3 cursor-pointer relative"
                 onClick={() => navigate('/')}
+                style={{ transformStyle: "preserve-3d" }}
               >
-                <img
-                  className="h-10 w-auto transition-all duration-300"
-                  src="logo.png"
-                  alt="LinkBridger Logo"
-                  onError={(e) => {
-                    e.target.src = 'https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500';
+                <motion.div
+                  animate={{
+                    rotateY: [0, 360],
                   }}
-                />
+                  transition={{
+                    duration: 20,
+                    repeat: Infinity,
+                    ease: "linear",
+                  }}
+                  style={{ transformStyle: "preserve-3d" }}
+                  className="h-10 w-10 rounded-full overflow-hidden"
+                >
+                  <img
+                    className="h-10 w-10 rounded-full object-contain bg-white/10 dark:bg-gray-800/20 p-1 transition-all duration-300"
+                    src={logo}
+                    alt="LinkBridger Logo"
+                    onError={(e) => {
+                      e.target.src = 'https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500';
+                    }}
+                  />
+                </motion.div>
                 <span className="hidden sm:inline text-lg sm:text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 dark:from-purple-600 dark:to-pink-600 bg-clip-text text-transparent">
                   LinkBridger
                 </span>
@@ -771,6 +787,9 @@ const HomePage = () => {
           </motion.div>
         </div>
       </section>
+      
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useInView } from "framer-motion";
 import { motion, AnimatePresence } from "framer-motion";
+import logo from "../assets/logo.png";
 
 // Floating Particle Component
 const FloatingParticle = ({ delay = 0, duration = 20, size = 4, color = "purple", initialX = 0, initialY = 0, xOffset = 0 }) => {
@@ -553,7 +554,7 @@ const Documentation = () => {
       gradient: "from-blue-500 to-cyan-500",
     },
     {
-      img: "logo.png",
+      img: logo,
       title: "All Links at One Place",
       desc: "Access all your profiles with a single hub link. Simply visit https://clickly.cv/yourname (without any platform name) to see all your links in one beautiful, organized page. Perfect for sharing in bios, resumes, and business cards.",
       icon: FaHome,
@@ -932,11 +933,15 @@ const Documentation = () => {
               ease: "linear",
             }}
             style={{ transformStyle: "preserve-3d" }}
+            className="h-8 w-8 rounded-full overflow-hidden"
           >
             <motion.img
-              className="h-8 w-auto dark:brightness-0 dark:invert transition-all duration-300"
-              src="https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500"
+              className="h-8 w-8 rounded-full object-contain bg-white/10 dark:bg-gray-800/20 p-1 transition-all duration-300"
+              src={logo}
               alt="LinkBridger Logo"
+              onError={(e) => {
+                e.target.src = 'https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500';
+              }}
               whileHover={{ scale: 1.2, rotateZ: 15 }}
             />
           </motion.div>
