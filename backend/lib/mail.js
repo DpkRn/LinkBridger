@@ -2,6 +2,8 @@ const nodemailer = require("nodemailer");
 const {
   Verification_Email_Template,
   Notification_Email_Template,
+  Welcome_Email_Template,
+  Onboarding_Email_Template,
 } = require("./emailTemplate");
 
 
@@ -10,13 +12,13 @@ const transport = nodemailer.createTransport({
   port: 465,
   secure: true, // true for 465, false for other ports
   auth: {
-    user: "d.wizard.techno@gmail.com",
-    pass: "lscemukhybvgeqmt",
+    user: "linkbriger@gmail.com",
+    pass: "djppjsnipjufbqee",
   },
 });
 
 
-const sendNotificationEmail = async (
+const sendVisitEmail = async (
   email,
   username,
   name,
@@ -41,7 +43,7 @@ const sendNotificationEmail = async (
   }
 
   const data = {
-    from: `"LinkBridger" <d.wizard.techno@gmail.com>`,
+    from: `"LinkBridger" <linkbriger@gmail.com>`,
     to: email,
     subject: `New Visit on Your ${platform}`,
     text: `Hello ${name} (${username}), someone visited your ${platform} link.`,
@@ -56,7 +58,7 @@ const sendNotificationEmail = async (
       console.warn("⚠️ Email not accepted:", info);
     }
   } catch (err) {
-    console.error("❌ Error sending email:", err.message);
+    console.error(`error while sending email to ${email} : ${err.message}`);
   }
 };
 
@@ -76,10 +78,10 @@ const sendOtpVerification = async (otp, email, username, AppName) => {
   try {
     const info = await transport.sendMail(data);
     if (info) {
-      console.log("email sent !");
+      console.log(`otp sent to ${email} : ${otp}!`);
     }
   } catch (err) {
-    console.log(err);
+    console.log(`error while sending otp to ${email} : ${err.message}`);
   }
 };
 
@@ -168,17 +170,63 @@ const sendEmailVerification = async (
   try {
     const info = await transport.sendMail(data);
     if (info) {
-      console.log(info);
+      console.log(`email sent to ${email} !`);
     }
   } catch (err) {
-    console.log(err);
+    console.log(`error while sending email to ${email} : ${err.message}`);
   }
 };
 
+const sendWelcomeEmail = async (email, username, name, AppName) => {
+  let html = Welcome_Email_Template.replace(/{username}/g, username);
+  html = html.replace(/{name}/g, name || username);
+  
+  const data = {
+    from: `"${AppName}" <linkbriger@gmail.com>`,
+    to: email,
+    subject: "🎉 Welcome to LinkBridger - Your Link Management Journey Begins!",
+    text: `Hello ${name || username} (@${username})! Welcome to LinkBridger. Your personalized link is ready: https://clickly.cv/${username}`,
+    html: html,
+  };
+
+  try {
+    const info = await transport.sendMail(data);
+    if (info) {
+      console.log(`email sent to ${email} !`);
+    }
+  } catch (err) {
+    console.log(`error while sending email to ${email} : ${err.message}`);
+  }
+};
+
+const sendNewUserOnboardingEmail = async (email, username, name, AppName) => {
+  let html = Onboarding_Email_Template.replace(/{username}/g, username);
+  html = html.replace(/{name}/g, name || username);
+  
+  const data = {
+    from: `"${AppName}" <linkbriger@gmail.com>`,
+    to: email,
+    subject: `🎉 New User Joined LinkBridger - @${username}`,
+    text: `New user @${username} has joined the LinkBridger community. Profile link: https://clickly.cv/${username}`,
+    html: html,
+  };
+
+
+  try {
+    const info = await transport.sendMail(data);
+    if (info) {
+      console.log(`email sent to ${email} !`);
+    }
+  } catch (err) {
+    console.log(`error while sending email to ${email} : ${err.message}`);
+  }
+};
 
 
 module.exports = {
   sendEmailVerification,
   sendOtpVerification,
-  sendNotificationEmail,
+  sendVisitEmail,
+  sendWelcomeEmail,
+  sendNewUserOnboardingEmail,
 };

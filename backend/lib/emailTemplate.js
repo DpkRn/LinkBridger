@@ -86,86 +86,346 @@ const Welcome_Email_Template = `
   <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Welcome to Our Community</title>
+      <title>Welcome to LinkBridger!</title>
       <style>
-          body {
-              font-family: Arial, sans-serif;
+          * {
               margin: 0;
               padding: 0;
-              background-color: #f4f4f4;
+              box-sizing: border-box;
+          }
+          body {
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+              background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+              padding: 20px;
               color: #333;
           }
-          .container {
+          .email-wrapper {
               max-width: 600px;
-              margin: 30px auto;
+              margin: 0 auto;
               background: #ffffff;
-              border-radius: 8px;
-              box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+              border-radius: 16px;
               overflow: hidden;
-              border: 1px solid #ddd;
+              box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
           }
           .header {
-              background-color: #007BFF;
+              background: linear-gradient(135deg, #9333ea 0%, #ec4899 50%, #3b82f6 100%);
               color: white;
-              padding: 20px;
+              padding: 40px 30px;
               text-align: center;
-              font-size: 26px;
-              font-weight: bold;
+          }
+          .header h1 {
+              font-size: 32px;
+              font-weight: 700;
+              margin-bottom: 10px;
+          }
+          .header p {
+              font-size: 16px;
+              opacity: 0.95;
           }
           .content {
-              padding: 25px;
-              line-height: 1.8;
+              padding: 40px 30px;
           }
           .welcome-message {
-              font-size: 18px;
-              margin: 20px 0;
+              font-size: 20px;
+              font-weight: 600;
+              color: #1f2937;
+              margin-bottom: 20px;
           }
-          .button {
+          .highlight-box {
+              background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+              border-left: 4px solid #9333ea;
+              padding: 20px;
+              border-radius: 8px;
+              margin: 25px 0;
+          }
+          .highlight-box strong {
+              color: #9333ea;
+              font-size: 18px;
+          }
+          .benefits {
+              margin: 30px 0;
+          }
+          .benefit-item {
+              display: flex;
+              align-items: flex-start;
+              margin-bottom: 20px;
+              padding: 15px;
+              background: #f9fafb;
+              border-radius: 10px;
+          }
+          .benefit-icon {
+              font-size: 24px;
+              margin-right: 15px;
+              min-width: 30px;
+          }
+          .benefit-content h3 {
+              color: #1f2937;
+              font-size: 18px;
+              margin-bottom: 5px;
+          }
+          .benefit-content p {
+              color: #6b7280;
+              font-size: 14px;
+              line-height: 1.6;
+          }
+          .step-section {
+              margin: 30px 0;
+          }
+          .step-item {
+              display: flex;
+              align-items: flex-start;
+              margin-bottom: 25px;
+              padding: 20px;
+              background: #f9fafb;
+              border-radius: 12px;
+              border-left: 4px solid #9333ea;
+          }
+          .step-number {
+              background: linear-gradient(135deg, #9333ea 0%, #ec4899 100%);
+              color: white;
+              width: 40px;
+              height: 40px;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-weight: 700;
+              font-size: 18px;
+              margin-right: 20px;
+              flex-shrink: 0;
+          }
+          .step-content h3 {
+              color: #1f2937;
+              font-size: 18px;
+              margin-bottom: 8px;
+          }
+          .step-content p {
+              color: #6b7280;
+              font-size: 14px;
+              line-height: 1.6;
+          }
+          .cta-section {
+              text-align: center;
+              margin: 35px 0;
+          }
+          .cta-button {
               display: inline-block;
-              padding: 12px 25px;
-              margin: 20px 0;
-              background-color: #007BFF;
+              padding: 16px 40px;
+              background: linear-gradient(135deg, #9333ea 0%, #ec4899 100%);
               color: white;
               text-decoration: none;
-              border-radius: 5px;
-              text-align: center;
-              font-size: 16px;
-              font-weight: bold;
-              transition: background-color 0.3s;
+              border-radius: 12px;
+              font-size: 18px;
+              font-weight: 600;
+              box-shadow: 0 4px 15px rgba(147, 51, 234, 0.4);
           }
-          .button:hover {
-              background-color: #0056b3;
+          .link-preview {
+              background: #f3f4f6;
+              padding: 15px;
+              border-radius: 8px;
+              text-align: center;
+              margin: 25px 0;
+              border: 2px dashed #9333ea;
+          }
+          .link-preview code {
+              color: #9333ea;
+              font-size: 16px;
+              font-weight: 600;
+              background: white;
+              padding: 8px 15px;
+              border-radius: 6px;
+              display: inline-block;
+          }
+          .tips-box {
+              background: #eff6ff;
+              border-left: 4px solid #3b82f6;
+              padding: 20px;
+              border-radius: 8px;
+              margin: 25px 0;
+          }
+          .tips-box h3 {
+              color: #1e40af;
+              font-size: 18px;
+              margin-bottom: 10px;
+          }
+          .tips-box ul {
+              color: #1e3a8a;
+              padding-left: 20px;
+              line-height: 1.8;
+          }
+          .tips-box li {
+              margin-bottom: 8px;
           }
           .footer {
-              background-color: #f4f4f4;
-              padding: 15px;
+              background: #f9fafb;
+              padding: 30px;
               text-align: center;
-              color: #777;
-              font-size: 12px;
-              border-top: 1px solid #ddd;
+              border-top: 1px solid #e5e7eb;
           }
-          p {
-              margin: 0 0 15px;
+          .footer p {
+              color: #6b7280;
+              font-size: 14px;
+              margin: 5px 0;
+          }
+          .social-links {
+              margin-top: 20px;
+          }
+          .social-links a {
+              color: #9333ea;
+              text-decoration: none;
+              margin: 0 10px;
+          }
+          @media only screen and (max-width: 600px) {
+              .content {
+                  padding: 30px 20px;
+              }
+              .header {
+                  padding: 30px 20px;
+              }
+              .header h1 {
+                  font-size: 26px;
+              }
           }
       </style>
   </head>
   <body>
-      <div class="container">
-          <div class="header">Welcome to Our Community!</div>
+      <div class="email-wrapper">
+          <div class="header">
+              <h1>🎉 Welcome to LinkBridger!</h1>
+              <p>Your journey to better link management starts now</p>
+          </div>
           <div class="content">
-              <p class="welcome-message">Hello {name},</p>
-              <p>We’re thrilled to have you join us! Your registration was successful, and we’re committed to providing you with the best experience possible.</p>
-              <p>Here’s how you can get started:</p>
-              <ul>
-                  <li>Explore our features and customize your experience.</li>
-                  <li>Stay informed by checking out our blog for the latest updates and tips.</li>
-                  <li>Reach out to our support team if you have any questions or need assistance.</li>
-              </ul>
-              <a href="#" class="button">Get Started</a>
-              <p>If you need any help, don’t hesitate to contact us. We’re here to support you every step of the way.</p>
+              <p class="welcome-message">Hello {name} (@{username})!</p>
+              
+              <p style="color: #4b5563; line-height: 1.8; margin-bottom: 20px;">
+                  We're absolutely thrilled to have you join the LinkBridger community! 🚀 Your account has been successfully created, and you're just moments away from transforming how you share and manage your social media links.
+              </p>
+
+              <div class="highlight-box">
+                  <strong>✨ Your Personalized Link is Ready!</strong>
+                  <p style="margin-top: 10px; color: #6b7280;">
+                      Share all your profiles with one simple link: <code style="color: #9333ea; background: white; padding: 5px 10px; border-radius: 4px;">https://clickly.cv/{username}</code>
+                  </p>
+              </div>
+
+              <div class="benefits">
+                  <h2 style="color: #1f2937; font-size: 24px; margin-bottom: 20px; text-align: center;">🌟 What You Can Do Now:</h2>
+                  
+                  <div class="benefit-item">
+                      <div class="benefit-icon">🔗</div>
+                      <div class="benefit-content">
+                          <h3>One Link, All Your Profiles</h3>
+                          <p>Create a single, memorable link that leads to all your social media profiles. No more long, complicated URLs!</p>
+                      </div>
+                  </div>
+
+                  <div class="benefit-item">
+                      <div class="benefit-icon">📊</div>
+                      <div class="benefit-content">
+                          <h3>Track Every Click</h3>
+                          <p>Get real-time analytics on who's visiting your links. Know exactly when and where your audience is engaging.</p>
+                      </div>
+                  </div>
+
+                  <div class="benefit-item">
+                      <div class="benefit-icon">📧</div>
+                      <div class="benefit-content">
+                          <h3>Instant Email Notifications</h3>
+                          <p>Receive email alerts every time someone clicks your links. Stay connected with your audience in real-time.</p>
+                      </div>
+                  </div>
+
+                  <div class="benefit-item">
+                      <div class="benefit-icon">⚡</div>
+                      <div class="benefit-content">
+                          <h3>Update Once, Reflect Everywhere</h3>
+                          <p>Change a link once, and it updates across all platforms instantly. No more manual updates everywhere!</p>
+                      </div>
+                  </div>
+
+                  <div class="benefit-item">
+                      <div class="benefit-icon">🎨</div>
+                      <div class="benefit-content">
+                          <h3>Beautiful Landing Page</h3>
+                          <p>Your profile gets a stunning, customizable landing page that showcases all your links in one beautiful place.</p>
+                      </div>
+                  </div>
+              </div>
+
+              <div class="cta-section">
+                  <a href="https://clickly.cv/app/home" class="cta-button">Start Building Your Links →</a>
+              </div>
+
+              <div class="link-preview">
+                  <p style="color: #6b7280; margin-bottom: 10px; font-size: 14px;">Your personalized link:</p>
+                  <code>https://clickly.cv/{username}</code>
+              </div>
+
+              <div class="step-section">
+                  <h2 style="color: #1f2937; font-size: 24px; margin-bottom: 20px; text-align: center;">📋 Quick Start Guide:</h2>
+                  
+                  <div class="step-item">
+                      <div class="step-number">1</div>
+                      <div class="step-content">
+                          <h3>Add Your First Link</h3>
+                          <p>Go to your dashboard and click "Create Bridge" to add your first social media link. Start with your most important profile!</p>
+                      </div>
+                  </div>
+
+                  <div class="step-item">
+                      <div class="step-number">2</div>
+                      <div class="step-content">
+                          <h3>Customize Your Profile</h3>
+                          <p>Visit your profile page to add a bio, profile picture, and personalize your landing page. Make it uniquely yours!</p>
+                      </div>
+                  </div>
+
+                  <div class="step-item">
+                      <div class="step-number">3</div>
+                      <div class="step-content">
+                          <h3>Share Your Link</h3>
+                          <p>Copy your personalized link <code style="background: #f3f4f6; padding: 2px 8px; border-radius: 4px;">https://clickly.cv/{username}</code> and share it everywhere - in your bio, email signature, business cards, and more!</p>
+                      </div>
+                  </div>
+
+                  <div class="step-item">
+                      <div class="step-number">4</div>
+                      <div class="step-content">
+                          <h3>Track Your Analytics</h3>
+                          <p>Monitor who's clicking your links in real-time. You'll receive email notifications for every visit, so you never miss an engagement!</p>
+                      </div>
+                  </div>
+              </div>
+
+              <div class="tips-box">
+                  <h3>💡 Pro Tips for Success:</h3>
+                  <ul>
+                      <li>Keep your link short and memorable - it's already done for you!</li>
+                      <li>Update your links in one place - changes reflect everywhere instantly</li>
+                      <li>Use descriptive platform names (e.g., "Instagram" instead of "ig")</li>
+                      <li>Check your email notifications to see who's visiting your links</li>
+                      <li>Share your link on all your social media profiles for maximum reach</li>
+                  </ul>
+              </div>
+
+              <p style="color: #4b5563; line-height: 1.8; margin-top: 30px; text-align: center;">
+                  Questions? We're here to help! Check out our <a href="https://clickly.cv/app/doc" style="color: #9333ea; text-decoration: none;">documentation</a> or reply to this email.
+              </p>
           </div>
           <div class="footer">
-              <p>&copy; ${new Date().getFullYear()} Your Company. All rights reserved.</p>
+              <p><strong>Happy Linking! 🎯</strong></p>
+              <p>The LinkBridger Team</p>
+              <div class="social-links">
+                  <a href="https://clickly.cv/app/doc">Documentation</a> | 
+                  <a href="https://clickly.cv/app/home">Dashboard</a>
+              </div>
+              <p style="margin-top: 20px; font-size: 12px;">
+                  &copy; ${new Date().getFullYear()} LinkBridger. All rights reserved.
+              </p>
+              <p>For any kind of support you can visit to our Email <a href="mailto:d.wizard.techno@gmail.com">d.wizard.techno@gmail.com</a></p>
+              <p style="font-size: 12px; color: #9ca3af;">
+                  This is an automated welcome email from LinkBridger.
+              </p>
           </div>
       </div>
   </body>
@@ -260,8 +520,191 @@ const Notification_Email_Template=`<!DOCTYPE html>
 </html>
 `
 
+const Onboarding_Email_Template = `
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>New User Joined - LinkBridger</title>
+      <style>
+          * {
+              margin: 0;
+              padding: 0;
+              box-sizing: border-box;
+          }
+          body {
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+              background: #f4f4f4;
+              padding: 20px;
+              color: #333;
+          }
+          .email-wrapper {
+              max-width: 600px;
+              margin: 0 auto;
+              background: #ffffff;
+              border-radius: 12px;
+              overflow: hidden;
+              box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+          }
+          .header {
+              background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+              color: white;
+              padding: 30px;
+              text-align: center;
+          }
+          .header h1 {
+              font-size: 28px;
+              font-weight: 700;
+              margin-bottom: 8px;
+          }
+          .header p {
+              font-size: 16px;
+              opacity: 0.95;
+          }
+          .content {
+              padding: 30px;
+          }
+          .notification-box {
+              background: #f0fdf4;
+              border: 2px solid #10b981;
+              border-radius: 10px;
+              padding: 25px;
+              margin: 20px 0;
+              text-align: center;
+          }
+          .notification-box h2 {
+              color: #065f46;
+              font-size: 24px;
+              margin-bottom: 15px;
+          }
+          .user-info {
+              background: #ffffff;
+              border: 1px solid #d1d5db;
+              border-radius: 8px;
+              padding: 20px;
+              margin: 20px 0;
+          }
+          .user-info-item {
+              display: flex;
+              justify-content: space-between;
+              padding: 12px 0;
+              border-bottom: 1px solid #e5e7eb;
+          }
+          .user-info-item:last-child {
+              border-bottom: none;
+          }
+          .user-info-label {
+              font-weight: 600;
+              color: #374151;
+          }
+          .user-info-value {
+              color: #6b7280;
+          }
+          .user-info-value a {
+              color: #9333ea;
+              text-decoration: none;
+          }
+          .stats-box {
+              background: #fef3c7;
+              border-left: 4px solid #f59e0b;
+              padding: 20px;
+              border-radius: 8px;
+              margin: 20px 0;
+          }
+          .stats-box p {
+              color: #92400e;
+              line-height: 1.8;
+          }
+          .footer {
+              background: #f9fafb;
+              padding: 25px;
+              text-align: center;
+              border-top: 1px solid #e5e7eb;
+          }
+          .footer p {
+              color: #6b7280;
+              font-size: 14px;
+              margin: 5px 0;
+          }
+          @media only screen and (max-width: 600px) {
+              .content {
+                  padding: 20px;
+              }
+              .header {
+                  padding: 25px 20px;
+              }
+              .header h1 {
+                  font-size: 24px;
+              }
+          }
+      </style>
+  </head>
+  <body>
+      <div class="email-wrapper">
+          <div class="header">
+              <h1>🎉 New User Joined!</h1>
+              <p>Someone just signed up for LinkBridger</p>
+          </div>
+          
+          <div class="content">
+              <div class="notification-box">
+                  <h2>Welcome to the Community!</h2>
+                  <p style="color: #065f46; font-size: 16px; line-height: 1.6;">
+                      A new user has successfully registered and joined the LinkBridger community!
+                  </p>
+              </div>
+
+              <div class="user-info">
+                  <div class="user-info-item">
+                      <span class="user-info-label">Username:</span>
+                      <span class="user-info-value"><strong>@{username}</strong></span>
+                  </div>
+                  <div class="user-info-item">
+                      <span class="user-info-label">Profile Link:</span>
+                      <span class="user-info-value">
+                          <a href="https://clickly.cv/{username}" target="_blank">https://clickly.cv/{username}</a>
+                      </span>
+                  </div>
+                  <div class="user-info-item">
+                      <span class="user-info-label">Registration Date:</span>
+                      <span class="user-info-value">${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                  </div>
+                  <div class="user-info-item">
+                      <span class="user-info-label">Registration Time:</span>
+                      <span class="user-info-value">${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</span>
+                  </div>
+              </div>
+
+              <div class="stats-box">
+                  <p style="margin-bottom: 10px;"><strong>📊 Community Growth:</strong></p>
+                  <p style="font-size: 14px;">
+                      Every new member helps grow the LinkBridger community! This user can now create personalized links, track analytics, and manage their social media presence all in one place.
+                  </p>
+              </div>
+
+              <p style="color: #4b5563; line-height: 1.8; margin-top: 25px; text-align: center;">
+                  You can view user activity and manage your LinkBridger platform from your admin dashboard.
+              </p>
+          </div>
+
+          <div class="footer">
+              <p><strong>LinkBridger Admin Notification</strong></p>
+              <p style="margin-top: 15px; font-size: 12px;">
+                  &copy; ${new Date().getFullYear()} LinkBridger. All rights reserved.
+              </p>
+              <p style="font-size: 12px; color: #9ca3af;">
+                  This is an automated notification email sent to the project owner.
+              </p>
+          </div>
+      </div>
+  </body>
+  </html>
+`;
+
 module.exports={
     Verification_Email_Template,
     Welcome_Email_Template,
-    Notification_Email_Template
+    Notification_Email_Template,
+    Onboarding_Email_Template
 }

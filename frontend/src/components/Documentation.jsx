@@ -1147,129 +1147,65 @@ const Documentation = () => {
             variants={itemVariants}
             className="mb-6 md:mb-8"
           >
-            <MagneticCard intensity={0.08}>
+            <MagneticCard intensity={0.05}>
               <motion.div
                 className="relative bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-6 md:p-10 lg:p-12 overflow-hidden group"
-                whileHover={{ scale: 1.01 }}
-                transition={{ duration: 0.4, ease: "easeOut" }}
-                style={{ transformStyle: "preserve-3d" }}
+                whileHover={{ scale: 1.005 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
               >
-                {/* Animated Border Glow */}
-                <motion.div
-                  className="absolute inset-0 rounded-3xl pointer-events-none"
+                {/* Subtle Static Border Glow */}
+                <div
+                  className="absolute inset-0 rounded-3xl pointer-events-none opacity-30"
                   style={{
-                    background: "linear-gradient(45deg, transparent, rgba(147, 51, 234, 0.2), transparent)",
-                    backgroundSize: "200% 200%",
-                  }}
-                  animate={{
-                    backgroundPosition: ["0% 0%", "200% 200%", "0% 0%"],
-                  }}
-                  transition={{
-                    duration: 4,
-                    repeat: Infinity,
-                    ease: "linear",
+                    background: "linear-gradient(135deg, rgba(147, 51, 234, 0.1), rgba(236, 72, 153, 0.1), rgba(59, 130, 246, 0.1))",
                   }}
                 />
                 
-                {/* Floating Particles - Fixed positions for consistency */}
-                {[
-                  { x: 10, y: 15, offset: 8, delay: 0, duration: 5, size: 3, color: "purple" },
-                  { x: 85, y: 20, offset: -6, delay: 0.8, duration: 6, size: 2.5, color: "pink" },
-                  { x: 20, y: 80, offset: 5, delay: 1.2, duration: 5.5, size: 2, color: "blue" },
-                  { x: 75, y: 75, offset: -8, delay: 0.4, duration: 6.5, size: 2.5, color: "purple" },
-                  { x: 50, y: 10, offset: 4, delay: 1.6, duration: 5.8, size: 3, color: "pink" },
-                ].map((particle, i) => (
-                  <FloatingParticle
-                    key={i}
-                    delay={particle.delay}
-                    duration={particle.duration}
-                    size={particle.size}
-                    color={particle.color}
-                    initialX={particle.x}
-                    initialY={particle.y}
-                    xOffset={particle.offset}
-                  />
-                ))}
-                
                 <motion.h2
-                  initial={{ opacity: 0, x: -20, rotateY: -10 }}
-                  whileInView={{ opacity: 1, x: 0, rotateY: 0 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent relative"
                   animate={{
                     backgroundPosition: ["0%", "100%", "0%"],
                   }}
                   transition={{
-                    opacity: { duration: 0.8, type: "spring" },
-                    x: { duration: 0.8, type: "spring" },
-                    rotateY: { duration: 0.8, type: "spring" },
-                    backgroundPosition: { duration: 3, repeat: Infinity, ease: "linear" },
+                    opacity: { duration: 0.6, ease: "easeOut" },
+                    y: { duration: 0.6, ease: "easeOut" },
+                    backgroundPosition: { duration: 5, repeat: Infinity, ease: "linear" },
                   }}
                   style={{
-                    transformStyle: "preserve-3d",
                     backgroundSize: "200% 100%",
                   }}
                 >
                   Introduction
-                  {/* Text Shadow Glow */}
-                  <motion.span
-                    className="absolute inset-0 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent blur-xl opacity-50"
-                    animate={{
-                      opacity: [0.3, 0.7, 0.3],
-                    }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                    }}
-                  >
-                    Introduction
-                  </motion.span>
                 </motion.h2>
-                <motion.p
+                <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: 0.2, duration: 0.6, ease: "easeOut" }}
-                  className="text-base md:text-lg lg:text-xl leading-8 text-gray-700 dark:text-gray-300 relative z-10"
-                  style={{ transform: "translateZ(10px)" }}
+                  transition={{ delay: 0.1, duration: 0.6, ease: "easeOut" }}
+                  className="relative z-10 space-y-5"
+                  style={{
+                    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+                  }}
                 >
-                  Welcome to <motion.b 
-                    className="text-gray-900 dark:text-gray-100"
-                    animate={{
-                      textShadow: [
-                        "0 0 0px rgba(147, 51, 234, 0)",
-                        "0 0 8px rgba(147, 51, 234, 0.4)",
-                        "0 0 0px rgba(147, 51, 234, 0)",
-                      ],
-                    }}
-                    transition={{
-                      duration: 3,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                    }}
-                  >LinkBridger</motion.b>, a tool designed to make your social
-                  media links easier to remember and manage. Whether you're sharing
-                  your Instagram, GitHub, or LinkedIn profile, LinkBridger allows you
-                  to generate personalized URLs that are simple and customizable. Access all your links at one place by visiting <motion.b 
-                    className="text-gray-900 dark:text-white"
-                    animate={{
-                      color: [
-                        "rgb(17, 24, 39)",
-                        "rgb(147, 51, 234)",
-                        "rgb(17, 24, 39)",
-                      ],
-                    }}
-                    transition={{
-                      duration: 3,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                    }}
-                  >https://clickly.cv/yourname</motion.b> (without any platform name) - it creates a beautiful landing page showing all your profiles. Plus, get real-time email notifications every time someone visits your links! It
-                  also tracks how often your links are clicked and allows centralized
-                  updating, so any changes you make will reflect across all platforms
-                  instantly.
-                </motion.p>
+                  <p className="text-base md:text-lg lg:text-[1.125rem] leading-relaxed md:leading-[1.85] text-gray-700 dark:text-gray-300 font-normal tracking-wide">
+                    Welcome to <span className="font-semibold text-gray-900 dark:text-gray-100">LinkBridger</span>, your ultimate partner for streamlined online presence and effortless link management. We offer innovative IT support and services that make your social media profiles, portfolios, and professional links easy to remember, manage, and share.
+                  </p>
+                  
+                  <p className="text-base md:text-lg lg:text-[1.125rem] leading-relaxed md:leading-[1.85] text-gray-700 dark:text-gray-300 font-normal tracking-wide">
+                    Whether you're sharing your Instagram, GitHub, LinkedIn, or any other platform, LinkBridger allows you to generate a single, personalized URL that leads to a beautiful, customizable landing page featuring all your profiles. Simply visit <span className="font-medium text-purple-600 dark:text-purple-400">https://clickly.cv/yourname</span> (without any platform name) to access your unified link hub.
+                  </p>
+                  
+                  <p className="text-base md:text-lg lg:text-[1.125rem] leading-relaxed md:leading-[1.85] text-gray-700 dark:text-gray-300 font-normal tracking-wide">
+                    With real-time visitor notifications and detailed analytics, you can effortlessly track performance, monitor click rates, and gain valuable insights into your audience engagement. Enjoy the convenience of centralized updating—any changes you make are instantly reflected across all your platforms, eliminating the need for manual updates everywhere.
+                  </p>
+                  
+                  <p className="text-base md:text-lg lg:text-[1.125rem] leading-relaxed md:leading-[1.85] text-gray-700 dark:text-gray-300 font-normal tracking-wide">
+                    Experience the power of simplified link management and take control of your digital presence today.
+                  </p>
+                </motion.div>
               </motion.div>
             </MagneticCard>
           </motion.section>

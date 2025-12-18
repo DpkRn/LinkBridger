@@ -23,8 +23,7 @@ const VerificationPage = () => {
       );
       if (res.status === 201 && res.data.success) {
         toast.success(res.data.message);
-        
-        navigate("/verified", { state: "verified" }, { replace: true });
+        navigate("/verified", { state: "verified", replace: true });
       }
     } catch (err) {
       console.log(err);

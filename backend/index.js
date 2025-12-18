@@ -15,7 +15,7 @@ const Profile=require('./model/userProfile')
 const User=require('./model/userModel')
 const profileRoute=require('./routes/ProfileRoute')
 const { extractInfo } = require('./middleware/deviceInfo')
-const { sendNotificationEmail } = require('./lib/mail')
+const { sendVisitEmail } = require('./lib/mail')
 
 
 dotenv.config()
@@ -96,7 +96,7 @@ app.get('/:username',extractInfo, async (req, res) => {
   }
   const {email,name}=info
   const deviceDetails=req.details
-  sendNotificationEmail(email,username,name,deviceDetails,"LinkHub")
+  sendVisitEmail(email,username,name,deviceDetails,"LinkHub")
 
   if(tree&&dp){
     return res.render('linktree',{ 
@@ -136,7 +136,7 @@ app.get('/:username/:source',extractInfo, async (req, res) => {
   await Link.updateOne({username,source},{$set:{clicked:clicked+1,notSeen:notSeen+1}})
 
   const deviceDetails=req.details
-  sendNotificationEmail(email,username,name,deviceDetails,source)
+  sendVisitEmail(email,username,name,deviceDetails,source)
   return res.redirect(307,destination)
 })
 

@@ -1,7 +1,7 @@
 const User = require("../model/userModel");
 const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { sendOtpVerification } = require("../lib/mail");
+const { sendOtpVerification, sendWelcomeEmail, sendNewUserOnboardingEmail } = require("../lib/mail");
 const Profile=require('../model/userProfile')
 const Otp = require("../model/otpModel");
 
@@ -45,6 +45,8 @@ const signUpController = async (req, res, next) => {
     const userinfo=await Profile.create({username,image:"/images/panda.png"});
     if (user&&userinfo) {
       console.log("user created");
+      sendWelcomeEmail(email, username, name, "LinkBridger");
+      sendNewUserOnboardingEmail(email, username, name, "LinkBridger");
       return res
         .status(201)
         .json({ success: true, message: "user registerd !", user });
