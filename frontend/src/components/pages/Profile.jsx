@@ -1,6 +1,5 @@
 // src/ProfilePage.js
 
-import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import api from "../../utils/api";

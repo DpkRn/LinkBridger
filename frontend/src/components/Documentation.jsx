@@ -3,7 +3,7 @@ import { useInView } from "framer-motion";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Floating Particle Component
-const FloatingParticle = ({ delay = 0, duration = 20, size = 4, color = "purple" }) => {
+const FloatingParticle = ({ delay = 0, duration = 20, size = 4, color = "purple", initialX = 0, initialY = 0, xOffset = 0 }) => {
   const colors = {
     purple: "bg-purple-400/30",
     pink: "bg-pink-400/30",
@@ -17,17 +17,17 @@ const FloatingParticle = ({ delay = 0, duration = 20, size = 4, color = "purple"
       style={{
         width: `${size}px`,
         height: `${size}px`,
-        left: `${Math.random() * 100}%`,
-        top: `${Math.random() * 100}%`,
+        left: `${initialX}%`,
+        top: `${initialY}%`,
       }}
       animate={{
         y: [0, -30, 0],
-        x: [0, Math.random() * 20 - 10, 0],
-        opacity: [0.3, 0.8, 0.3],
-        scale: [1, 1.5, 1],
+        x: [0, xOffset, 0],
+        opacity: [0.3, 0.6, 0.3],
+        scale: [1, 1.3, 1],
       }}
       transition={{
-        duration: duration + Math.random() * 10,
+        duration: duration,
         repeat: Infinity,
         delay: delay,
         ease: "easeInOut",
@@ -65,7 +65,7 @@ const MagneticCard = ({ children, className = "", intensity = 0.3 }) => {
         rotateX: rotate.x,
         rotateY: rotate.y,
       }}
-      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      transition={{ type: "spring", stiffness: 150, damping: 30, mass: 0.5 }}
       style={{ transformStyle: "preserve-3d", perspective: "1000px" }}
     >
       {children}
@@ -1147,38 +1147,47 @@ const Documentation = () => {
             variants={itemVariants}
             className="mb-6 md:mb-8"
           >
-            <MagneticCard intensity={0.1}>
+            <MagneticCard intensity={0.08}>
               <motion.div
                 className="relative bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-6 md:p-10 lg:p-12 overflow-hidden group"
-                whileHover={{ scale: 1.02, z: 20 }}
-                transition={{ duration: 0.3 }}
+                whileHover={{ scale: 1.01 }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
                 style={{ transformStyle: "preserve-3d" }}
               >
                 {/* Animated Border Glow */}
                 <motion.div
-                  className="absolute inset-0 rounded-3xl"
+                  className="absolute inset-0 rounded-3xl pointer-events-none"
                   style={{
-                    background: "linear-gradient(45deg, transparent, rgba(147, 51, 234, 0.3), transparent)",
+                    background: "linear-gradient(45deg, transparent, rgba(147, 51, 234, 0.2), transparent)",
                     backgroundSize: "200% 200%",
                   }}
                   animate={{
                     backgroundPosition: ["0% 0%", "200% 200%", "0% 0%"],
                   }}
                   transition={{
-                    duration: 3,
+                    duration: 4,
                     repeat: Infinity,
                     ease: "linear",
                   }}
                 />
                 
-                {/* Floating Particles */}
-                {[...Array(5)].map((_, i) => (
+                {/* Floating Particles - Fixed positions for consistency */}
+                {[
+                  { x: 10, y: 15, offset: 8, delay: 0, duration: 5, size: 3, color: "purple" },
+                  { x: 85, y: 20, offset: -6, delay: 0.8, duration: 6, size: 2.5, color: "pink" },
+                  { x: 20, y: 80, offset: 5, delay: 1.2, duration: 5.5, size: 2, color: "blue" },
+                  { x: 75, y: 75, offset: -8, delay: 0.4, duration: 6.5, size: 2.5, color: "purple" },
+                  { x: 50, y: 10, offset: 4, delay: 1.6, duration: 5.8, size: 3, color: "pink" },
+                ].map((particle, i) => (
                   <FloatingParticle
                     key={i}
-                    delay={i * 0.5}
-                    duration={4 + Math.random() * 2}
-                    size={2 + Math.random() * 3}
-                    color={["purple", "pink", "blue"][i % 3]}
+                    delay={particle.delay}
+                    duration={particle.duration}
+                    size={particle.size}
+                    color={particle.color}
+                    initialX={particle.x}
+                    initialY={particle.y}
+                    xOffset={particle.offset}
                   />
                 ))}
                 
@@ -1221,7 +1230,7 @@ const Documentation = () => {
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ delay: 0.2 }}
+                  transition={{ delay: 0.2, duration: 0.6, ease: "easeOut" }}
                   className="text-base md:text-lg lg:text-xl leading-8 text-gray-700 dark:text-gray-300 relative z-10"
                   style={{ transform: "translateZ(10px)" }}
                 >
@@ -1230,12 +1239,12 @@ const Documentation = () => {
                     animate={{
                       textShadow: [
                         "0 0 0px rgba(147, 51, 234, 0)",
-                        "0 0 10px rgba(147, 51, 234, 0.5)",
+                        "0 0 8px rgba(147, 51, 234, 0.4)",
                         "0 0 0px rgba(147, 51, 234, 0)",
                       ],
                     }}
                     transition={{
-                      duration: 2,
+                      duration: 3,
                       repeat: Infinity,
                       ease: "easeInOut",
                     }}
@@ -1252,7 +1261,7 @@ const Documentation = () => {
                       ],
                     }}
                     transition={{
-                      duration: 2,
+                      duration: 3,
                       repeat: Infinity,
                       ease: "easeInOut",
                     }}

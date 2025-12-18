@@ -20,9 +20,6 @@ const extractInfo=(req,res,next)=>{
     };
     req.details=details
 
-    // Send email notification
-    // console.log(details)
-
     return next()
 }
 module.exports={

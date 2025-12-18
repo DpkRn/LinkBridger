@@ -1,14 +1,6 @@
-import React, { useEffect, useState } from 'react'
-import toast from 'react-hot-toast'
-import { useDispatch, useSelector } from 'react-redux'
-import api from '../utils/api'
-import { setLinks } from '../redux/userSlice'
-
-
-import Nav from './navbar/Nav'
+import React from 'react'
 import LinkPage from './pages/LinkPage'
 import Content from './content/Content'
-import Form from './pages/CreateBridge'
 import CreateBridge from './pages/CreateBridge'
 import Footer from './footer/Footer'
 

@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { replace, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import api from "../utils/api";
 import toast from "react-hot-toast";
 
@@ -23,6 +23,7 @@ const VerificationPage = () => {
       );
       if (res.status === 201 && res.data.success) {
         toast.success(res.data.message);
+        
         navigate("/verified", { state: "verified" }, { replace: true });
       }
     } catch (err) {

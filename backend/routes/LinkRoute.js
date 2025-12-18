@@ -11,6 +11,4 @@ router.post('/deletelink',verifyToken,deleteLink)
 router.post('/editlink',verifyToken,editLink)
 router.post('/notifications',verifyToken,setNotificationToZero)
 
-// router.get('/verify',verifyToken,getUserInfo)
-
 module.exports=router

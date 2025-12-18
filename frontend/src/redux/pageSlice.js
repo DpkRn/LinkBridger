@@ -22,10 +22,6 @@ const pageSlice=createSlice({
             state.darkMode = !state.darkMode;
             localStorage.setItem('darkMode', state.darkMode.toString());
         },
-        setDarkMode:(state,action)=>{
-            state.darkMode = action.payload;
-            localStorage.setItem('darkMode', state.darkMode.toString());
-        },
         setEditLinkData:(state,action)=>{
             state.editLinkData = action.payload; // { id, source, destination } or null
         },
@@ -35,5 +31,5 @@ const pageSlice=createSlice({
     }
 })
 
-export const {setSidebarMenu, toggleDarkMode, setDarkMode, setEditLinkData, clearEditLinkData}=pageSlice.actions;
+export const {setSidebarMenu, toggleDarkMode, setEditLinkData, clearEditLinkData}=pageSlice.actions;
 export default pageSlice.reducer;

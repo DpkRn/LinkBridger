@@ -34,7 +34,6 @@ const db_url=process.env.DATABASE_URL;
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-// console.log('Views directory:', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 const allowedOrigins = [
@@ -56,7 +55,6 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
 }));
 
-// Optional: explicitly handle OPTIONS for all routes
 app.options('*', cors());
 
 app.use(cookieParser());
