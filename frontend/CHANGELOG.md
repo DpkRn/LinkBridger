@@ -7,7 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Documentation Page Glowing Background Animations**: Added multiple glowing background animation effects:
+  - **Pulsing Glow Rings**: 4 animated rings that pulse with different colors (purple, pink, blue, cyan) with blur and box-shadow effects
+  - **Animated Glowing Waves**: Horizontal and vertical gradient waves that sweep across the background
+  - **Radial Glow Effects**: 6 radial gradient orbs that pulse and move in circular patterns
+  - **Glowing Grid Lines**: Animated grid pattern with glowing purple and pink lines that pulse in opacity
+  - **Animated Glow Spots**: 8 glowing spots that scale, fade, and move in wave patterns across the background
+  - All effects use smooth animations with varying durations and delays for a dynamic, layered glow effect
+
 ### Fixed
+- **Documentation Page Example Links Section Card Animations**: Enhanced card animations and particle positioning:
+  - Moved floating particles (dots) from card's top-left corner to be centered with the icon
+  - Particles now orbit around the icon center when card is hovered
+  - Added continuous glowing animation on each card using animated boxShadow that pulses
+  - Particles are now positioned relative to the icon container, ensuring they stay centered with the icon
+
 - **Documentation Page Example Links Section Card Layout**: Improved card layout and text display:
   - Centered icon horizontally with animated glow effect that moves with the icon
   - Restored continuous icon animation (rotate, scale, and float) that was previously working

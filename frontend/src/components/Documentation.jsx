@@ -136,6 +136,23 @@ const AnimatedLinkCard = ({ link, idx }) => {
           }}
         />
 
+        {/* Card Glow Animation */}
+        <motion.div
+          className="absolute inset-0 rounded-2xl"
+          animate={{
+            boxShadow: [
+              "0 0 20px rgba(255, 255, 255, 0.1)",
+              "0 0 40px rgba(255, 255, 255, 0.3)",
+              "0 0 20px rgba(255, 255, 255, 0.1)",
+            ],
+          }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+
         {/* Shimmer Effect */}
         <motion.div
           className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
@@ -149,33 +166,6 @@ const AnimatedLinkCard = ({ link, idx }) => {
           }}
           style={{ transform: "skewX(-20deg)" }}
         />
-
-        {/* Floating Particles */}
-        <AnimatePresence>
-          {isHovered && (
-            <>
-              {[...Array(6)].map((_, i) => (
-                <motion.div
-                  key={i}
-                  className="absolute w-2 h-2 bg-white rounded-full"
-                  initial={{ opacity: 0, scale: 0, x: "50%", y: "50%" }}
-                  animate={{
-                    opacity: [0, 1, 0],
-                    scale: [0, 1, 0],
-                    x: `calc(50% + ${Math.cos((i / 6) * Math.PI * 2) * 60}px)`,
-                    y: `calc(50% + ${Math.sin((i / 6) * Math.PI * 2) * 60}px)`,
-                  }}
-                  exit={{ opacity: 0 }}
-                  transition={{
-                    duration: 1,
-                    delay: i * 0.1,
-                    repeat: Infinity,
-                  }}
-                />
-              ))}
-            </>
-          )}
-        </AnimatePresence>
 
         {/* Content */}
         <div className="relative z-10" style={{ transform: "translateZ(20px)" }}>
@@ -210,6 +200,33 @@ const AnimatedLinkCard = ({ link, idx }) => {
               >
                 <div className="w-16 h-16 bg-white/20 rounded-full blur-xl" />
               </motion.div>
+              
+              {/* Floating Particles - Centered with Icon */}
+              <AnimatePresence>
+                {isHovered && (
+                  <>
+                    {[...Array(6)].map((_, i) => (
+                      <motion.div
+                        key={i}
+                        className="absolute w-2 h-2 bg-white rounded-full pointer-events-none"
+                        initial={{ opacity: 0, scale: 0 }}
+                        animate={{
+                          opacity: [0, 1, 0],
+                          scale: [0, 1, 0],
+                          x: `${Math.cos((i / 6) * Math.PI * 2) * 60}px`,
+                          y: `${Math.sin((i / 6) * Math.PI * 2) * 60}px`,
+                        }}
+                        exit={{ opacity: 0 }}
+                        transition={{
+                          duration: 1,
+                          delay: i * 0.1,
+                          repeat: Infinity,
+                        }}
+                      />
+                    ))}
+                  </>
+                )}
+              </AnimatePresence>
               
               {/* Icon */}
               <span className="relative z-10">{link.icon}</span>
@@ -459,6 +476,7 @@ const Documentation = () => {
   const dispatch = useDispatch();
   const sidebarMenu = useSelector((store) => store.page.sidebarMenu);
   const darkMode = useSelector((store) => store.page.darkMode);
+  const isAuthenticated=useSelector((store) => store.admin.isAuthenticated);
   const location = useLocation();
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [openFAQ, setOpenFAQ] = useState([false, false, false]);
@@ -512,7 +530,7 @@ const Documentation = () => {
     },
   ];
 
-  const plateforms = [
+  const platforms = [
     "linkedin",
     "github",
     "leetcode",
@@ -737,9 +755,161 @@ const Documentation = () => {
             }}
           />
         ))}
+
+        {/* Pulsing Glow Rings */}
+        {[...Array(4)].map((_, i) => (
+          <motion.div
+            key={`glow-ring-${i}`}
+            className="absolute inset-0 flex items-center justify-center pointer-events-none"
+            animate={{
+              scale: [1, 1.5 + i * 0.3, 1],
+              opacity: [0.1, 0.3, 0.1],
+            }}
+            transition={{
+              duration: 4 + i * 0.5,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: i * 0.5,
+            }}
+          >
+            <div
+              className={`w-96 h-96 rounded-full border-2 ${
+                i % 4 === 0 ? "border-purple-500/30" :
+                i % 4 === 1 ? "border-pink-500/30" :
+                i % 4 === 2 ? "border-blue-500/30" :
+                "border-cyan-500/30"
+              } blur-xl`}
+              style={{
+                boxShadow: `0 0 ${40 + i * 20}px ${
+                  i % 4 === 0 ? "rgba(147, 51, 234, 0.3)" :
+                  i % 4 === 1 ? "rgba(236, 72, 153, 0.3)" :
+                  i % 4 === 2 ? "rgba(59, 130, 246, 0.3)" :
+                  "rgba(6, 182, 212, 0.3)"
+                }`,
+              }}
+            />
+          </motion.div>
+        ))}
+
+        {/* Animated Glowing Waves */}
+        <motion.div
+          className="absolute inset-0 opacity-20"
+          style={{
+            background: "linear-gradient(90deg, transparent, rgba(147, 51, 234, 0.2), transparent)",
+            backgroundSize: "200% 100%",
+          }}
+          animate={{
+            backgroundPosition: ["0% 0%", "200% 0%", "0% 0%"],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "linear",
+          }}
+        />
+        <motion.div
+          className="absolute inset-0 opacity-15"
+          style={{
+            background: "linear-gradient(180deg, transparent, rgba(236, 72, 153, 0.2), transparent)",
+            backgroundSize: "100% 200%",
+          }}
+          animate={{
+            backgroundPosition: ["0% 0%", "0% 200%", "0% 0%"],
+          }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+            ease: "linear",
+            delay: 1,
+          }}
+        />
+
+        {/* Radial Glow Effects */}
+        {[...Array(6)].map((_, i) => (
+          <motion.div
+            key={`radial-glow-${i}`}
+            className="absolute rounded-full blur-3xl"
+            style={{
+              width: `${200 + i * 100}px`,
+              height: `${200 + i * 100}px`,
+              left: `${(i * 15) % 80}%`,
+              top: `${(i * 20) % 80}%`,
+              background: `radial-gradient(circle, ${
+                i % 3 === 0 ? "rgba(147, 51, 234, 0.2)" :
+                i % 3 === 1 ? "rgba(236, 72, 153, 0.2)" :
+                "rgba(59, 130, 246, 0.2)"
+              }, transparent)`,
+            }}
+            animate={{
+              scale: [1, 1.3, 1],
+              opacity: [0.1, 0.4, 0.1],
+              x: [0, Math.sin(i) * 50, 0],
+              y: [0, Math.cos(i) * 50, 0],
+            }}
+            transition={{
+              duration: 6 + i * 0.5,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: i * 0.3,
+            }}
+          />
+        ))}
+
+        {/* Glowing Grid Lines */}
+        <motion.div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `
+              linear-gradient(to right, rgba(147, 51, 234, 0.1) 1px, transparent 1px),
+              linear-gradient(to bottom, rgba(236, 72, 153, 0.1) 1px, transparent 1px)
+            `,
+            backgroundSize: "50px 50px",
+          }}
+          animate={{
+            opacity: [0.2, 0.5, 0.2],
+          }}
+          transition={{
+            duration: 4,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+
+        {/* Animated Glow Spots */}
+        {[...Array(8)].map((_, i) => (
+          <motion.div
+            key={`glow-spot-${i}`}
+            className="absolute rounded-full blur-2xl"
+            style={{
+              width: "150px",
+              height: "150px",
+              left: `${(i * 12.5) % 100}%`,
+              top: `${(i * 15) % 100}%`,
+              background: `radial-gradient(circle, ${
+                i % 4 === 0 ? "rgba(147, 51, 234, 0.3)" :
+                i % 4 === 1 ? "rgba(236, 72, 153, 0.3)" :
+                i % 4 === 2 ? "rgba(59, 130, 246, 0.3)" :
+                "rgba(6, 182, 212, 0.3)"
+              }, transparent)`,
+            }}
+            animate={{
+              scale: [0.8, 1.5, 0.8],
+              opacity: [0.2, 0.6, 0.2],
+              x: [0, Math.sin(i * 0.5) * 30, 0],
+              y: [0, Math.cos(i * 0.5) * 30, 0],
+            }}
+            transition={{
+              duration: 5 + Math.random() * 2,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: i * 0.2,
+            }}
+          />
+        ))}
       </div>
 
       {/* Enhanced Navigation Header with Glow Effects */}
+      {!isAuthenticated && (
       <motion.div
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -945,6 +1115,7 @@ const Documentation = () => {
           </motion.button>
         </div>
       </motion.div>
+      )}
 
       <div className="relative z-10">
         <motion.div
@@ -1246,7 +1417,7 @@ const Documentation = () => {
                       className="text-blue-400 dark:text-blue-300 underline font-mono hover:text-blue-300 transition-colors"
                     >
                       https://clickly.cv/dpkrn/
-                      <FlipWords className="text-blue-400 dark:text-blue-300" words={plateforms} />
+                      <FlipWords className="text-blue-400 dark:text-blue-300" words={platforms} />
                     </a>
                   </motion.div>
                 </div>
