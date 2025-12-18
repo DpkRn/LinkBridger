@@ -1491,72 +1491,203 @@ const Documentation = () => {
 
           {/* Special Link Section */}
           <motion.section variants={itemVariants} className="mb-12 md:mb-16">
-            <motion.div
-              className="bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-6 md:p-10 overflow-hidden relative"
-              whileHover={{ scale: 1.01 }}
-            >
-              <BackgroundBeamsWithCollision>
-                <div className="space-y-6">
+            <MagneticCard intensity={0.1}>
+              <motion.div
+                className="relative bg-black dark:bg-black backdrop-blur-xl rounded-2xl md:rounded-3xl shadow-2xl border border-gray-900 dark:border-gray-800 p-6 md:p-8 lg:p-10 overflow-hidden group"
+                whileHover={{ scale: 1.02, y: -5 }}
+                transition={{ duration: 0.3 }}
+              >
+                {/* Matrix Background Effect */}
+                <div className="absolute inset-0 opacity-30 dark:opacity-40 pointer-events-none">
+                  {[...Array(80)].map((_, i) => (
+                    <motion.div
+                      key={i}
+                      className="absolute text-green-500 dark:text-green-400 font-mono text-xs md:text-sm font-bold"
+                      style={{
+                        left: `${(i * 5.7) % 100}%`,
+                        top: `${(i * 8.3) % 100}%`,
+                      }}
+                      animate={{
+                        y: [0, -150, 0],
+                        opacity: [0, 1, 0.8, 0],
+                      }}
+                      transition={{
+                        duration: 4 + Math.random() * 3,
+                        repeat: Infinity,
+                        delay: Math.random() * 2,
+                        ease: "linear",
+                      }}
+                    >
+                      {String.fromCharCode(0x30A0 + Math.floor(Math.random() * 96))}
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* Additional Matrix Rain Effect */}
+                <div className="absolute inset-0 opacity-20 dark:opacity-30 pointer-events-none">
+                  {[...Array(30)].map((_, i) => (
+                    <motion.div
+                      key={`rain-${i}`}
+                      className="absolute w-px h-20 bg-gradient-to-b from-green-400 to-transparent"
+                      style={{
+                        left: `${(i * 7.3) % 100}%`,
+                        top: `-20%`,
+                      }}
+                      animate={{
+                        y: [0, window.innerHeight + 100],
+                        opacity: [0, 0.8, 0],
+                      }}
+                      transition={{
+                        duration: 3 + Math.random() * 2,
+                        repeat: Infinity,
+                        delay: Math.random() * 3,
+                        ease: "linear",
+                      }}
+                    />
+                  ))}
+                </div>
+
+                {/* Subtle Glowing Background Effects - More Subtle */}
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-br from-purple-950/10 via-pink-950/10 to-blue-950/10 dark:from-purple-950/15 dark:via-pink-950/15 dark:to-blue-950/15"
+                  animate={{
+                    opacity: [0.2, 0.4, 0.2],
+                  }}
+                  transition={{
+                    duration: 5,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
+                />
+                
+                {/* Subtle Corner Glow Effects */}
+                <motion.div
+                  className="absolute top-0 left-0 w-48 h-48 rounded-full pointer-events-none blur-3xl"
+                  animate={{
+                    opacity: [0.1, 0.3, 0.1],
+                    scale: [1, 1.15, 1],
+                  }}
+                  transition={{
+                    duration: 4,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
+                  style={{
+                    background: "radial-gradient(circle, rgba(147, 51, 234, 0.3), transparent 70%)",
+                    transform: "translate(-50%, -50%)",
+                  }}
+                />
+                <motion.div
+                  className="absolute bottom-0 right-0 w-48 h-48 rounded-full pointer-events-none blur-3xl"
+                  animate={{
+                    opacity: [0.1, 0.3, 0.1],
+                    scale: [1, 1.15, 1],
+                  }}
+                  transition={{
+                    duration: 4,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    delay: 2,
+                  }}
+                  style={{
+                    background: "radial-gradient(circle, rgba(236, 72, 153, 0.3), transparent 70%)",
+                    transform: "translate(50%, 50%)",
+                  }}
+                />
+
+                {/* Animated Border Glow - More Subtle */}
+                <motion.div
+                  className="absolute -inset-[2px] rounded-2xl md:rounded-3xl pointer-events-none z-0"
+                  animate={{
+                    opacity: [0.2, 0.5, 0.2],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
+                  style={{
+                    background: "linear-gradient(135deg, rgba(147, 51, 234, 0.4), rgba(236, 72, 153, 0.3), rgba(59, 130, 246, 0.3), rgba(147, 51, 234, 0.4))",
+                    filter: "blur(6px)",
+                  }}
+                />
+
+                {/* Hover Glow Effect */}
+                <motion.div
+                  className="absolute inset-0 rounded-2xl md:rounded-3xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  style={{
+                    background: "radial-gradient(circle at center, rgba(147, 51, 234, 0.15), rgba(236, 72, 153, 0.1), transparent 70%)",
+                    filter: "blur(20px)",
+                  }}
+                />
+
+                {/* Content */}
+                <div className="relative z-10 space-y-4 md:space-y-6">
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    className="relative mx-auto w-max"
+                    transition={{ duration: 0.6 }}
+                    className="relative mx-auto w-full text-center"
                   >
-                    <div className="relative bg-clip-text text-transparent bg-no-repeat bg-gradient-to-r from-purple-400 via-violet-200 to-pink-500 dark:from-purple-300 dark:via-violet-100 dark:to-pink-400 py-4">
-                      <span className="uppercase text-sm md:text-xl font-bold">
+                    <div className="relative bg-clip-text text-transparent bg-no-repeat bg-gradient-to-r from-purple-400 via-violet-200 to-pink-500 dark:from-purple-300 dark:via-violet-100 dark:to-pink-400 py-2 md:py-4">
+                      <span className="uppercase text-sm md:text-base lg:text-xl font-bold block">
                         It will provide a special link for all your platforms.
                       </span>
                     </div>
                   </motion.div>
+                  
                   <motion.p
                     initial={{ opacity: 0, scale: 0.9 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
-                    className="text-lg md:text-2xl lg:text-3xl text-center"
+                    transition={{ duration: 0.6, delay: 0.1 }}
+                    className="text-base md:text-lg lg:text-2xl xl:text-3xl text-center"
                   >
                     <a
                       href="https://clickly.cv/dpkrn/"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-400 dark:text-blue-300 underline font-mono hover:text-blue-300 transition-colors"
+                      className="text-blue-400 dark:text-blue-300 underline font-mono hover:text-blue-300 dark:hover:text-blue-200 transition-colors break-all md:break-normal"
                     >
                       https://clickly.cv/dpkrn
                     </a>
                   </motion.p>
+                  
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ delay: 0.2 }}
-                    className="relative mx-auto w-max"
+                    transition={{ delay: 0.2, duration: 0.6 }}
+                    className="relative mx-auto w-full text-center"
                   >
-                    <div className="relative bg-clip-text text-transparent bg-no-repeat bg-gradient-to-r from-purple-400 via-violet-200 to-pink-500 dark:from-purple-300 dark:via-violet-100 dark:to-pink-400 py-4">
-                      <span className="uppercase text-sm md:text-xl font-bold">
+                    <div className="relative bg-clip-text text-transparent bg-no-repeat bg-gradient-to-r from-purple-400 via-violet-200 to-pink-500 dark:from-purple-300 dark:via-violet-100 dark:to-pink-400 py-2 md:py-4">
+                      <span className="uppercase text-sm md:text-base lg:text-xl font-bold block">
                         Change only the platform name to redirect to all profiles
                       </span>
                     </div>
                   </motion.div>
+                  
                   <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
-                    transition={{ delay: 0.3 }}
-                    className="text-lg md:text-2xl lg:text-3xl text-center"
+                    transition={{ delay: 0.3, duration: 0.6 }}
+                    className="text-base md:text-lg lg:text-2xl xl:text-3xl text-center"
                   >
                     <a
                       href="https://clickly.cv/dpkrn/"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-400 dark:text-blue-300 underline font-mono hover:text-blue-300 transition-colors"
+                      className="text-blue-400 dark:text-blue-300 underline font-mono hover:text-blue-300 dark:hover:text-blue-200 transition-colors break-all md:break-normal"
                     >
                       https://clickly.cv/dpkrn/
                       <FlipWords className="text-blue-400 dark:text-blue-300" words={platforms} />
                     </a>
                   </motion.div>
                 </div>
-              </BackgroundBeamsWithCollision>
-            </motion.div>
+              </motion.div>
+            </MagneticCard>
           </motion.section>
 
           {/* Enhanced Get Started CTA with 3D Effects */}
