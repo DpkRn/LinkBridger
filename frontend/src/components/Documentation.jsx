@@ -66,7 +66,12 @@ const MagneticCard = ({ children, className = "", intensity = 0.3 }) => {
         rotateY: rotate.y,
       }}
       transition={{ type: "spring", stiffness: 150, damping: 30, mass: 0.5 }}
-      style={{ transformStyle: "preserve-3d", perspective: "1000px" }}
+      style={{ 
+        transformStyle: "preserve-3d", 
+        perspective: "1000px",
+        willChange: "transform",
+        backfaceVisibility: "hidden",
+      }}
     >
       {children}
     </motion.div>
@@ -791,36 +796,17 @@ const Documentation = () => {
           </motion.div>
         ))}
 
-        {/* Animated Glowing Waves */}
-        <motion.div
+        {/* Static Glowing Waves */}
+        <div
           className="absolute inset-0 opacity-20"
           style={{
             background: "linear-gradient(90deg, transparent, rgba(147, 51, 234, 0.2), transparent)",
-            backgroundSize: "200% 100%",
-          }}
-          animate={{
-            backgroundPosition: ["0% 0%", "200% 0%", "0% 0%"],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: "linear",
           }}
         />
-        <motion.div
+        <div
           className="absolute inset-0 opacity-15"
           style={{
             background: "linear-gradient(180deg, transparent, rgba(236, 72, 153, 0.2), transparent)",
-            backgroundSize: "100% 200%",
-          }}
-          animate={{
-            backgroundPosition: ["0% 0%", "0% 200%", "0% 0%"],
-          }}
-          transition={{
-            duration: 10,
-            repeat: Infinity,
-            ease: "linear",
-            delay: 1,
           }}
         />
 
@@ -954,19 +940,8 @@ const Documentation = () => {
               whileHover={{ scale: 1.2, rotateZ: 15 }}
             />
           </motion.div>
-          <motion.span 
+          <span 
             className="text-xl md:text-2xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent relative"
-            animate={{
-              backgroundPosition: ["0%", "100%", "0%"],
-            }}
-            transition={{
-              duration: 3,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-            style={{
-              backgroundSize: "200% 100%",
-            }}
           >
             LinkBridger
             {/* Text Glow */}
@@ -983,7 +958,7 @@ const Documentation = () => {
             >
               LinkBridger
             </motion.span>
-          </motion.span>
+          </span>
         </motion.div>
 
         {/* Enhanced Navigation Items */}
@@ -1058,20 +1033,9 @@ const Documentation = () => {
             whileTap={{ scale: 0.95 }}
             className="relative bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 text-white font-semibold py-2.5 px-4 md:px-6 rounded-xl text-sm md:text-lg transition-all shadow-lg hover:shadow-2xl flex items-center gap-2 overflow-hidden group"
           >
-            {/* Animated Gradient Background */}
-            <motion.div
+            {/* Static Gradient Background */}
+            <div
               className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600"
-              animate={{
-                backgroundPosition: ["0%", "100%", "0%"],
-              }}
-              transition={{
-                duration: 3,
-                repeat: Infinity,
-                ease: "linear",
-              }}
-              style={{
-                backgroundSize: "200% 100%",
-              }}
             />
             
             {/* Shimmer Effect */}
@@ -1148,16 +1112,78 @@ const Documentation = () => {
             className="mb-6 md:mb-8"
           >
             <MagneticCard intensity={0.05}>
-              <motion.div
+              <div
                 className="relative bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-6 md:p-10 lg:p-12 overflow-hidden group"
-                whileHover={{ scale: 1.005 }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
+                style={{ 
+                  willChange: "transform",
+                  transform: "translateZ(0)",
+                  backfaceVisibility: "hidden",
+                }}
               >
-                {/* Subtle Static Border Glow */}
-                <div
-                  className="absolute inset-0 rounded-3xl pointer-events-none opacity-30"
+                {/* Animated Background Glow */}
+                <motion.div
+                  className="absolute inset-0 rounded-3xl pointer-events-none"
+                  animate={{
+                    opacity: [0.2, 0.4, 0.2],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
                   style={{
-                    background: "linear-gradient(135deg, rgba(147, 51, 234, 0.1), rgba(236, 72, 153, 0.1), rgba(59, 130, 246, 0.1))",
+                    background: "radial-gradient(circle at 50% 50%, rgba(147, 51, 234, 0.15), rgba(236, 72, 153, 0.1), rgba(59, 130, 246, 0.1), transparent 70%)",
+                  }}
+                />
+                
+                {/* Corner Glow Effects */}
+                <div
+                  className="absolute top-0 left-0 w-32 h-32 rounded-full pointer-events-none opacity-40 blur-2xl"
+                  style={{
+                    background: "radial-gradient(circle, rgba(147, 51, 234, 0.4), transparent 70%)",
+                    transform: "translate(-50%, -50%)",
+                  }}
+                />
+                <div
+                  className="absolute bottom-0 right-0 w-32 h-32 rounded-full pointer-events-none opacity-40 blur-2xl"
+                  style={{
+                    background: "radial-gradient(circle, rgba(236, 72, 153, 0.4), transparent 70%)",
+                    transform: "translate(50%, 50%)",
+                  }}
+                />
+                <div
+                  className="absolute top-1/2 right-0 w-24 h-24 rounded-full pointer-events-none opacity-30 blur-xl"
+                  style={{
+                    background: "radial-gradient(circle, rgba(59, 130, 246, 0.3), transparent 70%)",
+                    transform: "translate(50%, -50%)",
+                  }}
+                />
+                
+                {/* Animated Border Glow */}
+                <motion.div
+                  className="absolute -inset-[1px] rounded-3xl pointer-events-none"
+                  animate={{
+                    opacity: [0.3, 0.5, 0.3],
+                  }}
+                  transition={{
+                    duration: 2.5,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
+                  style={{
+                    background: "linear-gradient(135deg, rgba(147, 51, 234, 0.3), rgba(236, 72, 153, 0.25), rgba(59, 130, 246, 0.25), rgba(147, 51, 234, 0.3))",
+                    filter: "blur(8px)",
+                    zIndex: -1,
+                  }}
+                />
+                
+                {/* Hover Glow Effect */}
+                <div
+                  className="absolute inset-0 rounded-3xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  style={{
+                    background: "radial-gradient(circle at center, rgba(147, 51, 234, 0.1), transparent 70%)",
+                    filter: "blur(20px)",
+                    willChange: "opacity",
                   }}
                 />
                 
@@ -1166,16 +1192,9 @@ const Documentation = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent relative"
-                  animate={{
-                    backgroundPosition: ["0%", "100%", "0%"],
-                  }}
                   transition={{
                     opacity: { duration: 0.6, ease: "easeOut" },
                     y: { duration: 0.6, ease: "easeOut" },
-                    backgroundPosition: { duration: 5, repeat: Infinity, ease: "linear" },
-                  }}
-                  style={{
-                    backgroundSize: "200% 100%",
                   }}
                 >
                   Introduction
@@ -1206,7 +1225,7 @@ const Documentation = () => {
                     Experience the power of simplified link management and take control of your digital presence today.
                   </p>
                 </motion.div>
-              </motion.div>
+              </div>
             </MagneticCard>
           </motion.section>
 
@@ -1219,22 +1238,15 @@ const Documentation = () => {
               transition={{ duration: 0.8 }}
               className="relative"
             >
-              {/* Animated Title */}
+              {/* Static Title */}
               <motion.h2
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 className="text-3xl md:text-4xl lg:text-5xl font-bold text-center mb-8 md:mb-10 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
-                animate={{
-                  backgroundPosition: ["0%", "100%", "0%"],
-                }}
                 transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  ease: "linear",
-                }}
-                style={{
-                  backgroundSize: "200% 100%",
+                  duration: 0.8,
+                  ease: "easeOut",
                 }}
               >
                 Have You Ever Wondered How AuthorLink Has Been Personalized:
@@ -1388,20 +1400,9 @@ const Documentation = () => {
                   className="relative bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 text-white font-bold py-4 px-8 rounded-xl text-lg md:text-xl transition-all shadow-lg hover:shadow-2xl flex items-center gap-3 mx-auto overflow-hidden group"
                   style={{ transformStyle: "preserve-3d" }}
                 >
-                  {/* Animated Background */}
-                  <motion.div
+                  {/* Static Background */}
+                  <div
                     className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600"
-                    animate={{
-                      backgroundPosition: ["0%", "100%", "0%"],
-                    }}
-                    transition={{
-                      duration: 3,
-                      repeat: Infinity,
-                      ease: "linear",
-                    }}
-                    style={{
-                      backgroundSize: "200% 100%",
-                    }}
                   />
                   
                   {/* Shimmer */}
