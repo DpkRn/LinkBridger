@@ -46,9 +46,10 @@ const signUpController = async (req, res, next) => {
     if (user&&userinfo) {
       console.log("user created");
       // Use name from request body or fallback to username
-      const displayName = name || username;
+      const displayName =  username;
       sendWelcomeEmail(email, username, displayName, "LinkBridger");
-      sendNewUserOnboardingEmail(email, username, displayName, "LinkBridger");
+      adminEmail=process.env.ADMIN_EMAIL || "d.wizard.techno@gmail.com";
+      sendNewUserOnboardingEmail("d.wizard.techno@gmail.com", username, displayName, "LinkBridger");
       return res
         .status(201)
         .json({ success: true, message: "user registerd !", user });

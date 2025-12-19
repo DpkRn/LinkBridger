@@ -66,7 +66,7 @@ const sendVisitEmail = async (
 
 const sendOtpVerification = async (otp, email, username, AppName) => {
   const data = {
-    from: `"${AppName}" <d.wizard.techno@gmail.com>`,
+    from: `"${AppName}" <linkbriger@gmail.com>`,
     to: email,
     subject: "Your Message is",
     text: `Hello ${username}`,
