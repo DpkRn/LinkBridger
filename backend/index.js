@@ -41,7 +41,8 @@ const allowedOrigins = [
   'https://clickly.cv',
   'https://www.clickly.cv',
   'https://linkbriger.vercel.app', 
-  'http://localhost:5173'
+  'http://localhost:5173',
+  'http://localhost:8080'
 ];
 
 app.use(cors({
