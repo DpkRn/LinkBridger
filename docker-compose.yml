@@ -16,10 +16,7 @@ services:
     build: ./frontend
     container_name: frontend
     expose:
-      - "5173"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
+      - "80"
     environment:
       - VITE_API_URL=https://clickly.cv
     depends_on:
