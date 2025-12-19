@@ -7,6 +7,107 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added - 2024-12-XX
+- **Profile Page Redesign**: Complete redesign of Profile page with modern UI
+  - Added animated background with gradient orbs and grid pattern
+  - Implemented glassmorphism design with backdrop blur effects
+  - Enhanced profile picture upload with hover effects and loading states
+  - Added form inputs with icons (User, Location, Heart, Edit)
+  - Improved layout with two-column grid (profile picture on left, form on right)
+  - Added smooth animations using Framer Motion
+  - Added stat cards (Total Links, Total Clicks, Hub Page Status)
+  - Added public profile information section
+  - Full light and dark mode support
+
+- **Settings Page**: New comprehensive settings page for privacy and permissions
+  - Profile visibility controls (public, search, profile view, email, location, bio, passion, image)
+  - Link display settings (show link count, show click stats)
+  - Search & discovery settings (allow search, featured, search keywords)
+  - Privacy settings (show analytics, show last updated, require auth)
+  - Notification settings (email on click, email on profile view, weekly report)
+  - Modern UI with toggle switches and keyword management
+  - Full light and dark mode support
+
+- **ProfilePreview Component**: Public profile view for visitors
+  - Respects all visibility settings from user settings
+  - Shows only public links (filters out unlisted/private)
+  - Displays profile information based on permissions
+  - Stats display (link count, clicks) based on settings
+  - Responsive design with animations
+  - Full light and dark mode support
+  - Back button for navigation
+
+- **Search Functionality**: User search in navigation bar
+  - Real-time search with 300ms debounce
+  - Search dropdown with user results
+  - Click to visit profile from search results
+  - Responsive design: icon on mobile, full input on desktop
+  - Mobile search expands when icon is clicked
+  - Loading spinner during search
+  - Click-outside to close dropdown
+  - Full light and dark mode support
+
+- **Link Visibility Controls**: Per-link privacy settings
+  - Added visibility field to Link model (public, unlisted, private)
+  - Lock icon button on each link card
+  - Dropdown menu to change visibility (public/unlisted/private)
+  - Visual badge showing current visibility status
+  - Color-coded visibility indicators (green/yellow/red)
+  - Password protection for unlisted links
+  - Helper methods for visibility checks
+
+- **Database Models Enhancement**: Added timestamps and analytics support
+  - Added `createdAt`, `updatedAt`, `deletedAt` to all models
+  - Added `linkId` to Link model for foreign key relationships
+  - Created LinkAnalytics model with comprehensive click tracking
+  - Created UserSettings model for privacy and visibility controls
+  - Added full timestamp tracking (date, time, timezone) in analytics
+  - Comprehensive documentation for all models in `/backend/doc/`
+
+- **Model Documentation**: Complete documentation for all database models
+  - Created `/backend/doc/` folder with detailed model documentation
+  - One documentation file per model (linkModel.md, userModel.md, etc.)
+  - Each file includes field descriptions, enum values, usage examples
+  - Added README.md in doc folder as index
+  - Documentation explains why each field is required/optional
+
+### Changed - 2024-12-XX
+- **Link Model**: Added visibility and password fields
+  - Added `visibility` field with enum: 'public', 'unlisted', 'private'
+  - Added `password` field for unlisted link protection
+  - Changed default visibility from 'private' to 'public'
+  - Added helper methods: `isAccessible()`, `shouldShowInProfile()`, `shouldShowInSearch()`
+  - Added indexes for visibility queries
+
+- **UserSettings Model**: Refactored to remove redundant link visibility fields
+  - Removed `links.defaultVisibility`, `links.publicLinks`, `links.unlistedLinks`
+  - Removed methods: `isLinkPublic()`, `isLinkUnlisted()`, `getPublicLinks()`
+  - Kept only display settings: `showLinkCount`, `showClickStats`
+  - Link visibility now managed directly in Link model
+
+- **Profile Page**: Added Preview button
+  - Added "Preview" button to see how profile looks to visitors
+  - Button only shows when not in edit mode
+  - Navigates to public profile preview page
+
+- **Navigation**: Enhanced with search functionality
+  - Added search input with icon in navbar
+  - Responsive: shows icon on mobile, full input on desktop
+  - Mobile search expands when icon is clicked
+  - Connected Settings link in profile menu
+
+### Fixed - 2024-12-XX
+- **CreateBridge Copy Button**: Fixed form submission issue
+  - Added `type="button"` to copy button to prevent form submission
+  - Copy button no longer triggers platform validation warning
+  - Fixed issue where clicking copy showed "first fill the platform" warning
+
+- **Profile Picture Upload**: Fixed click handler issues
+  - Restructured profile picture container to fix hover and click handlers
+  - Removed blocking div that was preventing clicks
+  - Added proper event handlers on main container
+  - Added pointer-events-none to hover overlay
+
 ### Added - 2024-12-20
 - **Logo Implementation**: Added LinkBridger logo across all navigation bars
   - Imported logo from `assets/logo.png` in all navbar components

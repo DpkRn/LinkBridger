@@ -405,6 +405,7 @@ const CreateBridge = () => {
                       {`https://clickly.cv/${username}/${source}`}
                     </span>
                     <motion.button
+                      type="button"
                       whileHover={{ scale: 1.1, rotate: 5 }}
                       whileTap={{ scale: 0.9 }}
                       onClick={copyToClipboard}

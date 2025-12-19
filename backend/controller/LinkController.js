@@ -1,4 +1,5 @@
 const Link = require("../model/linkModel");
+const crypto = require('crypto');
 
 const addNewSource=async(req,res)=>{
     try{
@@ -28,8 +29,11 @@ const addNewSource=async(req,res)=>{
             return res.status(409).json({success:false,message:`${normalizedSource} already exists !`})
         }
         
+        // Generate unique linkId
+        const linkId = crypto.randomBytes(16).toString('hex');
+        
         // Store normalized source to ensure consistency
-        const doc=await Link.create({userId,username,source:normalizedSource,destination})
+        const doc=await Link.create({userId,username,source:normalizedSource,destination,linkId})
        
         if(doc)
         return res.status(201).json({success:true,message:`${normalizedSource} added !`,link:doc})
@@ -49,7 +53,7 @@ const getAllSource=async(req,res)=>{
              return res.status(400).json({success:false,message:"looks like you entered link directely ! please login first"})
          }
      
-         const sources=await Link.find({username,userId},{source:1,destination:1,clicked:1,notSeen:1});
+         const sources=await Link.find({username,userId,deletedAt:null},{source:1,destination:1,clicked:1,notSeen:1,visibility:1,linkId:1});
          if(!sources)
          return res.status(404).json({success:false,message:'sources not found !'})
          return res.status(200).json({success:true,message:'sources fetched successfully',sources})
@@ -158,10 +162,95 @@ const deleteLink=async(req,res)=>{
         }
     }
 
+const updateVisibility = async (req, res) => {
+    try {
+        if (!req.userId) {
+            return res.status(401).json({
+                success: false,
+                message: "Authentication required"
+            });
+        }
+
+        const { id, visibility, password } = req.body;
+
+        if (!id || !visibility) {
+            return res.status(400).json({
+                success: false,
+                message: "Link ID and visibility are required"
+            });
+        }
+
+        // Validate visibility value
+        if (!['public', 'unlisted', 'private'].includes(visibility)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid visibility value. Must be 'public', 'unlisted', or 'private'"
+            });
+        }
+
+        // Find the link
+        const link = await Link.findById(id);
+        if (!link) {
+            return res.status(404).json({
+                success: false,
+                message: "Link not found"
+            });
+        }
+
+        // Verify the link belongs to the user
+        if (link.userId.toString() !== req.userId.toString()) {
+            return res.status(403).json({
+                success: false,
+                message: "You don't have permission to update this link"
+            });
+        }
+
+        // Prepare update data
+        const updateData = { visibility };
+
+        // Handle password for private links
+        if (visibility === 'private') {
+            if (!password) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Password is required for private links"
+                });
+            }
+            // Hash password using bcryptjs (consistent with AuthController)
+            const bcryptjs = require('bcryptjs');
+            const hashedPassword = await bcryptjs.hash(password, 10);
+            updateData.password = hashedPassword;
+        } else {
+            // Clear password for public and unlisted links
+            updateData.password = null;
+        }
+
+        // Update the link
+        const updatedLink = await Link.findByIdAndUpdate(
+            id,
+            { $set: updateData },
+            { new: true }
+        );
+
+        return res.status(200).json({
+            success: true,
+            message: "Link visibility updated successfully",
+            link: updatedLink
+        });
+    } catch (err) {
+        console.log("Update visibility error:", err);
+        return res.status(500).json({
+            success: false,
+            message: "Server internal error"
+        });
+    }
+};
+
 module.exports={
     addNewSource,
     getAllSource,
     deleteLink,
     setNotificationToZero,
     editLink,
+    updateVisibility,
 }

@@ -17,8 +17,13 @@ const userSchema=mongoose.Schema({
         required:true,
         unique:true,
     },
-
-},{timestamps:true})
+    deletedAt: {
+        type: Date,
+        default: null
+    }
+}, {
+    timestamps: true // This adds createdAt and updatedAt automatically
+})
 
 const User=mongoose.model('user',userSchema)
 module.exports=User

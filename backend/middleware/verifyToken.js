@@ -70,4 +70,31 @@ const otpVerify = async (req, res, next) => {
   }
 };
 
-module.exports = { verifyToken, otpVerify };
+// Optional token verification - doesn't fail if no token, but sets userId if token is valid
+const verifyTokenOptional = async (req, res, next) => {
+  try {
+    const token = req.cookies?.token;
+    
+    if (!token) {
+      // No token provided, continue without authentication
+      req.userId = null;
+      return next();
+    }
+    
+    const auth = await jwt.verify(token, process.env.JWT_KEY);
+    if (auth) {
+      req.userId = auth.id;
+      return next();
+    }
+    
+    // Invalid token, but continue without authentication
+    req.userId = null;
+    return next();
+  } catch (err) {
+    // Token error, but continue without authentication
+    req.userId = null;
+    return next();
+  }
+};
+
+module.exports = { verifyToken, otpVerify, verifyTokenOptional };

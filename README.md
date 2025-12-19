@@ -407,7 +407,11 @@ Visit this link to see a beautiful landing page with all social profiles!
 
 ### Developer Features
 
-- 📚 **Comprehensive Documentation**: Detailed README, API docs, and code comments
+- 📚 **Comprehensive Documentation**: 
+  - Detailed README, API docs, and code comments
+  - Model documentation in `/backend/doc/`
+  - Page documentation in `/frontend/docs/`
+  - CHANGELOG files for frontend and backend
 - 🧩 **Modular Architecture**: Clean, maintainable code structure
 - 🐳 **Docker Support**: Easy deployment with Docker and Docker Compose
 - 🔧 **Environment Configuration**: Flexible environment variable setup

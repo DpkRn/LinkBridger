@@ -3,7 +3,8 @@ const userProfileSchema=new mongoose.Schema({
     username:{
         type:String,
         unique:true,
-        required:true    
+        required:true,
+        ref: 'user'
     },
     name:{
         type:String,
@@ -23,10 +24,15 @@ const userProfileSchema=new mongoose.Schema({
     },
     image:{
         type:String,
-        defalut:"profile.jpg"
+        default:"profile.jpg"
+    },
+    deletedAt: {
+        type: Date,
+        default: null
     }
-
-},{timestamps:true})
+}, {
+    timestamps: true // This adds createdAt and updatedAt automatically
+})
 
 const User=mongoose.model('userinfo',userProfileSchema)
 module.exports=User;

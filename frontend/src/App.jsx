@@ -15,6 +15,8 @@ import Documentation from './components/Documentation'
 import HomePage from './components/pages/HomePage'
 import LinkPage from './components/pages/LinkPage'
 import ProfilePage from './components/pages/Profile'
+import ProfilePreview from './components/pages/ProfilePreview'
+import Settings from './components/pages/Settings'
 import NotFound from './components/pages/NotFound'
 import AboutDeveloper from './components/pages/AboutDeveloper'
 
@@ -125,6 +127,8 @@ function App() {
         <Route path='/links' element={<PrivateRoute><LinkPage/></PrivateRoute>} />
         <Route path='/' element={<AuthRoute><HomePage/></AuthRoute>} />
         <Route path='/profile' element={<PrivateRoute><ProfilePage/></PrivateRoute>} />
+        <Route path='/profile/:username' element={<ProfilePreview/>} />
+        <Route path='/settings' element={<PrivateRoute><Settings/></PrivateRoute>} />
         <Route path='/home' element={<PrivateRoute><DashBoard /></PrivateRoute>} />
         <Route path='/verified' element={<VerifiedPage />} />
         <Route path='/reset_password' element={<PasswordReset />} />

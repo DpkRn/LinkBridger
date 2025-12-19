@@ -14,7 +14,7 @@ import {
 } from "../../redux/userSlice";
 import { MdOutlineArrowDropDownCircle, MdMenu, MdClose } from "react-icons/md";
 import { MdDarkMode, MdLightMode } from "react-icons/md";
-import { FaBell, FaUser, FaCog, FaSignOutAlt, FaHome, FaLink, FaBook } from "react-icons/fa";
+import { FaBell, FaUser, FaCog, FaSignOutAlt, FaHome, FaLink, FaBook, FaSearch, FaTimes } from "react-icons/fa";
 import Notification from "../notification/Notification";
 
 const Nav = () => {
@@ -22,11 +22,18 @@ const Nav = () => {
   const dispatch = useDispatch();
   const notificationRef = useRef(null);
   const profilePageRef = useRef(null);
+  const searchInputRef = useRef(null);
   const location = useLocation();
 
   const [profileMenu, setProfileMenu] = useState(false);
   const [notificationPage, setNotificationPage] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 });
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [showSearchDropdown, setShowSearchDropdown] = useState(false);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const searchRef = useRef(null);
 
   const { sidebarMenu, darkMode } = useSelector((store) => store.page);
   const username = useSelector((store) => store.admin.user.username);
@@ -110,6 +117,42 @@ const Nav = () => {
     setNotificationPage((state) => !state);
   };
 
+  // Handle search
+  const handleSearch = async (query) => {
+    if (!query.trim()) {
+      setSearchResults([]);
+      setShowSearchDropdown(false);
+      return;
+    }
+
+    try {
+      setSearchLoading(true);
+      const res = await api.post('/search/users', { query: query.trim() }, { withCredentials: true });
+      if (res.status === 200 && res.data.success) {
+        setSearchResults(res.data.results || []);
+        setShowSearchDropdown(true);
+      }
+    } catch (error) {
+      console.error("Search error:", error);
+      setSearchResults([]);
+    } finally {
+      setSearchLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (searchQuery) {
+        handleSearch(searchQuery);
+      } else {
+        setSearchResults([]);
+        setShowSearchDropdown(false);
+      }
+    }, 300); // Debounce search
+
+    return () => clearTimeout(timeoutId);
+  }, [searchQuery]);
+
   // Handle outside click
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -127,9 +170,17 @@ const Nav = () => {
       ) {
         setProfileMenu(false);
       }
+      if (
+        searchRef.current &&
+        !searchRef.current.contains(event.target) &&
+        !event.target.closest(".search-button")
+      ) {
+        setShowSearchDropdown(false);
+        setIsSearchExpanded(false);
+      }
     };
 
-    if (notificationPage || profileMenu) {
+    if (notificationPage || profileMenu || showSearchDropdown || isSearchExpanded) {
       document.addEventListener("mousedown", handleClickOutside);
     } else {
       document.removeEventListener("mousedown", handleClickOutside);
@@ -138,10 +189,15 @@ const Nav = () => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [notificationPage, profileMenu]);
+  }, [notificationPage, profileMenu, showSearchDropdown, isSearchExpanded]);
 
   const handleProfileClick = (e) => {
     navigate("/profile");
+    setProfileMenu(false);
+  };
+
+  const handleSettingsClick = (e) => {
+    navigate("/settings");
     setProfileMenu(false);
   };
 
@@ -280,6 +336,191 @@ const Nav = () => {
 
           {/* Right side actions */}
           <div className="flex items-center gap-3">
+            {/* Search - Responsive: Icon on mobile, full input on desktop */}
+            <div className="relative search-button" ref={searchRef}>
+              {/* Mobile: Search Icon Button */}
+              <motion.button
+                type="button"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => setIsSearchExpanded(true)}
+                className="md:hidden rounded-lg bg-white/10 dark:bg-gray-800/50 backdrop-blur-sm p-2.5 text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-200 hover:bg-white/20 dark:hover:bg-gray-700/50 border border-white/10 dark:border-gray-700/50"
+                aria-label="Search users"
+              >
+                <FaSearch className="h-5 w-5" />
+              </motion.button>
+
+              {/* Desktop: Full Search Input */}
+              <div className="hidden md:block relative">
+                <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 h-4 w-4 z-10" />
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  placeholder="Search users..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onFocus={() => {
+                    if (searchResults.length > 0) {
+                      setShowSearchDropdown(true);
+                    }
+                  }}
+                  className="pl-10 pr-10 py-2 bg-white/10 dark:bg-gray-800/50 backdrop-blur-sm text-white placeholder-gray-400 dark:placeholder-gray-500 rounded-lg border border-white/10 dark:border-gray-700/50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 w-48 md:w-64 text-sm"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => {
+                      setSearchQuery("");
+                      setSearchResults([]);
+                      setShowSearchDropdown(false);
+                    }}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-white dark:hover:text-white z-10"
+                  >
+                    <FaTimes className="h-3 w-3" />
+                  </button>
+                )}
+              </div>
+
+              {/* Mobile: Expanded Search Input (when icon is clicked) */}
+              <AnimatePresence>
+                {isSearchExpanded && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    className="md:hidden absolute top-full left-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 p-4 z-50"
+                  >
+                    <div className="relative">
+                      <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 h-4 w-4" />
+                      <input
+                        ref={searchInputRef}
+                        type="text"
+                        placeholder="Search users..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onFocus={() => {
+                          if (searchResults.length > 0) {
+                            setShowSearchDropdown(true);
+                          }
+                        }}
+                        autoFocus
+                        className="w-full pl-10 pr-10 py-2 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 rounded-lg border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 text-sm"
+                      />
+                      <button
+                        onClick={() => {
+                          setIsSearchExpanded(false);
+                          setSearchQuery("");
+                          setSearchResults([]);
+                          setShowSearchDropdown(false);
+                        }}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
+                      >
+                        <FaTimes className="h-4 w-4" />
+                      </button>
+                    </div>
+                    
+                    {/* Mobile Search Dropdown */}
+                    {showSearchDropdown && (searchResults.length > 0 || searchLoading) && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="mt-2 w-full bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden"
+                      >
+                        {searchLoading ? (
+                          <div className="p-4 text-center text-gray-600 dark:text-gray-400">
+                            <div className="animate-spin h-5 w-5 border-2 border-purple-500 border-t-transparent rounded-full mx-auto"></div>
+                          </div>
+                        ) : searchResults.length > 0 ? (
+                          <div className="max-h-96 overflow-y-auto">
+                            {searchResults.map((user) => (
+                              <motion.div
+                                key={user.username}
+                                whileHover={{ backgroundColor: "rgba(147, 51, 234, 0.1)" }}
+                                onClick={() => {
+                                  navigate(`/profile/${user.username}`);
+                                  setShowSearchDropdown(false);
+                                  setSearchQuery("");
+                                  setIsSearchExpanded(false);
+                                }}
+                                className="p-4 hover:bg-purple-50 dark:hover:bg-gray-700 cursor-pointer border-b border-gray-200 dark:border-gray-700 last:border-b-0 flex items-center gap-3"
+                              >
+                                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold flex-shrink-0">
+                                  {user.name?.[0]?.toUpperCase() || user.username[0].toUpperCase()}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <div className="font-semibold text-gray-900 dark:text-white truncate">
+                                    {user.name || user.username}
+                                  </div>
+                                  <div className="text-sm text-gray-600 dark:text-gray-400 truncate">
+                                    @{user.username}
+                                  </div>
+                                </div>
+                                <FaUser className="text-gray-400 dark:text-gray-500 flex-shrink-0" />
+                              </motion.div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="p-4 text-center text-gray-600 dark:text-gray-400">
+                            No users found
+                          </div>
+                        )}
+                      </motion.div>
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Search Dropdown - Desktop */}
+              <AnimatePresence>
+                {!isSearchExpanded && showSearchDropdown && (searchResults.length > 0 || searchLoading) && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="hidden md:block absolute top-full left-0 mt-2 w-64 md:w-80 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50"
+                  >
+                    {searchLoading ? (
+                      <div className="p-4 text-center text-gray-600 dark:text-gray-400">
+                        <div className="animate-spin h-5 w-5 border-2 border-purple-500 border-t-transparent rounded-full mx-auto"></div>
+                      </div>
+                    ) : searchResults.length > 0 ? (
+                      <div className="max-h-96 overflow-y-auto">
+                        {searchResults.map((user) => (
+                          <motion.div
+                            key={user.username}
+                            whileHover={{ backgroundColor: "rgba(147, 51, 234, 0.1)" }}
+                            onClick={() => {
+                              navigate(`/profile/${user.username}`);
+                              setShowSearchDropdown(false);
+                              setSearchQuery("");
+                            }}
+                            className="p-4 hover:bg-purple-50 dark:hover:bg-gray-700 cursor-pointer border-b border-gray-200 dark:border-gray-700 last:border-b-0 flex items-center gap-3"
+                          >
+                            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold flex-shrink-0">
+                              {user.name?.[0]?.toUpperCase() || user.username[0].toUpperCase()}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="font-semibold text-gray-900 dark:text-white truncate">
+                                {user.name || user.username}
+                              </div>
+                              <div className="text-sm text-gray-600 dark:text-gray-400 truncate">
+                                @{user.username}
+                              </div>
+                            </div>
+                            <FaUser className="text-gray-400 dark:text-gray-500 flex-shrink-0" />
+                          </motion.div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="p-4 text-center text-gray-600 dark:text-gray-400">
+                        No users found
+                      </div>
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
             {/* Dark Mode Toggle */}
             <motion.button
               type="button"
@@ -410,6 +651,7 @@ const Nav = () => {
                         whileHover={{ x: 5 }}
                         className="flex items-center gap-3 px-4 py-3 text-sm text-white dark:text-gray-200 hover:text-white dark:hover:text-white hover:bg-white/10 dark:hover:bg-gray-800/50 rounded-lg cursor-pointer transition-colors duration-200"
                         role="menuitem"
+                        onClick={handleSettingsClick}
                       >
                         <FaCog className="w-4 h-4 text-blue-400" />
                         Settings
