@@ -368,8 +368,10 @@ const AboutDeveloper = () => {
                 variants={fadeInUp}
                 className="text-lg text-gray-600 dark:text-gray-300 mb-6 transition-colors duration-300"
               >
-                Full-stack developer passionate about creating innovative web solutions. Specializing in backend
-                development, frontend design, and network architecture to build scalable and efficient applications.
+                I created LinkBridger to solve a real problem: managing multiple social media and professional links scattered across different platforms. 
+                Instead of sharing long, forgettable URLs, LinkBridger lets you create memorable, personalized links that reflect your brand. With granular
+                privacy controls, customizable notifications, and password protection, you have complete control over your digital presence. and it also delivers
+                a solution that's both powerful and user-friendly.
               </motion.p>
 
               {/* Social Links */}
@@ -430,7 +432,7 @@ const AboutDeveloper = () => {
             variants={fadeInUp}
             className="text-3xl font-bold text-center text-gray-800 dark:text-white mb-8 transition-colors duration-300"
           >
-            Expertise & Roles
+            Developers & Contributors
           </motion.h2>
           <motion.div variants={staggerContainer} className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {roles.map((role, index) => (

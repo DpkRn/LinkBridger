@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux";
 import { setAuthenticated, setUser } from "../redux/userSlice";
 import { Link, useNavigate } from "react-router-dom";
 import { GiSkullCrossedBones } from "react-icons/gi";
-import { FaCheck, FaEnvelope, FaLock, FaUser, FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaCheck, FaEnvelope, FaLock, FaUser, FaEye, FaEyeSlash, FaArrowLeft } from "react-icons/fa";
 import { HiSparkles } from "react-icons/hi2";
 
 const AuthPage = () => {
@@ -198,6 +198,20 @@ const AuthPage = () => {
       </div>
 
       <div className="relative z-10 min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8">
+        {/* Back Button */}
+        <motion.button
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5 }}
+          onClick={() => navigate('/')}
+          whileHover={{ scale: 1.05, x: -5 }}
+          whileTap={{ scale: 0.95 }}
+          className="absolute top-4 left-4 sm:top-6 sm:left-6 md:top-8 md:left-8 flex items-center gap-2 text-white dark:text-gray-300 hover:text-purple-400 dark:hover:text-purple-400 transition-colors z-20"
+        >
+          <FaArrowLeft />
+          <span>Back to Home</span>
+        </motion.button>
+
         <motion.div
           variants={containerVariants}
           initial="hidden"

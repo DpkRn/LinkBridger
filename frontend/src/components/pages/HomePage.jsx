@@ -221,7 +221,7 @@ const HomePage = () => {
     {
       icon: <FaEnvelope className="w-8 h-8" />,
       title: "Real-Time Email Notifications",
-      description: "Get instant email notifications for every visit to your links. Stay informed about who's checking out your profiles in real-time",
+      description: "Get instant email notifications based on your preferences. Customize notifications for link visits, profile views, and weekly reports. Control what you want to be notified about through your settings. Stay informed about engagement on your terms",
       color: "from-cyan-500 to-blue-500",
       delay: 0.25
     },
@@ -235,7 +235,7 @@ const HomePage = () => {
     {
       icon: <FaShieldAlt className="w-8 h-8" />,
       title: "Privacy First",
-      description: "No tracking scripts, no third-party analytics. Your data stays yours",
+      description: "Control who sees what with granular content permissions. Protect links with passwords, set visibility preferences (public/unlisted/private), and customize what appears in your profile. No tracking scripts, no third-party analytics. Your data stays yours",
       color: "from-orange-500 to-red-500",
       delay: 0.4
     },
