@@ -26,7 +26,96 @@ const ProfilePreview = () => {
   const [links, setLinks] = useState([]);
   const [settings, setSettings] = useState(null);
 
-  // Mouse tracking for interactive background
+  // Add edge animation styles
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes edge-glow {
+        0%, 100% {
+          box-shadow: 
+            0 0 5px rgba(147, 51, 234, 0.4),
+            0 0 10px rgba(236, 72, 153, 0.3),
+            0 0 15px rgba(59, 130, 246, 0.2),
+            inset 0 0 5px rgba(147, 51, 234, 0.2);
+        }
+        50% {
+          box-shadow: 
+            0 0 15px rgba(147, 51, 234, 0.6),
+            0 0 25px rgba(236, 72, 153, 0.5),
+            0 0 35px rgba(59, 130, 246, 0.4),
+            inset 0 0 10px rgba(147, 51, 234, 0.3);
+        }
+      }
+      @keyframes edge-shimmer {
+        0% {
+          background-position: -200% center;
+        }
+        100% {
+          background-position: 200% center;
+        }
+      }
+      .edge-animated {
+        position: relative;
+        transition: all 0.3s ease;
+      }
+      .edge-animated::before {
+        content: '';
+        position: absolute;
+        inset: -2px;
+        border-radius: inherit;
+        padding: 2px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(147, 51, 234, 0.6),
+          rgba(236, 72, 153, 0.6),
+          rgba(59, 130, 246, 0.6),
+          rgba(147, 51, 234, 0.6),
+          transparent
+        );
+        background-size: 200% 100%;
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+        z-index: 0;
+      }
+      .edge-animated:hover {
+        animation: edge-glow 2s ease-in-out infinite;
+      }
+      .edge-animated:hover::before {
+        opacity: 1;
+        animation: edge-shimmer 2s linear infinite;
+      }
+      .dark .edge-animated:hover {
+        animation: edge-glow 2s ease-in-out infinite;
+      }
+      .dark .edge-animated::before {
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(168, 85, 247, 0.7),
+          rgba(244, 114, 182, 0.7),
+          rgba(96, 165, 250, 0.7),
+          rgba(168, 85, 247, 0.7),
+          transparent
+        );
+        background-size: 200% 100%;
+      }
+      .edge-animated > * {
+        position: relative;
+        z-index: 1;
+      }
+    `;
+    document.head.appendChild(style);
+    return () => {
+      if (document.head.contains(style)) {
+        document.head.removeChild(style);
+      }
+    };
+  }, []);
   useEffect(() => {
     const handleMouseMove = (e) => {
       setMousePosition({
@@ -201,7 +290,7 @@ const ProfilePreview = () => {
           {/* Profile Card */}
           <motion.div
             variants={itemVariants}
-            className="bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-6 md:p-10 lg:p-12 mb-8"
+            className="edge-animated bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-6 md:p-10 lg:p-12 mb-8"
           >
             {/* Profile Header */}
             <div className="flex flex-col md:flex-row items-center md:items-start gap-6 mb-8">
@@ -266,7 +355,7 @@ const ProfilePreview = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 pt-8 border-t border-white/20 dark:border-gray-700/50">
               {/* Link Count Card - Controlled by showLinkCount setting */}
               {settings?.links?.showLinkCount !== false && (
-                <div className="text-center p-4 bg-gradient-to-r from-purple-600/10 via-pink-600/10 to-blue-600/10 rounded-2xl border border-white/20 dark:border-purple-400/20">
+                <div className="edge-animated text-center p-4 bg-gradient-to-r from-purple-600/10 via-pink-600/10 to-blue-600/10 rounded-2xl border border-white/20 dark:border-purple-400/20">
                   <div className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
                     {links.length}
                   </div>
@@ -275,7 +364,7 @@ const ProfilePreview = () => {
               )}
               {/* Click Stats Card - Controlled by showClickStats setting */}
               {settings?.links?.showClickStats !== false && (
-                <div className="text-center p-4 bg-gradient-to-r from-blue-600/10 to-cyan-600/10 rounded-2xl border border-white/20 dark:border-blue-400/20">
+                <div className="edge-animated text-center p-4 bg-gradient-to-r from-blue-600/10 to-cyan-600/10 rounded-2xl border border-white/20 dark:border-blue-400/20">
                   <div className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
                     {links.reduce((sum, link) => sum + (link.clicked || 0), 0)}
                   </div>
@@ -283,7 +372,7 @@ const ProfilePreview = () => {
                 </div>
               )}
               {/* Status Card - Always visible */}
-              <div className="text-center p-4 bg-gradient-to-r from-green-600/10 to-emerald-600/10 rounded-2xl border border-white/20 dark:border-green-400/20">
+              <div className="edge-animated text-center p-4 bg-gradient-to-r from-green-600/10 to-emerald-600/10 rounded-2xl border border-white/20 dark:border-green-400/20">
                 <div className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
                   Live
                 </div>
@@ -309,7 +398,7 @@ const ProfilePreview = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
                   whileHover={{ scale: 1.02, y: -5 }}
-                  className="block bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/50 p-6 hover:shadow-2xl transition-all duration-300 group"
+                  className="edge-animated block bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/50 p-6 hover:shadow-2xl transition-all duration-300 group"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4 flex-1">
@@ -353,7 +442,7 @@ const ProfilePreview = () => {
           ) : (
             <motion.div
               variants={itemVariants}
-              className="bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-12 text-center"
+              className="edge-animated bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-12 text-center"
             >
               <FaLink className="text-6xl text-gray-400 dark:text-gray-600 mx-auto mb-4" />
               <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">No Links Yet</h3>

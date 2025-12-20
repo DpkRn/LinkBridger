@@ -14,6 +14,107 @@ const AboutDeveloper = () => {
   const darkMode = useSelector(store => store.page.darkMode);
   const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 });
 
+  // Add edge animation styles
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes edge-glow {
+        0%, 100% {
+          box-shadow: 
+            0 0 5px rgba(147, 51, 234, 0.4),
+            0 0 10px rgba(236, 72, 153, 0.3),
+            0 0 15px rgba(59, 130, 246, 0.2),
+            inset 0 0 5px rgba(147, 51, 234, 0.2);
+        }
+        50% {
+          box-shadow: 
+            0 0 15px rgba(147, 51, 234, 0.6),
+            0 0 25px rgba(236, 72, 153, 0.5),
+            0 0 35px rgba(59, 130, 246, 0.4),
+            inset 0 0 10px rgba(147, 51, 234, 0.3);
+        }
+      }
+      @keyframes edge-shimmer {
+        0% {
+          background-position: -200% center;
+        }
+        100% {
+          background-position: 200% center;
+        }
+      }
+      .edge-animated {
+        position: relative;
+        transition: all 0.3s ease;
+      }
+      .edge-animated::before {
+        content: '';
+        position: absolute;
+        inset: -2px;
+        border-radius: inherit;
+        padding: 2px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(147, 51, 234, 0.6),
+          rgba(236, 72, 153, 0.6),
+          rgba(59, 130, 246, 0.6),
+          rgba(147, 51, 234, 0.6),
+          transparent
+        );
+        background-size: 200% 100%;
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+        z-index: 0;
+      }
+      .edge-animated:hover {
+        animation: edge-glow 2s ease-in-out infinite;
+      }
+      .edge-animated:hover::before {
+        opacity: 1;
+        animation: edge-shimmer 2s linear infinite;
+      }
+      .dark .edge-animated:hover {
+        animation: edge-glow 2s ease-in-out infinite;
+      }
+      .edge-animated-always {
+        animation: edge-glow 2s ease-in-out infinite;
+      }
+      .edge-animated-always::before {
+        opacity: 1;
+        animation: edge-shimmer 2s linear infinite;
+      }
+      .dark .edge-animated-always {
+        animation: edge-glow 2s ease-in-out infinite;
+      }
+      .dark .edge-animated::before {
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(168, 85, 247, 0.7),
+          rgba(244, 114, 182, 0.7),
+          rgba(96, 165, 250, 0.7),
+          rgba(168, 85, 247, 0.7),
+          transparent
+        );
+        background-size: 200% 100%;
+      }
+      .edge-animated > * {
+        position: relative;
+        z-index: 1;
+      }
+    `;
+    document.head.appendChild(style);
+    return () => {
+      if (document.head.contains(style)) {
+        document.head.removeChild(style);
+      }
+    };
+  }, []);
+
   // Mouse tracking for interactive background
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -233,7 +334,7 @@ const AboutDeveloper = () => {
         {/* Developer Card */}
         <motion.div
           variants={fadeInUp}
-          className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg rounded-2xl shadow-2xl p-8 md:p-12 mb-12 transition-colors duration-300"
+          className="edge-animated edge-animated-always bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg rounded-2xl shadow-2xl p-8 md:p-12 mb-12 transition-colors duration-300"
         >
           <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
             {/* Profile Image */}
@@ -337,7 +438,7 @@ const AboutDeveloper = () => {
                 key={index}
                 variants={fadeInUp}
                 whileHover={{ y: -5 }}
-                className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300"
+                className="edge-animated bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300"
               >
                 {/* Icon */}
                 <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mb-4 mx-auto">
