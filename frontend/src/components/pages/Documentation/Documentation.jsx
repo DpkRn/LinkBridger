@@ -1,10 +1,18 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useInView } from "framer-motion";
 import { motion, AnimatePresence } from "framer-motion";
-import logo from "../assets/logo.png";
+import logo from "../../../assets/logo.png";
 
 // Floating Particle Component
-const FloatingParticle = ({ delay = 0, duration = 20, size = 4, color = "purple", initialX = 0, initialY = 0, xOffset = 0 }) => {
+const FloatingParticle = ({
+  delay = 0,
+  duration = 20,
+  size = 4,
+  color = "purple",
+  initialX = 0,
+  initialY = 0,
+  xOffset = 0,
+}) => {
   const colors = {
     purple: "bg-purple-400/30",
     pink: "bg-pink-400/30",
@@ -67,8 +75,8 @@ const MagneticCard = ({ children, className = "", intensity = 0.3 }) => {
         rotateY: rotate.y,
       }}
       transition={{ type: "spring", stiffness: 150, damping: 30, mass: 0.5 }}
-      style={{ 
-        transformStyle: "preserve-3d", 
+      style={{
+        transformStyle: "preserve-3d",
         perspective: "1000px",
         willChange: "transform",
         backfaceVisibility: "hidden",
@@ -87,9 +95,13 @@ const AnimatedLinkCard = ({ link, idx }) => {
 
   return (
     <motion.div
-      animate={inView ? {
-        y: [0, -10, 0],
-      } : {}}
+      animate={
+        inView
+          ? {
+              y: [0, -10, 0],
+            }
+          : {}
+      }
       transition={{
         duration: 3,
         repeat: Infinity,
@@ -106,18 +118,22 @@ const AnimatedLinkCard = ({ link, idx }) => {
           onHoverStart={() => setIsHovered(true)}
           onHoverEnd={() => setIsHovered(false)}
           initial={{ opacity: 0, rotateY: -20, scale: 0.8 }}
-          animate={inView ? {
-            opacity: 1,
-            rotateY: 0,
-            scale: 1,
-          } : { opacity: 0 }}
+          animate={
+            inView
+              ? {
+                  opacity: 1,
+                  rotateY: 0,
+                  scale: 1,
+                }
+              : { opacity: 0 }
+          }
           transition={{
             opacity: { duration: 0.6, delay: idx * 0.1 },
             rotateY: { duration: 0.6, delay: idx * 0.1 },
             scale: { duration: 0.6, delay: idx * 0.1 },
           }}
-          whileHover={{ 
-            scale: 1.1, 
+          whileHover={{
+            scale: 1.1,
             y: -15,
             z: 50,
             rotateY: 5,
@@ -125,179 +141,197 @@ const AnimatedLinkCard = ({ link, idx }) => {
           className={`relative group bg-gradient-to-br ${link.color} p-6 rounded-2xl shadow-2xl overflow-hidden cursor-pointer min-h-[180px] flex flex-col justify-between`}
           style={{ transformStyle: "preserve-3d" }}
         >
+          {/* Animated Background Gradient */}
+          <motion.div
+            className={`absolute inset-0 bg-gradient-to-br ${link.color} opacity-90`}
+            animate={
+              isHovered
+                ? {
+                    opacity: [0.9, 1, 0.9],
+                    scale: [1, 1.1, 1],
+                  }
+                : {
+                    opacity: [0.7, 0.9, 0.7],
+                  }
+            }
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
 
-        {/* Animated Background Gradient */}
-        <motion.div
-          className={`absolute inset-0 bg-gradient-to-br ${link.color} opacity-90`}
-          animate={isHovered ? {
-            opacity: [0.9, 1, 0.9],
-            scale: [1, 1.1, 1],
-          } : {
-            opacity: [0.7, 0.9, 0.7],
-          }}
-          transition={{
-            duration: 2,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
+          {/* Card Glow Animation */}
+          <motion.div
+            className="absolute inset-0 rounded-2xl"
+            animate={{
+              boxShadow: [
+                "0 0 20px rgba(255, 255, 255, 0.1)",
+                "0 0 40px rgba(255, 255, 255, 0.3)",
+                "0 0 20px rgba(255, 255, 255, 0.1)",
+              ],
+            }}
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
 
-        {/* Card Glow Animation */}
-        <motion.div
-          className="absolute inset-0 rounded-2xl"
-          animate={{
-            boxShadow: [
-              "0 0 20px rgba(255, 255, 255, 0.1)",
-              "0 0 40px rgba(255, 255, 255, 0.3)",
-              "0 0 20px rgba(255, 255, 255, 0.1)",
-            ],
-          }}
-          transition={{
-            duration: 3,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
+          {/* Shimmer Effect */}
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+            initial={{ x: "-100%" }}
+            animate={isHovered ? { x: "200%" } : { x: "-100%" }}
+            transition={{
+              duration: 1,
+              repeat: isHovered ? Infinity : 0,
+              repeatDelay: 0.5,
+              ease: "linear",
+            }}
+            style={{ transform: "skewX(-20deg)" }}
+          />
 
-        {/* Shimmer Effect */}
-        <motion.div
-          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
-          initial={{ x: "-100%" }}
-          animate={isHovered ? { x: "200%" } : { x: "-100%" }}
-          transition={{
-            duration: 1,
-            repeat: isHovered ? Infinity : 0,
-            repeatDelay: 0.5,
-            ease: "linear",
-          }}
-          style={{ transform: "skewX(-20deg)" }}
-        />
-
-        {/* Content */}
-        <div className="relative z-10" style={{ transform: "translateZ(20px)" }}>
-          {/* Platform Icon with Glow Effect */}
-          <div className="flex justify-center mb-3 relative h-16">
-            {/* Icon with Continuous Animation and Glow */}
-            <motion.div
-              className="text-4xl relative z-10 flex items-center justify-center"
-              animate={{
-                rotate: [0, 10, -10, 0],
-                scale: [1, 1.1, 1],
-                y: [0, -5, 0],
-              }}
-              transition={{
-                duration: 3,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-            >
-              {/* Glow Effect - moves with icon */}
+          {/* Content */}
+          <div
+            className="relative z-10"
+            style={{ transform: "translateZ(20px)" }}
+          >
+            {/* Platform Icon with Glow Effect */}
+            <div className="flex justify-center mb-3 relative h-16">
+              {/* Icon with Continuous Animation and Glow */}
               <motion.div
-                className="absolute inset-0 flex items-center justify-center pointer-events-none"
+                className="text-4xl relative z-10 flex items-center justify-center"
                 animate={{
-                  scale: [1, 1.3, 1],
-                  opacity: [0.3, 0.6, 0.3],
+                  rotate: [0, 10, -10, 0],
+                  scale: [1, 1.1, 1],
+                  y: [0, -5, 0],
                 }}
                 transition={{
-                  duration: 2,
+                  duration: 3,
                   repeat: Infinity,
                   ease: "easeInOut",
                 }}
               >
-                <div className="w-16 h-16 bg-white/20 rounded-full blur-xl" />
+                {/* Glow Effect - moves with icon */}
+                <motion.div
+                  className="absolute inset-0 flex items-center justify-center pointer-events-none"
+                  animate={{
+                    scale: [1, 1.3, 1],
+                    opacity: [0.3, 0.6, 0.3],
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
+                >
+                  <div className="w-16 h-16 bg-white/20 rounded-full blur-xl" />
+                </motion.div>
+
+                {/* Floating Particles - Centered with Icon */}
+                <AnimatePresence>
+                  {isHovered && (
+                    <>
+                      {[...Array(6)].map((_, i) => (
+                        <motion.div
+                          key={i}
+                          className="absolute w-2 h-2 bg-white rounded-full pointer-events-none"
+                          initial={{ opacity: 0, scale: 0 }}
+                          animate={{
+                            opacity: [0, 1, 0],
+                            scale: [0, 1, 0],
+                            x: `${Math.cos((i / 6) * Math.PI * 2) * 60}px`,
+                            y: `${Math.sin((i / 6) * Math.PI * 2) * 60}px`,
+                          }}
+                          exit={{ opacity: 0 }}
+                          transition={{
+                            duration: 1,
+                            delay: i * 0.1,
+                            repeat: Infinity,
+                          }}
+                        />
+                      ))}
+                    </>
+                  )}
+                </AnimatePresence>
+
+                {/* Icon */}
+                <span className="relative z-10">{link.icon}</span>
               </motion.div>
-              
-              {/* Floating Particles - Centered with Icon */}
-              <AnimatePresence>
-                {isHovered && (
-                  <>
-                    {[...Array(6)].map((_, i) => (
-                      <motion.div
-                        key={i}
-                        className="absolute w-2 h-2 bg-white rounded-full pointer-events-none"
-                        initial={{ opacity: 0, scale: 0 }}
-                        animate={{
-                          opacity: [0, 1, 0],
-                          scale: [0, 1, 0],
-                          x: `${Math.cos((i / 6) * Math.PI * 2) * 60}px`,
-                          y: `${Math.sin((i / 6) * Math.PI * 2) * 60}px`,
-                        }}
-                        exit={{ opacity: 0 }}
-                        transition={{
-                          duration: 1,
-                          delay: i * 0.1,
-                          repeat: Infinity,
-                        }}
-                      />
-                    ))}
-                  </>
-                )}
-              </AnimatePresence>
-              
-              {/* Icon */}
-              <span className="relative z-10">{link.icon}</span>
+            </div>
+
+            {/* Platform Name */}
+            <motion.h3
+              className="text-xl md:text-2xl font-bold text-white mb-2 text-center"
+              animate={
+                isHovered
+                  ? {
+                      scale: [1, 1.05, 1],
+                    }
+                  : {}
+              }
+              transition={{
+                duration: 1.5,
+                repeat: isHovered ? Infinity : 0,
+              }}
+            >
+              {link.platform}
+            </motion.h3>
+
+            {/* URL - Tightened with full text visible */}
+            <motion.p
+              className="text-[10px] md:text-xs text-white/90 font-mono text-center px-1"
+              style={{ letterSpacing: "-0.3px", wordSpacing: "-1px" }}
+              animate={
+                isHovered
+                  ? {
+                      x: [0, 5, 0],
+                    }
+                  : {}
+              }
+              transition={{
+                duration: 2,
+                repeat: isHovered ? Infinity : 0,
+              }}
+            >
+              {link.url}
+            </motion.p>
+
+            {/* Arrow Indicator */}
+            <motion.div
+              className="absolute bottom-4 right-4 text-white/80"
+              animate={
+                isHovered
+                  ? {
+                      x: [0, 5, 0],
+                      opacity: [0.8, 1, 0.8],
+                    }
+                  : {}
+              }
+              transition={{
+                duration: 1,
+                repeat: isHovered ? Infinity : 0,
+              }}
+            >
+              <FaArrowRight className="w-5 h-5" />
             </motion.div>
           </div>
 
-          {/* Platform Name */}
-          <motion.h3
-            className="text-xl md:text-2xl font-bold text-white mb-2 text-center"
-            animate={isHovered ? {
-              scale: [1, 1.05, 1],
-            } : {}}
-            transition={{
-              duration: 1.5,
-              repeat: isHovered ? Infinity : 0,
+          {/* Glow Effect */}
+          <motion.div
+            className={`absolute inset-0 bg-gradient-to-br ${link.color} blur-2xl opacity-0`}
+            animate={{
+              opacity: isHovered ? [0, 0.6, 0] : 0,
+              scale: isHovered ? [1, 1.3, 1] : 1,
             }}
-          >
-            {link.platform}
-          </motion.h3>
-
-          {/* URL - Tightened with full text visible */}
-          <motion.p
-            className="text-[10px] md:text-xs text-white/90 font-mono text-center px-1"
-            style={{ letterSpacing: '-0.3px', wordSpacing: '-1px' }}
-            animate={isHovered ? {
-              x: [0, 5, 0],
-            } : {}}
             transition={{
               duration: 2,
               repeat: isHovered ? Infinity : 0,
+              ease: "easeInOut",
             }}
-          >
-            {link.url}
-          </motion.p>
-
-          {/* Arrow Indicator */}
-          <motion.div
-            className="absolute bottom-4 right-4 text-white/80"
-            animate={isHovered ? {
-              x: [0, 5, 0],
-              opacity: [0.8, 1, 0.8],
-            } : {}}
-            transition={{
-              duration: 1,
-              repeat: isHovered ? Infinity : 0,
-            }}
-          >
-            <FaArrowRight className="w-5 h-5" />
-          </motion.div>
-        </div>
-
-        {/* Glow Effect */}
-        <motion.div
-          className={`absolute inset-0 bg-gradient-to-br ${link.color} blur-2xl opacity-0`}
-          animate={{
-            opacity: isHovered ? [0, 0.6, 0] : 0,
-            scale: isHovered ? [1, 1.3, 1] : 1,
-          }}
-          transition={{
-            duration: 2,
-            repeat: isHovered ? Infinity : 0,
-            ease: "easeInOut",
-          }}
-        />
-      </motion.a>
+          />
+        </motion.a>
       </MagneticCard>
     </motion.div>
   );
@@ -316,7 +350,11 @@ const FeatureCard = ({ feature, idx, hoveredFeature, setHoveredFeature }) => {
       <motion.div
         key={feature.title}
         ref={ref}
-        initial={{ opacity: 0, x: isLeft ? -100 : 100, rotateY: isLeft ? -15 : 15 }}
+        initial={{
+          opacity: 0,
+          x: isLeft ? -100 : 100,
+          rotateY: isLeft ? -15 : 15,
+        }}
         animate={inView ? { opacity: 1, x: 0, rotateY: 0 } : {}}
         transition={{ duration: 0.8, type: "spring", stiffness: 100 }}
         onHoverStart={() => {
@@ -341,13 +379,17 @@ const FeatureCard = ({ feature, idx, hoveredFeature, setHoveredFeature }) => {
           }}
           transition={{ duration: 0.3 }}
         />
-        
+
         {/* Shimmer Effect */}
         <motion.div
           className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
           initial={{ x: "-100%" }}
           animate={cardHover ? { x: "200%" } : { x: "-100%" }}
-          transition={{ duration: 0.8, repeat: cardHover ? Infinity : 0, repeatDelay: 0.5 }}
+          transition={{
+            duration: 0.8,
+            repeat: cardHover ? Infinity : 0,
+            repeatDelay: 0.5,
+          }}
           style={{ transform: "skewX(-20deg)" }}
         />
 
@@ -365,7 +407,7 @@ const FeatureCard = ({ feature, idx, hoveredFeature, setHoveredFeature }) => {
             ))}
           </>
         )}
-        
+
         {/* Icon with 3D Rotation */}
         <motion.div
           className={`relative bg-gradient-to-r ${feature.gradient} p-6 rounded-2xl shadow-lg`}
@@ -376,7 +418,11 @@ const FeatureCard = ({ feature, idx, hoveredFeature, setHoveredFeature }) => {
         >
           <motion.div
             animate={cardHover ? { rotate: 360 } : {}}
-            transition={{ duration: 3, repeat: cardHover ? Infinity : 0, ease: "linear" }}
+            transition={{
+              duration: 3,
+              repeat: cardHover ? Infinity : 0,
+              ease: "linear",
+            }}
           >
             <IconComponent className="text-4xl md:text-5xl text-white" />
           </motion.div>
@@ -413,7 +459,10 @@ const FeatureCard = ({ feature, idx, hoveredFeature, setHoveredFeature }) => {
         </motion.div>
 
         {/* Content */}
-        <div className="flex-1 text-center md:text-left" style={{ transform: "translateZ(20px)" }}>
+        <div
+          className="flex-1 text-center md:text-left"
+          style={{ transform: "translateZ(20px)" }}
+        >
           <motion.h3
             className={`text-2xl md:text-3xl font-bold mb-4 bg-gradient-to-r ${feature.gradient} bg-clip-text text-transparent`}
             animate={cardHover ? { scale: [1, 1.05, 1] } : {}}
@@ -421,7 +470,7 @@ const FeatureCard = ({ feature, idx, hoveredFeature, setHoveredFeature }) => {
           >
             {feature.title}
           </motion.h3>
-          <motion.p 
+          <motion.p
             className="text-base md:text-lg text-gray-700 dark:text-gray-400 leading-relaxed"
             animate={cardHover ? { x: [0, 5, 0] } : {}}
             transition={{ duration: 2, repeat: cardHover ? Infinity : 0 }}
@@ -435,24 +484,24 @@ const FeatureCard = ({ feature, idx, hoveredFeature, setHoveredFeature }) => {
 };
 import { useSelector, useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import { toggleDarkMode } from "../redux/pageSlice";
+import { toggleDarkMode } from "../../../redux/pageSlice";
 import { MdDarkMode, MdLightMode } from "react-icons/md";
-import { TypewriterEffect } from "./ui/typewriter-effect";
+import { TypewriterEffect } from "../../ui/typewriter-effect";
 import {
   TextRevealCard,
   TextRevealCardDescription,
   TextRevealCardTitle,
-} from "./ui/text-reveal-card";
-import { FlipWords } from "./ui/flip-words";
-import { BackgroundBeamsWithCollision } from "./ui/background-beams-with-collision";
-import Footer from "./footer/Footer";
-import { FeaturesSection } from "./pages/Documentation/sections/FeaturesSection";
-import { 
-  FaRocket, 
-  FaLink, 
-  FaChartLine, 
-  FaSyncAlt, 
-  FaCog, 
+} from "../../ui/text-reveal-card";
+import { FlipWords } from "../../ui/flip-words";
+import { BackgroundBeamsWithCollision } from "../../ui/background-beams-with-collision";
+import Footer from "../../footer/Footer";
+import { FeaturesSection } from "./sections";
+import {
+  FaRocket,
+  FaLink,
+  FaChartLine,
+  FaSyncAlt,
+  FaCog,
   FaChevronDown,
   FaChevronUp,
   FaStar,
@@ -475,7 +524,7 @@ import {
   FaCheck,
   FaTimes,
   FaHome,
-  FaEnvelope
+  FaEnvelope,
 } from "react-icons/fa";
 
 const Documentation = () => {
@@ -483,7 +532,7 @@ const Documentation = () => {
   const dispatch = useDispatch();
   const sidebarMenu = useSelector((store) => store.page.sidebarMenu);
   const darkMode = useSelector((store) => store.page.darkMode);
-  const isAuthenticated=useSelector((store) => store.admin.isAuthenticated);
+  const isAuthenticated = useSelector((store) => store.admin.isAuthenticated);
   const location = useLocation();
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [openFAQ, setOpenFAQ] = useState([false, false, false]);
@@ -650,7 +699,7 @@ const Documentation = () => {
             scale: [1, 1.2, 1],
             opacity: [0.2, 0.4, 0.2],
           }}
-          transition={{ 
+          transition={{
             x: { type: "spring", stiffness: 50, damping: 20 },
             y: { type: "spring", stiffness: 50, damping: 20 },
             scale: { duration: 4, repeat: Infinity, ease: "easeInOut" },
@@ -665,11 +714,21 @@ const Documentation = () => {
             scale: [1, 1.3, 1],
             opacity: [0.2, 0.35, 0.2],
           }}
-          transition={{ 
+          transition={{
             x: { type: "spring", stiffness: 50, damping: 20 },
             y: { type: "spring", stiffness: 50, damping: 20 },
-            scale: { duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.5 },
-            opacity: { duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.5 },
+            scale: {
+              duration: 5,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 0.5,
+            },
+            opacity: {
+              duration: 5,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 0.5,
+            },
           }}
         />
         <motion.div
@@ -680,20 +739,34 @@ const Documentation = () => {
             scale: [1, 1.15, 1],
             opacity: [0.2, 0.3, 0.2],
           }}
-          transition={{ 
+          transition={{
             x: { type: "spring", stiffness: 50, damping: 20 },
             y: { type: "spring", stiffness: 50, damping: 20 },
-            scale: { duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 },
-            opacity: { duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 },
+            scale: {
+              duration: 6,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 1,
+            },
+            opacity: {
+              duration: 6,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 1,
+            },
           }}
         />
-        
+
         {/* Additional Floating Orbs */}
         {[...Array(5)].map((_, i) => (
           <motion.div
             key={i}
             className={`absolute w-64 h-64 ${
-              i % 3 === 0 ? "bg-cyan-500/10" : i % 3 === 1 ? "bg-violet-500/10" : "bg-rose-500/10"
+              i % 3 === 0
+                ? "bg-cyan-500/10"
+                : i % 3 === 1
+                ? "bg-violet-500/10"
+                : "bg-rose-500/10"
             } rounded-full blur-3xl`}
             animate={{
               x: [0, Math.random() * 200 - 100, 0],
@@ -713,7 +786,7 @@ const Documentation = () => {
             }}
           />
         ))}
-        
+
         {/* Floating Particles Layer */}
         <div className="absolute inset-0">
           {[...Array(30)].map((_, i) => (
@@ -726,9 +799,9 @@ const Documentation = () => {
             />
           ))}
         </div>
-        
+
         {/* Animated Grid with Wave Effect */}
-        <motion.div 
+        <motion.div
           className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]"
           animate={{
             opacity: [0.3, 0.6, 0.3],
@@ -739,7 +812,7 @@ const Documentation = () => {
             ease: "easeInOut",
           }}
         />
-        
+
         {/* Rotating Gradient Rings */}
         {[...Array(3)].map((_, i) => (
           <motion.div
@@ -747,10 +820,15 @@ const Documentation = () => {
             className="absolute inset-0 flex items-center justify-center"
             style={{
               background: `conic-gradient(from ${i * 120}deg, transparent, ${
-                i === 0 ? "rgba(147, 51, 234, 0.1)" : i === 1 ? "rgba(236, 72, 153, 0.1)" : "rgba(59, 130, 246, 0.1)"
+                i === 0
+                  ? "rgba(147, 51, 234, 0.1)"
+                  : i === 1
+                  ? "rgba(236, 72, 153, 0.1)"
+                  : "rgba(59, 130, 246, 0.1)"
               }, transparent)`,
               maskImage: "radial-gradient(circle, transparent 60%, black 100%)",
-              WebkitMaskImage: "radial-gradient(circle, transparent 60%, black 100%)",
+              WebkitMaskImage:
+                "radial-gradient(circle, transparent 60%, black 100%)",
             }}
             animate={{
               rotate: 360,
@@ -781,17 +859,23 @@ const Documentation = () => {
           >
             <div
               className={`w-96 h-96 rounded-full border-2 ${
-                i % 4 === 0 ? "border-purple-500/30" :
-                i % 4 === 1 ? "border-pink-500/30" :
-                i % 4 === 2 ? "border-blue-500/30" :
-                "border-cyan-500/30"
+                i % 4 === 0
+                  ? "border-purple-500/30"
+                  : i % 4 === 1
+                  ? "border-pink-500/30"
+                  : i % 4 === 2
+                  ? "border-blue-500/30"
+                  : "border-cyan-500/30"
               } blur-xl`}
               style={{
                 boxShadow: `0 0 ${40 + i * 20}px ${
-                  i % 4 === 0 ? "rgba(147, 51, 234, 0.3)" :
-                  i % 4 === 1 ? "rgba(236, 72, 153, 0.3)" :
-                  i % 4 === 2 ? "rgba(59, 130, 246, 0.3)" :
-                  "rgba(6, 182, 212, 0.3)"
+                  i % 4 === 0
+                    ? "rgba(147, 51, 234, 0.3)"
+                    : i % 4 === 1
+                    ? "rgba(236, 72, 153, 0.3)"
+                    : i % 4 === 2
+                    ? "rgba(59, 130, 246, 0.3)"
+                    : "rgba(6, 182, 212, 0.3)"
                 }`,
               }}
             />
@@ -802,13 +886,15 @@ const Documentation = () => {
         <div
           className="absolute inset-0 opacity-20"
           style={{
-            background: "linear-gradient(90deg, transparent, rgba(147, 51, 234, 0.2), transparent)",
+            background:
+              "linear-gradient(90deg, transparent, rgba(147, 51, 234, 0.2), transparent)",
           }}
         />
         <div
           className="absolute inset-0 opacity-15"
           style={{
-            background: "linear-gradient(180deg, transparent, rgba(236, 72, 153, 0.2), transparent)",
+            background:
+              "linear-gradient(180deg, transparent, rgba(236, 72, 153, 0.2), transparent)",
           }}
         />
 
@@ -823,9 +909,11 @@ const Documentation = () => {
               left: `${(i * 15) % 80}%`,
               top: `${(i * 20) % 80}%`,
               background: `radial-gradient(circle, ${
-                i % 3 === 0 ? "rgba(147, 51, 234, 0.2)" :
-                i % 3 === 1 ? "rgba(236, 72, 153, 0.2)" :
-                "rgba(59, 130, 246, 0.2)"
+                i % 3 === 0
+                  ? "rgba(147, 51, 234, 0.2)"
+                  : i % 3 === 1
+                  ? "rgba(236, 72, 153, 0.2)"
+                  : "rgba(59, 130, 246, 0.2)"
               }, transparent)`,
             }}
             animate={{
@@ -874,10 +962,13 @@ const Documentation = () => {
               left: `${(i * 12.5) % 100}%`,
               top: `${(i * 15) % 100}%`,
               background: `radial-gradient(circle, ${
-                i % 4 === 0 ? "rgba(147, 51, 234, 0.3)" :
-                i % 4 === 1 ? "rgba(236, 72, 153, 0.3)" :
-                i % 4 === 2 ? "rgba(59, 130, 246, 0.3)" :
-                "rgba(6, 182, 212, 0.3)"
+                i % 4 === 0
+                  ? "rgba(147, 51, 234, 0.3)"
+                  : i % 4 === 1
+                  ? "rgba(236, 72, 153, 0.3)"
+                  : i % 4 === 2
+                  ? "rgba(59, 130, 246, 0.3)"
+                  : "rgba(6, 182, 212, 0.3)"
               }, transparent)`,
             }}
             animate={{
@@ -898,193 +989,192 @@ const Documentation = () => {
 
       {/* Enhanced Navigation Header with Glow Effects */}
       {!isAuthenticated && (
-      <motion.div
-        initial={{ y: -100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6, type: "spring" }}
-        className="relative z-50 w-full h-[70px] shadow-lg bg-white/95 dark:bg-gray-900/50 backdrop-blur-xl flex items-center justify-between border-b border-gray-200 dark:border-white/10 transition-colors duration-300 px-4 sm:px-6 md:px-10 lg:px-12"
-      >
-        {/* Animated Background Glow */}
         <motion.div
-          className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-blue-500/10 opacity-0"
-          animate={{
-            opacity: [0, 0.3, 0],
-          }}
-          transition={{
-            duration: 3,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-        
-        {/* Logo with 3D Rotation */}
-        <motion.div
-          className="flex items-center gap-4 cursor-pointer relative z-10"
-          onClick={() => navigate("/")}
-          whileHover={{ scale: 1.05, rotateY: 5 }}
-          style={{ transformStyle: "preserve-3d" }}
+          initial={{ y: -100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.6, type: "spring" }}
+          className="relative z-50 w-full h-[70px] shadow-lg bg-white/95 dark:bg-gray-900/50 backdrop-blur-xl flex items-center justify-between border-b border-gray-200 dark:border-white/10 transition-colors duration-300 px-4 sm:px-6 md:px-10 lg:px-12"
         >
+          {/* Animated Background Glow */}
           <motion.div
+            className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-blue-500/10 opacity-0"
             animate={{
-              rotateY: [0, 360],
+              opacity: [0, 0.3, 0],
             }}
             transition={{
-              duration: 20,
+              duration: 3,
               repeat: Infinity,
-              ease: "linear",
+              ease: "easeInOut",
             }}
+          />
+
+          {/* Logo with 3D Rotation */}
+          <motion.div
+            className="flex items-center gap-4 cursor-pointer relative z-10"
+            onClick={() => navigate("/")}
+            whileHover={{ scale: 1.05, rotateY: 5 }}
             style={{ transformStyle: "preserve-3d" }}
-            className="h-8 w-8 rounded-full overflow-hidden"
-          >
-            <motion.img
-              className="h-8 w-8 rounded-full object-contain bg-white/10 dark:bg-gray-800/20 p-1 transition-all duration-300"
-              src={logo}
-              alt="LinkBridger Logo"
-              onError={(e) => {
-                e.target.src = 'https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500';
-              }}
-              whileHover={{ scale: 1.2, rotateZ: 15 }}
-            />
-          </motion.div>
-          <span 
-            className="text-xl md:text-2xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent relative"
-          >
-            LinkBridger
-            {/* Text Glow */}
-            <motion.span
-              className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent blur-sm opacity-50"
-              animate={{
-                opacity: [0.3, 0.7, 0.3],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-            >
-              LinkBridger
-            </motion.span>
-          </span>
-        </motion.div>
-
-        {/* Enhanced Navigation Items */}
-        <div className="flex items-center gap-4 md:gap-6 relative z-10">
-          {/* Navigation Links with Magnetic Effect */}
-          <div className="hidden md:flex items-center gap-6">
-            <motion.button
-              onClick={() => navigate("/")}
-              className="relative text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 font-medium transition-colors overflow-hidden group"
-              whileHover={{ scale: 1.1, y: -2 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <span className="relative z-10">Home</span>
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20"
-                initial={{ x: "-100%" }}
-                whileHover={{ x: "100%" }}
-                transition={{ duration: 0.5 }}
-              />
-            </motion.button>
-            <motion.button
-              onClick={() => navigate("/login")}
-              className="relative text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 font-medium transition-colors overflow-hidden group"
-              whileHover={{ scale: 1.1, y: -2 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <span className="relative z-10">Login</span>
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20"
-                initial={{ x: "-100%" }}
-                whileHover={{ x: "100%" }}
-                transition={{ duration: 0.5 }}
-              />
-            </motion.button>
-          </div>
-
-          {/* Enhanced Dark Mode Toggle with Glow */}
-          <motion.button
-            onClick={() => dispatch(toggleDarkMode())}
-            whileHover={{ scale: 1.15, rotate: 15 }}
-            whileTap={{ scale: 0.9 }}
-            className="relative p-2.5 rounded-xl bg-white/90 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 text-gray-800 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700/50 transition-all duration-300 shadow-md hover:shadow-lg overflow-hidden group"
-            title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
           >
             <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-purple-500/30 to-pink-500/30 opacity-0 group-hover:opacity-100"
-              transition={{ duration: 0.3 }}
-            />
-            <motion.div
-              className="relative z-10"
               animate={{
-                rotate: [0, 360],
+                rotateY: [0, 360],
               }}
               transition={{
                 duration: 20,
                 repeat: Infinity,
                 ease: "linear",
               }}
+              style={{ transformStyle: "preserve-3d" }}
+              className="h-8 w-8 rounded-full overflow-hidden"
             >
-              {darkMode ? (
-                <MdLightMode className="text-xl" />
-              ) : (
-                <MdDarkMode className="text-xl" />
-              )}
+              <motion.img
+                className="h-8 w-8 rounded-full object-contain bg-white/10 dark:bg-gray-800/20 p-1 transition-all duration-300"
+                src={logo}
+                alt="LinkBridger Logo"
+                onError={(e) => {
+                  e.target.src =
+                    "https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500";
+                }}
+                whileHover={{ scale: 1.2, rotateZ: 15 }}
+              />
             </motion.div>
-          </motion.button>
+            <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent relative">
+              LinkBridger
+              {/* Text Glow */}
+              <motion.span
+                className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent blur-sm opacity-50"
+                animate={{
+                  opacity: [0.3, 0.7, 0.3],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              >
+                LinkBridger
+              </motion.span>
+            </span>
+          </motion.div>
 
-          {/* Enhanced Get Started Button with Particle Effect */}
-          <motion.button
-            onClick={handleGetStarted}
-            whileHover={{ scale: 1.1, y: -3 }}
-            whileTap={{ scale: 0.95 }}
-            className="relative bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 text-white font-semibold py-2.5 px-4 md:px-6 rounded-xl text-sm md:text-lg transition-all shadow-lg hover:shadow-2xl flex items-center gap-2 overflow-hidden group"
-          >
-            {/* Static Gradient Background */}
-            <div
-              className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600"
-            />
-            
-            {/* Shimmer Effect */}
-            <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
-              initial={{ x: "-100%" }}
-              animate={{
-                x: ["-100%", "200%"],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                repeatDelay: 1,
-                ease: "linear",
-              }}
-              style={{ transform: "skewX(-20deg)" }}
-            />
-            
-            {/* Button Content */}
-            <span className="relative z-10 hidden sm:inline">Get Started</span>
-            <span className="relative z-10 sm:hidden">Start</span>
-            <motion.span
-              className="relative z-10"
-              animate={{
-                x: [0, 5, 0],
-              }}
-              transition={{
-                duration: 1.5,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
+          {/* Enhanced Navigation Items */}
+          <div className="flex items-center gap-4 md:gap-6 relative z-10">
+            {/* Navigation Links with Magnetic Effect */}
+            <div className="hidden md:flex items-center gap-6">
+              <motion.button
+                onClick={() => navigate("/")}
+                className="relative text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 font-medium transition-colors overflow-hidden group"
+                whileHover={{ scale: 1.1, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <span className="relative z-10">Home</span>
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20"
+                  initial={{ x: "-100%" }}
+                  whileHover={{ x: "100%" }}
+                  transition={{ duration: 0.5 }}
+                />
+              </motion.button>
+              <motion.button
+                onClick={() => navigate("/login")}
+                className="relative text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 font-medium transition-colors overflow-hidden group"
+                whileHover={{ scale: 1.1, y: -2 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <span className="relative z-10">Login</span>
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20"
+                  initial={{ x: "-100%" }}
+                  whileHover={{ x: "100%" }}
+                  transition={{ duration: 0.5 }}
+                />
+              </motion.button>
+            </div>
+
+            {/* Enhanced Dark Mode Toggle with Glow */}
+            <motion.button
+              onClick={() => dispatch(toggleDarkMode())}
+              whileHover={{ scale: 1.15, rotate: 15 }}
+              whileTap={{ scale: 0.9 }}
+              className="relative p-2.5 rounded-xl bg-white/90 dark:bg-gray-800/50 border border-gray-300 dark:border-gray-700/50 text-gray-800 dark:text-gray-300 hover:bg-white dark:hover:bg-gray-700/50 transition-all duration-300 shadow-md hover:shadow-lg overflow-hidden group"
+              title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
             >
-              <FaArrowRight />
-            </motion.span>
-            
-            {/* Glow Effect */}
-            <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 blur-xl opacity-0 group-hover:opacity-50"
-              transition={{ duration: 0.3 }}
-            />
-          </motion.button>
-        </div>
-      </motion.div>
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-purple-500/30 to-pink-500/30 opacity-0 group-hover:opacity-100"
+                transition={{ duration: 0.3 }}
+              />
+              <motion.div
+                className="relative z-10"
+                animate={{
+                  rotate: [0, 360],
+                }}
+                transition={{
+                  duration: 20,
+                  repeat: Infinity,
+                  ease: "linear",
+                }}
+              >
+                {darkMode ? (
+                  <MdLightMode className="text-xl" />
+                ) : (
+                  <MdDarkMode className="text-xl" />
+                )}
+              </motion.div>
+            </motion.button>
+
+            {/* Enhanced Get Started Button with Particle Effect */}
+            <motion.button
+              onClick={handleGetStarted}
+              whileHover={{ scale: 1.1, y: -3 }}
+              whileTap={{ scale: 0.95 }}
+              className="relative bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 text-white font-semibold py-2.5 px-4 md:px-6 rounded-xl text-sm md:text-lg transition-all shadow-lg hover:shadow-2xl flex items-center gap-2 overflow-hidden group"
+            >
+              {/* Static Gradient Background */}
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600" />
+
+              {/* Shimmer Effect */}
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                initial={{ x: "-100%" }}
+                animate={{
+                  x: ["-100%", "200%"],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  repeatDelay: 1,
+                  ease: "linear",
+                }}
+                style={{ transform: "skewX(-20deg)" }}
+              />
+
+              {/* Button Content */}
+              <span className="relative z-10 hidden sm:inline">
+                Get Started
+              </span>
+              <span className="relative z-10 sm:hidden">Start</span>
+              <motion.span
+                className="relative z-10"
+                animate={{
+                  x: [0, 5, 0],
+                }}
+                transition={{
+                  duration: 1.5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              >
+                <FaArrowRight />
+              </motion.span>
+
+              {/* Glow Effect */}
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 blur-xl opacity-0 group-hover:opacity-50"
+                transition={{ duration: 0.3 }}
+              />
+            </motion.button>
+          </div>
+        </motion.div>
       )}
 
       <div className="relative z-10">
@@ -1095,7 +1185,10 @@ const Documentation = () => {
           className="p-4 sm:p-6 md:p-10 lg:p-12"
         >
           {/* Hero Section */}
-          <motion.section variants={itemVariants} className="mb-6 md:mb-8 text-center">
+          <motion.section
+            variants={itemVariants}
+            className="mb-6 md:mb-8 text-center"
+          >
             <div className="mb-4">
               <TypewriterEffect words={words} className="mb-4" />
             </div>
@@ -1113,14 +1206,11 @@ const Documentation = () => {
           </motion.section>
 
           {/* Enhanced Introduction Section with 3D Effects */}
-          <motion.section
-            variants={itemVariants}
-            className="mb-6 md:mb-8"
-          >
+          <motion.section variants={itemVariants} className="mb-6 md:mb-8">
             <MagneticCard intensity={0.15}>
               <div
                 className="relative bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-6 md:p-10 lg:p-12 overflow-hidden group"
-                style={{ 
+                style={{
                   willChange: "transform",
                   transform: "translateZ(0)",
                   backfaceVisibility: "hidden",
@@ -1138,10 +1228,11 @@ const Documentation = () => {
                     ease: "easeInOut",
                   }}
                   style={{
-                    background: "radial-gradient(circle at 50% 50%, rgba(147, 51, 234, 0.25), rgba(236, 72, 153, 0.2), rgba(59, 130, 246, 0.2), transparent 70%)",
+                    background:
+                      "radial-gradient(circle at 50% 50%, rgba(147, 51, 234, 0.25), rgba(236, 72, 153, 0.2), rgba(59, 130, 246, 0.2), transparent 70%)",
                   }}
                 />
-                
+
                 {/* Corner Glow Effects */}
                 <motion.div
                   className="absolute top-0 left-0 w-40 h-40 rounded-full pointer-events-none blur-3xl z-0"
@@ -1155,7 +1246,8 @@ const Documentation = () => {
                     ease: "easeInOut",
                   }}
                   style={{
-                    background: "radial-gradient(circle, rgba(147, 51, 234, 0.5), transparent 70%)",
+                    background:
+                      "radial-gradient(circle, rgba(147, 51, 234, 0.5), transparent 70%)",
                     transform: "translate(-50%, -50%)",
                   }}
                 />
@@ -1172,7 +1264,8 @@ const Documentation = () => {
                     delay: 1,
                   }}
                   style={{
-                    background: "radial-gradient(circle, rgba(236, 72, 153, 0.5), transparent 70%)",
+                    background:
+                      "radial-gradient(circle, rgba(236, 72, 153, 0.5), transparent 70%)",
                     transform: "translate(50%, 50%)",
                   }}
                 />
@@ -1189,11 +1282,12 @@ const Documentation = () => {
                     delay: 0.5,
                   }}
                   style={{
-                    background: "radial-gradient(circle, rgba(59, 130, 246, 0.4), transparent 70%)",
+                    background:
+                      "radial-gradient(circle, rgba(59, 130, 246, 0.4), transparent 70%)",
                     transform: "translate(50%, -50%)",
                   }}
                 />
-                
+
                 {/* Animated Border Glow */}
                 <motion.div
                   className="absolute -inset-[2px] rounded-3xl pointer-events-none z-0"
@@ -1206,11 +1300,12 @@ const Documentation = () => {
                     ease: "easeInOut",
                   }}
                   style={{
-                    background: "linear-gradient(135deg, rgba(147, 51, 234, 0.4), rgba(236, 72, 153, 0.35), rgba(59, 130, 246, 0.35), rgba(147, 51, 234, 0.4))",
+                    background:
+                      "linear-gradient(135deg, rgba(147, 51, 234, 0.4), rgba(236, 72, 153, 0.35), rgba(59, 130, 246, 0.35), rgba(147, 51, 234, 0.4))",
                     filter: "blur(10px)",
                   }}
                 />
-                
+
                 {/* Hover Glow Effect */}
                 <motion.div
                   className="absolute inset-0 rounded-3xl pointer-events-none z-0"
@@ -1218,11 +1313,12 @@ const Documentation = () => {
                   whileHover={{ opacity: 0.3 }}
                   transition={{ duration: 0.3 }}
                   style={{
-                    background: "radial-gradient(circle at center, rgba(147, 51, 234, 0.2), rgba(236, 72, 153, 0.15), transparent 70%)",
+                    background:
+                      "radial-gradient(circle at center, rgba(147, 51, 234, 0.2), rgba(236, 72, 153, 0.15), transparent 70%)",
                     filter: "blur(25px)",
                   }}
                 />
-                
+
                 <motion.h2
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -1242,23 +1338,46 @@ const Documentation = () => {
                   transition={{ delay: 0.1, duration: 0.6, ease: "easeOut" }}
                   className="relative z-10 space-y-5"
                   style={{
-                    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+                    fontFamily:
+                      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
                   }}
                 >
                   <p className="text-base md:text-lg lg:text-[1.125rem] leading-relaxed md:leading-[1.85] text-gray-700 dark:text-gray-300 font-normal tracking-wide">
-                    Welcome to <span className="font-semibold text-gray-900 dark:text-gray-100">LinkBridger</span>, your ultimate partner for streamlined online presence and effortless link management. We offer innovative IT support and services that make your social media profiles, portfolios, and professional links easy to remember, manage, and share.
+                    Welcome to{" "}
+                    <span className="font-semibold text-gray-900 dark:text-gray-100">
+                      LinkBridger
+                    </span>
+                    , your ultimate partner for streamlined online presence and
+                    effortless link management. We offer innovative IT support
+                    and services that make your social media profiles,
+                    portfolios, and professional links easy to remember, manage,
+                    and share.
                   </p>
-                  
+
                   <p className="text-base md:text-lg lg:text-[1.125rem] leading-relaxed md:leading-[1.85] text-gray-700 dark:text-gray-300 font-normal tracking-wide">
-                    Whether you're sharing your Instagram, GitHub, LinkedIn, or any other platform, LinkBridger allows you to generate a single, personalized URL that leads to a beautiful, customizable landing page featuring all your profiles. Simply visit <span className="font-medium text-purple-600 dark:text-purple-400">https://clickly.cv/yourname</span> (without any platform name) to access your unified link hub.
+                    Whether you're sharing your Instagram, GitHub, LinkedIn, or
+                    any other platform, LinkBridger allows you to generate a
+                    single, personalized URL that leads to a beautiful,
+                    customizable landing page featuring all your profiles.
+                    Simply visit{" "}
+                    <span className="font-medium text-purple-600 dark:text-purple-400">
+                      https://clickly.cv/yourname
+                    </span>{" "}
+                    (without any platform name) to access your unified link hub.
                   </p>
-                  
+
                   <p className="text-base md:text-lg lg:text-[1.125rem] leading-relaxed md:leading-[1.85] text-gray-700 dark:text-gray-300 font-normal tracking-wide">
-                    With real-time visitor notifications and detailed analytics, you can effortlessly track performance, monitor click rates, and gain valuable insights into your audience engagement. Enjoy the convenience of centralized updating—any changes you make are instantly reflected across all your platforms, eliminating the need for manual updates everywhere.
+                    With real-time visitor notifications and detailed analytics,
+                    you can effortlessly track performance, monitor click rates,
+                    and gain valuable insights into your audience engagement.
+                    Enjoy the convenience of centralized updating—any changes
+                    you make are instantly reflected across all your platforms,
+                    eliminating the need for manual updates everywhere.
                   </p>
-                  
+
                   <p className="text-base md:text-lg lg:text-[1.125rem] leading-relaxed md:leading-[1.85] text-gray-700 dark:text-gray-300 font-normal tracking-wide">
-                    Experience the power of simplified link management and take control of your digital presence today.
+                    Experience the power of simplified link management and take
+                    control of your digital presence today.
                   </p>
                 </motion.div>
               </div>
@@ -1310,14 +1429,48 @@ const Documentation = () => {
                 <div className="relative z-10 w-full max-w-6xl mx-auto px-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                     {[
-                      { platform: "LinkedIn", url: "https://clickly.cv/dpkrn/linkedin", color: "from-blue-500 to-cyan-500", icon: "💼" },
-                      { platform: "GitHub", url: "https://clickly.cv/dpkrn/github", color: "from-gray-600 to-gray-800", icon: "🐙" },
-                      { platform: "LeetCode", url: "https://clickly.cv/dpkrn/leetcode", color: "from-orange-500 to-yellow-500", icon: "💻" },
-                      { platform: "Portfolio", url: "https://clickly.cv/dpkrn/portfolio", color: "from-purple-500 to-pink-500", icon: "🎨" },
-                      { platform: "Instagram", url: "https://clickly.cv/dpkrn/instagram", color: "from-pink-500 to-rose-500", icon: "📸" },
-                      { platform: "Codeforces", url: "https://clickly.cv/dpkrn/codeforces", color: "from-red-500 to-orange-500", icon: "⚔️" },
+                      {
+                        platform: "LinkedIn",
+                        url: "https://clickly.cv/dpkrn/linkedin",
+                        color: "from-blue-500 to-cyan-500",
+                        icon: "💼",
+                      },
+                      {
+                        platform: "GitHub",
+                        url: "https://clickly.cv/dpkrn/github",
+                        color: "from-gray-600 to-gray-800",
+                        icon: "🐙",
+                      },
+                      {
+                        platform: "LeetCode",
+                        url: "https://clickly.cv/dpkrn/leetcode",
+                        color: "from-orange-500 to-yellow-500",
+                        icon: "💻",
+                      },
+                      {
+                        platform: "Portfolio",
+                        url: "https://clickly.cv/dpkrn/portfolio",
+                        color: "from-purple-500 to-pink-500",
+                        icon: "🎨",
+                      },
+                      {
+                        platform: "Instagram",
+                        url: "https://clickly.cv/dpkrn/instagram",
+                        color: "from-pink-500 to-rose-500",
+                        icon: "📸",
+                      },
+                      {
+                        platform: "Codeforces",
+                        url: "https://clickly.cv/dpkrn/codeforces",
+                        color: "from-red-500 to-orange-500",
+                        icon: "⚔️",
+                      },
                     ].map((link, idx) => (
-                      <AnimatedLinkCard key={link.platform} link={link} idx={idx} />
+                      <AnimatedLinkCard
+                        key={link.platform}
+                        link={link}
+                        idx={idx}
+                      />
                     ))}
                   </div>
 
@@ -1356,7 +1509,7 @@ const Documentation = () => {
                                 ease: "linear",
                               }}
                             >
-                              {String.fromCharCode(0x30A0 + Math.random() * 96)}
+                              {String.fromCharCode(0x30a0 + Math.random() * 96)}
                             </motion.div>
                           ))}
                         </div>
@@ -1373,7 +1526,8 @@ const Documentation = () => {
                             ease: "easeInOut",
                           }}
                           style={{
-                            background: "linear-gradient(135deg, rgba(147, 51, 234, 0.5), rgba(236, 72, 153, 0.5), rgba(59, 130, 246, 0.5), rgba(147, 51, 234, 0.5))",
+                            background:
+                              "linear-gradient(135deg, rgba(147, 51, 234, 0.5), rgba(236, 72, 153, 0.5), rgba(59, 130, 246, 0.5), rgba(147, 51, 234, 0.5))",
                             filter: "blur(8px)",
                           }}
                         />
@@ -1458,7 +1612,7 @@ const Documentation = () => {
                               ✨
                             </motion.span>
                           </motion.div>
-                          
+
                           <motion.p
                             className="text-base md:text-lg text-gray-200 dark:text-gray-300 font-medium"
                             animate={{
@@ -1477,7 +1631,8 @@ const Documentation = () => {
                           <motion.div
                             className="absolute inset-0 rounded-2xl md:rounded-3xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                             style={{
-                              background: "radial-gradient(circle at center, rgba(147, 51, 234, 0.3), rgba(236, 72, 153, 0.2), transparent 70%)",
+                              background:
+                                "radial-gradient(circle at center, rgba(147, 51, 234, 0.3), rgba(236, 72, 153, 0.2), transparent 70%)",
                               filter: "blur(20px)",
                             }}
                           />
@@ -1519,7 +1674,9 @@ const Documentation = () => {
                         ease: "linear",
                       }}
                     >
-                      {String.fromCharCode(0x30A0 + Math.floor(Math.random() * 96))}
+                      {String.fromCharCode(
+                        0x30a0 + Math.floor(Math.random() * 96)
+                      )}
                     </motion.div>
                   ))}
                 </div>
@@ -1535,7 +1692,12 @@ const Documentation = () => {
                         top: `-20%`,
                       }}
                       animate={{
-                        y: [0, (typeof window !== 'undefined' ? window.innerHeight : 800) + 100],
+                        y: [
+                          0,
+                          (typeof window !== "undefined"
+                            ? window.innerHeight
+                            : 800) + 100,
+                        ],
                         opacity: [0, 0.8, 0],
                       }}
                       transition={{
@@ -1560,7 +1722,7 @@ const Documentation = () => {
                     ease: "easeInOut",
                   }}
                 />
-                
+
                 {/* Subtle Corner Glow Effects */}
                 <motion.div
                   className="absolute top-0 left-0 w-48 h-48 rounded-full pointer-events-none blur-3xl"
@@ -1574,7 +1736,8 @@ const Documentation = () => {
                     ease: "easeInOut",
                   }}
                   style={{
-                    background: "radial-gradient(circle, rgba(147, 51, 234, 0.3), transparent 70%)",
+                    background:
+                      "radial-gradient(circle, rgba(147, 51, 234, 0.3), transparent 70%)",
                     transform: "translate(-50%, -50%)",
                   }}
                 />
@@ -1591,7 +1754,8 @@ const Documentation = () => {
                     delay: 2,
                   }}
                   style={{
-                    background: "radial-gradient(circle, rgba(236, 72, 153, 0.3), transparent 70%)",
+                    background:
+                      "radial-gradient(circle, rgba(236, 72, 153, 0.3), transparent 70%)",
                     transform: "translate(50%, 50%)",
                   }}
                 />
@@ -1608,7 +1772,8 @@ const Documentation = () => {
                     ease: "easeInOut",
                   }}
                   style={{
-                    background: "linear-gradient(135deg, rgba(147, 51, 234, 0.4), rgba(236, 72, 153, 0.3), rgba(59, 130, 246, 0.3), rgba(147, 51, 234, 0.4))",
+                    background:
+                      "linear-gradient(135deg, rgba(147, 51, 234, 0.4), rgba(236, 72, 153, 0.3), rgba(59, 130, 246, 0.3), rgba(147, 51, 234, 0.4))",
                     filter: "blur(6px)",
                   }}
                 />
@@ -1617,7 +1782,8 @@ const Documentation = () => {
                 <motion.div
                   className="absolute inset-0 rounded-2xl md:rounded-3xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                   style={{
-                    background: "radial-gradient(circle at center, rgba(147, 51, 234, 0.15), rgba(236, 72, 153, 0.1), transparent 70%)",
+                    background:
+                      "radial-gradient(circle at center, rgba(147, 51, 234, 0.15), rgba(236, 72, 153, 0.1), transparent 70%)",
                     filter: "blur(20px)",
                   }}
                 />
@@ -1637,7 +1803,7 @@ const Documentation = () => {
                       </span>
                     </div>
                   </motion.div>
-                  
+
                   <motion.p
                     initial={{ opacity: 0, scale: 0.9 }}
                     whileInView={{ opacity: 1, scale: 1 }}
@@ -1654,7 +1820,7 @@ const Documentation = () => {
                       https://clickly.cv/dpkrn
                     </a>
                   </motion.p>
-                  
+
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -1664,11 +1830,12 @@ const Documentation = () => {
                   >
                     <div className="relative bg-clip-text text-transparent bg-no-repeat bg-gradient-to-r from-purple-400 via-violet-200 to-pink-500 dark:from-purple-300 dark:via-violet-100 dark:to-pink-400 py-2 md:py-4">
                       <span className="uppercase text-sm md:text-base lg:text-xl font-bold block">
-                        Change only the platform name to redirect to all profiles
+                        Change only the platform name to redirect to all
+                        profiles
                       </span>
                     </div>
                   </motion.div>
-                  
+
                   <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
                     whileInView={{ opacity: 1, scale: 1 }}
@@ -1683,7 +1850,10 @@ const Documentation = () => {
                       className="text-blue-400 dark:text-blue-300 underline font-mono hover:text-blue-300 dark:hover:text-blue-200 transition-colors break-all md:break-normal"
                     >
                       https://clickly.cv/dpkrn/
-                      <FlipWords className="text-blue-400 dark:text-blue-300" words={platforms} />
+                      <FlipWords
+                        className="text-blue-400 dark:text-blue-300"
+                        words={platforms}
+                      />
                     </a>
                   </motion.div>
                 </div>
@@ -1692,7 +1862,10 @@ const Documentation = () => {
           </motion.section>
 
           {/* Enhanced Get Started CTA with 3D Effects */}
-          <motion.section variants={itemVariants} className="mb-6 md:mb-8 text-center">
+          <motion.section
+            variants={itemVariants}
+            className="mb-6 md:mb-8 text-center"
+          >
             <motion.div
               initial={{ opacity: 0, y: 30, rotateX: -15 }}
               whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
@@ -1710,10 +1883,8 @@ const Documentation = () => {
                   style={{ transformStyle: "preserve-3d" }}
                 >
                   {/* Static Background */}
-                  <div
-                    className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600"
-                  />
-                  
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600" />
+
                   {/* Shimmer */}
                   <motion.div
                     className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent"
@@ -1729,7 +1900,7 @@ const Documentation = () => {
                     }}
                     style={{ transform: "skewX(-20deg)" }}
                   />
-                  
+
                   {/* Content */}
                   <span className="relative z-10">Get Started</span>
                   <motion.span
@@ -1746,7 +1917,7 @@ const Documentation = () => {
                   >
                     <FaRocket />
                   </motion.span>
-                  
+
                   {/* Glow Effect */}
                   <motion.div
                     className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 blur-2xl opacity-0 group-hover:opacity-60 -z-10"
@@ -1760,7 +1931,7 @@ const Documentation = () => {
                       ease: "easeInOut",
                     }}
                   />
-                  
+
                   {/* Floating Particles on Hover */}
                   <motion.div
                     className="absolute inset-0 pointer-events-none"
@@ -1802,7 +1973,7 @@ const Documentation = () => {
                   </motion.div>
                 </motion.button>
               </MagneticCard>
-              
+
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -1816,7 +1987,8 @@ const Documentation = () => {
                   y: { delay: 0.2 },
                 }}
               >
-                Create an account and start managing your personalized links today!
+                Create an account and start managing your personalized links
+                today!
               </motion.p>
             </motion.div>
           </motion.section>
@@ -1851,12 +2023,19 @@ const Documentation = () => {
                 transition={{ delay: 0.1 }}
                 className="text-base md:text-lg lg:text-xl leading-8 text-gray-700 dark:text-gray-300 mb-4 md:mb-6"
               >
-                The core idea behind <b className="text-gray-900 dark:text-white">LinkBridger</b> is to simplify the
-                management of social media links. Instead of sharing long,
-                hard-to-remember URLs, you create a single, personalized URL that
-                automatically redirects users to the correct platform. Access all your links at one place by visiting <b className="text-gray-900 dark:text-white">https://clickly.cv/yourname</b> (without any platform name). Plus, get real-time email notifications every time someone visits your links!
+                The core idea behind{" "}
+                <b className="text-gray-900 dark:text-white">LinkBridger</b> is
+                to simplify the management of social media links. Instead of
+                sharing long, hard-to-remember URLs, you create a single,
+                personalized URL that automatically redirects users to the
+                correct platform. Access all your links at one place by visiting{" "}
+                <b className="text-gray-900 dark:text-white">
+                  https://clickly.cv/yourname
+                </b>{" "}
+                (without any platform name). Plus, get real-time email
+                notifications every time someone visits your links!
               </motion.p>
-              
+
               <div className="space-y-6">
                 {[
                   {
@@ -1932,7 +2111,9 @@ const Documentation = () => {
                 transition={{ delay: 0.6 }}
                 className="mt-8 p-6 bg-white/5 dark:bg-gray-800/30 rounded-2xl border border-white/10"
               >
-                <p className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Example:</p>
+                <p className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                  Example:
+                </p>
                 <div className="space-y-2">
                   <motion.a
                     href="https://clickly.cv/dpkrn/instagram"
@@ -1985,9 +2166,11 @@ const Documentation = () => {
                 viewport={{ once: true }}
                 className="text-base md:text-lg lg:text-xl leading-8 text-gray-800 dark:text-gray-300"
               >
-                With <b className="text-gray-900 dark:text-white">LinkBridger</b>, you can track how many times each of your
-                links has been clicked. This allows you to monitor the engagement on
-                your social media profiles across different platforms. Access the
+                With{" "}
+                <b className="text-gray-900 dark:text-white">LinkBridger</b>,
+                you can track how many times each of your links has been
+                clicked. This allows you to monitor the engagement on your
+                social media profiles across different platforms. Access the
                 analytics section from your dashboard to see detailed statistics
                 about each link's performance.
               </motion.p>
@@ -2057,42 +2240,66 @@ const Documentation = () => {
                   desc: "Create professional links for your resume, LinkedIn, portfolio, and GitHub. Share one memorable link with recruiters.",
                   icon: FaBriefcase,
                   gradient: "from-blue-500 to-cyan-500",
-                  examples: ["Resume sharing", "Interview preparation", "Professional networking"],
+                  examples: [
+                    "Resume sharing",
+                    "Interview preparation",
+                    "Professional networking",
+                  ],
                 },
                 {
                   title: "Content Creators",
                   desc: "Manage all your social media profiles from one place. Share your LinkBridger link in bio and watch engagement grow.",
                   icon: FaUserTie,
                   gradient: "from-purple-500 to-pink-500",
-                  examples: ["Instagram bio links", "YouTube descriptions", "TikTok profiles"],
+                  examples: [
+                    "Instagram bio links",
+                    "YouTube descriptions",
+                    "TikTok profiles",
+                  ],
                 },
                 {
                   title: "Developers",
                   desc: "Showcase your GitHub, portfolio, blog, and coding profiles. Perfect for developer portfolios and tech resumes.",
                   icon: FaCode,
                   gradient: "from-green-500 to-emerald-500",
-                  examples: ["Portfolio websites", "GitHub profiles", "Tech blogs"],
+                  examples: [
+                    "Portfolio websites",
+                    "GitHub profiles",
+                    "Tech blogs",
+                  ],
                 },
                 {
                   title: "Students",
                   desc: "Share academic profiles, LinkedIn, research papers, and project portfolios. Great for college applications and networking.",
                   icon: FaGraduationCap,
                   gradient: "from-orange-500 to-red-500",
-                  examples: ["College applications", "Academic networking", "Project showcases"],
+                  examples: [
+                    "College applications",
+                    "Academic networking",
+                    "Project showcases",
+                  ],
                 },
                 {
                   title: "Businesses",
                   desc: "Create branded links for your company's social media presence. Manage multiple team member profiles efficiently.",
                   icon: FaUsers,
                   gradient: "from-indigo-500 to-purple-500",
-                  examples: ["Team profiles", "Brand consistency", "Social media management"],
+                  examples: [
+                    "Team profiles",
+                    "Brand consistency",
+                    "Social media management",
+                  ],
                 },
                 {
                   title: "Freelancers",
                   desc: "Consolidate your work samples, client testimonials, and contact information in one professional link.",
                   icon: FaRocket,
                   gradient: "from-pink-500 to-rose-500",
-                  examples: ["Client proposals", "Portfolio sharing", "Service showcases"],
+                  examples: [
+                    "Client proposals",
+                    "Portfolio sharing",
+                    "Service showcases",
+                  ],
                 },
               ].map((useCase, idx) => {
                 const IconComponent = useCase.icon;
@@ -2124,7 +2331,10 @@ const Documentation = () => {
                       </p>
                       <div className="space-y-2">
                         {useCase.examples.map((example, i) => (
-                          <div key={i} className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-400">
+                          <div
+                            key={i}
+                            className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-400"
+                          >
                             <FaCheckCircle className="text-green-600 dark:text-green-400 text-xs" />
                             <span>{example}</span>
                           </div>
@@ -2212,7 +2422,9 @@ const Documentation = () => {
                         className="flex-shrink-0 mt-1"
                         whileHover={{ scale: 1.2, rotate: 10 }}
                       >
-                        <IconComponent className={`text-2xl ${practice.color}`} />
+                        <IconComponent
+                          className={`text-2xl ${practice.color}`}
+                        />
                       </motion.div>
                       <div className="flex-1">
                         <h4 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white mb-2">
@@ -2246,15 +2458,43 @@ const Documentation = () => {
               viewport={{ once: true }}
             >
               <p className="text-lg md:text-xl text-gray-700 dark:text-gray-400 mb-4 md:mb-6 text-center">
-                LinkBridger supports <b className="text-gray-900 dark:text-white">any platform</b> you can think of! Just provide the destination URL and we'll create your personalized link.
+                LinkBridger supports{" "}
+                <b className="text-gray-900 dark:text-white">any platform</b>{" "}
+                you can think of! Just provide the destination URL and we'll
+                create your personalized link.
               </p>
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
                 {[
-                  "LinkedIn", "GitHub", "Instagram", "Facebook", "Twitter/X", "YouTube",
-                  "TikTok", "Snapchat", "Pinterest", "Reddit", "Discord", "Telegram",
-                  "WhatsApp", "Medium", "Dev.to", "Behance", "Dribbble", "Figma",
-                  "Portfolio", "Blog", "Website", "Email", "Resume", "LeetCode",
-                  "Codeforces", "HackerRank", "CodeChef", "Stack Overflow", "Quora", "Tumblr"
+                  "LinkedIn",
+                  "GitHub",
+                  "Instagram",
+                  "Facebook",
+                  "Twitter/X",
+                  "YouTube",
+                  "TikTok",
+                  "Snapchat",
+                  "Pinterest",
+                  "Reddit",
+                  "Discord",
+                  "Telegram",
+                  "WhatsApp",
+                  "Medium",
+                  "Dev.to",
+                  "Behance",
+                  "Dribbble",
+                  "Figma",
+                  "Portfolio",
+                  "Blog",
+                  "Website",
+                  "Email",
+                  "Resume",
+                  "LeetCode",
+                  "Codeforces",
+                  "HackerRank",
+                  "CodeChef",
+                  "Stack Overflow",
+                  "Quora",
+                  "Tumblr",
                 ].map((platform, idx) => (
                   <motion.div
                     key={platform}
@@ -2278,7 +2518,8 @@ const Documentation = () => {
                 transition={{ delay: 0.5 }}
                 className="text-center text-gray-600 dark:text-gray-500 mt-6 text-sm md:text-base"
               >
-                And many more! If you can share a URL, we can create a personalized link for it.
+                And many more! If you can share a URL, we can create a
+                personalized link for it.
               </motion.p>
             </motion.div>
           </motion.section>
@@ -2377,37 +2618,43 @@ const Documentation = () => {
               {[
                 {
                   issue: "My link is not redirecting correctly",
-                  solution: "Double-check that your destination URL is correct and includes the full protocol (https://). Make sure the URL is accessible and not behind a login wall.",
+                  solution:
+                    "Double-check that your destination URL is correct and includes the full protocol (https://). Make sure the URL is accessible and not behind a login wall.",
                   icon: FaExclamationTriangle,
                   color: "from-red-500 to-orange-500",
                 },
                 {
                   issue: "I forgot my password",
-                  solution: "Use the 'Forgot Password' link on the login page to reset your password. You'll receive an email with instructions to create a new password.",
+                  solution:
+                    "Use the 'Forgot Password' link on the login page to reset your password. You'll receive an email with instructions to create a new password.",
                   icon: FaQuestionCircle,
                   color: "from-blue-500 to-cyan-500",
                 },
                 {
                   issue: "My username is already taken",
-                  solution: "Usernames must be unique. Try adding numbers or variations to your desired username. Remember, usernames cannot be changed once created.",
+                  solution:
+                    "Usernames must be unique. Try adding numbers or variations to your desired username. Remember, usernames cannot be changed once created.",
                   icon: FaTimes,
                   color: "from-yellow-500 to-orange-500",
                 },
                 {
                   issue: "I'm not receiving verification emails",
-                  solution: "Check your spam/junk folder. Make sure you entered the correct email address. If the issue persists, contact support for assistance.",
+                  solution:
+                    "Check your spam/junk folder. Make sure you entered the correct email address. If the issue persists, contact support for assistance.",
                   icon: FaExclamationTriangle,
                   color: "from-purple-500 to-pink-500",
                 },
                 {
                   issue: "My click count seems incorrect",
-                  solution: "Click tracking may take a few moments to update. Refresh your dashboard. Note that clicks from the same IP within a short time may be filtered to prevent spam.",
+                  solution:
+                    "Click tracking may take a few moments to update. Refresh your dashboard. Note that clicks from the same IP within a short time may be filtered to prevent spam.",
                   icon: FaChartLine,
                   color: "from-green-500 to-emerald-500",
                 },
                 {
                   issue: "I want to delete my account",
-                  solution: "Contact our support team to request account deletion. We'll process your request and ensure all your data is permanently removed from our systems.",
+                  solution:
+                    "Contact our support team to request account deletion. We'll process your request and ensure all your data is permanently removed from our systems.",
                   icon: FaUserTie,
                   color: "from-indigo-500 to-purple-500",
                 },
@@ -2436,7 +2683,9 @@ const Documentation = () => {
                             {item.issue}
                           </h4>
                           <p className="text-gray-700 dark:text-gray-400 leading-relaxed">
-                            <span className="font-semibold text-green-600 dark:text-green-400">Solution: </span>
+                            <span className="font-semibold text-green-600 dark:text-green-400">
+                              Solution:{" "}
+                            </span>
                             {item.solution}
                           </p>
                         </div>
@@ -2463,8 +2712,9 @@ const Documentation = () => {
                   className="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 underline"
                 >
                   d.wizard.techno@gmail.com
-                </a>
-                {" "}and we'll be happy to assist you!
+                </a>{" "}
+                
+                and we'll be happy to assist you!
               </p>
             </motion.div>
           </motion.section>
