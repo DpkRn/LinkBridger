@@ -104,6 +104,28 @@ const ProfilePreview = () => {
         );
         background-size: 200% 100%;
       }
+      .edge-animated-always {
+        animation: edge-glow 2s ease-in-out infinite;
+      }
+      .edge-animated-always::before {
+        opacity: 1;
+        animation: edge-shimmer 2s linear infinite;
+      }
+      .dark .edge-animated-always {
+        animation: edge-glow 2s ease-in-out infinite;
+      }
+      .dark .edge-animated-always::before {
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(168, 85, 247, 0.7),
+          rgba(244, 114, 182, 0.7),
+          rgba(96, 165, 250, 0.7),
+          rgba(168, 85, 247, 0.7),
+          transparent
+        );
+        background-size: 200% 100%;
+      }
       .edge-animated > * {
         position: relative;
         z-index: 1;
@@ -290,30 +312,46 @@ const ProfilePreview = () => {
           {/* Profile Card */}
           <motion.div
             variants={itemVariants}
-            className="edge-animated bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-6 md:p-10 lg:p-12 mb-8"
+            className="edge-animated edge-animated-always bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-6 md:p-10 lg:p-12 mb-8"
           >
             {/* Profile Header */}
             <div className="flex flex-col md:flex-row items-center md:items-start gap-6 mb-8">
               {/* Profile Image */}
-              {settings?.profile?.showProfileImage !== false && (
-                <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ type: "spring", stiffness: 200, damping: 15 }}
-                  className="relative"
-                >
-                  <div className="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-purple-500/30 dark:border-purple-400/30 overflow-hidden shadow-2xl">
-                    <img
-                      src={profileData.image || "profile.png"}
-                      alt={profileData.name || username}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.target.src = "profile.png";
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: "spring", stiffness: 200, damping: 15 }}
+                className="relative w-32 h-32 md:w-40 md:h-40 rounded-full"
+              >
+                <div className="w-full h-full rounded-full border-4 border-purple-500/30 dark:border-purple-400/30 overflow-hidden shadow-2xl relative">
+                  <img
+                    src={profileData.image || "profile.png"}
+                    alt={profileData.name || username}
+                    className="w-full h-full object-cover"
+                    style={{
+                      filter: settings?.profile?.showProfileImage === false ? 'blur(6px)' : 'none',
+                      transform: 'translateZ(0)',
+                      backfaceVisibility: 'hidden',
+                      WebkitBackfaceVisibility: 'hidden',
+                      imageRendering: 'auto'
+                    }}
+                    onError={(e) => {
+                      e.target.src = "profile.png";
+                    }}
+                  />
+                  {settings?.profile?.showProfileImage === false && (
+                    <div 
+                      className="absolute inset-0 flex items-center justify-center rounded-full pointer-events-none"
+                      style={{
+                        background: 'rgba(17, 24, 39, 0.2)',
+                        transform: 'translateZ(0)'
                       }}
-                    />
-                  </div>
-                </motion.div>
-              )}
+                    >
+                      <FaLock className="text-2xl md:text-3xl text-gray-400 dark:text-gray-500" />
+                    </div>
+                  )}
+                </div>
+              </motion.div>
 
               {/* Profile Info */}
               <div className="flex-1 text-center md:text-left">

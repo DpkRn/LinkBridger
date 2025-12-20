@@ -127,7 +127,7 @@ function App() {
         <Route path='/links' element={<PrivateRoute><LinkPage/></PrivateRoute>} />
         <Route path='/' element={<AuthRoute><HomePage/></AuthRoute>} />
         <Route path='/profile' element={<PrivateRoute><ProfilePage/></PrivateRoute>} />
-        <Route path='/profile/:username' element={<ProfilePreview/>} />
+        <Route path='/profile/:username' element={<PrivateRoute><ProfilePreview/></PrivateRoute>} />
         <Route path='/settings' element={<PrivateRoute><Settings/></PrivateRoute>} />
         <Route path='/home' element={<PrivateRoute><DashBoard /></PrivateRoute>} />
         <Route path='/verified' element={<VerifiedPage />} />
