@@ -175,7 +175,7 @@ const getPublicProfile = async (req, res) => {
                 bio: settings.profile.showBio ? profile.bio : null,
                 image: settings.profile.showProfileImage ? profile.image : null
             },
-            links: publicLinks,
+            links: visibleLinks, // Include both public and unlisted links
             settings: {
                 profile: settings.profile,
                 links: settings.links,

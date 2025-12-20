@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
 import api from "../../utils/api";
@@ -75,7 +75,7 @@ const ProfilePage = () => {
     }
   };
 
-  const getProfileInfo = async () => {
+  const getProfileInfo = useCallback(async () => {
     try {
       const profileinfo = await api.post(
         "/profile/getprofileinfo",
@@ -94,7 +94,7 @@ const ProfilePage = () => {
       const message = error.response?.data?.msg || "Server error";
       toast.error(message);
     }
-  };
+  }, [username]);
 
   const handleCancel = () => {
     setEditable(false);
@@ -166,7 +166,7 @@ const ProfilePage = () => {
     if (username) {
       getProfileInfo();
     }
-  }, [username]);
+  }, [username, getProfileInfo]);
 
   const containerVariants = {
     hidden: { opacity: 0 },

@@ -50,9 +50,8 @@ const ProfilePreview = () => {
       const res = await api.post('/profile/getpublicprofile', { username }, { withCredentials: true });
       if (res.status === 200 && res.data.success) {
         setProfileData(res.data.profile);
-        // Filter only public links for visitors
-        const publicLinks = (res.data.links || []).filter(link => link.visibility === 'public');
-        setLinks(publicLinks);
+        // Include both public and unlisted links (unlisted will be tagged)
+        setLinks(res.data.links || []);
         setSettings(res.data.settings);
       } else {
         toast.error(res.data.message || "Profile not found or not public");
@@ -318,12 +317,25 @@ const ProfilePreview = () => {
                         {getVisibilityIcon(link.visibility)}
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1">
-                          {link.source.toUpperCase()}
-                        </h3>
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                            {link.source.toUpperCase()}
+                          </h3>
+                          {link.visibility === 'unlisted' && (
+                            <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 text-white dark:from-yellow-400 dark:to-orange-400 flex items-center gap-1">
+                              <FaEyeSlash className="text-xs" />
+                              Unlisted
+                            </span>
+                          )}
+                        </div>
                         <p className="text-sm text-gray-600 dark:text-gray-400 truncate">
                           {link.destination}
                         </p>
+                        {link.visibility === 'unlisted' && (
+                          <p className="text-xs text-yellow-600 dark:text-yellow-400 mt-1 italic">
+                            Not listed in link hub
+                          </p>
+                        )}
                         {/* Click Count */}
                         <div className="flex items-center gap-2 mt-2">
                           <FaMousePointer className="text-xs text-gray-500 dark:text-gray-400" />
