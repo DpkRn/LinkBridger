@@ -107,6 +107,7 @@ const decodeData = (encodedData) => {
 
 // Handle password submission for private links
 app.post('/link/verify-password', extractInfo, async (req, res) => {
+
   try {
     const { hashedUsername, hashedSource, password } = req.body;
     console.log(hashedUsername,hashedSource)
@@ -120,7 +121,7 @@ app.post('/link/verify-password', extractInfo, async (req, res) => {
     // Decode the username and source
     const username = decodeData(hashedUsername);
     const source = decodeData(hashedSource);
-    console.log(hashedUsername,hashedSource)
+    console.log("after decoding",hashedUsername,hashedSource)
 
     if (!username || !source) {
       return res.status(400).json({
@@ -164,9 +165,13 @@ app.post('/link/verify-password', extractInfo, async (req, res) => {
         console.error('Failed to send visit email:', err);
       });
     }
-    
+    return res.status(200).json({
+      success: true,
+      message: 'Password verified successfully',
+      destination: destination
+    });
     // Redirect directly to destination
-    return res.redirect(307, destination);
+    // return res.redirect(307, destination);
   } catch (error) {
     console.error('Password verification error:', error);
     return res.status(500).json({
@@ -175,6 +180,146 @@ app.post('/link/verify-password', extractInfo, async (req, res) => {
     });
   }
 });
+
+
+
+app.get('/:username/:source',extractInfo, async (req, res) => {
+  const {username,source}=req.params;
+  const linkHub=`Available link: ${req.protocol}://${req.get('host')}/${username}`
+
+  const doc=await Link.findOne({
+    username,
+    source,
+    deletedAt: null
+  })
+
+  const info=await User.findOne({username},{email:1,name:1})
+  if(!info){
+    return res.render('not_exists',{
+      linkHub:""
+    })
+  }
+  const {email,name}=info
+  
+  if(!doc) {
+    return res.render('not_exists',{
+      linkHub:linkHub
+    })
+  }
+
+  // Check link visibility
+  // private links should render password prompt page directly
+  if(doc.visibility === 'private') {
+    // Encode username and source before sending to EJS
+    const hashedUsername = encodeData(username);
+    const hashedSource = encodeData(source);
+    return res.render('password_prompt', { 
+      hashedUsername, 
+      hashedSource 
+    });
+  }
+
+  // unlisted links are accessible via direct URL (password protection can be added later)
+  // public links are accessible
+  const {destination,clicked,notSeen}=doc
+  await Link.updateOne({username,source},{$set:{clicked:clicked+1,notSeen:notSeen+1}})
+
+  const deviceDetails=req.details
+  sendVisitEmail(email,username,name,deviceDetails,source)
+  return res.redirect(307,destination)
+})
+
+app.get('/:username/:source',extractInfo, async (req, res) => {
+  const {username,source}=req.params;
+  const linkHub=`Available link: ${req.protocol}://${req.get('host')}/${username}`
+
+  const doc=await Link.findOne({
+    username,
+    source,
+    deletedAt: null
+  })
+
+  const info=await User.findOne({username},{email:1,name:1})
+  if(!info){
+    return res.render('not_exists',{
+      linkHub:""
+    })
+  }
+  const {email,name}=info
+  
+  if(!doc) {
+    return res.render('not_exists',{
+      linkHub:linkHub
+    })
+  }
+
+  // Check link visibility
+  // private links should render password prompt page directly
+  if(doc.visibility === 'private') {
+    // Encode username and source before sending to EJS
+    const hashedUsername = encodeData(username);
+    const hashedSource = encodeData(source);
+    return res.render('password_prompt', { 
+      hashedUsername, 
+      hashedSource 
+    });
+  }
+
+  // unlisted links are accessible via direct URL (password protection can be added later)
+  // public links are accessible
+  const {destination,clicked,notSeen}=doc
+  await Link.updateOne({username,source},{$set:{clicked:clicked+1,notSeen:notSeen+1}})
+
+  const deviceDetails=req.details
+  sendVisitEmail(email,username,name,deviceDetails,source)
+  return res.redirect(307,destination)
+})
+
+app.get('/:username/:source',extractInfo, async (req, res) => {
+  const {username,source}=req.params;
+  const linkHub=`Available link: ${req.protocol}://${req.get('host')}/${username}`
+
+  const doc=await Link.findOne({
+    username,
+    source,
+    deletedAt: null
+  })
+
+  const info=await User.findOne({username},{email:1,name:1})
+  if(!info){
+    return res.render('not_exists',{
+      linkHub:""
+    })
+  }
+  const {email,name}=info
+  
+  if(!doc) {
+    return res.render('not_exists',{
+      linkHub:linkHub
+    })
+  }
+
+  // Check link visibility
+  // private links should render password prompt page directly
+  if(doc.visibility === 'private') {
+    // Encode username and source before sending to EJS
+    const hashedUsername = encodeData(username);
+    const hashedSource = encodeData(source);
+    return res.render('password_prompt', { 
+      hashedUsername, 
+      hashedSource 
+    });
+  }
+
+  // unlisted links are accessible via direct URL (password protection can be added later)
+  // public links are accessible
+  const {destination,clicked,notSeen}=doc
+  await Link.updateOne({username,source},{$set:{clicked:clicked+1,notSeen:notSeen+1}})
+
+  const deviceDetails=req.details
+  sendVisitEmail(email,username,name,deviceDetails,source)
+  return res.redirect(307,destination)
+})
 
 app.get('/:username/:source',extractInfo, async (req, res) => {
   const {username,source}=req.params;
@@ -223,6 +368,7 @@ app.get('/:username/:source',extractInfo, async (req, res) => {
 })
 
 
+
 app.get('/:username',extractInfo, async (req, res) => {
   console.log("backend profile search start")
   const username=req.params.username
@@ -252,6 +398,8 @@ app.get('/:username',extractInfo, async (req, res) => {
   
   return res.render('not_exists', { linkHub: '' })
 })
+
+
 
 
 mongoose.connect(db_url).then(()=>{
