@@ -8,14 +8,9 @@ import {
   FaLink, 
   FaChartLine, 
   FaSyncAlt, 
-  FaShieldAlt, 
-  FaInfinity,
   FaUsers,
-  FaGlobe,
   FaClock,
-  FaStar,
   FaEnvelope,
-  FaHome,
   FaCheckCircle,
   FaBriefcase,
   FaUserTie,
@@ -42,6 +37,48 @@ import {
   CTASection
 } from './sections';
 
+// 3D Card Component with Magnetic Hover
+const MagneticCard = ({ children, className = "", intensity = 0.3 }) => {
+  const cardRef = useRef(null);
+  const [rotate, setRotate] = useState({ x: 0, y: 0 });
+
+  const handleMouseMove = (e) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const x = (e.clientX - centerX) / (rect.width / 2);
+    const y = (e.clientY - centerY) / (rect.height / 2);
+    setRotate({ x: y * intensity, y: -x * intensity });
+  };
+
+  const handleMouseLeave = () => {
+    setRotate({ x: 0, y: 0 });
+  };
+
+  return (
+    <motion.div
+      ref={cardRef}
+      className={className}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      animate={{
+        rotateX: rotate.x,
+        rotateY: rotate.y,
+      }}
+      transition={{ type: "spring", stiffness: 150, damping: 30, mass: 0.5 }}
+      style={{
+        transformStyle: "preserve-3d",
+        perspective: "1000px",
+        willChange: "transform",
+        backfaceVisibility: "hidden",
+      }}
+    >
+      {children}
+    </motion.div>
+  );
+};
+
 const HomePage = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -50,8 +87,6 @@ const HomePage = () => {
   const darkMode = useSelector(store => store.page.darkMode);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const statsRef = useRef(null);
-  const featuresRef = useRef(null);
-  const benefitsRef = useRef(null);
   // Ref to store latest mouse position, avoiding stale closure values in RAF callback
   const latestMousePositionRef = useRef({ x: 0, y: 0 });
 
@@ -131,100 +166,156 @@ const HomePage = () => {
 
   const flipWords = ["LinkedIn", "GitHub", "Instagram", "Portfolio", "YouTube", "Twitter"];
 
-  const features = [
+  const platformsForFlip = [
+    "linkedin",
+    "github",
+    "leetcode",
+    "portfolio",
+    "instagram",
+    "codeforce",
+  ];
+
+  const exampleLinks = [
     {
-      icon: <FaLink className="w-8 h-8" />,
-      title: "Personalized Links",
-      description: "Create memorable URLs like clickly.cv/yourname/linkedin that reflect your brand",
+      platform: "LinkedIn",
+      url: "https://clickly.cv/dpkrn/linkedin",
       color: "from-blue-500 to-cyan-500",
-      delay: 0.1
     },
     {
-      icon: <FaHome className="w-8 h-8" />,
-      title: "All Links at One Place",
-      description: "Access all your profiles with a single hub link. Visit clickly.cv/yourname to see all your links in one beautiful page",
-      color: "from-violet-500 to-purple-500",
-      delay: 0.15
+      platform: "GitHub",
+      url: "https://clickly.cv/dpkrn/github",
+      color: "from-gray-600 to-gray-800",
     },
     {
-      icon: <FaSyncAlt className="w-8 h-8" />,
-      title: "Centralized Management",
-      description: "Update once, reflect everywhere. Change your destination URL and all shared links update automatically",
+      platform: "LeetCode",
+      url: "https://clickly.cv/dpkrn/leetcode",
+      color: "from-orange-500 to-yellow-500",
+    },
+    {
+      platform: "Portfolio",
+      url: "https://clickly.cv/dpkrn/portfolio",
       color: "from-purple-500 to-pink-500",
-      delay: 0.2
     },
     {
-      icon: <FaEnvelope className="w-8 h-8" />,
-      title: "Real-Time Email Notifications",
-      description: "Get instant email notifications based on your preferences. Customize notifications for link visits, profile views, and weekly reports. Control what you want to be notified about through your settings. Stay informed about engagement on your terms",
-      color: "from-cyan-500 to-blue-500",
-      delay: 0.25
-    },
-    {
-      icon: <FaChartLine className="w-8 h-8" />,
-      title: "Click Analytics",
-      description: "Track engagement with real-time analytics. Know which platforms drive the most traffic",
-      color: "from-green-500 to-emerald-500",
-      delay: 0.3
-    },
-    {
-      icon: <FaShieldAlt className="w-8 h-8" />,
-      title: "Privacy First",
-      description: "Control who sees what with granular content permissions. Protect links with passwords, set visibility preferences (public/unlisted/private), and customize what appears in your profile. No tracking scripts, no third-party analytics. Your data stays yours",
-      color: "from-orange-500 to-red-500",
-      delay: 0.4
-    },
-    {
-      icon: <FaInfinity className="w-8 h-8" />,
-      title: "Never Expires",
-      description: "Your links work forever. No expiration dates, no premium plans, no limits",
-      color: "from-indigo-500 to-purple-500",
-      delay: 0.5
-    },
-    {
-      icon: <FaRocket className="w-8 h-8" />,
-      title: "Easy Setup",
-      description: "Get started in minutes. Just choose a username and start creating your personalized links",
+      platform: "Instagram",
+      url: "https://clickly.cv/dpkrn/instagram",
       color: "from-pink-500 to-rose-500",
-      delay: 0.6
+    },
+    {
+      platform: "Codeforces",
+      url: "https://clickly.cv/dpkrn/codeforces",
+      color: "from-red-500 to-orange-500",
     },
   ];
 
-  const benefits = [
+  const useCases = [
     {
-      title: "For Professionals",
-      points: [
-        "Build your brand with consistent, memorable links",
-        "Professional appearance on resumes and business cards",
-        "Save time with centralized link management",
-        "Track engagement to optimize networking strategy"
+      title: "Job Seekers",
+      desc: "Create professional links for your resume, LinkedIn, portfolio, and GitHub. Share one memorable link with recruiters.",
+      icon: FaBriefcase,
+      gradient: "from-blue-500 to-cyan-500",
+      examples: [
+        "Resume sharing",
+        "Interview preparation",
+        "Professional networking",
       ],
-      icon: <FaUsers className="w-12 h-12" />,
-      gradient: "from-blue-600 to-cyan-600"
     },
     {
-      title: "For Content Creators",
-      points: [
-        "Easy sharing across all platforms",
-        "Audience insights through click tracking",
-        "Flexibility to add any platform",
-        "Cross-platform promotion made simple"
+      title: "Content Creators",
+      desc: "Manage all your social media profiles from one place. Share your LinkBridger link in bio and watch engagement grow.",
+      icon: FaUserTie,
+      gradient: "from-purple-500 to-pink-500",
+      examples: [
+        "Instagram bio links",
+        "YouTube descriptions",
+        "TikTok profiles",
       ],
-      icon: <FaStar className="w-12 h-12" />,
-      gradient: "from-purple-600 to-pink-600"
     },
     {
-      title: "For Developers",
-      points: [
-        "Open source and fully customizable",
-        "API access for integration",
-        "Self-hostable solution",
-        "Contribute to the community"
+      title: "Developers",
+      desc: "Showcase your GitHub, portfolio, blog, and coding profiles. Perfect for developer portfolios and tech resumes.",
+      icon: FaCode,
+      gradient: "from-green-500 to-emerald-500",
+      examples: [
+        "Portfolio websites",
+        "GitHub profiles",
+        "Tech blogs",
       ],
-      icon: <FaGlobe className="w-12 h-12" />,
-      gradient: "from-green-600 to-emerald-600"
+    },
+    {
+      title: "Students",
+      desc: "Share academic profiles, LinkedIn, research papers, and project portfolios. Great for college applications and networking.",
+      icon: FaGraduationCap,
+      gradient: "from-orange-500 to-red-500",
+      examples: [
+        "College applications",
+        "Academic networking",
+        "Project showcases",
+      ],
+    },
+    {
+      title: "Businesses",
+      desc: "Create branded links for your company's social media presence. Manage multiple team member profiles efficiently.",
+      icon: FaUsers,
+      gradient: "from-indigo-500 to-purple-500",
+      examples: [
+        "Team profiles",
+        "Brand consistency",
+        "Social media management",
+      ],
+    },
+    {
+      title: "Freelancers",
+      desc: "Consolidate your work samples, client testimonials, and contact information in one professional link.",
+      icon: FaRocket,
+      gradient: "from-pink-500 to-rose-500",
+      examples: [
+        "Client proposals",
+        "Portfolio sharing",
+        "Service showcases",
+      ],
     },
   ];
+
+  const howItWorksSteps = [
+    {
+      step: "1",
+      title: "Create an Account",
+      desc: "Sign up using your email and create an account on LinkBridger.",
+      icon: FaRocket,
+    },
+    {
+      step: "2",
+      title: "Choose a Username",
+      desc: "Pick a username that's easy to remember (e.g., dpkrn). Your link will follow this format: https://clickly.cv/your-username/instagram.",
+      icon: FaLink,
+    },
+    {
+      step: "3",
+      title: "Verify Your Account",
+      desc: "Complete email verification to activate your account.",
+      icon: FaCheckCircle,
+    },
+    {
+      step: "4",
+      title: "Create a New Link",
+      desc: "Enter the platform name (e.g., Instagram, LinkedIn) in lowercase. Paste your profile URL in the 'Destination URL' field. Click 'Create Link' to generate your personalized link.",
+      icon: FaCog,
+    },
+    {
+      step: "5",
+      title: "Share the Link",
+      desc: "Copy and share your smart link across various platforms. Share your hub link (https://clickly.cv/yourname) to let visitors see all your profiles in one place.",
+      icon: FaSyncAlt,
+    },
+    {
+      step: "6",
+      title: "Get Real-Time Notifications",
+      desc: "Receive instant email notifications every time someone visits your links. Stay informed about engagement and track who's viewing your profiles in real-time.",
+      icon: FaEnvelope,
+    },
+  ];
+
 
   const platforms = [
     { name: "LinkedIn", icon: <SiLinkedin />, color: "text-blue-600" },
@@ -340,28 +431,603 @@ const HomePage = () => {
         isAuthenticated={isAuthenticated}
       />
 
+      {/* Have You Ever Wondered Section - Redesigned with Perfect Alignment */}
+      <motion.section
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8 }}
+        className="py-12 px-4 sm:px-6 lg:px-8"
+      >
+        <div className="container mx-auto max-w-3xl">
+          <motion.h2
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="text-2xl md:text-3xl lg:text-4xl font-bold text-center mb-4 md:mb-6 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
+          >
+            Have You Ever Wondered How Link Has Been Personalized:
+          </motion.h2>
+
+          <MagneticCard intensity={0.15}>
+            <motion.div
+              className="relative bg-gradient-to-br from-slate-800/95 via-slate-700/95 to-slate-800/95 dark:from-slate-900/95 dark:via-slate-800/95 dark:to-slate-900/95 backdrop-blur-xl rounded-xl md:rounded-2xl shadow-2xl border border-purple-500/20 dark:border-purple-400/20 p-4 md:p-5 lg:p-6 overflow-hidden"
+              whileHover={{ scale: 1.02, y: -5 }}
+              transition={{ duration: 0.3 }}
+            >
+              {/* Animated Background Glow */}
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-blue-500/10"
+                animate={{
+                  opacity: [0.3, 0.6, 0.3],
+                  scale: [1, 1.05, 1],
+                }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              />
+
+              {/* Floating Particles */}
+              {[...Array(8)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  className="absolute w-1 h-1 rounded-full bg-purple-400/40"
+                  style={{
+                    left: `${10 + (i * 7)}%`,
+                    top: `${15 + (i % 4) * 25}%`,
+                  }}
+                  animate={{
+                    y: [0, -20, 0],
+                    x: [0, Math.sin(i) * 10, 0],
+                    opacity: [0.2, 0.6, 0.2],
+                    scale: [1, 1.5, 1],
+                  }}
+                  transition={{
+                    duration: 3 + i * 0.2,
+                    repeat: Infinity,
+                    delay: i * 0.3,
+                    ease: "easeInOut",
+                  }}
+                />
+              ))}
+
+              <div className="relative z-10">
+                {/* Base URL Display - Shown Once */}
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6 }}
+                  className="mb-4 pb-3 border-b border-purple-500/30 dark:border-purple-400/30"
+                >
+                  <p className="text-xs text-gray-400 dark:text-gray-500 mb-1.5 font-semibold uppercase tracking-wider">
+                    Base URL (Same for All):
+                  </p>
+                  <motion.div
+                    className="flex items-center gap-2 flex-wrap"
+                    animate={{
+                      x: [0, 5, 0],
+                    }}
+                    transition={{
+                      duration: 3,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }}
+                  >
+                    <motion.a
+                      href="https://clickly.cv/dpkrn/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs md:text-sm lg:text-base font-mono font-bold text-purple-300 dark:text-purple-200 bg-purple-500/20 dark:bg-purple-500/30 px-2 py-1 rounded-lg border border-purple-400/30 hover:bg-purple-500/30 dark:hover:bg-purple-500/40 hover:border-purple-400/50 transition-all duration-300 inline-block"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      https://clickly.cv/dpkrn/
+                    </motion.a>
+                    <span className="text-xs md:text-sm text-gray-400 dark:text-gray-500 italic">
+                      (accessible for all generated link at one place)
+                    </span>
+                    <motion.span
+                      className="text-lg"
+                      animate={{
+                        opacity: [0.5, 1, 0.5],
+                        scale: [1, 1.2, 1],
+                      }}
+                      transition={{
+                        duration: 1.5,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                      }}
+                    >
+                      ⬇️
+                    </motion.span>
+                  </motion.div>
+                </motion.div>
+
+                {/* Links List - Perfectly Aligned */}
+                <div className="space-y-1.5 md:space-y-2">
+                  {[
+                    { platform: "LinkedIn", url: "https://clickly.cv/dpkrn/linkedin", color: "from-blue-500 to-cyan-500" },
+                    { platform: "GitHub", url: "https://clickly.cv/dpkrn/github", color: "from-gray-400 to-gray-600" },
+                    { platform: "LeetCode", url: "https://clickly.cv/dpkrn/leetcode", color: "from-orange-500 to-yellow-500" },
+                    { platform: "Portfolio", url: "https://clickly.cv/dpkrn/portfolio", color: "from-purple-500 to-pink-500" },
+                    { platform: "Instagram", url: "https://clickly.cv/dpkrn/instagram", color: "from-pink-500 to-rose-500" },
+                    { platform: "Facebook", url: "https://clickly.cv/dpkrn/facebook", color: "from-blue-600 to-blue-700" },
+                    { platform: "Codeforces", url: "https://clickly.cv/dpkrn/codeforces", color: "from-red-500 to-orange-500" },
+                  ].map((link, idx) => (
+                    <motion.div
+                      key={link.platform}
+                      initial={{ opacity: 0, x: -50 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ 
+                        delay: 0.3 + idx * 0.1,
+                        type: "spring",
+                        stiffness: 100,
+                        damping: 15
+                      }}
+                      whileHover={{ 
+                        x: 10,
+                        scale: 1.02,
+                      }}
+                      className="group relative"
+                    >
+                      {/* Hover Glow Effect */}
+                      <motion.div
+                        className={`absolute -inset-1 bg-gradient-to-r ${link.color} opacity-0 group-hover:opacity-20 blur-md rounded-lg transition-opacity duration-300`}
+                      />
+                      
+                      <div className="relative flex items-center gap-2 p-2 bg-slate-700/50 dark:bg-slate-800/50 rounded-lg border border-slate-600/50 dark:border-slate-700/50 backdrop-blur-sm group-hover:border-purple-400/50 transition-all duration-300">
+                        {/* Platform Label */}
+                        <motion.div
+                          className="flex-shrink-0 w-20 md:w-24"
+                          whileHover={{ scale: 1.1 }}
+                        >
+                          <span className="text-xs md:text-sm font-semibold text-gray-300 dark:text-gray-400">
+                            {link.platform}:
+                          </span>
+                        </motion.div>
+
+                        {/* Complete URL - No Space */}
+                        <div className="flex items-center font-mono">
+                          {/* Base URL - Static */}
+                          <span className="text-xs md:text-sm lg:text-base text-gray-400 dark:text-gray-500 select-all">
+                            https://clickly.cv/dpkrn/
+                          </span>
+                          {/* Platform Name - Animated (no space before) */}
+                          <motion.a
+                            href={link.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={`text-xs md:text-sm lg:text-base font-bold bg-gradient-to-r ${link.color} bg-clip-text text-transparent hover:scale-110 transition-transform duration-300 inline-block`}
+                            whileHover={{ 
+                              scale: 1.15,
+                            }}
+                            whileTap={{ scale: 0.95 }}
+                          >
+                            {link.platform.toLowerCase()}
+                          </motion.a>
+                        </div>
+
+                        {/* Animated Arrow */}
+                        <motion.div
+                          className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity"
+                          animate={{
+                            x: [0, 5, 0],
+                          }}
+                          transition={{
+                            duration: 1.5,
+                            repeat: Infinity,
+                            ease: "easeInOut",
+                          }}
+                        >
+                          <span className="text-purple-400">→</span>
+                        </motion.div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* Bottom CTA */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 1.2, duration: 0.6 }}
+                  className="mt-5 pt-4 border-t border-purple-500/30 dark:border-purple-400/30"
+                >
+                  <motion.div
+                    className="flex flex-col items-center justify-center gap-2"
+                    animate={{
+                      scale: [1, 1.02, 1],
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut",
+                    }}
+                  >
+                   
+                    <motion.div
+                      className="flex items-center justify-center gap-2"
+                      whileHover={{ scale: 1.05 }}
+                    >
+                      <motion.span
+                        className="text-lg"
+                        animate={{
+                          rotate: [0, 360],
+                          scale: [1, 1.2, 1],
+                        }}
+                        transition={{
+                          duration: 3,
+                          repeat: Infinity,
+                          ease: "linear",
+                        }}
+                      >
+                        ✨
+                      </motion.span>
+                      <motion.a
+                        href="/login"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          navigate('/login');
+                        }}
+                        className="text-center text-sm md:text-base text-purple-300 dark:text-purple-200 font-bold hover:text-purple-200 dark:hover:text-purple-100 transition-colors underline decoration-2 underline-offset-3 decoration-purple-400/50 hover:decoration-purple-400"
+                        whileHover={{ 
+                          scale: 1.1,
+                          x: 5,
+                        }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        You can create your own links: click here to start
+                      </motion.a>
+                      <motion.span
+                        className="text-lg"
+                        animate={{
+                          rotate: [360, 0],
+                          scale: [1, 1.2, 1],
+                        }}
+                        transition={{
+                          duration: 3,
+                          repeat: Infinity,
+                          ease: "linear",
+                        }}
+                      >
+                        ✨
+                      </motion.span>
+                    </motion.div>
+                  </motion.div>
+                </motion.div>
+              </div>
+            </motion.div>
+          </MagneticCard>
+        </div>
+      </motion.section>
+
+      {/* Only the platform name changes Section */}
+      <motion.section
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8 }}
+        className="py-20 px-4 sm:px-6 lg:px-8"
+      >
+        <div className="container mx-auto">
+          <MagneticCard intensity={0.1}>
+            <motion.div
+              className="relative bg-gradient-to-br from-purple-900/40 via-pink-900/40 to-blue-900/40 dark:from-purple-950/60 dark:via-pink-950/60 dark:to-blue-950/60 backdrop-blur-xl rounded-2xl md:rounded-3xl shadow-2xl border border-purple-500/30 dark:border-purple-400/20 p-6 md:p-8 overflow-hidden"
+              whileHover={{ scale: 1.02, y: -5 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="relative z-10 text-center">
+                <motion.div
+                  className="flex items-center justify-center gap-2 mb-4"
+                  animate={{ scale: [1, 1.1, 1] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  <motion.span
+                    className="text-2xl md:text-3xl"
+                    animate={{ rotate: [0, 360] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                  >
+                    ✨
+                  </motion.span>
+                  <motion.h3
+                    className="text-xl md:text-2xl font-bold bg-gradient-to-r from-purple-300 via-pink-300 to-blue-300 dark:from-purple-200 dark:via-pink-200 dark:to-blue-200 bg-clip-text text-transparent"
+                    animate={{ backgroundPosition: ["0%", "100%", "0%"] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                    style={{ backgroundSize: "200% 100%" }}
+                  >
+                    Only the platform name changes
+                  </motion.h3>
+                  <motion.span
+                    className="text-2xl md:text-3xl"
+                    animate={{ rotate: [360, 0] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                  >
+                    ✨
+                  </motion.span>
+                </motion.div>
+                <motion.p
+                  className="text-base md:text-lg text-gray-200 dark:text-gray-300 font-medium"
+                  animate={{ opacity: [0.8, 1, 0.8] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  All else remains the same
+                </motion.p>
+              </div>
+            </motion.div>
+          </MagneticCard>
+        </div>
+      </motion.section>
+
+      {/* It will provide a special link Section */}
+      <motion.section
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8 }}
+        className="py-20 px-4 sm:px-6 lg:px-8 bg-black/5 dark:bg-black/20"
+      >
+        <div className="container mx-auto">
+          <MagneticCard intensity={0.1}>
+            <motion.div
+              className="relative bg-black dark:bg-black backdrop-blur-xl rounded-2xl md:rounded-3xl shadow-2xl border border-gray-900 dark:border-gray-800 p-6 md:p-8 lg:p-10 overflow-hidden"
+              whileHover={{ scale: 1.02, y: -5 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="relative z-10 space-y-4 md:space-y-6">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6 }}
+                  className="text-center"
+                >
+                  <div className="relative bg-clip-text text-transparent bg-no-repeat bg-gradient-to-r from-purple-400 via-violet-200 to-pink-500 dark:from-purple-300 dark:via-violet-100 dark:to-pink-400 py-2 md:py-4">
+                    <span className="uppercase text-sm md:text-base lg:text-xl font-bold block">
+                      It will provide a special link for all your platforms.
+                    </span>
+                  </div>
+                </motion.div>
+
+                <motion.p
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: 0.1 }}
+                  className="text-base md:text-lg lg:text-2xl xl:text-3xl text-center"
+                >
+                  <a
+                    href="https://clickly.cv/dpkrn/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-400 dark:text-blue-300 underline font-mono hover:text-blue-300 dark:hover:text-blue-200 transition-colors break-all md:break-normal"
+                  >
+                    https://clickly.cv/dpkrn
+                  </a>
+                </motion.p>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.2, duration: 0.6 }}
+                  className="text-center"
+                >
+                  <div className="relative bg-clip-text text-transparent bg-no-repeat bg-gradient-to-r from-purple-400 via-violet-200 to-pink-500 dark:from-purple-300 dark:via-violet-100 dark:to-pink-400 py-2 md:py-4">
+                    <span className="uppercase text-sm md:text-base lg:text-xl font-bold block">
+                      Change only the platform name to redirect to all profiles
+                    </span>
+                  </div>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.3, duration: 0.6 }}
+                  className="text-base md:text-lg lg:text-2xl xl:text-3xl text-center"
+                >
+                  <a
+                    href="https://clickly.cv/dpkrn/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-400 dark:text-blue-300 underline font-mono hover:text-blue-300 dark:hover:text-blue-200 transition-colors break-all md:break-normal"
+                  >
+                    https://clickly.cv/dpkrn/
+                    <FlipWords
+                      className="text-blue-400 dark:text-blue-300"
+                      words={platformsForFlip}
+                    />
+                  </a>
+                </motion.div>
+              </div>
+            </motion.div>
+          </MagneticCard>
+        </div>
+      </motion.section>
+
+      {/* Use Cases Section - Title changed to "Perfect for Everyone" */}
+      <motion.section
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8 }}
+        className="py-20 px-4 sm:px-6 lg:px-8"
+      >
+        <div className="container mx-auto">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 md:mb-8 text-center bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
+          >
+            Perfect for Everyone
+          </motion.h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            {useCases.map((useCase, idx) => {
+              const IconComponent = useCase.icon;
+              return (
+                <motion.div
+                  key={useCase.title}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.1 }}
+                  whileHover={{ scale: 1.05, y: -5 }}
+                  className="bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-6 md:p-8 relative overflow-hidden group"
+                >
+                  <motion.div
+                    className={`absolute inset-0 bg-gradient-to-r ${useCase.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}
+                  />
+                  <div className="relative z-10">
+                    <motion.div
+                      className={`bg-gradient-to-r ${useCase.gradient} p-4 rounded-xl w-fit mb-4`}
+                      whileHover={{ scale: 1.1, rotate: 5 }}
+                    >
+                      <IconComponent className="text-3xl text-white" />
+                    </motion.div>
+                    <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-3">
+                      {useCase.title}
+                    </h3>
+                    <p className="text-gray-700 dark:text-gray-400 leading-relaxed mb-4">
+                      {useCase.desc}
+                    </p>
+                    <div className="space-y-2">
+                      {useCase.examples.map((example, i) => (
+                        <div
+                          key={i}
+                          className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-400"
+                        >
+                          <FaCheckCircle className="text-green-600 dark:text-green-400 text-xs" />
+                          <span>{example}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      </motion.section>
+
+      {/* How It Works Section */}
+      <motion.section
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8 }}
+        className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50/80 via-purple-50/80 to-pink-50/80 dark:from-slate-900/60 dark:via-purple-950/40 dark:to-pink-950/40"
+      >
+        <div className="container mx-auto">
+          <motion.div
+            className="bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-6 md:p-10 lg:p-12"
+            whileHover={{ scale: 1.01 }}
+          >
+            <motion.h2
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
+            >
+              How It Works
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="text-base md:text-lg lg:text-xl leading-8 text-gray-700 dark:text-gray-300 mb-4 md:mb-6"
+            >
+              The core idea behind{" "}
+              <b className="text-gray-900 dark:text-white">LinkBridger</b> is
+              to simplify the management of social media links. Instead of
+              sharing long, hard-to-remember URLs, you create a single,
+              personalized URL that automatically redirects users to the
+              correct platform. Access all your links at one place by visiting{" "}
+              <b className="text-gray-900 dark:text-white">
+                https://clickly.cv/yourname
+              </b>{" "}
+              (without any platform name). Plus, get real-time email
+              notifications every time someone visits your links!
+            </motion.p>
+
+            <div className="space-y-6">
+              {howItWorksSteps.map((item, idx) => {
+                const IconComponent = item.icon;
+                return (
+                  <motion.div
+                    key={item.step}
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: idx * 0.1 }}
+                    className="flex items-start gap-4 p-6 bg-white/5 dark:bg-gray-800/30 rounded-2xl border border-white/10 hover:border-white/20 transition-all group"
+                  >
+                    <motion.div
+                      className="bg-gradient-to-r from-purple-600 to-pink-600 p-4 rounded-xl flex-shrink-0"
+                      whileHover={{ scale: 1.1, rotate: 5 }}
+                    >
+                      <IconComponent className="text-2xl text-white" />
+                    </motion.div>
+                    <div className="flex-1">
+                      <h4 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                        {item.step}. {item.title}
+                      </h4>
+                      <p className="text-gray-700 dark:text-gray-400 leading-relaxed">
+                        {item.desc}
+                      </p>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.6 }}
+              className="mt-8 p-6 bg-white/5 dark:bg-gray-800/30 rounded-2xl border border-white/10"
+            >
+              <p className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                Example:
+              </p>
+              <div className="space-y-2">
+                <motion.a
+                  href="https://clickly.cv/dpkrn/instagram"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  whileHover={{ scale: 1.02, x: 5 }}
+                  className="block text-blue-400 hover:text-blue-300 underline font-mono text-base md:text-lg"
+                >
+                  Instagram: https://clickly.cv/dpkrn/instagram
+                </motion.a>
+                <motion.a
+                  href="https://clickly.cv/dpkrn/leetcode"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  whileHover={{ scale: 1.02, x: 5 }}
+                  className="block text-blue-400 hover:text-blue-300 underline font-mono text-base md:text-lg"
+                >
+                  LeetCode: https://clickly.cv/dpkrn/leetcode
+                </motion.a>
+              </div>
+            </motion.div>
+          </motion.div>
+        </div>
+      </motion.section>
+
       {/* Statistics Section */}
       <StatisticsSection
         stats={stats}
         title="Trusted by Thousands"
         subtitle="Join the community of professionals, creators, and developers"
         sectionRef={statsRef}
-      />
-
-      {/* Features Section */}
-      <FeaturesSection
-        features={features}
-        title="Powerful Features"
-        subtitle="Everything you need to manage your social presence in one place"
-        sectionRef={featuresRef}
-      />
-
-      {/* Benefits Section */}
-      <BenefitsSection
-        benefits={benefits}
-        title="Perfect for Everyone"
-        subtitle="Whether you're a professional, creator, or developer"
-        sectionRef={benefitsRef}
       />
 
       {/* Final CTA Section */}

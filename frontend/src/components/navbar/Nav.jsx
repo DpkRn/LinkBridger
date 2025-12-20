@@ -14,7 +14,7 @@ import {
 } from "../../redux/userSlice";
 import { MdOutlineArrowDropDownCircle, MdMenu, MdClose } from "react-icons/md";
 import { MdDarkMode, MdLightMode } from "react-icons/md";
-import { FaBell, FaUser, FaCog, FaSignOutAlt, FaHome, FaLink, FaBook, FaSearch, FaTimes, FaChartLine } from "react-icons/fa";
+import { FaBell, FaUser, FaCog, FaSignOutAlt, FaHome, FaLink, FaBook, FaSearch, FaTimes, FaChartLine, FaRocket, FaStar, FaShieldAlt, FaLightbulb } from "react-icons/fa";
 import Notification from "../notification/Notification";
 
 const Nav = () => {
@@ -34,6 +34,8 @@ const Nav = () => {
   const [searchLoading, setSearchLoading] = useState(false);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const searchRef = useRef(null);
+  const [docsMenu, setDocsMenu] = useState(false);
+  const docsMenuRef = useRef(null);
 
   const { sidebarMenu, darkMode } = useSelector((store) => store.page);
   const username = useSelector((store) => store.admin.user.username);
@@ -178,9 +180,16 @@ const Nav = () => {
         setShowSearchDropdown(false);
         setIsSearchExpanded(false);
       }
+      if (
+        docsMenuRef.current &&
+        !docsMenuRef.current.contains(event.target) &&
+        !event.target.closest(".docs-menu-button")
+      ) {
+        setDocsMenu(false);
+      }
     };
 
-    if (notificationPage || profileMenu || showSearchDropdown || isSearchExpanded) {
+    if (notificationPage || profileMenu || showSearchDropdown || isSearchExpanded || docsMenu) {
       document.addEventListener("mousedown", handleClickOutside);
     } else {
       document.removeEventListener("mousedown", handleClickOutside);
@@ -189,7 +198,7 @@ const Nav = () => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [notificationPage, profileMenu, showSearchDropdown, isSearchExpanded]);
+  }, [notificationPage, profileMenu, showSearchDropdown, isSearchExpanded, docsMenu]);
 
   const handleProfileClick = (e) => {
     navigate("/profile");
@@ -205,7 +214,14 @@ const Nav = () => {
     { to: "/home", label: "Home", icon: FaHome },
     { to: "/links", label: "Links", icon: FaLink },
     { to: "/analytics", label: "Analytics", icon: FaChartLine },
-    { to: "/doc", label: "Docs", icon: FaBook },
+  ];
+
+  const docsMenuItems = [
+    { to: "/docs/features", label: "Features", icon: FaRocket },
+    { to: "/docs/benefits", label: "Benefits", icon: FaStar },
+    { to: "/docs/security", label: "Security", icon: FaShieldAlt },
+    { to: "/docs/how-to-use", label: "How to Use", icon: FaBook },
+    { to: "/docs/different", label: "How it's Different", icon: FaLightbulb },
   ];
 
   return (
@@ -332,6 +348,66 @@ const Nav = () => {
                   </Link>
                 );
               })}
+              
+              {/* Docs Dropdown */}
+              <div className="relative docs-menu-button" ref={docsMenuRef}>
+                <motion.button
+                  type="button"
+                  onClick={() => setDocsMenu(!docsMenu)}
+                  className={`relative px-4 py-2 rounded-lg font-medium text-sm md:text-base transition-all duration-200 flex items-center gap-2 ${
+                    location.pathname.startsWith("/docs")
+                      ? "text-white dark:text-white bg-gradient-to-r from-purple-600/30 via-pink-600/30 to-blue-600/30"
+                      : "text-white dark:text-gray-300 hover:text-white dark:hover:text-white hover:bg-white/10 dark:hover:bg-white/10"
+                  }`}
+                >
+                  <FaBook className="w-4 h-4" />
+                  Docs
+                  <motion.div
+                    animate={{ rotate: docsMenu ? 180 : 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <MdOutlineArrowDropDownCircle className="w-4 h-4" />
+                  </motion.div>
+                </motion.button>
+
+                {/* Docs Dropdown Menu */}
+                <AnimatePresence>
+                  {docsMenu && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute top-full left-0 z-[100] mt-2 w-56 origin-top-left rounded-2xl bg-gray-800/95 dark:bg-gray-900/90 backdrop-blur-xl border border-gray-700/50 dark:border-gray-700/50 shadow-2xl overflow-hidden"
+                    >
+                      <div className="p-2">
+                        {docsMenuItems.map((item) => {
+                          const Icon = item.icon;
+                          const isActive = location.pathname === item.to;
+                          return (
+                            <motion.div
+                              key={item.to}
+                              whileHover={{ x: 5 }}
+                              className={`flex items-center gap-3 px-4 py-3 text-sm rounded-lg cursor-pointer transition-colors duration-200 ${
+                                isActive
+                                  ? "text-white dark:text-white bg-gradient-to-r from-purple-600/30 via-pink-600/30 to-blue-600/30"
+                                  : "text-white dark:text-gray-200 hover:text-white dark:hover:text-white hover:bg-white/10 dark:hover:bg-gray-800/50"
+                              }`}
+                              onClick={() => {
+                                navigate(item.to);
+                                setDocsMenu(false);
+                              }}
+                            >
+                              <Icon className="w-4 h-4" />
+                              {item.label}
+                            </motion.div>
+                          );
+                        })}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
           </div>
 
@@ -705,6 +781,67 @@ const Nav = () => {
                     </Link>
                   );
                 })}
+                
+                {/* Mobile Docs Dropdown */}
+                <div className="space-y-1">
+                  <motion.button
+                    type="button"
+                    onClick={() => setDocsMenu(!docsMenu)}
+                    className={`w-full flex items-center justify-between gap-3 px-4 py-3 rounded-lg font-medium transition-all duration-200 ${
+                      location.pathname.startsWith("/docs")
+                        ? "text-white dark:text-white bg-gradient-to-r from-purple-600/30 via-pink-600/30 to-blue-600/30"
+                        : "text-white dark:text-gray-300 hover:text-white dark:hover:text-white hover:bg-white/10 dark:hover:bg-white/10"
+                    }`}
+                  >
+                    <span className="flex items-center gap-3">
+                      <FaBook className="w-5 h-5" />
+                      Docs
+                    </span>
+                    <motion.div
+                      animate={{ rotate: docsMenu ? 180 : 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <MdOutlineArrowDropDownCircle className="w-5 h-5" />
+                    </motion.div>
+                  </motion.button>
+                  
+                  <AnimatePresence>
+                    {docsMenu && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="pl-4 space-y-1">
+                          {docsMenuItems.map((item) => {
+                            const Icon = item.icon;
+                            const isActive = location.pathname === item.to;
+                            return (
+                              <Link
+                                key={item.to}
+                                to={item.to}
+                                onClick={() => {
+                                  dispatch(setSidebarMenu(false));
+                                  setDocsMenu(false);
+                                }}
+                                className={`flex items-center gap-3 px-4 py-2 rounded-lg text-sm transition-all duration-200 ${
+                                  isActive
+                                    ? "text-white dark:text-white bg-gradient-to-r from-purple-600/20 via-pink-600/20 to-blue-600/20"
+                                    : "text-gray-300 dark:text-gray-400 hover:text-white dark:hover:text-white hover:bg-white/5 dark:hover:bg-white/5"
+                                }`}
+                              >
+                                <Icon className="w-4 h-4" />
+                                {item.label}
+                              </Link>
+                            );
+                          })}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               </div>
             </motion.div>
           )}

@@ -20,6 +20,11 @@ import Settings from './components/pages/Settings'
 import NotFound from './components/pages/NotFound'
 import AboutDeveloper from './components/pages/AboutDeveloper'
 import Analytics from './components/pages/Analytics'
+import Features from './components/pages/docs/Features'
+import Benefits from './components/pages/docs/Benefits'
+import Security from './components/pages/docs/Security'
+import HowToUse from './components/pages/docs/HowToUse'
+import Different from './components/pages/docs/Different'
 
 function App() {
   const dispatch = useDispatch();
@@ -123,6 +128,11 @@ function App() {
 
       <Routes>
         <Route path='/doc' element={<Documentation/>} />
+        <Route path='/docs/features' element={<Features/>} />
+        <Route path='/docs/benefits' element={<Benefits/>} />
+        <Route path='/docs/security' element={<Security/>} />
+        <Route path='/docs/how-to-use' element={<HowToUse/>} />
+        <Route path='/docs/different' element={<Different/>} />
         <Route path='/login' element={<AuthRoute><AuthPage /></AuthRoute>}/>
         <Route path='/verify' element={<VerificationPage />} />
         <Route path='/links' element={<PrivateRoute><LinkPage/></PrivateRoute>} />

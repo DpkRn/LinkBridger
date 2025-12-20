@@ -1404,7 +1404,7 @@ const Documentation = () => {
                   ease: "easeOut",
                 }}
               >
-                Have You Ever Wondered How AuthorLink Has Been Personalized:
+                Have You Ever Wondered How Link Has Been Personalized:
               </motion.h2>
 
               {/* 3D Floating Cards Container */}

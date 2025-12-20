@@ -3,7 +3,7 @@ const crypto = require('crypto');
 
 const addNewSource=async(req,res)=>{
     try{
-         const userId=req.userId;
+        const userId=req.userId;
         console.log(userId)
        const {username,source,destination}=req.body
         if(!userId||!source||!username||!destination){
