@@ -19,6 +19,7 @@ import ProfilePreview from './components/pages/ProfilePreview'
 import Settings from './components/pages/Settings'
 import NotFound from './components/pages/NotFound'
 import AboutDeveloper from './components/pages/AboutDeveloper'
+import Analytics from './components/pages/Analytics'
 
 function App() {
   const dispatch = useDispatch();
@@ -130,6 +131,7 @@ function App() {
         <Route path='/profile/:username' element={<ProfilePreview/>} />
         <Route path='/settings' element={<PrivateRoute><Settings/></PrivateRoute>} />
         <Route path='/home' element={<PrivateRoute><DashBoard /></PrivateRoute>} />
+        <Route path='/analytics' element={<PrivateRoute><Analytics /></PrivateRoute>} />
         <Route path='/verified' element={<VerifiedPage />} />
         <Route path='/reset_password' element={<PasswordReset />} />
         <Route path='/about-developer' element={<AboutDeveloper />} />
