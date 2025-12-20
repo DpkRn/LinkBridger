@@ -5,6 +5,7 @@ This directory contains documentation for the LinkBridger frontend application.
 ## Documentation Files
 
 - **[PAGES.md](./PAGES.md)** - Comprehensive documentation about all page components, routing, and design patterns
+- **[SECTIONS_AND_PAGES.md](./SECTIONS_AND_PAGES.md)** - Detailed documentation about section components, their parameters, and page-by-page structure
 
 ## Quick Reference
 

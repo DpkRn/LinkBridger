@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleDarkMode } from '../../../redux/pageSlice';
@@ -16,7 +16,12 @@ import {
   FaStar,
   FaEnvelope,
   FaHome,
-  FaCheckCircle
+  FaCheckCircle,
+  FaBriefcase,
+  FaUserTie,
+  FaCode,
+  FaGraduationCap,
+  FaCog
 } from 'react-icons/fa';
 import { 
   SiLinkedin, 
@@ -30,11 +35,10 @@ import {
 import { MdDarkMode, MdLightMode } from 'react-icons/md';
 import Footer from '../../footer/Footer';
 import logo from '../../../assets/logo.png';
+import { FlipWords } from '../../ui/flip-words';
 import {
   HeroSection,
-  FeaturesSection,
   StatisticsSection,
-  BenefitsSection,
   CTASection
 } from './sections';
 
