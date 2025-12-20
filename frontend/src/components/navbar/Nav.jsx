@@ -14,7 +14,7 @@ import {
 } from "../../redux/userSlice";
 import { MdOutlineArrowDropDownCircle, MdMenu, MdClose } from "react-icons/md";
 import { MdDarkMode, MdLightMode } from "react-icons/md";
-import { FaBell, FaUser, FaCog, FaSignOutAlt, FaHome, FaLink, FaBook, FaSearch, FaTimes } from "react-icons/fa";
+import { FaBell, FaUser, FaCog, FaSignOutAlt, FaHome, FaLink, FaBook, FaSearch, FaTimes, FaChartLine } from "react-icons/fa";
 import Notification from "../notification/Notification";
 
 const Nav = () => {
@@ -204,6 +204,7 @@ const Nav = () => {
   const navLinks = [
     { to: "/home", label: "Home", icon: FaHome },
     { to: "/links", label: "Links", icon: FaLink },
+    { to: "/analytics", label: "Analytics", icon: FaChartLine },
     { to: "/doc", label: "Docs", icon: FaBook },
   ];
 

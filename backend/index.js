@@ -10,6 +10,7 @@ const crypto = require('crypto')
 
 const authRoute=require('./routes/AuthRoute')
 const linkRoute=require('./routes/LinkRoute')
+const analyticsRoute=require('./routes/AnalyticsRoute')
 
 const Link = require('./model/linkModel')
 const Profile=require('./model/userProfile')
@@ -88,6 +89,7 @@ app.use('/source',linkRoute)
 app.use('/profile',profileRoute)
 app.use('/settings',require('./routes/SettingsRoute'))
 app.use('/search',require('./routes/SearchRoute'))
+app.use('/analytics',analyticsRoute)
 
 // Helper function to encode username and source (base64)
 const encodeData = (data) => {
@@ -146,126 +148,6 @@ app.post('/link/verify-password', extractInfo, async (req, res) => {
       });
     }
 
-  const xyx=()=>{
-    // const username = decodeData(hashedUsername);
-  // const source = decodeData(hashedSource);
-  // try {
-  //   // Accept both JSON and form data
-  //   const { hashedUsername, hashedSource, password } = req.body;
-    
-  //   if (!hashedUsername || !hashedSource || !password) {
-  //     // If it's a form submission, render error page
-  //     if (req.headers['content-type']?.includes('application/x-www-form-urlencoded')) {
-  //       return res.render('password_prompt', {
-  //         hashedUsername: hashedUsername || '',
-  //         hashedSource: hashedSource || '',
-  //         error: 'Hashed username, hashed source, and password are required'
-  //       });
-  //     }
-  //     return res.status(400).json({
-  //       success: false,
-  //       message: 'Hashed username, hashed source, and password are required'
-  //     });
-  //   }
-    
-  //   // Decode the username and source
-  //   // const username = decodeData(hashedUsername);
-  //   // const source = decodeData(hashedSource);
-
-  //   if (!username || !source) {
-  //     // If it's a form submission, render error page
-  //     if (req.headers['content-type']?.includes('application/x-www-form-urlencoded')) {
-  //       return res.render('password_prompt', {
-  //         hashedUsername,
-  //         hashedSource,
-  //         error: 'Invalid hashed data. Cannot decrypt username or source.'
-  //       });
-  //     }
-  //     return res.status(400).json({
-  //       success: false,
-  //       message: 'Invalid hashed data. Cannot decrypt username or source.'
-  //     });
-  //   }
-    
-  //   const doc = await Link.findOne({
-  //     username,
-  //     source,
-  //     visibility: 'private',
-  //     deletedAt: null
-  //   });
-    
-  //   if (!doc) {
-  //     // If it's a form submission, render error page
-  //     if (req.headers['content-type']?.includes('application/x-www-form-urlencoded')) {
-  //       return res.render('password_prompt', {
-  //         hashedUsername,
-  //         hashedSource,
-  //         error: 'Link not found or not private'
-  //       });
-  //     }
-  //     return res.status(404).json({
-  //       success: false,
-  //       message: 'Link not found or not private'
-  //     });
-  //   }
-    
-  //   const bcryptjs = require('bcryptjs');
-  //   if (!doc.password || !(await bcryptjs.compare(password, doc.password))) {
-  //     // If it's a form submission, render error page
-  //     if (req.headers['content-type']?.includes('application/x-www-form-urlencoded')) {
-  //       return res.render('password_prompt', {
-  //         hashedUsername,
-  //         hashedSource,
-  //         error: 'Incorrect password'
-  //       });
-  //     }
-  //     return res.status(401).json({
-  //       success: false,
-  //       message: 'Incorrect password'
-  //     });
-  //   }
-    
-  //   // Password correct, redirect directly to destination
-  //   const {destination,clicked,notSeen}=doc
-  //   await Link.updateOne({username,source},{$set:{clicked:clicked+1,notSeen:notSeen+1}})
-    
-  //   const info=await User.findOne({username},{email:1,name:1})
-  //   if(info) {
-  //     const {email,name}=info
-  //     const deviceDetails=req.details || {}
-  //     // Send email asynchronously, don't wait for it
-  //     sendVisitEmail(email,username,name,deviceDetails,source).catch(err => {
-  //       console.error('Failed to send visit email:', err);
-  //     });
-  //   }
-    
-  //   // If it's a form submission, redirect directly - browser will follow automatically
-  //   if (req.headers['content-type']?.includes('application/x-www-form-urlencoded')) {
-  //     return res.redirect(307, destination);
-  //   }
-    
-  //   // For JSON requests (API calls), return JSON response
-  //   // return res.status(200).json({
-  //   //   success: true,
-  //   //   message: 'Password verified successfully',
-  //   //   destination: destination
-  //   // });
-  // } catch (error) {
-  //   console.error('Password verification error:', error);
-  //   // If it's a form submission, render error page
-  //   if (req.headers['content-type']?.includes('application/x-www-form-urlencoded')) {
-  //     return res.render('password_prompt', {
-  //       hashedUsername: req.body?.hashedUsername || '',
-  //       hashedSource: req.body?.hashedSource || '',
-  //       error: 'Internal server error. Please try again.'
-  //     });
-  //   }
-  //   return res.status(500).json({
-  //     success: false,
-  //     message: 'Internal server error. Please try again.'
-  //   });
-  // }
-  }
 
   return res.json({
     success: true,
