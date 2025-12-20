@@ -258,7 +258,7 @@ const Linkcard = ({ sources }) => {
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ scale: 1.02, y: -5 }}
       className="bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-6 md:p-8 relative group"
-      style={{ overflow: 'visible', zIndex: 1 }}
+      style={{ transformOrigin: 'center', willChange: 'transform', overflow: 'visible', zIndex: 1 }}
     >
       {/* Gradient Background on Hover */}
       <motion.div
@@ -271,10 +271,12 @@ const Linkcard = ({ sources }) => {
           <motion.div
             className="hidden md:flex flex-col items-center justify-center border-r-2 border-dashed border-white/20 dark:border-gray-600 pr-6 min-w-[120px]"
             whileHover={{ scale: 1.1 }}
+            style={{ transformOrigin: 'center', willChange: 'transform' }}
           >
             <motion.div
               className="bg-gradient-to-r from-blue-600 to-cyan-600 p-6 rounded-2xl shadow-lg mb-3"
               whileHover={{ rotate: 5, scale: 1.1 }}
+              style={{ transformOrigin: 'center', willChange: 'transform' }}
             >
               <FaMousePointer className="text-3xl text-white" />
             </motion.div>
@@ -298,6 +300,7 @@ const Linkcard = ({ sources }) => {
               <motion.h3
                 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent mb-2"
                 whileHover={{ scale: 1.05 }}
+                style={{ transformOrigin: 'center', willChange: 'transform' }}
               >
                 {source.toUpperCase()}
               </motion.h3>
@@ -320,6 +323,7 @@ const Linkcard = ({ sources }) => {
                 </span>
                 <motion.button
                   whileHover={{ scale: 1.1, rotate: 5 }}
+                  style={{ transformOrigin: 'center', willChange: 'transform' }}
                   whileTap={{ scale: 0.9 }}
                   onClick={copyToClipboard}
                   className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 p-2.5 rounded-lg transition-all duration-300 flex-shrink-0"
@@ -335,6 +339,7 @@ const Linkcard = ({ sources }) => {
               <motion.div
                 className="bg-gradient-to-r from-blue-600 to-cyan-600 p-3 rounded-xl"
                 whileHover={{ scale: 1.1, rotate: 5 }}
+                style={{ transformOrigin: 'center', willChange: 'transform' }}
               >
                 <FaMousePointer className="text-2xl text-white" />
               </motion.div>
@@ -406,6 +411,8 @@ const Linkcard = ({ sources }) => {
                   title="Change visibility"
                   type="button"
                   style={{ 
+                    transformOrigin: 'center', 
+                    willChange: 'transform',
                     zIndex: 1000, 
                     position: 'relative', 
                     pointerEvents: 'auto',
@@ -576,6 +583,7 @@ const Linkcard = ({ sources }) => {
                                 setConfirmPassword('');
                               }}
                               whileHover={{ scale: 1.02 }}
+                              style={{ transformOrigin: 'center', willChange: 'transform' }}
                               whileTap={{ scale: 0.98 }}
                               className="flex-1 px-4 py-3 rounded-xl bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white font-semibold transition-colors hover:bg-gray-300 dark:hover:bg-gray-600"
                             >
@@ -585,6 +593,7 @@ const Linkcard = ({ sources }) => {
                               type="submit"
                               disabled={updatingVisibility || !password || !confirmPassword}
                               whileHover={{ scale: updatingVisibility ? 1 : 1.02 }}
+                              style={{ transformOrigin: 'center', willChange: 'transform' }}
                               whileTap={{ scale: updatingVisibility ? 1 : 0.98 }}
                               className="flex-1 px-4 py-3 rounded-xl bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
                             >
@@ -623,6 +632,7 @@ const Linkcard = ({ sources }) => {
                 onClick={() => handleEditLink(_id)}
                 className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white p-3 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-2"
                 title="Edit link"
+                style={{ transformOrigin: 'center', willChange: 'transform' }}
               >
                 <FaEdit className="text-lg" />
                 <span className="hidden sm:inline">Edit</span>
@@ -636,6 +646,7 @@ const Linkcard = ({ sources }) => {
                 whileTap={{ scale: 0.9 }}
                 className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white p-3 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-2"
                 title="Open link"
+                style={{ transformOrigin: 'center', willChange: 'transform' }}
               >
                 <FaExternalLinkAlt className="text-lg" />
                 <span className="hidden sm:inline">Open</span>

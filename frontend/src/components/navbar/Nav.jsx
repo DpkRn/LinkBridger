@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -117,8 +117,8 @@ const Nav = () => {
     setNotificationPage((state) => !state);
   };
 
-  // Handle search
-  const handleSearch = async (query) => {
+  // Handle search - memoized with useCallback to avoid stale closures
+  const handleSearch = useCallback(async (query) => {
     if (!query.trim()) {
       setSearchResults([]);
       setShowSearchDropdown(false);
@@ -138,7 +138,7 @@ const Nav = () => {
     } finally {
       setSearchLoading(false);
     }
-  };
+  }, []); // Empty deps array since handleSearch only uses stable setState functions and api
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -151,7 +151,7 @@ const Nav = () => {
     }, 300); // Debounce search
 
     return () => clearTimeout(timeoutId);
-  }, [searchQuery]);
+  }, [searchQuery, handleSearch]);
 
   // Handle outside click
   useEffect(() => {
