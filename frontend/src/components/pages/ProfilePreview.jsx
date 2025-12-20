@@ -116,7 +116,7 @@ const ProfilePreview = () => {
       <div className="flex flex-col justify-center items-center h-screen bg-white dark:bg-gray-900">
         <FaShieldAlt className="text-6xl text-gray-400 dark:text-gray-600 mb-4" />
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Profile Protected</h2>
-        <p className="text-gray-600 dark:text-gray-400">This profile is not available for public viewing.</p>
+        <p className="text-gray-700 dark:text-gray-400">This profile is not available for public viewing.</p>
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
@@ -149,7 +149,7 @@ const ProfilePreview = () => {
   };
 
   return (
-    <div className="w-full overflow-hidden relative min-h-screen bg-white dark:bg-gray-900" data-profile-preview>
+    <div className="w-full overflow-hidden relative min-h-screen dark:bg-gray-900" data-profile-preview>
       {/* Animated Background */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
@@ -201,7 +201,7 @@ const ProfilePreview = () => {
           {/* Profile Card */}
           <motion.div
             variants={itemVariants}
-            className="bg-white/80 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50 p-6 md:p-10 lg:p-12 mb-8"
+            className="bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-6 md:p-10 lg:p-12 mb-8"
           >
             {/* Profile Header */}
             <div className="flex flex-col md:flex-row items-center md:items-start gap-6 mb-8">
@@ -231,11 +231,11 @@ const ProfilePreview = () => {
                 <motion.h1
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 dark:from-purple-400 dark:via-pink-400 dark:to-blue-400 bg-clip-text text-transparent mb-2"
+                  className="text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 dark:from-purple-400 dark:via-pink-400 dark:to-blue-400 bg-clip-text text-transparent mb-2"
                 >
                   {profileData.name || username}
                 </motion.h1>
-                <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">@{username}</p>
+                <p className="text-lg text-gray-700 dark:text-gray-400 mb-4">@{username}</p>
 
                 {/* Location */}
                 {settings?.profile?.showLocation !== false && profileData.location && (
@@ -263,31 +263,31 @@ const ProfilePreview = () => {
             </div>
 
             {/* Stats - Each card is independently controlled by its setting */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 pt-8 border-t border-gray-200/50 dark:border-gray-700/50">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 pt-8 border-t border-white/20 dark:border-gray-700/50">
               {/* Link Count Card - Controlled by showLinkCount setting */}
               {settings?.links?.showLinkCount !== false && (
-                <div className="text-center p-4 bg-gradient-to-r from-purple-600/10 via-pink-600/10 to-blue-600/10 rounded-2xl border border-purple-400/20">
+                <div className="text-center p-4 bg-gradient-to-r from-purple-600/10 via-pink-600/10 to-blue-600/10 rounded-2xl border border-white/20 dark:border-purple-400/20">
                   <div className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
                     {links.length}
                   </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">Links</div>
+                  <div className="text-sm text-gray-700 dark:text-gray-400">Links</div>
                 </div>
               )}
               {/* Click Stats Card - Controlled by showClickStats setting */}
               {settings?.links?.showClickStats !== false && (
-                <div className="text-center p-4 bg-gradient-to-r from-blue-600/10 to-cyan-600/10 rounded-2xl border border-blue-400/20">
+                <div className="text-center p-4 bg-gradient-to-r from-blue-600/10 to-cyan-600/10 rounded-2xl border border-white/20 dark:border-blue-400/20">
                   <div className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
                     {links.reduce((sum, link) => sum + (link.clicked || 0), 0)}
                   </div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">Total Clicks</div>
+                  <div className="text-sm text-gray-700 dark:text-gray-400">Total Clicks</div>
                 </div>
               )}
               {/* Status Card - Always visible */}
-              <div className="text-center p-4 bg-gradient-to-r from-green-600/10 to-emerald-600/10 rounded-2xl border border-green-400/20">
+              <div className="text-center p-4 bg-gradient-to-r from-green-600/10 to-emerald-600/10 rounded-2xl border border-white/20 dark:border-green-400/20">
                 <div className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
                   Live
                 </div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">Status</div>
+                <div className="text-sm text-gray-700 dark:text-gray-400">Status</div>
               </div>
             </div>
           </motion.div>
@@ -309,7 +309,7 @@ const ProfilePreview = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
                   whileHover={{ scale: 1.02, y: -5 }}
-                  className="block bg-white/80 dark:bg-gray-900/50 backdrop-blur-xl rounded-2xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 p-6 hover:shadow-2xl transition-all duration-300 group"
+                  className="block bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 dark:border-gray-700/50 p-6 hover:shadow-2xl transition-all duration-300 group"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4 flex-1">
@@ -328,7 +328,7 @@ const ProfilePreview = () => {
                             </span>
                           )}
                         </div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 truncate">
+                        <p className="text-sm text-gray-700 dark:text-gray-400 truncate">
                           {link.destination}
                         </p>
                         {link.visibility === 'unlisted' && (
@@ -339,7 +339,7 @@ const ProfilePreview = () => {
                         {/* Click Count */}
                         <div className="flex items-center gap-2 mt-2">
                           <FaMousePointer className="text-xs text-gray-500 dark:text-gray-400" />
-                          <span className="text-xs font-semibold text-gray-600 dark:text-gray-400">
+                          <span className="text-xs font-semibold text-gray-700 dark:text-gray-400">
                             {link.clicked || 0} {link.clicked === 1 ? 'click' : 'clicks'}
                           </span>
                         </div>
@@ -353,11 +353,11 @@ const ProfilePreview = () => {
           ) : (
             <motion.div
               variants={itemVariants}
-              className="bg-white/80 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50 p-12 text-center"
+              className="bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-12 text-center"
             >
               <FaLink className="text-6xl text-gray-400 dark:text-gray-600 mx-auto mb-4" />
               <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">No Links Yet</h3>
-              <p className="text-gray-600 dark:text-gray-400">This user hasn't added any public links yet.</p>
+              <p className="text-gray-700 dark:text-gray-400">This user hasn't added any public links yet.</p>
             </motion.div>
           )}
         </motion.div>
