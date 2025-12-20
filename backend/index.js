@@ -61,6 +61,7 @@ app.options('*', cors());
 
 app.use(cookieParser());
 app.use(express.json({limit:'100mb'}))
+app.use(express.urlencoded({ extended: true, limit: '100mb' })) // For form submissions
 app.use(helmet());
 
 app.use(helmet.contentSecurityPolicy({
@@ -107,78 +108,142 @@ const decodeData = (encodedData) => {
 
 // Handle password submission for private links
 app.post('/link/verify-password', extractInfo, async (req, res) => {
-
-  try {
-    const { hashedUsername, hashedSource, password } = req.body;
-    console.log(hashedUsername,hashedSource)
-    if (!hashedUsername || !hashedSource || !password) {
-      return res.status(400).json({
-        success: false,
-        message: 'Hashed username, hashed source, and password are required'
-      });
-    }
-    
-    // Decode the username and source
-    const username = decodeData(hashedUsername);
-    const source = decodeData(hashedSource);
-    console.log("after decoding",hashedUsername,hashedSource)
-
-    if (!username || !source) {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid hashed data. Cannot decrypt username or source.'
-      });
-    }
-    
-    const doc = await Link.findOne({
-      username,
-      source,
-      visibility: 'private',
-      deletedAt: null
-    });
-    
-    if (!doc) {
-      return res.status(404).json({
-        success: false,
-        message: 'Link not found or not private'
-      });
-    }
-    
-    const bcryptjs = require('bcryptjs');
-    if (!doc.password || !(await bcryptjs.compare(password, doc.password))) {
-      return res.status(401).json({
-        success: false,
-        message: 'Incorrect password'
-      });
-    }
-    
-    // Password correct, redirect directly to destination
-    const {destination,clicked,notSeen}=doc
-    await Link.updateOne({username,source},{$set:{clicked:clicked+1,notSeen:notSeen+1}})
-    
-    const info=await User.findOne({username},{email:1,name:1})
-    if(info) {
-      const {email,name}=info
-      const deviceDetails=req.details || {}
-      // Send email asynchronously, don't wait for it
-      sendVisitEmail(email,username,name,deviceDetails,source).catch(err => {
-        console.error('Failed to send visit email:', err);
-      });
-    }
-    return res.status(200).json({
-      success: true,
-      message: 'Password verified successfully',
-      destination: destination
-    });
-    // Redirect directly to destination
-    // return res.redirect(307, destination);
-  } catch (error) {
-    console.error('Password verification error:', error);
-    return res.status(500).json({
+  console.log("verify password request received")
+  console.log("req.body = ",req.body)
+  const { hashedUsername, hashedSource, password } = req.body;
+  if (!hashedUsername || !hashedSource || !password) {
+    return res.status(400).json({
       success: false,
-      message: 'Internal server error. Please try again.'
+      message: 'Hashed username, hashed source, and password are required'
     });
   }
+  const doc = await Link.findOne({
+        username:hashedUsername,
+        source:hashedSource,
+        visibility: 'private',
+        deletedAt: null
+      });
+  console.log("doc = ",doc)
+
+  return res.redirect(307,doc.destination)
+  // const username = decodeData(hashedUsername);
+  // const source = decodeData(hashedSource);
+  // try {
+  //   // Accept both JSON and form data
+  //   const { hashedUsername, hashedSource, password } = req.body;
+    
+  //   if (!hashedUsername || !hashedSource || !password) {
+  //     // If it's a form submission, render error page
+  //     if (req.headers['content-type']?.includes('application/x-www-form-urlencoded')) {
+  //       return res.render('password_prompt', {
+  //         hashedUsername: hashedUsername || '',
+  //         hashedSource: hashedSource || '',
+  //         error: 'Hashed username, hashed source, and password are required'
+  //       });
+  //     }
+  //     return res.status(400).json({
+  //       success: false,
+  //       message: 'Hashed username, hashed source, and password are required'
+  //     });
+  //   }
+    
+  //   // Decode the username and source
+  //   // const username = decodeData(hashedUsername);
+  //   // const source = decodeData(hashedSource);
+
+  //   if (!username || !source) {
+  //     // If it's a form submission, render error page
+  //     if (req.headers['content-type']?.includes('application/x-www-form-urlencoded')) {
+  //       return res.render('password_prompt', {
+  //         hashedUsername,
+  //         hashedSource,
+  //         error: 'Invalid hashed data. Cannot decrypt username or source.'
+  //       });
+  //     }
+  //     return res.status(400).json({
+  //       success: false,
+  //       message: 'Invalid hashed data. Cannot decrypt username or source.'
+  //     });
+  //   }
+    
+  //   const doc = await Link.findOne({
+  //     username,
+  //     source,
+  //     visibility: 'private',
+  //     deletedAt: null
+  //   });
+    
+  //   if (!doc) {
+  //     // If it's a form submission, render error page
+  //     if (req.headers['content-type']?.includes('application/x-www-form-urlencoded')) {
+  //       return res.render('password_prompt', {
+  //         hashedUsername,
+  //         hashedSource,
+  //         error: 'Link not found or not private'
+  //       });
+  //     }
+  //     return res.status(404).json({
+  //       success: false,
+  //       message: 'Link not found or not private'
+  //     });
+  //   }
+    
+  //   const bcryptjs = require('bcryptjs');
+  //   if (!doc.password || !(await bcryptjs.compare(password, doc.password))) {
+  //     // If it's a form submission, render error page
+  //     if (req.headers['content-type']?.includes('application/x-www-form-urlencoded')) {
+  //       return res.render('password_prompt', {
+  //         hashedUsername,
+  //         hashedSource,
+  //         error: 'Incorrect password'
+  //       });
+  //     }
+  //     return res.status(401).json({
+  //       success: false,
+  //       message: 'Incorrect password'
+  //     });
+  //   }
+    
+  //   // Password correct, redirect directly to destination
+  //   const {destination,clicked,notSeen}=doc
+  //   await Link.updateOne({username,source},{$set:{clicked:clicked+1,notSeen:notSeen+1}})
+    
+  //   const info=await User.findOne({username},{email:1,name:1})
+  //   if(info) {
+  //     const {email,name}=info
+  //     const deviceDetails=req.details || {}
+  //     // Send email asynchronously, don't wait for it
+  //     sendVisitEmail(email,username,name,deviceDetails,source).catch(err => {
+  //       console.error('Failed to send visit email:', err);
+  //     });
+  //   }
+    
+  //   // If it's a form submission, redirect directly - browser will follow automatically
+  //   if (req.headers['content-type']?.includes('application/x-www-form-urlencoded')) {
+  //     return res.redirect(307, destination);
+  //   }
+    
+  //   // For JSON requests (API calls), return JSON response
+  //   // return res.status(200).json({
+  //   //   success: true,
+  //   //   message: 'Password verified successfully',
+  //   //   destination: destination
+  //   // });
+  // } catch (error) {
+  //   console.error('Password verification error:', error);
+  //   // If it's a form submission, render error page
+  //   if (req.headers['content-type']?.includes('application/x-www-form-urlencoded')) {
+  //     return res.render('password_prompt', {
+  //       hashedUsername: req.body?.hashedUsername || '',
+  //       hashedSource: req.body?.hashedSource || '',
+  //       error: 'Internal server error. Please try again.'
+  //     });
+  //   }
+  //   return res.status(500).json({
+  //     success: false,
+  //     message: 'Internal server error. Please try again.'
+  //   });
+  // }
 });
 
 
@@ -211,11 +276,11 @@ app.get('/:username/:source',extractInfo, async (req, res) => {
   // private links should render password prompt page directly
   if(doc.visibility === 'private') {
     // Encode username and source before sending to EJS
-    const hashedUsername = encodeData(username);
-    const hashedSource = encodeData(source);
+    // const hashedUsername = encodeData(username);
+    // const hashedSource = encodeData(source);
     return res.render('password_prompt', { 
-      hashedUsername, 
-      hashedSource 
+      hashedUsername:username, 
+      hashedSource:source 
     });
   }
 
@@ -228,146 +293,6 @@ app.get('/:username/:source',extractInfo, async (req, res) => {
   sendVisitEmail(email,username,name,deviceDetails,source)
   return res.redirect(307,destination)
 })
-
-app.get('/:username/:source',extractInfo, async (req, res) => {
-  const {username,source}=req.params;
-  const linkHub=`Available link: ${req.protocol}://${req.get('host')}/${username}`
-
-  const doc=await Link.findOne({
-    username,
-    source,
-    deletedAt: null
-  })
-
-  const info=await User.findOne({username},{email:1,name:1})
-  if(!info){
-    return res.render('not_exists',{
-      linkHub:""
-    })
-  }
-  const {email,name}=info
-  
-  if(!doc) {
-    return res.render('not_exists',{
-      linkHub:linkHub
-    })
-  }
-
-  // Check link visibility
-  // private links should render password prompt page directly
-  if(doc.visibility === 'private') {
-    // Encode username and source before sending to EJS
-    const hashedUsername = encodeData(username);
-    const hashedSource = encodeData(source);
-    return res.render('password_prompt', { 
-      hashedUsername, 
-      hashedSource 
-    });
-  }
-
-  // unlisted links are accessible via direct URL (password protection can be added later)
-  // public links are accessible
-  const {destination,clicked,notSeen}=doc
-  await Link.updateOne({username,source},{$set:{clicked:clicked+1,notSeen:notSeen+1}})
-
-  const deviceDetails=req.details
-  sendVisitEmail(email,username,name,deviceDetails,source)
-  return res.redirect(307,destination)
-})
-
-app.get('/:username/:source',extractInfo, async (req, res) => {
-  const {username,source}=req.params;
-  const linkHub=`Available link: ${req.protocol}://${req.get('host')}/${username}`
-
-  const doc=await Link.findOne({
-    username,
-    source,
-    deletedAt: null
-  })
-
-  const info=await User.findOne({username},{email:1,name:1})
-  if(!info){
-    return res.render('not_exists',{
-      linkHub:""
-    })
-  }
-  const {email,name}=info
-  
-  if(!doc) {
-    return res.render('not_exists',{
-      linkHub:linkHub
-    })
-  }
-
-  // Check link visibility
-  // private links should render password prompt page directly
-  if(doc.visibility === 'private') {
-    // Encode username and source before sending to EJS
-    const hashedUsername = encodeData(username);
-    const hashedSource = encodeData(source);
-    return res.render('password_prompt', { 
-      hashedUsername, 
-      hashedSource 
-    });
-  }
-
-  // unlisted links are accessible via direct URL (password protection can be added later)
-  // public links are accessible
-  const {destination,clicked,notSeen}=doc
-  await Link.updateOne({username,source},{$set:{clicked:clicked+1,notSeen:notSeen+1}})
-
-  const deviceDetails=req.details
-  sendVisitEmail(email,username,name,deviceDetails,source)
-  return res.redirect(307,destination)
-})
-
-app.get('/:username/:source',extractInfo, async (req, res) => {
-  const {username,source}=req.params;
-  const linkHub=`Available link: ${req.protocol}://${req.get('host')}/${username}`
-
-  const doc=await Link.findOne({
-    username,
-    source,
-    deletedAt: null
-  })
-
-  const info=await User.findOne({username},{email:1,name:1})
-  if(!info){
-    return res.render('not_exists',{
-      linkHub:""
-    })
-  }
-  const {email,name}=info
-  
-  if(!doc) {
-    return res.render('not_exists',{
-      linkHub:linkHub
-    })
-  }
-
-  // Check link visibility
-  // private links should render password prompt page directly
-  if(doc.visibility === 'private') {
-    // Encode username and source before sending to EJS
-    const hashedUsername = encodeData(username);
-    const hashedSource = encodeData(source);
-    return res.render('password_prompt', { 
-      hashedUsername, 
-      hashedSource 
-    });
-  }
-
-  // unlisted links are accessible via direct URL (password protection can be added later)
-  // public links are accessible
-  const {destination,clicked,notSeen}=doc
-  await Link.updateOne({username,source},{$set:{clicked:clicked+1,notSeen:notSeen+1}})
-
-  const deviceDetails=req.details
-  sendVisitEmail(email,username,name,deviceDetails,source)
-  return res.redirect(307,destination)
-})
-
-
 
 app.get('/:username',extractInfo, async (req, res) => {
   console.log("backend profile search start")
