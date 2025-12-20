@@ -17,6 +17,7 @@ const User=require('./model/userModel')
 const profileRoute=require('./routes/ProfileRoute')
 const { extractInfo } = require('./middleware/deviceInfo')
 const { sendVisitEmail } = require('./lib/mail')
+const bcryptjs = require('bcryptjs')
 
 
 dotenv.config()
@@ -108,25 +109,45 @@ const decodeData = (encodedData) => {
 
 // Handle password submission for private links
 app.post('/link/verify-password', extractInfo, async (req, res) => {
-  console.log("verify password request received")
-  console.log("req.body = ",req.body)
   const { hashedUsername, hashedSource, password } = req.body;
-  if (!hashedUsername || !hashedSource || !password) {
-    return res.status(400).json({
+
+  const username = decodeData(hashedUsername);
+  const source = decodeData(hashedSource);
+  console.log(password)
+
+  const doc = await Link.findOne({
+    username,
+    source,
+    deletedAt: null
+  });
+
+  if (!doc) {
+    return res.status(404).json({ success: false });
+  }
+
+  //  const bcryptjs = require('bcryptjs');
+    if (!doc.password || !(await bcryptjs.compare(password, doc.password))) {
+    return res.status(401).json({
       success: false,
-      message: 'Hashed username, hashed source, and password are required'
+      message: "Invalid password"
     });
   }
-  const doc = await Link.findOne({
-        username:hashedUsername,
-        source:hashedSource,
-        visibility: 'private',
-        deletedAt: null
+  //   // Password correct, redirect directly to destination
+    const {destination,clicked,notSeen}=doc
+    await Link.updateOne({username,source},{$set:{clicked:clicked+1,notSeen:notSeen+1}})
+    
+    const info=await User.findOne({username},{email:1,name:1})
+    if(info) {
+      const {email,name}=info
+      const deviceDetails=req.details || {}
+      // Send email asynchronously, don't wait for it
+      sendVisitEmail(email,username,name,deviceDetails,source).catch(err => {
+        console.error(`Failed to send visit to ${username}:`, err);
       });
-  console.log("doc = ",doc)
+    }
 
-  return res.redirect(307,doc.destination)
-  // const username = decodeData(hashedUsername);
+  const xyx=()=>{
+    // const username = decodeData(hashedUsername);
   // const source = decodeData(hashedSource);
   // try {
   //   // Accept both JSON and form data
@@ -244,7 +265,14 @@ app.post('/link/verify-password', extractInfo, async (req, res) => {
   //     message: 'Internal server error. Please try again.'
   //   });
   // }
+  }
+
+  return res.json({
+    success: true,
+    destination: destination
+  });
 });
+
 
 
 
@@ -274,13 +302,15 @@ app.get('/:username/:source',extractInfo, async (req, res) => {
 
   // Check link visibility
   // private links should render password prompt page directly
-  if(doc.visibility === 'private') {
+  if(!doc.isAccessible()) {
+    console.log("not accessible")
     // Encode username and source before sending to EJS
-    // const hashedUsername = encodeData(username);
-    // const hashedSource = encodeData(source);
+    const hashedUsername = encodeData(username);
+    const hashedSource = encodeData(source);
     return res.render('password_prompt', { 
-      hashedUsername:username, 
-      hashedSource:source 
+      hashedUsername:hashedUsername, 
+      hashedSource:hashedSource,
+      linkId:doc.linkId 
     });
   }
 
