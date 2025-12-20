@@ -7,7 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added - 2024-12-XX
+### Added - 2024-12-XX (Latest)
+
+- **Private Link Password Protection**: Complete password protection UI for private links
+  - Password modal in Linkcard component for setting private link passwords
+  - Password input with confirmation field
+  - Visual indicators for link visibility status (public/unlisted/private)
+  - Lock icon button on each link card for quick visibility changes
+  - Dropdown menu for changing link visibility
+  - Color-coded visibility badges (green/yellow/red)
+  - Secure password handling with minimum length validation
+  - Loading states during password setting
+
+- **Settings Page**: Comprehensive settings page for privacy and permissions
+  - Profile visibility controls (8 toggle options)
+  - Link display settings (show link count, show click stats)
+  - Search & discovery settings (allow search, featured, search keywords)
+  - Privacy settings (show analytics, show last updated, require auth)
+  - Notification settings (email on click, email on profile view, weekly report)
+  - Modern UI with toggle switches and keyword management
+  - Full light and dark mode support
+  - Backend integration with proper state management
+
 - **Profile Page Redesign**: Complete redesign of Profile page with modern UI
   - Added animated background with gradient orbs and grid pattern
   - Implemented glassmorphism design with backdrop blur effects
@@ -53,8 +74,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Dropdown menu to change visibility (public/unlisted/private)
   - Visual badge showing current visibility status
   - Color-coded visibility indicators (green/yellow/red)
-  - Password protection for unlisted links
+  - Password protection for private links with secure modal
+  - Password modal with confirmation field and validation
   - Helper methods for visibility checks
+  - React Portal implementation for dropdown to prevent z-index issues
 
 - **Database Models Enhancement**: Added timestamps and analytics support
   - Added `createdAt`, `updatedAt`, `deletedAt` to all models
@@ -96,7 +119,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Mobile search expands when icon is clicked
   - Connected Settings link in profile menu
 
-### Fixed - 2024-12-XX
+### Fixed - 2024-12-XX (Latest)
+
+- **Private Link Password Modal Duplication**: Fixed duplicate password modal rendering
+  - Removed duplicate password modal code block in Linkcard.jsx
+  - Only one modal instance now renders when setting link to private
+  - Eliminated overlapping overlays and duplicate forms
+
+- **Private Link Redirection**: Fixed password verification and redirection flow
+  - Implemented proper form submission for password verification
+  - Fixed backend to decode username and source before verification
+  - Added direct HTTP redirect after successful password verification
+  - Fixed CSP and CORS issues for password prompt page
+  - Improved error handling with user-friendly messages
+  - Removed client-side fetch logic in favor of standard form submission
+
+- **Linkcard Dropdown Visibility**: Fixed privacy button dropdown visibility issues
+  - Implemented React Portal to render dropdown outside parent container
+  - Fixed z-index conflicts with other page elements
+  - Added dynamic position calculation with viewport bounds checking
+  - Fixed dropdown positioning to use viewport-relative coordinates
+  - Ensured dropdown is always visible and clickable
+
 - **CreateBridge Copy Button**: Fixed form submission issue
   - Added `type="button"` to copy button to prevent form submission
   - Copy button no longer triggers platform validation warning

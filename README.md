@@ -70,6 +70,17 @@ LinkBridger bridges this gap by providing:
 - 🚀 **Zero Expiration** - your links work forever
 - 🎨 **Brand Identity** - links that reflect your personal or professional brand
 - 🔒 **Privacy First** - no tracking scripts, no third-party analytics
+- 🔐 **Link Privacy Controls** - three-tier visibility system:
+  - **Public**: Visible everywhere (link hub, profile preview, search)
+  - **Unlisted**: Visible in profile preview only, NOT in link hub (perfect for 100+ links without cluttering)
+  - **Private**: Hidden everywhere, password-protected for direct access
+- 👥 **User Discovery** - real-time search in navigation bar to discover other users' public profiles
+- ⚙️ **Granular Privacy Settings** - fully customizable visibility controls:
+  - Profile visibility (public/private)
+  - Search visibility and keywords
+  - Content visibility (email, location, bio, passion, image)
+  - Link display settings
+  - Privacy and notification preferences
 - 💰 **Completely Free** - open source and free forever
 
 ### 🏗️ How It Works
@@ -77,9 +88,29 @@ LinkBridger bridges this gap by providing:
 1. **Sign Up**: Create an account with your email and choose a username
 2. **Add Platforms**: Add any social media platform with its destination URL
 3. **Get Your Links**: Receive personalized links like `clickly.cv/username/platform`
-4. **Share Everywhere**: Use your links on resumes, business cards, email signatures, and social media
-5. **Update Anytime**: Change destination URLs anytime - all your shared links update automatically
-6. **Track Performance**: Monitor clicks and engagement through the dashboard
+4. **Set Link Privacy**: Choose visibility for each link:
+   - **Public**: Visible everywhere (link hub, profile preview, search)
+   - **Unlisted**: Visible in profile preview only, NOT in link hub (perfect for 100+ links without cluttering hub)
+   - **Private**: Hidden everywhere, password-protected for direct access
+5. **Configure Privacy Settings**: Customize what information is visible in your public profile:
+   - Toggle profile visibility (public/private)
+   - Enable/disable search visibility
+   - Control content visibility (email, location, bio, passion, image)
+   - Configure link display settings
+   - Set up customizable email notification preferences
+     - Link click notifications (toggle on/off)
+     - Profile view notifications (toggle on/off)
+     - Weekly report emails (toggle on/off)
+6. **Share Everywhere**: Use your links on resumes, business cards, email signatures, and social media
+7. **Update Anytime**: Change destination URLs anytime - all your shared links update automatically
+8. **Track Performance**: Monitor clicks and engagement through the dashboard
+9. **Discover Users**: Search for other users in the navigation bar and view their public profiles
+10. **Customize Notifications**: Set up email notification preferences in Settings
+    - Enable/disable link click notifications
+    - Enable/disable profile view notifications
+    - Enable/disable weekly report emails
+    - Each notification type can be controlled independently
+11. **Get Notified**: Receive email notifications based on your preferences when someone clicks your links or views your profile
 
 ---
 
@@ -166,7 +197,111 @@ Track which platforms get the most clicks to understand your audience:
 - **Optimize Strategy**: Focus on platforms that get the most engagement
 - **Measure Impact**: Track the effectiveness of your networking efforts
 - **Real-time Updates**: See clicks as they happen
-- **Email Notifications**: Get notified when someone clicks your links (with device and location info)
+- **Customizable Email Notifications**: Get notified based on your preferences
+  - Link click notifications (customizable - toggle on/off)
+  - Profile view notifications (customizable - toggle on/off)
+  - Weekly report emails (customizable - toggle on/off)
+  - Each notification type includes detailed information (platform, device, location, timestamp)
+
+### 4.5. **Link Privacy & Protection** 🔒
+
+Control who can access your links with three visibility levels:
+
+- **Public Links**: Fully visible and accessible
+  - ✅ Visible in your profile preview
+  - ✅ Visible in link hub (`/username`)
+  - ✅ Visible in user search results
+  - ✅ Accessible via direct URL (`/username/platform`)
+  - Anyone can see and access these links
+  - Perfect for professional profiles and public content
+  - No password required
+
+- **Unlisted Links**: Hidden from hub but visible in profile preview
+  - ❌ **NOT** visible in link hub (`/username`)
+  - ✅ **Visible** in profile preview (`/profile/username`)
+  - ❌ **NOT** visible in user search results
+  - ✅ Accessible via direct URL (`/username/platform`) - **NO password required for direct access**
+  - **Purpose**: Allows you to preserve many links (up to 100+) in your profile preview without cluttering the public link hub
+  - Perfect for links that are less important but you still want visible in your profile
+  - Ideal for maintaining a comprehensive profile while keeping the public hub clean and focused
+  - Direct access works without password - anyone with the direct URL can access it
+
+- **Private Links**: Completely hidden - require password to access
+  - ❌ **NOT** visible in profile preview
+  - ❌ **NOT** visible in link hub
+  - ❌ **NOT** visible in user search results
+  - ✅ Only accessible via direct URL (`/username/platform`) with correct password
+  - Perfect for sensitive or personal content
+  - Secure password prompt page with validation
+  - Automatic redirect to destination after successful verification
+
+**How It Works:**
+
+**For Link Visibility:**
+1. **Setting Link Visibility**: Use the lock icon on each link card to change visibility
+2. **Public Links**: Immediately visible in link hub (`/username`), profile preview (`/profile/username`), and search results
+3. **Unlisted Links**: 
+   - ✅ Visible in profile preview (`/profile/username`)
+   - ❌ NOT visible in link hub (`/username`) - keeps hub clean and focused
+   - ✅ Accessible via direct URL (`/username/platform`) - NO password required
+   - **Purpose**: Perfect for preserving 100+ links in your profile preview without cluttering the public link hub
+   - Ideal for less important links you still want visible in your profile
+4. **Private Links**: When setting a link to "private", you'll be prompted to set a password
+5. **Accessing Private Links**: When someone visits a private link directly, they see a password prompt page
+6. **Password Verification**: The system securely verifies the password using bcrypt hashing
+7. **Automatic Redirect**: After successful verification, users are automatically redirected to the destination URL
+8. **Click Tracking**: All link clicks (including private links) are tracked and can be reported via email notifications (if enabled in your notification preferences)
+
+**For Privacy & Permissions (Fully Customizable):**
+1. **Access Settings**: Navigate to Settings page from your profile menu
+2. **Profile Visibility**: Toggle whether your profile is public or private
+   - Public: Visible to everyone, can be found in search
+   - Private: Only accessible if you share the direct link
+3. **Search Settings**: Control discoverability
+   - Enable/disable profile searchability
+   - Add search keywords for better discoverability
+   - Featured profile option for enhanced visibility
+4. **Content Visibility**: Individually toggle what information is visible
+   - Show/hide email address
+   - Show/hide location
+   - Show/hide bio
+   - Show/hide passion
+   - Show/hide profile image
+   - Each setting works independently
+5. **Link Display Settings**: Control what statistics are shown
+   - Show/hide total link count
+   - Show/hide click statistics
+6. **Privacy Controls**: Configure advanced privacy options
+   - Show/hide analytics information
+   - Show/hide last updated timestamp
+   - Require authentication for profile view
+7. **Email Notifications**: Fully customizable email notification preferences
+   - **Link Click Notifications**: Toggle email notifications when someone clicks your links
+     - Includes platform, device, location, and timestamp information
+     - Perfect for tracking engagement and recruiter interest
+     - Can be enabled/disabled independently
+   - **Profile View Notifications**: Toggle email notifications when someone views your public profile
+     - Know when potential clients or employers check out your profile
+     - Helps you understand profile visibility and interest
+     - Can be enabled/disabled independently
+   - **Weekly Reports**: Toggle weekly summary emails
+     - Get insights into your most popular links
+     - Track overall engagement trends
+     - Monitor profile performance over time
+     - Can be enabled/disabled independently
+   - All notification types can be controlled independently in Settings
+   - Changes take effect immediately
+   - No premium subscription required - all notification types are free
+8. **Real-time Updates**: All changes take effect immediately and are reflected in profile preview
+9. **Profile Preview**: Use the "Preview" button to see exactly how your profile appears to visitors with current privacy settings
+
+**Security Features:**
+- **Password Protection**: Secure password verification with bcrypt hashing
+- **Direct Redirection**: After password verification, users are automatically redirected to the destination
+- **Secure Encoding**: Username and source are encoded (Base64) for security when passing through password prompt
+- **Error Handling**: User-friendly error messages for incorrect passwords
+- **Click Tracking**: Private link clicks are still tracked and can be reported via email notifications (if enabled in your notification preferences)
+- **No URL Tampering**: Encoded parameters prevent unauthorized access attempts
 
 ### 5. **Platform Flexibility** 🎨
 
@@ -189,21 +324,105 @@ Unlike many link shorteners that:
 
 **LinkBridger links work forever** - as long as you maintain your account, your links remain active. No expiration dates, no premium plans, no limits.
 
-### 7. **Email Notifications** 📧
+### 7. **Customizable Email Notifications** 📧
 
-Get notified when someone clicks your links with:
+Get notified about important events based on your customizable preferences:
+
+**Notification Types (All Customizable):**
+- **Link Click Notifications**: Get notified when someone clicks your links
+  - Toggle on/off in Settings
+  - Includes platform information, device details, location data, and timestamp
+  - Perfect for tracking recruiter interest and engagement
+- **Profile View Notifications**: Get notified when someone views your public profile
+  - Toggle on/off in Settings
+  - Know when potential clients or employers check out your profile
+- **Weekly Reports**: Receive weekly summaries of your link performance
+  - Toggle on/off in Settings
+  - Get insights into your most popular links and overall engagement
+
+**What's Included in Notifications:**
 - **Platform Information**: Which link was clicked
 - **Device Details**: Desktop, mobile, or tablet
 - **Location Data**: General location information (privacy-respecting)
-- **Timestamp**: When the click occurred
+- **Timestamp**: When the click or view occurred
+- **User Information**: Basic details about the visitor (when available)
 
-Perfect for:
+**Customization (Based on Your Permissions):**
+- **Independent Control**: Control each notification type independently
+  - Link click notifications: Enable/disable in Settings
+  - Profile view notifications: Enable/disable in Settings
+  - Weekly report emails: Enable/disable in Settings
+- **Permission-Based**: Email notifications are sent based on your notification preferences
+  - Only enabled notification types will trigger emails
+  - You have full control over what notifications you receive
+  - No emails are sent for disabled notification types
+- **Easy Management**: All settings can be changed anytime in the Settings page
+  - Navigate to Settings from your profile menu
+  - Toggle each notification type on/off as needed
+  - Changes take effect immediately
+  - No premium subscription required - all notification customization is free
+
+**Perfect for:**
 - Tracking recruiter interest
 - Understanding audience behavior
 - Measuring engagement
 - Staying informed about your digital presence
+- Monitoring profile visibility
+- Getting weekly performance insights
 
-### 8. **Dark Mode Support** 🌓
+### 8. **User Search & Public Profiles** 👥
+
+Discover and connect with other users:
+
+- **User Search**: Search for other users by username or name in the navigation bar
+  - Real-time search with instant results
+  - Search dropdown with user profiles
+  - Click to visit any public profile
+  - Responsive design: search icon on mobile, full input on desktop
+  - Only shows users who have enabled public profile and search visibility
+
+- **Public Profile Viewing**: View other users' public profiles
+  - Access via `/profile/:username` route
+  - Shows only public links (filters out private links)
+  - Respects all privacy settings from the profile owner
+  - Displays profile information based on owner's permissions
+
+- **Profile Preview**: Preview how your own profile appears to visitors
+  - Click "Preview" button on your profile page
+  - See exactly what visitors see
+  - All content respects your privacy settings, even for owners
+  - Helps you fine-tune your public profile appearance
+
+- **Privacy Controls**: Granular settings for what information is visible
+  - Control profile visibility (public/private)
+  - Toggle search visibility (allow/disallow search)
+  - Control profile view permissions
+  - Fine-tune what information is shown (email, location, bio, passion, profile image)
+  - Link display settings (show link count, show click stats)
+  - Search & discovery settings (allow search, featured, search keywords)
+  - Privacy settings (show analytics, show last updated, require auth)
+  - **Customizable Email Notifications**: Fully customizable notification preferences
+    - Link click notifications (toggle on/off)
+    - Profile view notifications (toggle on/off)
+    - Weekly report emails (toggle on/off)
+    - Each notification type can be controlled independently
+    - All settings accessible in Settings page
+
+- **Search Visibility**: Control whether your profile appears in search results
+  - Enable/disable profile searchability
+  - Add search keywords for better discoverability
+  - Featured profile option for enhanced visibility
+  - Only searchable if profile is public AND search is enabled
+
+- **Profile Permissions**: Fine-tune visibility of email, location, bio, and more
+  - Show/hide email address
+  - Show/hide location
+  - Show/hide bio
+  - Show/hide passion
+  - Show/hide profile image
+  - Each setting can be toggled independently
+
+### 9. **Dark Mode Support** 🌓
 
 Modern, eye-friendly interface with full dark mode support:
 - **System Preference Detection**: Automatically matches your system theme
@@ -212,7 +431,7 @@ Modern, eye-friendly interface with full dark mode support:
 - **Smooth Transitions**: Beautiful animations when switching themes
 - **Accessibility**: Better for low-light environments and reducing eye strain
 
-### 9. **Mobile Responsive Design** 📱
+### 10. **Mobile Responsive Design** 📱
 
 Fully responsive design that works seamlessly on:
 - **Desktop**: Full-featured experience with all capabilities
@@ -220,7 +439,7 @@ Fully responsive design that works seamlessly on:
 - **Mobile**: Touch-friendly interface for smartphones
 - **All Browsers**: Works on Chrome, Firefox, Safari, Edge, and more
 
-### 10. **Privacy & Security** 🔒
+### 11. **Privacy & Security** 🔒
 
 **Security Features:**
 - **JWT Authentication**: Secure token-based authentication
@@ -237,8 +456,12 @@ Fully responsive design that works seamlessly on:
 - **No Data Selling**: Your data is yours - we don't sell it
 - **Open Source**: Transparent code you can audit
 - **User Control**: You control your data and links
+- **Link Privacy Controls**: Three-tier visibility system (public, unlisted, private)
+- **Password Protection**: Secure password protection for private links
+- **Profile Privacy Settings**: Granular control over what information is visible
+- **Search Visibility**: Control whether your profile appears in user searches
 
-### 11. **Fast Performance** ⚡
+### 12. **Fast Performance** ⚡
 
 - **Optimized Queries**: Efficient database operations
 - **Lazy Loading**: Code splitting and lazy imports
@@ -246,7 +469,7 @@ Fully responsive design that works seamlessly on:
 - **CDN Ready**: Optimized for content delivery networks
 - **Lightweight**: Minimal dependencies and optimized bundle size
 
-### 12. **User-Friendly Interface** 🎨
+### 13. **User-Friendly Interface** 🎨
 
 - **Intuitive Design**: Easy to use, even for non-technical users
 - **Real-time Validation**: Instant feedback on form inputs
@@ -255,7 +478,7 @@ Fully responsive design that works seamlessly on:
 - **Success Notifications**: Clear confirmation of actions
 - **Smooth Animations**: Polished user experience
 
-### 13. **Free & Open Source** 💰
+### 14. **Free & Open Source** 💰
 
 - **Completely Free**: No subscription fees, no premium plans
 - **Open Source**: Full source code available on GitHub
@@ -264,7 +487,7 @@ Fully responsive design that works seamlessly on:
 - **Customizable**: Modify to fit your needs
 - **No Vendor Lock-in**: You're not dependent on a single service
 
-### 14. **Easy Setup** 🚀
+### 15. **Easy Setup** 🚀
 
 Getting started is simple:
 1. Choose a short, memorable username
@@ -292,10 +515,15 @@ Getting started is simple:
 | **Cost** | ✅ Free and open source | ⚠️ Often requires paid plans | ⚠️ Premium features locked | ⚠️ Premium features locked | ❌ Expensive |
 | **Transparency** | ✅ Open source, auditable | ❌ Closed source | ❌ Closed source | ❌ Closed source | ⚠️ Varies |
 | **No Vendor Lock-in** | ✅ Self-hostable | ❌ Vendor-dependent | ❌ Vendor-dependent | ❌ Vendor-dependent | ✅ Self-hostable |
-| **Email Notifications** | ✅ Built-in | ❌ Not available | ⚠️ Premium feature | ⚠️ Premium feature | ⚠️ Varies |
+| **Email Notifications** | ✅ Fully customizable | ❌ Not available | ⚠️ Premium feature | ⚠️ Premium feature | ⚠️ Varies |
+| **Notification Customization** | ✅ Per-type toggles | ❌ Not available | ⚠️ Limited | ⚠️ Limited | ⚠️ Varies |
 | **Platform Flexibility** | ✅ Any platform | ✅ Any URL | ⚠️ Limited platforms | ⚠️ Limited platforms | ✅ Any platform |
 | **Dark Mode** | ✅ Full support | ⚠️ Varies | ⚠️ Limited | ⚠️ Limited | ⚠️ Varies |
 | **Mobile App** | ⚠️ Web-based (responsive) | ✅ Available | ✅ Available | ✅ Available | ⚠️ Varies |
+| **Link Privacy Controls** | ✅ Public/Unlisted/Private | ❌ Not available | ⚠️ Limited | ⚠️ Limited | ⚠️ Varies |
+| **Password Protection** | ✅ Built-in | ❌ Not available | ⚠️ Premium feature | ⚠️ Premium feature | ⚠️ Varies |
+| **User Search** | ✅ Built-in | ❌ Not available | ⚠️ Limited | ⚠️ Limited | ⚠️ Varies |
+| **Profile Privacy Settings** | ✅ Granular controls | ❌ Not available | ⚠️ Limited | ⚠️ Limited | ⚠️ Varies |
 
 ### Why LinkBridger is Superior
 
@@ -387,10 +615,28 @@ Visit this link to see a beautiful landing page with all social profiles!
 - 👤 **User Profiles**: Customizable profile with bio and profile picture
 - 🔗 **Link Management**: Create, edit, and delete social profile links
 - 📊 **Click Tracking**: Real-time analytics for each link with detailed statistics
-- 🔔 **Notifications**: Email notifications for link clicks with device and location information
+- 🔔 **Customizable Email Notifications**: Fully customizable email notifications based on your preferences
+  - Link click notifications (toggle on/off)
+  - Profile view notifications (toggle on/off)
+  - Weekly report emails (toggle on/off)
+  - Each notification type can be controlled independently
+- 🔒 **Link Privacy Controls**: Three-tier visibility system (public, unlisted, private) with password protection
+  - **Public**: Visible everywhere (link hub, profile preview, search)
+  - **Unlisted**: Visible in profile preview, NOT in link hub, direct access without password
+  - **Private**: Hidden everywhere, password-protected for direct access only
 - 🌓 **Dark Mode**: Full dark mode support with system preference detection and manual toggle
 - 📱 **Responsive Design**: Works perfectly on all devices and screen sizes
 - 🎨 **Modern UI/UX**: Beautiful, intuitive interface built with React and Tailwind CSS
+- 👥 **User Search & Public Profiles**: Search for users and view public profiles
+  - Real-time user search in navigation bar
+  - Public profile viewing with privacy-respecting content
+  - Profile preview to see how your profile appears to visitors
+- ⚙️ **Granular Privacy Settings**: Comprehensive privacy and visibility controls
+  - Profile visibility controls (8+ toggle options)
+  - Link display settings
+  - Search & discovery settings
+  - Privacy and notification preferences
+  - Customizable content visibility (email, location, bio, passion, image)
 
 ### Advanced Features
 
@@ -403,7 +649,47 @@ Visit this link to see a beautiful landing page with all social profiles!
 - 📈 **Analytics Dashboard**: Visual representation of click statistics
 - 🎭 **Platform Customization**: Add any platform with custom names
 - 🔍 **Search & Filter**: Easy to find and manage your links
-- 📧 **Email Integration**: Seamless email notifications for important events
+- 📧 **Customizable Email Notifications**: Fully customizable email notifications based on your preferences
+  - **Link Click Notifications**: Get notified when someone clicks your links (toggle on/off)
+    - Includes platform, device, location, and timestamp
+  - **Profile View Notifications**: Get notified when someone views your public profile (toggle on/off)
+  - **Weekly Reports**: Receive weekly summaries of your link performance (toggle on/off)
+  - All notification types can be enabled/disabled independently in Settings
+- 🔐 **Private Link Protection**: Password-protected private links with secure verification and direct redirection
+- 👀 **Profile Preview**: Preview how your profile appears to visitors before making it public
+- 🔎 **User Search**: Real-time search for other users in navigation bar with instant results
+  - Search by username or name
+  - Instant dropdown results
+  - Click to visit public profiles
+  - Responsive: search icon on mobile, full input on desktop
+  - Only shows users with public profiles and search enabled
+- 🎛️ **Granular Privacy Controls**: Fully customizable visibility settings
+  - **Profile Visibility**: Control who can view your profile (public/private)
+  - **Search Visibility**: Enable/disable profile searchability and add search keywords
+  - **Content Visibility**: Individually toggle visibility of:
+    - Email address
+    - Location
+    - Bio
+    - Passion
+    - Profile image
+  - **Link Display**: Control whether link count and click stats are shown to visitors
+  - **Search Settings**: Add search keywords, enable featured profile option
+  - **Privacy Settings**: Control analytics visibility, last updated display, authentication requirements
+  - **Email Notifications**: Fully customizable email notification preferences
+    - **Link Click Notifications**: Toggle email notifications when someone clicks your links
+      - Includes detailed information: platform, device type, location, timestamp
+      - Perfect for tracking engagement and understanding audience behavior
+    - **Profile View Notifications**: Toggle email notifications when someone views your public profile
+      - Know when potential clients, employers, or visitors check out your profile
+      - Helps monitor profile visibility and interest
+    - **Weekly Reports**: Toggle weekly summary emails with performance insights
+      - Get insights into your most popular links
+      - Track overall engagement trends
+      - Monitor profile performance over time
+    - Each notification type can be enabled/disabled independently
+    - All settings customizable in Settings page
+    - Changes take effect immediately
+  - **Real-time Preview**: See changes immediately in profile preview
 
 ### Developer Features
 

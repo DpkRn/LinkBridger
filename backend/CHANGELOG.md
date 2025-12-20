@@ -98,6 +98,42 @@ The following endpoints need to be implemented:
 4. **Public Profile Endpoint**:
    - `POST /profile/getpublicprofile` - Get public profile data with settings and public links only
 
+### Added - 2024-12-XX (Latest)
+
+- **Private Link Password Protection**: Complete password protection system for private links
+  - Password prompt page (`password_prompt.ejs`) for collecting passwords
+  - Secure password verification endpoint (`/link/verify-password`)
+  - Base64 encoding/decoding of username and source for security
+  - Direct HTTP redirect after successful password verification
+  - Support for both form submissions and JSON API requests
+  - Error handling with user-friendly error messages
+  - Click tracking and email notifications for password-protected link access
+  - Secure password hashing using bcryptjs
+  - Automatic redirect to destination URL after verification
+
+- **Link Visibility System**: Enhanced link visibility controls
+  - Three visibility levels: `public`, `unlisted`, `private`
+  - Public links: Visible in profile preview, searches, and link hub
+  - Unlisted links: Not in link hub or profile, but accessible via direct URL with password
+  - Private links: Completely hidden, require password for direct access
+  - Per-link visibility settings with visual indicators
+  - Helper methods: `isAccessible()`, `shouldShowInProfile()`, `shouldShowInSearch()`
+
+- **Public Profile System**: Public profile viewing and search
+  - Public profile endpoint with optional authentication (`verifyTokenOptional`)
+  - Profile preview component for visitors
+  - User search functionality in navigation
+  - Respects all privacy settings from UserSettings model
+  - Owner preview functionality to see how profile appears to visitors
+
+- **Settings Management**: Comprehensive privacy and visibility controls
+  - Settings page for managing all privacy preferences
+  - Profile visibility controls (8 toggle options)
+  - Link display settings
+  - Search & discovery settings
+  - Privacy and notification settings
+  - Backend integration with proper nested object updates
+
 ### Notes
 
 - All models now support soft deletes
@@ -105,3 +141,4 @@ The following endpoints need to be implemented:
 - Link visibility is per-link, not global
 - UserSettings provides granular privacy controls
 - LinkAnalytics provides comprehensive click tracking
+- Private links use secure password verification with direct redirection
