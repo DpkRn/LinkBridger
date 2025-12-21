@@ -124,14 +124,14 @@ function App() {
   </div>;
 
   // Determine if current route is public (non-authenticated)
-  const publicRoutes = ['/', '/login', '/verify', '/verified', '/reset_password', '/about-developer'];
+  const publicRoutes = ['/', '/verify', '/verified', '/reset_password', '/about-developer'];
   const isDocRoute = location.pathname.startsWith('/docs') || location.pathname === '/doc';
   const isPublicRoute = publicRoutes.includes(location.pathname) || isDocRoute;
   
   return (
     <div className='pb-1 min-h-screen bg-gradient-to-r from-slate-100 via-lime-100 to-slate-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden transition-colors duration-300'>
-      {/* Show Nav for authenticated users (except home page which has its own Nav) OR for public routes */}
-      {(isAuthenticated && location.pathname !== '/') || (!isAuthenticated && isPublicRoute) ? <Nav /> : null}
+      {/* Show Nav for authenticated users (except home page which has its own Nav) OR for public routes (except login) */}
+      {(isAuthenticated && location.pathname !== '/') || (!isAuthenticated && isPublicRoute && location.pathname !== '/login') ? <Nav /> : null}
 
       <Routes>
         <Route path='/doc' element={<Documentation/>} />
