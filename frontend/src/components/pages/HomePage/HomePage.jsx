@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
-import { toggleDarkMode } from '../../../redux/pageSlice';
+import { useSelector } from 'react-redux';
 import { 
   FaRocket, 
   FaLink, 
@@ -27,7 +26,6 @@ import {
   SiYoutube,
   SiX
 } from 'react-icons/si';
-import { MdDarkMode, MdLightMode } from 'react-icons/md';
 import Footer from '../../footer/Footer';
 import logo from '../../../assets/logo.png';
 import { FlipWords } from '../../ui/flip-words';
@@ -37,7 +35,7 @@ import {
   CTASection,
   ComparisonTable
 } from './sections';
-import Doc from '../../doc/Doc';
+import Nav from '../../navbar/Nav';
 
 // 3D Card Component with Magnetic Hover
 const MagneticCard = ({ children, className = "", intensity = 0.3 }) => {
@@ -84,9 +82,7 @@ const MagneticCard = ({ children, className = "", intensity = 0.3 }) => {
 const HomePage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const dispatch = useDispatch();
   const isAuthenticated = useSelector(store => store.admin.isAuthenticated);
-  const darkMode = useSelector(store => store.page.darkMode);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const statsRef = useRef(null);
   // Ref to store latest mouse position, avoiding stale closure values in RAF callback
@@ -338,88 +334,8 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen w-full overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 dark:from-slate-900 dark:via-purple-900 dark:to-slate-900">
-      {/* Navigation Header for Non-Authenticated Users */}
-      {!isAuthenticated && location.pathname === '/' && (
-        <motion.nav
-          initial={{ y: -100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.6 }}
-          className="fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 shadow-lg"
-        >
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between h-16">
-              <motion.div
-                whileHover={{ scale: 1.05, rotateY: 5 }}
-                className="flex items-center gap-3 cursor-pointer relative"
-                onClick={() => navigate('/')}
-                style={{ transformStyle: "preserve-3d" }}
-              >
-                <motion.div
-                  animate={{
-                    rotateY: [0, 360],
-                  }}
-                  transition={{
-                    duration: 20,
-                    repeat: Infinity,
-                    ease: "linear",
-                  }}
-                  style={{ transformStyle: "preserve-3d" }}
-                  className="h-10 w-10 rounded-full overflow-hidden"
-                >
-                  <img
-                    className="h-10 w-10 rounded-full object-contain bg-white/10 dark:bg-gray-800/20 p-1 transition-all duration-300"
-                    src={logo}
-                    alt="LinkBridger Logo"
-                    onError={(e) => {
-                      e.target.src = 'https://tailwindui.com/plus/img/logos/mark.svg?color=indigo&shade=500';
-                    }}
-                  />
-                </motion.div>
-                <span className="hidden sm:inline text-lg sm:text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 dark:from-purple-600 dark:to-pink-600 bg-clip-text text-transparent">
-                  LinkBridger
-                </span>
-              </motion.div>
-              
-              <div className="flex items-center gap-2 sm:gap-4">
-                {/* Dark Mode Toggle */}
-                <motion.button
-                  type="button"
-                  whileHover={{ scale: 1.1, rotate: 15 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={() => dispatch(toggleDarkMode())}
-                  className="relative rounded-lg bg-white/90 dark:bg-gray-800/50 backdrop-blur-sm p-2.5 text-gray-800 dark:text-gray-300 hover:text-purple-600 dark:hover:text-yellow-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-transparent transition-all duration-200 hover:bg-white dark:hover:bg-gray-700/50 border border-gray-300 dark:border-gray-700/50 shadow-md"
-                  aria-label="Toggle dark mode"
-                  title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
-                >
-                  {darkMode ? (
-                    <MdLightMode className="h-5 w-5 text-yellow-300" />
-                  ) : (
-                    <MdDarkMode className="h-5 w-5 text-gray-800" />
-                  )}
-                </motion.button>
-                
-                {/* <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => navigate('/doc')}
-                  className="px-3 py-1.5 sm:px-4 sm:py-2 text-sm sm:text-base text-gray-800 dark:text-gray-300 font-medium hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
-                >
-                  Docs
-                </motion.button> */}
-                <Doc/>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => navigate('/login')}
-                  className="px-4 py-1.5 sm:px-6 sm:py-2 text-sm sm:text-base bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-full shadow-lg hover:shadow-xl transition-all"
-                >
-                  Get Started
-                </motion.button>
-              </div>
-            </div>
-          </div>
-        </motion.nav>
-      )}
+      {/* Navigation - Only show Nav on home page for non-authenticated users */}
+      {!isAuthenticated && location.pathname === '/' && <Nav />}
 
       {/* Hero Section */}
       <HeroSection

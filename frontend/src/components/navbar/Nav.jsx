@@ -38,9 +38,10 @@ const Nav = () => {
   const docsMenuRef = useRef(null);
 
   const { sidebarMenu, darkMode } = useSelector((store) => store.page);
-  const username = useSelector((store) => store.admin.user.username);
-  const links = useSelector((store) => store.admin.links);
-  const notifications = useSelector((store) => store.admin.notifications);
+  const isAuthenticated = useSelector((store) => store.admin.isAuthenticated);
+  const username = useSelector((store) => store.admin.user?.username);
+  const links = useSelector((store) => store.admin.links) || [];
+  const notifications = useSelector((store) => store.admin.notifications) || 0;
 
   // Mouse tracking for interactive background
   useEffect(() => {
@@ -224,8 +225,13 @@ const Nav = () => {
     { to: "/docs/different", label: "How it's Different", icon: FaLightbulb },
   ];
 
+  // For non-authenticated users, use different styling on public pages
+  const publicRoutes = ['/', '/login', '/verify', '/verified', '/reset_password', '/about-developer'];
+  const isDocRoute = location.pathname.startsWith('/docs') || location.pathname === '/doc';
+  const isPublicNav = !isAuthenticated && (publicRoutes.includes(location.pathname) || isDocRoute);
+
   return (
-    <nav className="sticky top-0 z-50 backdrop-blur-xl bg-gray-800/95 dark:bg-gray-900/50 border-b border-gray-700/50 dark:border-gray-700/50 shadow-lg">
+    <nav className={`${isPublicNav ? 'fixed' : 'sticky'} top-0 left-0 right-0 w-full z-50 backdrop-blur-xl ${isPublicNav ? 'bg-white/95 dark:bg-gray-900/80' : 'bg-gray-800/95 dark:bg-gray-900/50'} border-b ${isPublicNav ? 'border-gray-200 dark:border-gray-700' : 'border-gray-700/50 dark:border-gray-700/50'} shadow-lg`}>
       {/* Interactive Background Gradient */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div
@@ -238,9 +244,10 @@ const Nav = () => {
         />
       </div>
 
-      <div className="relative z-10">
-        <div className="relative flex h-16 md:h-20 items-center justify-between px-4 sm:px-6 lg:px-8">
-          {/* Mobile menu button */}
+      <div className="relative z-10 w-full">
+        <div className={`relative flex items-center justify-between w-full ${isPublicNav ? 'h-14 sm:h-16 md:h-20 px-3 sm:px-4 md:px-6 lg:px-8' : 'h-16 md:h-20 px-4 sm:px-6 lg:px-8'}`}>
+          {/* Mobile menu button - Only for authenticated users */}
+          {isAuthenticated && (
           <div className="flex items-center sm:hidden">
             <motion.button
               type="button"
@@ -275,17 +282,18 @@ const Nav = () => {
               </AnimatePresence>
             </motion.button>
           </div>
+          )}
 
-          {/* Logo and Desktop Navigation */}
+            {/* Logo and Desktop Navigation */}
           <div className="flex items-center justify-center flex-1 sm:flex-none">
             <Link
-              to="/home"
+              to={isAuthenticated ? "/home" : "/"}
               className="flex items-center gap-3 group"
             >
               <motion.div
                 whileHover={{ scale: 1.05, rotateY: 5 }}
                 whileTap={{ scale: 0.95 }}
-                className="relative h-10 w-10 rounded-full overflow-hidden"
+                className={`relative ${isPublicNav ? 'h-8 w-8 sm:h-10 sm:w-10' : 'h-10 w-10'} rounded-full overflow-hidden`}
                 style={{ transformStyle: "preserve-3d" }}
               >
                 <motion.div
@@ -301,7 +309,7 @@ const Nav = () => {
                   className="h-full w-full"
                 >
                   <img
-                    className="h-10 w-10 rounded-full object-contain bg-white/10 dark:bg-gray-800/20 p-1 drop-shadow-lg transition-all duration-300"
+                    className={`${isPublicNav ? 'h-8 w-8 sm:h-10 sm:w-10' : 'h-10 w-10'} rounded-full object-contain bg-white/10 dark:bg-gray-800/20 p-1 drop-shadow-lg transition-all duration-300`}
                     src={logo}
                     alt="LinkBridger Logo"
                     onError={(e) => {
@@ -312,14 +320,15 @@ const Nav = () => {
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </motion.div>
               <motion.span
-                className="hidden sm:block text-xl md:text-2xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
+                className="hidden sm:block text-lg sm:text-xl md:text-2xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
                 whileHover={{ scale: 1.05 }}
               >
                 LinkBridger
               </motion.span>
             </Link>
 
-            {/* Desktop Navigation Links */}
+            {/* Desktop Navigation Links - Only show for authenticated users */}
+            {isAuthenticated && (
             <div className="hidden sm:ml-8 sm:flex sm:items-center sm:gap-2">
               {navLinks.map((link) => {
                 const Icon = link.icon;
@@ -349,7 +358,7 @@ const Nav = () => {
                 );
               })}
               
-              {/* Docs Dropdown */}
+              {/* Docs Dropdown - Only for authenticated users */}
               <div className="relative docs-menu-button" ref={docsMenuRef}>
                 <motion.button
                   type="button"
@@ -409,11 +418,13 @@ const Nav = () => {
                 </AnimatePresence>
               </div>
             </div>
+            )}
           </div>
 
           {/* Right side actions */}
           <div className="flex items-center gap-3">
-            {/* Search - Responsive: Icon on mobile, full input on desktop */}
+            {/* Search - Only for authenticated users */}
+            {isAuthenticated && (
             <div className="relative search-button" ref={searchRef}>
               {/* Mobile: Search Icon Button */}
               <motion.button
@@ -597,6 +608,7 @@ const Nav = () => {
                 )}
               </AnimatePresence>
             </div>
+            )}
 
             {/* Dark Mode Toggle */}
             <motion.button
@@ -604,18 +616,85 @@ const Nav = () => {
               whileHover={{ scale: 1.1, rotate: 15 }}
               whileTap={{ scale: 0.9 }}
               onClick={() => dispatch(toggleDarkMode())}
-              className="relative rounded-lg bg-white/10 dark:bg-gray-800/50 backdrop-blur-sm p-2.5 text-gray-300 hover:text-white dark:hover:text-yellow-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-transparent transition-all duration-200 hover:bg-white/20 dark:hover:bg-gray-700/50 border border-white/10 dark:border-gray-700/50"
+              className={`relative rounded-lg backdrop-blur-sm p-2.5 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-transparent transition-all duration-200 border ${
+                isPublicNav 
+                  ? 'bg-white/90 dark:bg-gray-800/50 text-gray-800 dark:text-gray-300 hover:text-purple-600 dark:hover:text-yellow-300 hover:bg-white dark:hover:bg-gray-700/50 border-gray-300 dark:border-gray-700/50 shadow-md' 
+                  : 'bg-white/10 dark:bg-gray-800/50 text-gray-300 hover:text-white dark:hover:text-yellow-300 hover:bg-white/20 dark:hover:bg-gray-700/50 border-white/10 dark:border-gray-700/50'
+              }`}
               aria-label="Toggle dark mode"
               title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
             >
               {darkMode ? (
                 <MdLightMode className="h-5 w-5 text-yellow-300" />
               ) : (
-                <MdDarkMode className="h-5 w-5" />
+                <MdDarkMode className={`h-5 w-5 ${isPublicNav ? 'text-gray-800' : ''}`} />
               )}
             </motion.button>
 
-            {/* Notifications */}
+            {/* Docs Dropdown for Public/Non-authenticated users - Moved to right side */}
+            {!isAuthenticated && (
+              <div className="relative docs-menu-button" ref={docsMenuRef}>
+                <motion.button
+                  type="button"
+                  onClick={() => setDocsMenu(!docsMenu)}
+                  className={`relative px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-medium text-xs sm:text-sm md:text-base transition-all duration-200 flex items-center gap-1.5 sm:gap-2 ${
+                    location.pathname.startsWith("/docs") || location.pathname === "/doc"
+                      ? "text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/20"
+                      : "text-gray-800 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+                  }`}
+                >
+                  <FaBook className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span className="hidden sm:inline">Docs</span>
+                  <motion.div
+                    animate={{ rotate: docsMenu ? 180 : 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <MdOutlineArrowDropDownCircle className="w-3 h-3 sm:w-4 sm:h-4" />
+                  </motion.div>
+                </motion.button>
+
+                {/* Docs Dropdown Menu */}
+                <AnimatePresence>
+                  {docsMenu && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute top-full right-0 z-[100] mt-2 w-56 origin-top-right rounded-2xl bg-white dark:bg-gray-800 backdrop-blur-xl border border-gray-200 dark:border-gray-700 shadow-2xl overflow-hidden"
+                    >
+                      <div className="p-2">
+                        {docsMenuItems.map((item) => {
+                          const Icon = item.icon;
+                          const isActive = location.pathname === item.to;
+                          return (
+                            <motion.div
+                              key={item.to}
+                              whileHover={{ x: 5 }}
+                              className={`flex items-center gap-3 px-4 py-3 text-sm rounded-lg cursor-pointer transition-colors duration-200 ${
+                                isActive
+                                  ? "text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/20"
+                                  : "text-gray-800 dark:text-gray-200 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                              }`}
+                              onClick={() => {
+                                navigate(item.to);
+                                setDocsMenu(false);
+                              }}
+                            >
+                              <Icon className="w-4 h-4" />
+                              {item.label}
+                            </motion.div>
+                          );
+                        })}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            )}
+
+            {/* Notifications - Only for authenticated users */}
+            {isAuthenticated && (
             <div className="relative">
               <motion.button
                 type="button"
@@ -678,8 +757,10 @@ const Nav = () => {
                 )}
               </AnimatePresence>
             </div>
+            )}
 
-            {/* Profile Menu */}
+            {/* Profile Menu - Only for authenticated users */}
+            {isAuthenticated && (
             <div className="relative ml-2">
               <motion.button
                 type="button"
@@ -747,10 +828,25 @@ const Nav = () => {
                 )}
               </AnimatePresence>
             </div>
+            )}
+
+            {/* Get Started Button - Only for non-authenticated users */}
+            {!isAuthenticated && (
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => navigate('/login')}
+                className="px-3 sm:px-4 md:px-6 py-1.5 sm:py-2 text-xs sm:text-sm md:text-base bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-full shadow-lg hover:shadow-xl transition-all whitespace-nowrap"
+              >
+                <span className="hidden sm:inline">Get Started</span>
+                <span className="sm:hidden">Start</span>
+              </motion.button>
+            )}
           </div>
         </div>
 
-        {/* Mobile Sidebar Menu */}
+        {/* Mobile Sidebar Menu - Only for authenticated users */}
+        {isAuthenticated && (
         <AnimatePresence>
           {sidebarMenu && (
             <motion.div
@@ -846,6 +942,7 @@ const Nav = () => {
             </motion.div>
           )}
         </AnimatePresence>
+        )}
       </div>
     </nav>
   );

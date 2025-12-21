@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import "./App.css"
 import AuthPage from './components/AuthPage'
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import DashBoard from './components/DashBoard'
 import { useDispatch, useSelector } from 'react-redux'
 import api from './utils/api'
@@ -27,6 +27,7 @@ import HowToUse from './components/pages/docs/HowToUse'
 import Different from './components/pages/docs/Different'
 
 function App() {
+  const location = useLocation();
   const dispatch = useDispatch();
   const [isLoading, setLoading] = useState(true);
   const isAuthenticated = useSelector(store => store.admin.isAuthenticated);
@@ -122,9 +123,15 @@ function App() {
 </div>
   </div>;
 
+  // Determine if current route is public (non-authenticated)
+  const publicRoutes = ['/', '/login', '/verify', '/verified', '/reset_password', '/about-developer'];
+  const isDocRoute = location.pathname.startsWith('/docs') || location.pathname === '/doc';
+  const isPublicRoute = publicRoutes.includes(location.pathname) || isDocRoute;
+  
   return (
     <div className='pb-1 min-h-screen bg-gradient-to-r from-slate-100 via-lime-100 to-slate-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden transition-colors duration-300'>
-      {isAuthenticated && <Nav />}
+      {/* Show Nav for authenticated users (except home page which has its own Nav) OR for public routes */}
+      {(isAuthenticated && location.pathname !== '/') || (!isAuthenticated && isPublicRoute) ? <Nav /> : null}
 
       <Routes>
         <Route path='/doc' element={<Documentation/>} />
