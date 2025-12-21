@@ -6,17 +6,10 @@ import toast from "react-hot-toast";
 import {
   FaUser,
   FaLock,
-  FaEye,
-  FaEyeSlash,
   FaLink,
-  FaChartLine,
   FaBell,
   FaSearch,
-  FaSave,
   FaSpinner,
-  FaCheckCircle,
-  FaGlobe,
-  FaUserLock,
   FaShieldAlt
 } from "react-icons/fa";
 
@@ -65,6 +58,7 @@ const Settings = () => {
   });
 
   const [newKeyword, setNewKeyword] = useState("");
+  const [updatingFields, setUpdatingFields] = useState(new Set());
 
   // Mouse tracking for interactive background
   useEffect(() => {
@@ -106,16 +100,34 @@ const Settings = () => {
     }
   };
 
-  const handleSave = async () => {
+  // Update a single setting field immediately
+  const updateSingleSetting = async (category, field, value) => {
+    const fieldKey = `${category}.${field}`;
+    
+    // Fields that require profile to be public - don't update if profile is private
+    const requiresPublicProfile = [
+      'profile.showInSearch',
+      'profile.allowProfileView',
+      'profile.showEmail',
+      'search.allowSearch',
+      'search.showInFeatured'
+    ];
+    
+    // If profile is private and this field requires public profile, don't update
+    if (!profileSettings.isPublic && requiresPublicProfile.includes(fieldKey)) {
+      console.log(`Skipping update for ${fieldKey} - profile is private`);
+      return true; // Return true to prevent UI revert, but don't make API call
+    }
+    
+    // Add to updating fields
+    setUpdatingFields(prev => new Set(prev).add(fieldKey));
+    
     try {
-      setLoading(true);
       const payload = {
         username,
-        profile: profileSettings,
-        links: linkSettings,
-        search: searchSettings,
-        privacy: privacySettings,
-        notifications: notificationSettings
+        category,
+        field,
+        value
       };
       
       const res = await api.post(
@@ -125,36 +137,65 @@ const Settings = () => {
       );
       
       if (res.status === 200 && res.data.success) {
-        toast.success("Settings saved successfully!");
-        // Reload settings to ensure UI is in sync
-        await loadSettings();
+        toast.success("Setting updated successfully!", { duration: 2000 });
       } else {
-        toast.error(res.data.message || "Failed to save settings");
+        toast.error(res.data.message || "Failed to update setting");
+        // Revert the change on error
+        return false;
       }
     } catch (error) {
-      console.error("Error saving settings:", error);
+      console.error("Error updating setting:", error);
       const message = error.response?.data?.message || "Server Internal Error";
       toast.error(message);
+      // Revert the change on error
+      return false;
     } finally {
-      setLoading(false);
+      setUpdatingFields(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(fieldKey);
+        return newSet;
+      });
     }
+    return true;
   };
 
-  const addKeyword = () => {
+  const addKeyword = async () => {
     if (newKeyword.trim() && !searchSettings.searchKeywords.includes(newKeyword.trim())) {
+      const updatedKeywords = [...searchSettings.searchKeywords, newKeyword.trim()];
       setSearchSettings({
         ...searchSettings,
-        searchKeywords: [...searchSettings.searchKeywords, newKeyword.trim()]
+        searchKeywords: updatedKeywords
       });
       setNewKeyword("");
+      
+      // Update immediately
+      const success = await updateSingleSetting('search', 'searchKeywords', updatedKeywords);
+      if (!success) {
+        // Revert on error
+        setSearchSettings({
+          ...searchSettings,
+          searchKeywords: searchSettings.searchKeywords
+        });
+      }
     }
   };
 
-  const removeKeyword = (keyword) => {
+  const removeKeyword = async (keyword) => {
+    const updatedKeywords = searchSettings.searchKeywords.filter(k => k !== keyword);
     setSearchSettings({
       ...searchSettings,
-      searchKeywords: searchSettings.searchKeywords.filter(k => k !== keyword)
+      searchKeywords: updatedKeywords
     });
+    
+    // Update immediately
+    const success = await updateSingleSetting('search', 'searchKeywords', updatedKeywords);
+    if (!success) {
+      // Revert on error
+      setSearchSettings({
+        ...searchSettings,
+        searchKeywords: searchSettings.searchKeywords
+      });
+    }
   };
 
   const containerVariants = {
@@ -253,52 +294,108 @@ const Settings = () => {
                   label="Make Profile Public"
                   description="Allow others to view your profile"
                   value={profileSettings.isPublic}
-                  onChange={(val) => setProfileSettings({ ...profileSettings, isPublic: val })}
+                  onChange={async (val) => {
+                    setProfileSettings({ ...profileSettings, isPublic: val });
+                    const success = await updateSingleSetting('profile', 'isPublic', val);
+                    if (!success) {
+                      setProfileSettings({ ...profileSettings, isPublic: !val });
+                    }
+                  }}
+                  updating={updatingFields.has('profile.isPublic')}
                 />
                 <ToggleSetting
                   label="Show in Search Results"
                   description="Allow your profile to appear in search"
                   value={profileSettings.showInSearch}
-                  onChange={(val) => setProfileSettings({ ...profileSettings, showInSearch: val })}
+                  onChange={async (val) => {
+                    setProfileSettings({ ...profileSettings, showInSearch: val });
+                    const success = await updateSingleSetting('profile', 'showInSearch', val);
+                    if (!success) {
+                      setProfileSettings({ ...profileSettings, showInSearch: !val });
+                    }
+                  }}
                   disabled={!profileSettings.isPublic}
+                  updating={updatingFields.has('profile.showInSearch')}
                 />
                 <ToggleSetting
                   label="Allow Profile View"
                   description="Let others view your full profile page"
                   value={profileSettings.allowProfileView}
-                  onChange={(val) => setProfileSettings({ ...profileSettings, allowProfileView: val })}
+                  onChange={async (val) => {
+                    setProfileSettings({ ...profileSettings, allowProfileView: val });
+                    const success = await updateSingleSetting('profile', 'allowProfileView', val);
+                    if (!success) {
+                      setProfileSettings({ ...profileSettings, allowProfileView: !val });
+                    }
+                  }}
                   disabled={!profileSettings.isPublic}
+                  updating={updatingFields.has('profile.allowProfileView')}
                 />
                 <ToggleSetting
                   label="Show Email"
                   description="Display email on public profile"
                   value={profileSettings.showEmail}
-                  onChange={(val) => setProfileSettings({ ...profileSettings, showEmail: val })}
+                  onChange={async (val) => {
+                    setProfileSettings({ ...profileSettings, showEmail: val });
+                    const success = await updateSingleSetting('profile', 'showEmail', val);
+                    if (!success) {
+                      setProfileSettings({ ...profileSettings, showEmail: !val });
+                    }
+                  }}
                   disabled={!profileSettings.isPublic}
+                  updating={updatingFields.has('profile.showEmail')}
                 />
                 <ToggleSetting
                   label="Show Location"
                   description="Display location on public profile"
                   value={profileSettings.showLocation}
-                  onChange={(val) => setProfileSettings({ ...profileSettings, showLocation: val })}
+                  onChange={async (val) => {
+                    setProfileSettings({ ...profileSettings, showLocation: val });
+                    const success = await updateSingleSetting('profile', 'showLocation', val);
+                    if (!success) {
+                      setProfileSettings({ ...profileSettings, showLocation: !val });
+                    }
+                  }}
+                  updating={updatingFields.has('profile.showLocation')}
                 />
                 <ToggleSetting
                   label="Show Bio"
                   description="Display bio on public profile"
                   value={profileSettings.showBio}
-                  onChange={(val) => setProfileSettings({ ...profileSettings, showBio: val })}
+                  onChange={async (val) => {
+                    setProfileSettings({ ...profileSettings, showBio: val });
+                    const success = await updateSingleSetting('profile', 'showBio', val);
+                    if (!success) {
+                      setProfileSettings({ ...profileSettings, showBio: !val });
+                    }
+                  }}
+                  updating={updatingFields.has('profile.showBio')}
                 />
                 <ToggleSetting
                   label="Show Passion"
                   description="Display passion on public profile"
                   value={profileSettings.showPassion}
-                  onChange={(val) => setProfileSettings({ ...profileSettings, showPassion: val })}
+                  onChange={async (val) => {
+                    setProfileSettings({ ...profileSettings, showPassion: val });
+                    const success = await updateSingleSetting('profile', 'showPassion', val);
+                    if (!success) {
+                      setProfileSettings({ ...profileSettings, showPassion: !val });
+                    }
+                  }}
+                  updating={updatingFields.has('profile.showPassion')}
                 />
                 <ToggleSetting
                   label="Show Profile Image"
                   description="Display profile picture on public profile"
                   value={profileSettings.showProfileImage}
-                  onChange={(val) => setProfileSettings({ ...profileSettings, showProfileImage: val })}
+                  onChange={async (val) => {
+                    setProfileSettings({ ...profileSettings, showProfileImage: val });
+                    const success = await updateSingleSetting('profile', 'showProfileImage', val);
+                    if (!success) {
+                      setProfileSettings({ ...profileSettings, showProfileImage: !val });
+                    }
+                  }}
+                  updating={updatingFields.has('profile.showProfileImage')}
                 />
               </div>
             </motion.div>
@@ -318,13 +415,27 @@ const Settings = () => {
                   label="Show Link Count"
                   description="Display total number of links on public profile"
                   value={linkSettings.showLinkCount}
-                  onChange={(val) => setLinkSettings({ ...linkSettings, showLinkCount: val })}
+                  onChange={async (val) => {
+                    setLinkSettings({ ...linkSettings, showLinkCount: val });
+                    const success = await updateSingleSetting('links', 'showLinkCount', val);
+                    if (!success) {
+                      setLinkSettings({ ...linkSettings, showLinkCount: !val });
+                    }
+                  }}
+                  updating={updatingFields.has('links.showLinkCount')}
                 />
                 <ToggleSetting
                   label="Show Click Statistics"
                   description="Display click statistics on public profile"
                   value={linkSettings.showClickStats}
-                  onChange={(val) => setLinkSettings({ ...linkSettings, showClickStats: val })}
+                  onChange={async (val) => {
+                    setLinkSettings({ ...linkSettings, showClickStats: val });
+                    const success = await updateSingleSetting('links', 'showClickStats', val);
+                    if (!success) {
+                      setLinkSettings({ ...linkSettings, showClickStats: !val });
+                    }
+                  }}
+                  updating={updatingFields.has('links.showClickStats')}
                 />
               </div>
             </motion.div>
@@ -344,14 +455,28 @@ const Settings = () => {
                   label="Allow Search"
                   description="Allow your profile to appear in search results"
                   value={searchSettings.allowSearch}
-                  onChange={(val) => setSearchSettings({ ...searchSettings, allowSearch: val })}
+                  onChange={async (val) => {
+                    setSearchSettings({ ...searchSettings, allowSearch: val });
+                    const success = await updateSingleSetting('search', 'allowSearch', val);
+                    if (!success) {
+                      setSearchSettings({ ...searchSettings, allowSearch: !val });
+                    }
+                  }}
+                  updating={updatingFields.has('search.allowSearch')}
                 />
                 <ToggleSetting
                   label="Show in Featured"
                   description="Allow your profile to appear in featured sections"
                   value={searchSettings.showInFeatured}
-                  onChange={(val) => setSearchSettings({ ...searchSettings, showInFeatured: val })}
+                  onChange={async (val) => {
+                    setSearchSettings({ ...searchSettings, showInFeatured: val });
+                    const success = await updateSingleSetting('search', 'showInFeatured', val);
+                    if (!success) {
+                      setSearchSettings({ ...searchSettings, showInFeatured: !val });
+                    }
+                  }}
                   disabled={!searchSettings.allowSearch}
+                  updating={updatingFields.has('search.showInFeatured')}
                 />
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
@@ -415,19 +540,40 @@ const Settings = () => {
                   label="Show Analytics"
                   description="Display analytics data on public profile"
                   value={privacySettings.showAnalytics}
-                  onChange={(val) => setPrivacySettings({ ...privacySettings, showAnalytics: val })}
+                  onChange={async (val) => {
+                    setPrivacySettings({ ...privacySettings, showAnalytics: val });
+                    const success = await updateSingleSetting('privacy', 'showAnalytics', val);
+                    if (!success) {
+                      setPrivacySettings({ ...privacySettings, showAnalytics: !val });
+                    }
+                  }}
+                  updating={updatingFields.has('privacy.showAnalytics')}
                 />
                 <ToggleSetting
                   label="Show Last Updated"
                   description="Display last updated timestamp on public profile"
                   value={privacySettings.showLastUpdated}
-                  onChange={(val) => setPrivacySettings({ ...privacySettings, showLastUpdated: val })}
+                  onChange={async (val) => {
+                    setPrivacySettings({ ...privacySettings, showLastUpdated: val });
+                    const success = await updateSingleSetting('privacy', 'showLastUpdated', val);
+                    if (!success) {
+                      setPrivacySettings({ ...privacySettings, showLastUpdated: !val });
+                    }
+                  }}
+                  updating={updatingFields.has('privacy.showLastUpdated')}
                 />
                 <ToggleSetting
                   label="Require Authentication"
                   description="Require users to be logged in to view your profile"
                   value={privacySettings.requireAuth}
-                  onChange={(val) => setPrivacySettings({ ...privacySettings, requireAuth: val })}
+                  onChange={async (val) => {
+                    setPrivacySettings({ ...privacySettings, requireAuth: val });
+                    const success = await updateSingleSetting('privacy', 'requireAuth', val);
+                    if (!success) {
+                      setPrivacySettings({ ...privacySettings, requireAuth: !val });
+                    }
+                  }}
+                  updating={updatingFields.has('privacy.requireAuth')}
                 />
               </div>
             </motion.div>
@@ -447,45 +593,44 @@ const Settings = () => {
                   label="Email on New Click"
                   description="Receive email when a link receives a new click"
                   value={notificationSettings.emailOnNewClick}
-                  onChange={(val) => setNotificationSettings({ ...notificationSettings, emailOnNewClick: val })}
+                  onChange={async (val) => {
+                    setNotificationSettings({ ...notificationSettings, emailOnNewClick: val });
+                    const success = await updateSingleSetting('notifications', 'emailOnNewClick', val);
+                    if (!success) {
+                      setNotificationSettings({ ...notificationSettings, emailOnNewClick: !val });
+                    }
+                  }}
+                  updating={updatingFields.has('notifications.emailOnNewClick')}
                 />
                 <ToggleSetting
                   label="Email on Profile View"
                   description="Receive email when your profile is viewed"
                   value={notificationSettings.emailOnProfileView}
-                  onChange={(val) => setNotificationSettings({ ...notificationSettings, emailOnProfileView: val })}
+                  onChange={async (val) => {
+                    setNotificationSettings({ ...notificationSettings, emailOnProfileView: val });
+                    const success = await updateSingleSetting('notifications', 'emailOnProfileView', val);
+                    if (!success) {
+                      setNotificationSettings({ ...notificationSettings, emailOnProfileView: !val });
+                    }
+                  }}
+                  updating={updatingFields.has('notifications.emailOnProfileView')}
                 />
                 <ToggleSetting
                   label="Weekly Report"
                   description="Receive weekly analytics report via email"
                   value={notificationSettings.weeklyReport}
-                  onChange={(val) => setNotificationSettings({ ...notificationSettings, weeklyReport: val })}
+                  onChange={async (val) => {
+                    setNotificationSettings({ ...notificationSettings, weeklyReport: val });
+                    const success = await updateSingleSetting('notifications', 'weeklyReport', val);
+                    if (!success) {
+                      setNotificationSettings({ ...notificationSettings, weeklyReport: !val });
+                    }
+                  }}
+                  updating={updatingFields.has('notifications.weeklyReport')}
                 />
               </div>
             </motion.div>
 
-            {/* Save Button */}
-            <motion.div variants={itemVariants} className="flex justify-end pt-6">
-              <motion.button
-                whileHover={{ scale: loading ? 1 : 1.05 }}
-                whileTap={{ scale: loading ? 1 : 0.95 }}
-                onClick={handleSave}
-                disabled={loading}
-                className="px-8 py-4 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 text-white font-bold rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-3"
-              >
-                {loading ? (
-                  <>
-                    <FaSpinner className="animate-spin" />
-                    Saving...
-                  </>
-                ) : (
-                  <>
-                    <FaSave />
-                    Save Settings
-                  </>
-                )}
-              </motion.button>
-            </motion.div>
           </div>
         </motion.div>
       </div>
@@ -494,7 +639,7 @@ const Settings = () => {
 };
 
 // Toggle Setting Component
-const ToggleSetting = ({ label, description, value, onChange, disabled = false }) => {
+const ToggleSetting = ({ label, description, value, onChange, disabled = false, updating = false }) => {
   return (
     <div className="flex items-start justify-between p-4 bg-gray-50 dark:bg-gray-800/30 rounded-xl border border-gray-200 dark:border-gray-700">
       <div className="flex-1">
@@ -503,19 +648,24 @@ const ToggleSetting = ({ label, description, value, onChange, disabled = false }
         </label>
         <p className="text-xs text-gray-600 dark:text-gray-400">{description}</p>
       </div>
-      <motion.button
-        whileTap={{ scale: 0.95 }}
-        onClick={() => !disabled && onChange(!value)}
-        disabled={disabled}
-        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-          value ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'
-        } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-      >
-        <motion.span
-          animate={{ x: value ? 20 : 2 }}
-          className="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
-        />
-      </motion.button>
+      <div className="flex items-center gap-2">
+        {updating && (
+          <FaSpinner className="animate-spin text-purple-600 dark:text-purple-400 text-sm" />
+        )}
+        <motion.button
+          whileTap={{ scale: updating || disabled ? 1 : 0.95 }}
+          onClick={() => !disabled && !updating && onChange(!value)}
+          disabled={disabled || updating}
+          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+            value ? 'bg-purple-600' : 'bg-gray-300 dark:bg-gray-600'
+          } ${disabled || updating ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+        >
+          <motion.span
+            animate={{ x: value ? 20 : 2 }}
+            className="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
+          />
+        </motion.button>
+      </div>
     </div>
   );
 };
