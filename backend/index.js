@@ -67,7 +67,12 @@ app.options('*', cors());
 app.use(cookieParser());
 app.use(express.json({limit:'100mb'}))
 app.use(express.urlencoded({ extended: true, limit: '100mb' })) // For form submissions
-app.use(helmet());
+// Configure helmet with iframe support for preview
+app.use(helmet({
+  frameguard: {
+    action: 'sameorigin' // Allow iframes from same origin, but we'll override for preview
+  }
+}));
 
 app.use(helmet.contentSecurityPolicy({
   directives: {
@@ -76,6 +81,7 @@ app.use(helmet.contentSecurityPolicy({
     imgSrc: ["'self'", "data:", "https://res.cloudinary.com"],  // Add your image host if needed
     styleSrc: ["'self'", "'unsafe-inline'"],  // Allow inline styles if needed
     connectSrc: ["'self'", "https://clickly.cv","https://clickly.cv/*", "http://localhost:8080"],  // Add your API backend here
+    frameAncestors: ["'self'", "http://localhost:5173", "https://clickly.cv", "https://linkbriger.vercel.app"],  // Allow iframes from these origins
     // Add more directives as needed
   }
 }));
@@ -93,6 +99,7 @@ app.use('/profile',profileRoute)
 app.use('/settings',require('./routes/SettingsRoute'))
 app.use('/search',require('./routes/SearchRoute'))
 app.use('/analytics',analyticsRoute)
+app.use('/project',require('./routes/ProjectRoute'))
 
 // Helper function to encode username and source (base64)
 const encodeData = (data) => {
@@ -210,6 +217,11 @@ app.get('/:username/:source',extractInfo, async (req, res) => {
 })
 
 app.get('/:username',extractInfo, async (req, res) => {
+  // Allow iframe embedding for preview (allow from frontend origins)
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  const frontendOrigins = "http://localhost:5173 https://clickly.cv https://linkbriger.vercel.app 'self'";
+  res.setHeader('Content-Security-Policy', `frame-ancestors ${frontendOrigins}`);
+  
   console.log("backend profile search start")
   const username=req.params.username
   // Only show public links in linkhub - unlisted and private links should not appear
@@ -231,13 +243,21 @@ app.get('/:username',extractInfo, async (req, res) => {
   if(tree&&dp){
     // Get user settings to determine template
     let template = 'default'; // Default template
-    try {
-      const settings = await UserSettings.getUserSettings(username);
-      if (settings && settings.template) {
-        template = settings.template;
+    
+    // Check if template query parameter is provided (for preview)
+    const previewTemplate = req.query.template;
+    if (previewTemplate) {
+      template = previewTemplate;
+    } else {
+      // Otherwise, use user's saved template from settings
+      try {
+        const settings = await UserSettings.getUserSettings(username);
+        if (settings && settings.template) {
+          template = settings.template;
+        }
+      } catch (err) {
+        console.log('Error fetching template settings, using default:', err.message);
       }
-    } catch (err) {
-      console.log('Error fetching template settings, using default:', err.message);
     }
     
     // Construct template name (templates/linktree-{template})
