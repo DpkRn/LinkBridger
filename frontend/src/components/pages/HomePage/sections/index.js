@@ -3,4 +3,5 @@ export { default as FeaturesSection } from './FeaturesSection';
 export { default as StatisticsSection } from './StatisticsSection';
 export { default as BenefitsSection } from './BenefitsSection';
 export { default as CTASection } from './CTASection';
+export { default as ComparisonTable } from './ComparisonTable';
 

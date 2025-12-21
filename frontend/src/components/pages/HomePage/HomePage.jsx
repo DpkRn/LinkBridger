@@ -34,8 +34,10 @@ import { FlipWords } from '../../ui/flip-words';
 import {
   HeroSection,
   StatisticsSection,
-  CTASection
+  CTASection,
+  ComparisonTable
 } from './sections';
+import Doc from '../../doc/Doc';
 
 // 3D Card Component with Magnetic Hover
 const MagneticCard = ({ children, className = "", intensity = 0.3 }) => {
@@ -396,14 +398,15 @@ const HomePage = () => {
                   )}
                 </motion.button>
                 
-                <motion.button
+                {/* <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => navigate('/doc')}
                   className="px-3 py-1.5 sm:px-4 sm:py-2 text-sm sm:text-base text-gray-800 dark:text-gray-300 font-medium hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
                 >
                   Docs
-                </motion.button>
+                </motion.button> */}
+                <Doc/>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
@@ -437,14 +440,14 @@ const HomePage = () => {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8 }}
-        className="py-12 px-4 sm:px-6 lg:px-8"
+        className="py-8 sm:py-12 md:py-16 lg:py-20 px-4 sm:px-6 lg:px-8"
       >
         <div className="container mx-auto max-w-3xl">
           <motion.h2
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="text-2xl md:text-3xl lg:text-4xl font-bold text-center mb-4 md:mb-6 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
+            className="text-2xl md:text-3xl lg:text-4xl font-bold text-center mb-3 sm:mb-4 md:mb-6 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
           >
             Have You Ever Wondered How Link Has Been Personalized:
           </motion.h2>
@@ -712,18 +715,18 @@ const HomePage = () => {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8 }}
-        className="py-20 px-4 sm:px-6 lg:px-8"
+        className="py-8 sm:py-12 md:py-16 lg:py-20 px-4 sm:px-6 lg:px-8"
       >
         <div className="container mx-auto">
           <MagneticCard intensity={0.1}>
             <motion.div
-              className="relative bg-gradient-to-br from-purple-900/40 via-pink-900/40 to-blue-900/40 dark:from-purple-950/60 dark:via-pink-950/60 dark:to-blue-950/60 backdrop-blur-xl rounded-2xl md:rounded-3xl shadow-2xl border border-purple-500/30 dark:border-purple-400/20 p-6 md:p-8 overflow-hidden"
+              className="relative bg-gradient-to-br from-purple-900/40 via-pink-900/40 to-blue-900/40 dark:from-purple-950/60 dark:via-pink-950/60 dark:to-blue-950/60 backdrop-blur-xl rounded-xl sm:rounded-2xl md:rounded-3xl shadow-2xl border border-purple-500/30 dark:border-purple-400/20 p-4 sm:p-5 md:p-6 lg:p-8 overflow-hidden"
               whileHover={{ scale: 1.02, y: -5 }}
               transition={{ duration: 0.3 }}
             >
               <div className="relative z-10 text-center">
                 <motion.div
-                  className="flex items-center justify-center gap-2 mb-4"
+                  className="flex items-center justify-center gap-2 mb-3 sm:mb-4"
                   animate={{ scale: [1, 1.1, 1] }}
                   transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                 >
@@ -769,16 +772,16 @@ const HomePage = () => {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8 }}
-        className="py-20 px-4 sm:px-6 lg:px-8 bg-black/5 dark:bg-black/20"
+        className="py-8 sm:py-12 md:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-black/5 dark:bg-black/20"
       >
         <div className="container mx-auto">
           <MagneticCard intensity={0.1}>
             <motion.div
-              className="relative bg-black dark:bg-black backdrop-blur-xl rounded-2xl md:rounded-3xl shadow-2xl border border-gray-900 dark:border-gray-800 p-6 md:p-8 lg:p-10 overflow-hidden"
+              className="relative bg-black dark:bg-black backdrop-blur-xl rounded-xl sm:rounded-2xl md:rounded-3xl shadow-2xl border border-gray-900 dark:border-gray-800 p-4 sm:p-5 md:p-6 lg:p-8 xl:p-10 overflow-hidden"
               whileHover={{ scale: 1.02, y: -5 }}
               transition={{ duration: 0.3 }}
             >
-              <div className="relative z-10 space-y-4 md:space-y-6">
+              <div className="relative z-10 space-y-3 sm:space-y-4 md:space-y-5 lg:space-y-6">
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -856,18 +859,18 @@ const HomePage = () => {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8 }}
-        className="py-20 px-4 sm:px-6 lg:px-8"
+        className="py-8 sm:py-12 md:py-16 lg:py-20 px-4 sm:px-6 lg:px-8"
       >
         <div className="container mx-auto">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 md:mb-8 text-center bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
+            className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 sm:mb-5 md:mb-6 lg:mb-8 text-center bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
           >
             Perfect for Everyone
           </motion.h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6 lg:gap-8">
             {useCases.map((useCase, idx) => {
               const IconComponent = useCase.icon;
               return (
@@ -885,15 +888,15 @@ const HomePage = () => {
                   />
                   <div className="relative z-10">
                     <motion.div
-                      className={`bg-gradient-to-r ${useCase.gradient} p-4 rounded-xl w-fit mb-4`}
+                      className={`bg-gradient-to-r ${useCase.gradient} p-3 sm:p-4 rounded-xl w-fit mb-3 sm:mb-4`}
                       whileHover={{ scale: 1.1, rotate: 5 }}
                     >
-                      <IconComponent className="text-3xl text-white" />
+                      <IconComponent className="text-2xl sm:text-3xl text-white" />
                     </motion.div>
-                    <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-3">
+                    <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-2 sm:mb-3">
                       {useCase.title}
                     </h3>
-                    <p className="text-gray-700 dark:text-gray-400 leading-relaxed mb-4">
+                    <p className="text-gray-700 dark:text-gray-400 leading-relaxed mb-3 sm:mb-4">
                       {useCase.desc}
                     </p>
                     <div className="space-y-2">
@@ -915,13 +918,24 @@ const HomePage = () => {
         </div>
       </motion.section>
 
+    
+       <motion.section
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8 }}
+        className="pt-8 sm:pt-12 md:pt-16 lg:pt-20 pb-2 sm:pb-4 md:pb-6 lg:pb-8 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50/80 via-purple-50/80 to-pink-50/80 dark:from-slate-900/60 dark:via-purple-950/40 dark:to-pink-950/40"
+      >
+         <ComparisonTable/> 
+      </motion.section>
+
       {/* How It Works Section */}
       <motion.section
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8 }}
-        className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50/80 via-purple-50/80 to-pink-50/80 dark:from-slate-900/60 dark:via-purple-950/40 dark:to-pink-950/40"
+        className="pt-2 sm:pt-4 md:pt-6 lg:pt-8 pb-8 sm:pb-12 md:pb-16 lg:pb-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50/80 via-purple-50/80 to-pink-50/80 dark:from-slate-900/60 dark:via-purple-950/40 dark:to-pink-950/40"
       >
         <div className="container mx-auto">
           <motion.div
@@ -941,7 +955,7 @@ const HomePage = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="text-base md:text-lg lg:text-xl leading-8 text-gray-700 dark:text-gray-300 mb-4 md:mb-6"
+              className="text-base md:text-lg lg:text-xl leading-8 text-gray-700 dark:text-gray-300 mb-3 sm:mb-4 md:mb-6"
             >
               The core idea behind{" "}
               <b className="text-gray-900 dark:text-white">LinkBridger</b> is
@@ -956,7 +970,7 @@ const HomePage = () => {
               notifications every time someone visits your links!
             </motion.p>
 
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-5 md:space-y-6">
               {howItWorksSteps.map((item, idx) => {
                 const IconComponent = item.icon;
                 return (
@@ -966,16 +980,16 @@ const HomePage = () => {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: idx * 0.1 }}
-                    className="flex items-start gap-4 p-6 bg-white/5 dark:bg-gray-800/30 rounded-2xl border border-white/10 hover:border-white/20 transition-all group"
+                    className="flex items-start gap-3 sm:gap-4 p-4 sm:p-5 md:p-6 bg-white/5 dark:bg-gray-800/30 rounded-xl sm:rounded-2xl border border-white/10 hover:border-white/20 transition-all group"
                   >
                     <motion.div
-                      className="bg-gradient-to-r from-purple-600 to-pink-600 p-4 rounded-xl flex-shrink-0"
+                      className="bg-gradient-to-r from-purple-600 to-pink-600 p-3 sm:p-4 rounded-xl flex-shrink-0"
                       whileHover={{ scale: 1.1, rotate: 5 }}
                     >
-                      <IconComponent className="text-2xl text-white" />
+                      <IconComponent className="text-xl sm:text-2xl text-white" />
                     </motion.div>
                     <div className="flex-1">
-                      <h4 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                      <h4 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-1.5 sm:mb-2">
                         {item.step}. {item.title}
                       </h4>
                       <p className="text-gray-700 dark:text-gray-400 leading-relaxed">
@@ -992,9 +1006,9 @@ const HomePage = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.6 }}
-              className="mt-8 p-6 bg-white/5 dark:bg-gray-800/30 rounded-2xl border border-white/10"
+              className="mt-4 sm:mt-6 md:mt-8 p-4 sm:p-5 md:p-6 bg-white/5 dark:bg-gray-800/30 rounded-xl sm:rounded-2xl border border-white/10"
             >
-              <p className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              <p className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-3 sm:mb-4">
                 Example:
               </p>
               <div className="space-y-2">
