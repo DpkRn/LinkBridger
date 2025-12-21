@@ -110,7 +110,7 @@ const Nav = () => {
     dispatch(
       setNotifications(links.reduce((acc, link) => acc + link.notSeen, 0))
     );
-  }, [links, notifications, dispatch]);
+  }, [links, dispatch]);
 
   const onNotificationClick = async () => {
     if (notifications === 0) {

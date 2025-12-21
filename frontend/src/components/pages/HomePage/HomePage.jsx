@@ -35,7 +35,6 @@ import {
   CTASection,
   ComparisonTable
 } from './sections';
-import Nav from '../../navbar/Nav';
 
 // 3D Card Component with Magnetic Hover
 const MagneticCard = ({ children, className = "", intensity = 0.3 }) => {
@@ -334,8 +333,7 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen w-full overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 dark:from-slate-900 dark:via-purple-900 dark:to-slate-900">
-      {/* Navigation - Only show Nav on home page for non-authenticated users */}
-      {!isAuthenticated && location.pathname === '/' && <Nav />}
+      {/* Navigation is handled by App.jsx for all public routes */}
 
       {/* Hero Section */}
       <HeroSection
