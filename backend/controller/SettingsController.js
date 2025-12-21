@@ -90,12 +90,31 @@ const updateSettings = async (req, res) => {
 
         // Handle single field update (new format)
         if (category && field !== undefined && value !== undefined) {
-            const validCategories = ['profile', 'links', 'search', 'privacy', 'notifications'];
+            const validCategories = ['profile', 'links', 'search', 'privacy', 'notifications', 'template'];
             
             if (!validCategories.includes(category)) {
                 return res.status(400).json({
                     success: false,
                     message: `Invalid category. Valid options are: ${validCategories.join(', ')}`
+                });
+            }
+
+            // Handle template update
+            if (category === 'template') {
+                const validTemplates = ['default', 'minimal', 'modern', 'dark', 'light', 'hacker', 'glass', 'neon', 'gradient', 'cards', 'particles', '3d', 'retro'];
+                if (!validTemplates.includes(value)) {
+                    return res.status(400).json({
+                        success: false,
+                        message: `Invalid template. Valid options are: ${validTemplates.join(', ')}`
+                    });
+                }
+                settings.template = value;
+                await settings.save();
+                
+                return res.status(200).json({
+                    success: true,
+                    message: "Template updated successfully",
+                    settings
                 });
             }
 

@@ -10,7 +10,8 @@ import {
   FaBell,
   FaSearch,
   FaSpinner,
-  FaShieldAlt
+  FaShieldAlt,
+  FaPalette
 } from "react-icons/fa";
 
 const Settings = () => {
@@ -57,6 +58,9 @@ const Settings = () => {
     weeklyReport: false
   });
 
+  // Template Settings
+  const [selectedTemplate, setSelectedTemplate] = useState('default');
+
   const [newKeyword, setNewKeyword] = useState("");
   const [updatingFields, setUpdatingFields] = useState(new Set());
 
@@ -83,6 +87,7 @@ const Settings = () => {
       const res = await api.post('/settings/get', { username }, { withCredentials: true });
       if (res.status === 200 && res.data.success) {
         const settings = res.data.settings;
+        if (settings.template) setSelectedTemplate(settings.template);
         if (settings.profile) setProfileSettings(settings.profile);
         if (settings.links) setLinkSettings(settings.links);
         if (settings.search) setSearchSettings(settings.search);
@@ -159,42 +164,100 @@ const Settings = () => {
     return true;
   };
 
-  const addKeyword = async () => {
-    if (newKeyword.trim() && !searchSettings.searchKeywords.includes(newKeyword.trim())) {
-      const updatedKeywords = [...searchSettings.searchKeywords, newKeyword.trim()];
-      setSearchSettings({
-        ...searchSettings,
-        searchKeywords: updatedKeywords
-      });
-      setNewKeyword("");
+  // Update template
+  const updateTemplate = async (template) => {
+    setUpdatingFields(prev => new Set(prev).add('template'));
+    
+    try {
+      const payload = {
+        username,
+        category: 'template',
+        field: 'template',
+        value: template
+      };
       
-      // Update immediately
+      const res = await api.post(
+        '/settings/update',
+        payload,
+        { withCredentials: true }
+      );
+      
+      if (res.status === 200 && res.data.success) {
+        setSelectedTemplate(template);
+        toast.success("Template updated successfully!", { duration: 2000 });
+      } else {
+        toast.error(res.data.message || "Failed to update template");
+        return false;
+      }
+    } catch (error) {
+      console.error("Error updating template:", error);
+      const message = error.response?.data?.message || "Server Internal Error";
+      toast.error(message);
+      return false;
+    } finally {
+      setUpdatingFields(prev => {
+        const newSet = new Set(prev);
+        newSet.delete('template');
+        return newSet;
+      });
+    }
+    return true;
+  };
+
+  const addKeyword = async () => {
+    const keywordToAdd = newKeyword.trim();
+    if (!keywordToAdd) return;
+    
+    // Use functional update to get current state and avoid closure issues
+    let updatedKeywords;
+    setSearchSettings((prevSettings) => {
+      // Check if keyword already exists
+      if (prevSettings.searchKeywords.includes(keywordToAdd)) {
+        return prevSettings; // No change if already exists
+      }
+      
+      updatedKeywords = [...prevSettings.searchKeywords, keywordToAdd];
+      setNewKeyword("");
+      return {
+        ...prevSettings,
+        searchKeywords: updatedKeywords
+      };
+    });
+    
+    // Update immediately
+    if (updatedKeywords) {
       const success = await updateSingleSetting('search', 'searchKeywords', updatedKeywords);
       if (!success) {
-        // Revert on error
-        setSearchSettings({
-          ...searchSettings,
-          searchKeywords: searchSettings.searchKeywords
-        });
+        // Revert on error using functional update to get latest state
+        setSearchSettings((currentSettings) => ({
+          ...currentSettings,
+          searchKeywords: currentSettings.searchKeywords.filter(k => k !== keywordToAdd)
+        }));
       }
     }
   };
 
   const removeKeyword = async (keyword) => {
-    const updatedKeywords = searchSettings.searchKeywords.filter(k => k !== keyword);
-    setSearchSettings({
-      ...searchSettings,
-      searchKeywords: updatedKeywords
+    // Use functional update to get current state and avoid closure issues
+    let updatedKeywords;
+    setSearchSettings((prevSettings) => {
+      updatedKeywords = prevSettings.searchKeywords.filter(k => k !== keyword);
+      return {
+        ...prevSettings,
+        searchKeywords: updatedKeywords
+      };
     });
     
     // Update immediately
-    const success = await updateSingleSetting('search', 'searchKeywords', updatedKeywords);
-    if (!success) {
-      // Revert on error
-      setSearchSettings({
-        ...searchSettings,
-        searchKeywords: searchSettings.searchKeywords
-      });
+    if (updatedKeywords !== undefined) {
+      const success = await updateSingleSetting('search', 'searchKeywords', updatedKeywords);
+      if (!success) {
+        // Revert on error using functional update to get latest state
+        setSearchSettings((currentSettings) => ({
+          ...currentSettings,
+          searchKeywords: [...currentSettings.searchKeywords, keyword]
+        }));
+      }
     }
   };
 
@@ -279,6 +342,69 @@ const Settings = () => {
           </motion.div>
 
           <div className="space-y-6">
+            {/* Template Selection Section */}
+            <motion.div
+              variants={itemVariants}
+              className="bg-white/80 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50 p-6 md:p-8"
+            >
+              <div className="flex items-center gap-3 mb-6">
+                <FaPalette className="text-2xl text-purple-600 dark:text-purple-400" />
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">LinkHub Template</h2>
+              </div>
+
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+                Choose a template style for your public LinkHub profile page
+              </p>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {[
+                  { name: 'default', label: 'Default' },
+                  { name: 'minimal', label: 'Minimal' },
+                  { name: 'modern', label: 'Modern' },
+                  { name: 'dark', label: 'Dark' },
+                  { name: 'light', label: 'Light' },
+                  { name: 'hacker', label: 'Hacker' },
+                  { name: 'glass', label: 'Glass' },
+                  { name: 'neon', label: 'Neon' },
+                  { name: 'gradient', label: 'Gradient' },
+                  { name: 'cards', label: 'Cards' },
+                  { name: 'particles', label: 'Particles' },
+                  { name: '3d', label: '3D' },
+                  { name: 'retro', label: 'Retro' }
+                ].map((template) => (
+                  <motion.button
+                    key={template.name}
+                    whileHover={{ scale: updatingFields.has('template') ? 1 : 1.05 }}
+                    whileTap={{ scale: updatingFields.has('template') ? 1 : 0.95 }}
+                    onClick={() => !updatingFields.has('template') && updateTemplate(template.name)}
+                    disabled={updatingFields.has('template')}
+                    className={`relative p-4 rounded-xl border-2 transition-all ${
+                      selectedTemplate === template.name
+                        ? 'border-purple-600 dark:border-purple-400 bg-purple-50 dark:bg-purple-900/20 shadow-lg'
+                        : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 hover:border-purple-400 dark:hover:border-purple-500'
+                    } ${updatingFields.has('template') ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                  >
+                    <div className="absolute top-2 right-2">
+                      {updatingFields.has('template') && selectedTemplate === template.name ? (
+                        <FaSpinner className="animate-spin text-purple-600 dark:text-purple-400 text-sm" />
+                      ) : selectedTemplate === template.name ? (
+                        <div className="w-3 h-3 bg-purple-600 dark:bg-purple-400 rounded-full"></div>
+                      ) : null}
+                    </div>
+                    <div className="text-center">
+                      <div className={`text-lg font-semibold mb-1 ${
+                        selectedTemplate === template.name
+                          ? 'text-purple-700 dark:text-purple-300'
+                          : 'text-gray-700 dark:text-gray-300'
+                      }`}>
+                        {template.label}
+                      </div>
+                    </div>
+                  </motion.button>
+                ))}
+              </div>
+            </motion.div>
+
             {/* Profile Visibility Section */}
             <motion.div
               variants={itemVariants}
