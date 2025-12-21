@@ -16,6 +16,14 @@ const userSettingsSchema = new mongoose.Schema({
         index: true
     },
     
+    // Template Settings
+    template: {
+        type: String,
+        default: 'default', // Default template name
+        enum: ['default', 'minimal', 'modern', 'dark', 'light', 'hacker', 'glass', 'neon', 'gradient', 'cards', 'particles', '3d', 'retro'], // Available templates
+        trim: true
+    },
+    
     // Profile Visibility Settings
     profile: {
         isPublic: {

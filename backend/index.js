@@ -15,6 +15,7 @@ const analyticsRoute=require('./routes/AnalyticsRoute')
 const Link = require('./model/linkModel')
 const Profile=require('./model/userProfile')
 const User=require('./model/userModel')
+const UserSettings=require('./model/userSettingsModel')
 const profileRoute=require('./routes/ProfileRoute')
 const { extractInfo } = require('./middleware/deviceInfo')
 const { sendVisitEmail } = require('./lib/mail')
@@ -228,11 +229,36 @@ app.get('/:username',extractInfo, async (req, res) => {
   sendVisitEmail(email,username,name,deviceDetails,"LinkHub")
 
   if(tree&&dp){
-    return res.render('linktree',{ 
-      username:username,
-      tree:tree,
-      dp:dp 
-    })   
+    // Get user settings to determine template
+    let template = 'default'; // Default template
+    try {
+      const settings = await UserSettings.getUserSettings(username);
+      if (settings && settings.template) {
+        template = settings.template;
+      }
+    } catch (err) {
+      console.log('Error fetching template settings, using default:', err.message);
+    }
+    
+    // Construct template name (templates/linktree-{template})
+    const templateName = `templates/linktree-${template}`;
+    console.log("templateName",templateName)
+    // Render template, fallback to default if template doesn't exist
+    try {
+      return res.render(templateName,{ 
+        username:username,
+        tree:tree,
+        dp:dp 
+      });
+    } catch (renderErr) {
+      // If template doesn't exist, fallback to default
+      console.log(`Template ${templateName} not found, using default:`, renderErr.message);
+      return res.render('templates/linktree-default',{ 
+        username:username,
+        tree:tree,
+        dp:dp 
+      });
+    }
   }
   
   return res.render('not_exists', { linkHub: '' })

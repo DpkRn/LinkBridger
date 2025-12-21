@@ -85,6 +85,20 @@ const updateSettings = async (req, res) => {
             });
         }
 
+        // Update template if provided
+        if (settingsData.template !== undefined) {
+            // Validate template name
+            const validTemplates = ['default', 'minimal', 'modern', 'dark', 'light', 'hacker', 'glass', 'neon', 'gradient', 'cards', 'particles', '3d', 'retro'];
+            if (validTemplates.includes(settingsData.template)) {
+                settings.template = settingsData.template;
+            } else {
+                return res.status(400).json({
+                    success: false,
+                    message: `Invalid template. Valid options are: ${validTemplates.join(', ')}`
+                });
+            }
+        }
+        
         // Update settings - use Object.assign and markModified for nested objects
         if (settingsData.profile) {
             Object.assign(settings.profile, settingsData.profile);

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="<%=username.toUpperCase()%>'s LinkBridger profile">
+    <link rel="icon" type="image/svg+xml" href="<%=dp.image%>" />
+    <title><%=username.toUpperCase()%> - LinkBridger</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #fafafa;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #1a1a1a;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 500px;
+            max-height: 95vh;
+            background: #fff;
+            border-radius: 24px;
+            padding: 20px 35px;
+            box-shadow: 
+                0 2px 8px rgba(0, 0, 0, 0.04),
+                0 16px 48px rgba(0, 0, 0, 0.08);
+            animation: slideIn 0.6s ease;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .profile-section {
+            text-align: center;
+            margin-bottom: 25px;
+            flex-shrink: 0;
+        }
+        
+        .profile-pic {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #f0f0f0;
+            margin-bottom: 30px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .profile-pic:hover {
+            transform: scale(1.08);
+            border-color: #e0e0e0;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+        
+        .username {
+            font-size: 26px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+        
+        .bio {
+            font-size: 16px;
+            color: #666;
+            line-height: 1.7;
+            margin-bottom: 0;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            margin-bottom: 25px;
+            padding-right: 5px;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE and Edge */
+        }
+        
+        .links::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
+        }
+        
+        .link-item {
+            opacity: 0;
+            transform: translateY(10px);
+            animation: fadeUp 0.5s ease forwards;
+        }
+        
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 16px 24px;
+            background: #f8f8f8;
+            border: 1px solid #e8e8e8;
+            border-radius: 16px;
+            text-decoration: none;
+            color: #1a1a1a;
+            font-weight: 500;
+            font-size: 15px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+        
+        .btn:hover {
+            background: #1a1a1a;
+            color: #fff;
+            border-color: #1a1a1a;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-text {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .btn-arrow {
+            position: relative;
+            z-index: 1;
+            transition: transform 0.2s ease;
+            font-size: 18px;
+        }
+        
+        .btn:hover .btn-arrow {
+            transform: translateX(4px);
+        }
+        
+        .no-links {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+        
+        .footer {
+            text-align: center;
+            padding-top: 20px;
+            margin-top: 10px;
+            border-top: 1px solid #f0f0f0;
+            flex-shrink: 0;
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .website {
+            text-decoration: none;
+            color: #999;
+            font-size: 13px;
+            transition: color 0.2s ease;
+        }
+        
+        .website:hover {
+            color: #1a1a1a;
+        }
+        
+        .heart {
+            margin: 0 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="profile-section">
+            <img src="<%=dp.image%>" alt="<%=username.toUpperCase()%>'s Profile" class="profile-pic" onerror="handleImageError(this, '<%=username.charAt(0).toUpperCase()%>')">
+            <h1 class="username"><%= username.toUpperCase() %></h1>
+            <p class="bio"><%=dp.bio||"Welcome to my link hub! Explore all my profiles below."%></p>
+        </div>
+        
+        <div class="links">
+            <% if (tree && tree.length > 0) { %>
+                <% tree.forEach((item, index) => { %>
+                    <div class="link-item" >
+                        <a href="https://clickly.cv/<%= item.username %>/<%= item.source %>" class="btn" rel="noopener noreferrer" target="_self">
+                            <span class="btn-text"><%= item.source.toUpperCase() %></span>
+                            <span class="btn-arrow">→</span>
+                        </a>
+                    </div>
+                <% }); %>
+            <% } else { %>
+                <div class="no-links">
+                    <p>No links available yet.</p>
+                </div>
+            <% } %>
+        </div>
+        
+        <div class="footer">
+            <a class="website" href="https://clickly.cv" target="_blank">
+                <span>Made with</span>
+                <span class="heart">❤️</span>
+                <span>by LinkBridger</span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+            window.handleImageError = function(img, initial) {
+                if (img.onerror) img.onerror = null;
+                const svg = encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><circle cx="60" cy="60" r="60" fill="#f0f0f0"/><text x="50%" y="50%" text-anchor="middle" dy=".3em" font-size="45" fill="#999" font-weight="bold">${initial}</text></svg>`);
+                img.src = 'data:image/svg+xml,' + svg;
+            };
+        })();
+    </script>
+</body>
+</html>
+

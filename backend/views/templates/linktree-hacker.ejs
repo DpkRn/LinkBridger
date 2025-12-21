@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="<%=username.toUpperCase()%>'s LinkBridger profile">
+    <link rel="icon" type="image/svg+xml" href="<%=dp.image%>" />
+    <title><%=username.toUpperCase()%> - LinkBridger</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: #0a0e27;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #00ff41;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Matrix rain effect */
+        .matrix {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.1;
+        }
+        
+        .matrix-column {
+            position: absolute;
+            top: -100%;
+            color: #00ff41;
+            font-size: 14px;
+            animation: matrixFall linear infinite;
+        }
+        
+        @keyframes matrixFall {
+            to { transform: translateY(200vh); }
+        }
+        
+        /* Scanline effect */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(transparent 50%, rgba(0, 255, 65, 0.03) 50%);
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 1000;
+            animation: scanline 8s linear infinite;
+        }
+        
+        @keyframes scanline {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(4px); }
+        }
+        
+        .container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 530px;
+            max-height: 95vh;
+            background: rgba(10, 14, 39, 0.9);
+            border: 2px solid #00ff41;
+            border-radius: 0;
+            padding: 20px 30px;
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.3),
+                        inset 0 0 30px rgba(0, 255, 65, 0.1);
+            animation: glitch 0.3s infinite;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        @keyframes glitch {
+            0%, 100% { box-shadow: 0 0 30px rgba(0, 255, 65, 0.3), inset 0 0 30px rgba(0, 255, 65, 0.1); }
+            50% { box-shadow: 0 0 30px rgba(255, 0, 65, 0.3), inset 0 0 30px rgba(255, 0, 65, 0.1); }
+        }
+        
+        .profile-section {
+            text-align: center;
+            margin-bottom: 20px;
+            flex-shrink: 0;
+        }
+        
+        .profile-pic-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 25px;
+        }
+        
+        .profile-pic {
+            width: 110px;
+            height: 110px;
+            border-radius: 0;
+            object-fit: cover;
+            border: 3px solid #00ff41;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.5),
+                        inset 0 0 20px rgba(0, 255, 65, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 2;
+            clip-path: polygon(20% 0%, 80% 0%, 100% 20%, 100% 80%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
+        }
+        
+        .profile-pic:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 40px rgba(0, 255, 65, 0.8),
+                        inset 0 0 40px rgba(0, 255, 65, 0.4);
+            filter: brightness(1.2);
+        }
+        
+        .profile-pic-scan {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(transparent, rgba(0, 255, 65, 0.3), transparent);
+            animation: scan 2s linear infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes scan {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+        
+        .username {
+            font-size: 26px;
+            font-weight: 700;
+            color: #00ff41;
+            margin-bottom: 12px;
+            text-shadow: 0 0 10px #00ff41,
+                         0 0 20px #00ff41,
+                         0 0 30px #00ff41;
+            animation: textGlow 2s ease-in-out infinite;
+            letter-spacing: 2px;
+        }
+        
+        @keyframes textGlow {
+            0%, 100% { text-shadow: 0 0 10px #00ff41, 0 0 20px #00ff41, 0 0 30px #00ff41; }
+            50% { text-shadow: 0 0 20px #00ff41, 0 0 30px #00ff41, 0 0 40px #00ff41, 0 0 50px #00ff41; }
+        }
+        
+        .username::before {
+            content: '> ';
+            color: #00ff41;
+        }
+        
+        .bio {
+            font-size: 14px;
+            color: #00ff88;
+            line-height: 1.8;
+            margin-bottom: 35px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-right: 5px;
+            margin-bottom: 20px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(0, 255, 65, 0.3) transparent;
+        }
+        
+        .links::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .links::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        .links::-webkit-scrollbar-thumb {
+            background: rgba(0, 255, 65, 0.3);
+            border-radius: 3px;
+        }
+        
+        .links::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 255, 65, 0.5);
+        }
+        
+        .link-item {
+            opacity: 0;
+            animation: typeIn 0.5s ease forwards;
+        }
+        
+        @keyframes typeIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 14px 20px;
+            background: rgba(0, 255, 65, 0.05);
+            border: 2px solid #00ff41;
+            border-radius: 0;
+            text-decoration: none;
+            color: #00ff41;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .btn::before {
+            content: '> ';
+            position: absolute;
+            left: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 255, 65, 0.1);
+            transition: left 0.5s ease;
+        }
+        
+        .btn:hover::before {
+            opacity: 1;
+        }
+        
+        .btn:hover::after {
+            left: 100%;
+        }
+        
+        .btn:hover {
+            background: rgba(0, 255, 65, 0.1);
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.5),
+                        inset 0 0 20px rgba(0, 255, 65, 0.1);
+            transform: translateX(10px);
+        }
+        
+        .btn-text {
+            position: relative;
+            z-index: 1;
+            margin-left: 20px;
+        }
+        
+        .btn:hover .btn-text {
+            margin-left: 0;
+        }
+        
+        .btn-arrow {
+            position: relative;
+            z-index: 1;
+            transition: transform 0.3s ease;
+        }
+        
+        .btn:hover .btn-arrow {
+            transform: translateX(5px);
+        }
+        
+        .no-links {
+            text-align: center;
+            padding: 40px 20px;
+            color: #00ff88;
+        }
+        
+        .footer {
+            text-align: center;
+            padding-top: 20px;
+            margin-top: 10px;
+            border-top: 2px solid #00ff41;
+            flex-shrink: 0;
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .website {
+            text-decoration: none;
+            color: #00ff88;
+            font-size: 12px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .website:hover {
+            color: #00ff41;
+            text-shadow: 0 0 10px #00ff41;
+        }
+        
+        .heart {
+            margin: 0 5px;
+            animation: pulse 1s ease infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <div class="matrix" id="matrix"></div>
+    
+    <div class="container">
+        <div class="profile-section">
+            <div class="profile-pic-wrapper">
+                <div class="profile-pic-scan"></div>
+                <img src="<%=dp.image%>" alt="<%=username.toUpperCase()%>'s Profile" class="profile-pic" onerror="handleImageError(this, '<%=username.charAt(0).toUpperCase()%>')">
+            </div>
+            <h1 class="username"><%= username.toUpperCase() %></h1>
+            <p class="bio"><%=dp.bio||"Welcome to my link hub! Explore all my profiles below."%></p>
+        </div>
+        
+        <div class="links">
+            <% if (tree && tree.length > 0) { %>
+                <% tree.forEach((item, index) => { 
+                    const delay = index * 0.15;
+                    %>
+                    <div class="link-item" data-delay="<%= delay %>">
+                        <a href="https://clickly.cv/<%= item.username %>/<%= item.source %>" class="btn" rel="noopener noreferrer" target="_self">
+                            <span class="btn-text"><%= item.source.toUpperCase() %></span>
+                            <span class="btn-arrow">→</span>
+                        </a>
+                    </div>
+                <% }); %>
+            <% } else { %>
+                <div class="no-links">
+                    <p>No links available yet.</p>
+                </div>
+            <% } %>
+        </div>
+        
+        <div class="footer">
+            <a class="website" href="https://clickly.cv" target="_blank">
+                <span>Made with</span>
+                <span class="heart">❤️</span>
+                <span>by LinkBridger</span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+            
+            window.handleImageError = function(img, initial) {
+                if (img.onerror) img.onerror = null;
+                const svg = encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="140" height="140"><rect width="140" height="140" fill="#0a0e27"/><rect x="10" y="10" width="120" height="120" fill="none" stroke="#00ff41" stroke-width="3"/><text x="50%" y="50%" text-anchor="middle" dy=".3em" font-size="50" fill="#00ff41" font-weight="bold" font-family="monospace">${initial}</text></svg>`);
+                img.src = 'data:image/svg+xml,' + svg;
+            };
+            
+            // Create matrix rain effect
+            const matrixContainer = document.getElementById('matrix');
+            const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+            
+            for (let i = 0; i < 30; i++) {
+                const column = document.createElement('div');
+                column.className = 'matrix-column';
+                column.style.left = (i * (100 / 30)) + '%';
+                column.style.animationDuration = (5 + Math.random() * 10) + 's';
+                column.style.animationDelay = Math.random() * 5 + 's';
+                
+                let text = '';
+                for (let j = 0; j < 20; j++) {
+                    text += chars[Math.floor(Math.random() * chars.length)] + '<br>';
+                }
+                column.innerHTML = text;
+                matrixContainer.appendChild(column);
+            }
+        })();
+    </script>
+</body>
+</html>
+

@@ -10,7 +10,11 @@ body {
     background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
     color: #fff;
     min-height: 100vh;
-    overflow-x: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow: hidden;
     position: relative;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -83,13 +87,15 @@ body {
     padding: 20px;
     position: relative;
     z-index: 1;
+    width: 100%;
 }
 
 /* Profile Card */
 .profile {
     width: 100%;
-    max-width: 450px;
-    padding: 40px 30px;
+    max-width: 470px;
+    max-height: 95vh;
+    padding: 20px 30px;
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
@@ -99,6 +105,10 @@ body {
     position: relative;
     text-align: center;
     animation: fadeInUp 0.8s ease-out;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
 }
 
 @keyframes fadeInUp {
@@ -126,8 +136,10 @@ body {
 /* Profile Picture */
 .profile-pic-wrapper {
     position: relative;
-    display: inline-block;
-    margin-bottom: 24px;
+    display: block;
+    margin: 0 auto 20px auto;
+    flex-shrink: 0;
+    text-align: center;
 }
 
 .profile-pic-glow {
@@ -135,8 +147,8 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 140px;
-    height: 140px;
+    width: 120px;
+    height: 120px;
     background: linear-gradient(135deg, #9333ea 0%, #ec4899 50%, #3b82f6 100%);
     border-radius: 50%;
     filter: blur(20px);
@@ -156,8 +168,8 @@ body {
 }
 
 .profile-pic {
-    width: 120px;
-    height: 120px;
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
     object-fit: cover;
     border: 3px solid rgba(255, 255, 255, 0.3);
@@ -179,15 +191,16 @@ body {
 
 /* Username */
 .username-wrapper {
-    margin-bottom: 16px;
+    margin-bottom: 12px;
     position: relative;
+    flex-shrink: 0;
 }
 
 .username {
     font-family: 'Montserrat', 'Poppins', sans-serif;
-    font-size: 32px;
+    font-size: 26px;
     font-weight: 700;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 50%, #a5b4fc 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -220,14 +233,38 @@ body {
     font-size: 16px;
     line-height: 1.6;
     text-align: center;
-    margin-bottom: 32px;
+    margin-bottom: 20px;
     padding: 0 10px;
+    flex-shrink: 0;
 }
 
 /* Links Container */
 .links {
-    margin-bottom: 32px;
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 5px;
+    margin-bottom: 20px;
     min-height: 50px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+.links::-webkit-scrollbar {
+    width: 6px;
+}
+
+.links::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.links::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+}
+
+.links::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
 }
 
 .link-item {
@@ -254,7 +291,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 18px 24px;
+    padding: 14px 20px;
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
@@ -318,8 +355,12 @@ body {
 /* Footer */
 .footer {
     text-align: center;
-    padding-top: 24px;
+    padding-top: 20px;
+    margin-top: 10px;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
+    visibility: visible;
+    opacity: 1;
 }
 
 .website {
@@ -365,9 +406,18 @@ body {
 
 /* Responsive Design */
 @media (max-width: 480px) {
+    body {
+        padding: 10px;
+    }
+    
     .profile {
-        padding: 30px 20px;
+        padding: 20px 15px;
         max-width: 100%;
+        max-height: 98vh;
+    }
+    
+    .links {
+        margin-bottom: 15px;
     }
 
     .username {
@@ -404,9 +454,34 @@ body {
     }
 }
 
+@media (max-height: 600px) {
+    .profile {
+        max-height: 98vh;
+    }
+    
+    .profile-pic {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .profile-pic-glow {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .username {
+        font-size: 22px;
+    }
+    
+    .bio {
+        font-size: 14px;
+        margin-bottom: 15px;
+    }
+}
+
 @media (max-width: 360px) {
     .profile {
-        padding: 24px 16px;
+        padding: 20px 15px;
     }
 
     .username {
