@@ -128,7 +128,7 @@ const Different = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-100 via-lime-100 to-slate-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 md:pt-28 pb-12 md:pb-20">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
