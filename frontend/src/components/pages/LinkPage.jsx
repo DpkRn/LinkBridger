@@ -5,7 +5,7 @@ import Linkcard from "../linkcard/Linkcard";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { MdContentCopy, MdAddCircle } from "react-icons/md";
-import { FaRocket, FaLink, FaChartLine, FaHome } from "react-icons/fa";
+import { FaRocket, FaLink, FaChartLine, FaHome, FaEye } from "react-icons/fa";
 import { setLinks } from "../../redux/userSlice";
 import toast from "react-hot-toast";
 import api from "../../utils/api";
@@ -35,6 +35,10 @@ const LinkPage = ({ children }) => {
 
   const handleCreateNewBridge = () => {
     navigate("/home");
+  };
+
+  const handlePreviewLinkHub = () => {
+    navigate("/preview");
   };
 
   useEffect(() => {
@@ -147,17 +151,32 @@ const LinkPage = ({ children }) => {
               </motion.div>
 
               {location.pathname === "/links" && (
-                <motion.button
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={handleCreateNewBridge}
-                  className="bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 text-white font-bold py-4 px-8 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 flex items-center gap-3 text-lg"
-                >
-                  <MdAddCircle className="text-2xl" />
-                  Create New Bridge
-                </motion.button>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <motion.button
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={handlePreviewLinkHub}
+                    className="bg-gradient-to-r from-pink-600 via-purple-600 to-blue-600 hover:from-pink-700 hover:via-purple-700 hover:to-blue-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 flex items-center gap-3 text-base sm:text-lg"
+                  >
+                    <FaEye className="text-xl sm:text-2xl" />
+                    <span className="hidden sm:inline">Preview LinkHub</span>
+                    <span className="sm:hidden">Preview</span>
+                  </motion.button>
+                  <motion.button
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={handleCreateNewBridge}
+                    className="bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 flex items-center gap-3 text-base sm:text-lg"
+                  >
+                    <MdAddCircle className="text-xl sm:text-2xl" />
+                    <span className="hidden sm:inline">Create New Bridge</span>
+                    <span className="sm:hidden">Create</span>
+                  </motion.button>
+                </div>
               )}
             </div>
 
@@ -216,7 +235,7 @@ const LinkPage = ({ children }) => {
           </motion.div>
 
           {/* Main Content: Links and Preview */}
-          <div className={`grid grid-cols-1 ${children ? 'lg:grid-cols-2' : ''} gap-6 lg:gap-8`}>
+          <div className={`grid grid-cols-1 ${children ? 'lg:grid-cols-[2fr_1fr]' : ''} gap-6 lg:gap-8`}>
             {/* Left Side: Links Section */}
             <motion.div variants={itemVariants} className="space-y-6">
               {links.length === 0 ? (
@@ -273,13 +292,7 @@ const LinkPage = ({ children }) => {
                 variants={itemVariants} 
                 className="lg:sticky lg:top-8 h-fit"
               >
-                <div className="bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-4 md:p-6">
-                  <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-4 text-center lg:text-left">
-                    Live Preview
-                  </h3>
-                  <p className="text-sm text-gray-700 dark:text-gray-400 mb-4 text-center lg:text-left">
-                    See how your LinkHub looks on mobile
-                  </p>
+                <div>
                   {children}
                 </div>
               </motion.div>

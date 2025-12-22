@@ -11,7 +11,7 @@ const DashBoard = () => {
     <div className="flex flex-col dark:from-slate-900 dark:via-purple-900 dark:to-slate-900 dark:bg-gradient-to-br transition-colors duration-300">
       <Content/>
       {/* <TemplatePreview/> */}
-      <Template/>
+      {/* <Template/> */}
       <CreateBridge/>
       <LinkPage>
         <Template />

@@ -20,6 +20,7 @@ import Settings from './components/pages/Settings'
 import NotFound from './components/pages/NotFound'
 import AboutDeveloper from './components/pages/AboutDeveloper'
 import Analytics from './components/pages/Analytics'
+import TemplatePreview from './components/preview/TemplatePreview'
 import Features from './components/pages/docs/Features'
 import Benefits from './components/pages/docs/Benefits'
 import Security from './components/pages/docs/Security'
@@ -143,6 +144,7 @@ function App() {
         <Route path='/login' element={<AuthRoute><AuthPage /></AuthRoute>}/>
         <Route path='/verify' element={<VerificationPage />} />
         <Route path='/links' element={<PrivateRoute><LinkPage/></PrivateRoute>} />
+        <Route path='/preview' element={<PrivateRoute><TemplatePreview/></PrivateRoute>} />
         <Route path='/' element={<AuthRoute><HomePage/></AuthRoute>} />
         <Route path='/profile' element={<PrivateRoute><ProfilePage/></PrivateRoute>} />
         <Route path='/profile/:username' element={<PrivateRoute><ProfilePreview/></PrivateRoute>} />
