@@ -40,7 +40,11 @@ const LinkPage = () => {
   useEffect(() => {
     const getAllLinks = async () => {
       try {
-        const res = await api.post('/source/getallsource', { username }, { withCredentials: true });
+        const res = await api.post(
+          "/source/getallsource",
+          { username },
+          { withCredentials: true }
+        );
         if (res.status === 200 && res.data.success) {
           dispatch(setLinks(res.data.sources));
         }
@@ -113,7 +117,7 @@ const LinkPage = () => {
           }}
           transition={{ type: "spring", stiffness: 50, damping: 20 }}
         />
-        
+
         {/* Animated Grid */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]" />
       </div>
@@ -141,7 +145,7 @@ const LinkPage = () => {
                   Manage and track all your personalized social media links
                 </p>
               </motion.div>
-              
+
               {location.pathname === "/links" && (
                 <motion.button
                   initial={{ opacity: 0, scale: 0.9 }}
@@ -164,9 +168,7 @@ const LinkPage = () => {
               whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.3 }}
             >
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-purple-600/10 via-pink-600/10 to-blue-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-              />
+              <motion.div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 via-pink-600/10 to-blue-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <div className="relative z-10">
                 <div className="flex items-center gap-4 mb-4">
                   <motion.div
@@ -180,7 +182,8 @@ const LinkPage = () => {
                       Your Linktree Hub
                     </h3>
                     <p className="text-gray-700 dark:text-gray-400 text-sm md:text-base">
-                      Share this link to let visitors see all your profiles in one place
+                      Share this link to let visitors see all your profiles in
+                      one place
                     </p>
                   </div>
                 </div>
@@ -232,7 +235,8 @@ const LinkPage = () => {
                   No Links Yet
                 </h2>
                 <p className="text-gray-700 dark:text-gray-400 text-lg mb-8 max-w-md mx-auto">
-                  Get started by creating your first personalized link. Click the button above to create a new bridge!
+                  Get started by creating your first personalized link. Click
+                  the button above to create a new bridge!
                 </p>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
