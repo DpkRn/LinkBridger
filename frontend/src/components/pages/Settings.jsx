@@ -55,6 +55,7 @@ const Settings = () => {
   const [notificationSettings, setNotificationSettings] = useState({
     emailOnNewClick: false,
     emailOnProfileView: false,
+    emailOnLinkHubView: false,
     weeklyReport: false
   });
 
@@ -730,7 +731,7 @@ const Settings = () => {
                 />
                 <ToggleSetting
                   label="Email on Profile View"
-                  description="Receive email when your profile is viewed"
+                  description="Receive email when someone views your profile page (ProfilePreview)"
                   value={notificationSettings.emailOnProfileView}
                   onChange={async (val) => {
                     setNotificationSettings({ ...notificationSettings, emailOnProfileView: val });
@@ -740,6 +741,19 @@ const Settings = () => {
                     }
                   }}
                   updating={updatingFields.has('notifications.emailOnProfileView')}
+                />
+                <ToggleSetting
+                  label="Email on LinkHub Visit"
+                  description="Receive email when someone visits your LinkHub page (/:username)"
+                  value={notificationSettings.emailOnLinkHubView}
+                  onChange={async (val) => {
+                    setNotificationSettings({ ...notificationSettings, emailOnLinkHubView: val });
+                    const success = await updateSingleSetting('notifications', 'emailOnLinkHubView', val);
+                    if (!success) {
+                      setNotificationSettings({ ...notificationSettings, emailOnLinkHubView: !val });
+                    }
+                  }}
+                  updating={updatingFields.has('notifications.emailOnLinkHubView')}
                 />
                 <ToggleSetting
                   label="Weekly Report"

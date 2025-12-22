@@ -288,7 +288,7 @@ const Footer = () => {
             transition={{ duration: 0.5, delay: 0.4 }}
             className="text-sm text-gray-700 dark:text-gray-500 text-center sm:text-left"
           >
-            © 2024{' '}
+            © 2025{' '}
             <a
               href="https://clickly.cv"
               className="font-semibold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent hover:from-purple-300 hover:to-pink-300 transition-all duration-200"

@@ -122,6 +122,10 @@ const userSettingsSchema = new mongoose.Schema({
             type: Boolean,
             default: false
         },
+        emailOnLinkHubView: {
+            type: Boolean,
+            default: false
+        },
         weeklyReport: {
             type: Boolean,
             default: false
@@ -164,6 +168,13 @@ userSettingsSchema.methods.shouldEmailOnProfileView = function() {
            !this.deletedAt;
 };
 
+// Method to check if email notification should be sent on LinkHub view
+userSettingsSchema.methods.shouldEmailOnLinkHubView = function() {
+    return this.notifications && 
+           this.notifications.emailOnLinkHubView &&
+           !this.deletedAt;
+};
+
 // Method to check if weekly report notifications are enabled
 userSettingsSchema.methods.shouldSendWeeklyReport = function() {
     return this.notifications && 
@@ -176,6 +187,7 @@ userSettingsSchema.methods.hasEmailNotificationsEnabled = function() {
     return this.notifications && 
            (this.notifications.emailOnNewClick || 
             this.notifications.emailOnProfileView || 
+            this.notifications.emailOnLinkHubView ||
             this.notifications.weeklyReport) &&
            !this.deletedAt;
 };

@@ -4,6 +4,7 @@ const {
   Notification_Email_Template,
   Welcome_Email_Template,
   Onboarding_Email_Template,
+  Profile_Visit_Email_Template,
 } = require("./emailTemplate");
 
 
@@ -231,6 +232,63 @@ const sendNewUserOnboardingEmail = async (email, username, name, AppName) => {
   }
 };
 
+const sendProfileVisitEmail = async (
+  email,
+  profileOwnerUsername,
+  profileOwnerName,
+  deviceDetails,
+  visitorUsername = null,
+  visitorName = null
+) => {
+  // Determine visitor information
+  const visitorDisplayName = visitorName || visitorUsername || "Someone";
+  const visitorUsernameDisplay = visitorUsername || "Anonymous";
+  const visitorNameText = visitorUsername 
+    ? `${visitorName || visitorUsername} (@${visitorUsername})` 
+    : "Someone";
+
+  const placeholders = {
+    "{{username}}": profileOwnerUsername,
+    "{{visitorName}}": visitorNameText,
+    "{{visitorDisplayName}}": visitorDisplayName,
+    "{{visitorUsername}}": visitorUsernameDisplay,
+    "{{city}}": deviceDetails.city || "Unknown",
+    "{{country}}": deviceDetails.country || "Unknown",
+    "{{browser}}": deviceDetails.browser || "Unknown",
+    "{{time}}": deviceDetails.time || new Date().toLocaleTimeString("en-IN", { hour: '2-digit', minute: '2-digit' }),
+    "{{ipAdd}}": deviceDetails.ip || "Unknown",
+  };
+
+  let emailHTML = Profile_Visit_Email_Template;
+  for (const [key, value] of Object.entries(placeholders)) {
+    const regex = new RegExp(key.replace(/[{}]/g, "\\$&"), "g");
+    emailHTML = emailHTML.replace(regex, value);
+  }
+
+  const emailUser = process.env.EMAIL_USER || "linkbriger@gmail.com";
+  const subject = visitorUsername 
+    ? `👋 ${visitorName || visitorUsername} (@${visitorUsername}) visited your profile!`
+    : `👋 Someone visited your LinkBridger profile!`;
+
+  const data = {
+    from: `"LinkBridger" <${emailUser}>`,
+    to: email,
+    subject: subject,
+    text: `Hello ${profileOwnerName} (@${profileOwnerUsername}), ${visitorNameText} has visited your LinkBridger profile!`,
+    html: emailHTML,
+  };
+
+  try {
+    const info = await transport.sendMail(data);
+    if (info.accepted.length > 0) {
+      console.log("✅ Profile visit email sent to:", email);
+    } else {
+      console.warn("⚠️ Profile visit email not accepted:", info);
+    }
+  } catch (err) {
+    console.error(`error while sending profile visit email to ${email} : ${err.message}`);
+  }
+};
 
 module.exports = {
   sendEmailVerification,
@@ -238,4 +296,5 @@ module.exports = {
   sendVisitEmail,
   sendWelcomeEmail,
   sendNewUserOnboardingEmail,
+  sendProfileVisitEmail,
 };

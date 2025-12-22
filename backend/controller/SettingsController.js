@@ -208,7 +208,7 @@ const updateSettings = async (req, res) => {
                 settings.set(`privacy.${field}`, boolValue);
                 settings.markModified('privacy');
             } else if (category === 'notifications') {
-                const validFields = ['emailOnNewClick', 'emailOnProfileView', 'weeklyReport'];
+                const validFields = ['emailOnNewClick', 'emailOnProfileView', 'emailOnLinkHubView', 'weeklyReport'];
                 if (!validFields.includes(field)) {
                     return res.status(400).json({
                         success: false,

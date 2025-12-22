@@ -1,6 +1,9 @@
 const Profile = require("../model/userProfile");
 const User = require("../model/userModel");
 const cloudinary = require('cloudinary')
+const { sendProfileVisitEmail } = require("../lib/mail");
+const geoip = require('geoip-lite');
+const useragent = require('useragent');
 
 const updateProfile = async (req, res) => {
     let { username, name, location, bio, passion } = req.body;
@@ -136,6 +139,56 @@ const getPublicProfile = async (req, res) => {
                 success: false,
                 message: "Profile is private"
             });
+        }
+
+        // Extract device information for profile visit notification
+        const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+        const geo = geoip.lookup(ip) || { city: "Unknown", country: "Unknown" };
+        const agent = useragent.parse(req.headers['user-agent']);
+        const browser = agent.toAgent();
+        const visitTime = new Date().toLocaleTimeString("en-IN", { hour: '2-digit', minute: '2-digit' });
+        
+        const deviceDetails = {
+            ip: ip,
+            city: geo.city || "Unknown",
+            country: geo.country || "Unknown",
+            browser: browser,
+            time: visitTime,
+        };
+
+        // Get visitor information if they're logged in
+        let visitorUsername = null;
+        let visitorName = null;
+        if (userId && !isOwner) {
+            try {
+                const visitor = await User.findById(userId, { username: 1, name: 1 });
+                if (visitor) {
+                    visitorUsername = visitor.username;
+                    visitorName = visitor.name;
+                }
+            } catch (err) {
+                console.error(`Error fetching visitor info:`, err);
+            }
+        }
+
+        // Send profile visit email notification if enabled
+        if (!isOwner) {
+            try {
+                if (settings && settings.shouldEmailOnProfileView()) {
+                    sendProfileVisitEmail(
+                        user.email,
+                        username,
+                        user.name,
+                        deviceDetails,
+                        visitorUsername,
+                        visitorName
+                    ).catch(err => {
+                        console.error(`Failed to send profile visit email to ${username}:`, err);
+                    });
+                }
+            } catch (err) {
+                console.error(`Error checking notification settings for ${username}:`, err);
+            }
         }
 
         // Get profile

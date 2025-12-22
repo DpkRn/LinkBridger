@@ -18,7 +18,8 @@ const User=require('./model/userModel')
 const UserSettings=require('./model/userSettingsModel')
 const profileRoute=require('./routes/ProfileRoute')
 const { extractInfo } = require('./middleware/deviceInfo')
-const { sendVisitEmail } = require('./lib/mail')
+const { sendVisitEmail, sendProfileVisitEmail } = require('./lib/mail')
+const { verifyTokenOptional } = require('./middleware/verifyToken')
 const bcryptjs = require('bcryptjs')
 
 
@@ -228,7 +229,7 @@ app.get('/:username/:source',extractInfo, async (req, res) => {
   return res.redirect(307,destination)
 })
 
-app.get('/:username',extractInfo, async (req, res) => {
+app.get('/:username', extractInfo, verifyTokenOptional, async (req, res) => {
   // Allow iframe embedding for preview (allow from frontend origins)
   res.setHeader('X-Frame-Options', 'SAMEORIGIN');
   const frontendOrigins = "http://localhost:5173 https://clickly.cv https://linkbriger.vercel.app 'self'";
@@ -251,12 +252,35 @@ app.get('/:username',extractInfo, async (req, res) => {
   const {email,name}=info
   const deviceDetails=req.details
   
-  // Check if email notification is enabled for profile views
+  // Get visitor information if they're logged in
+  let visitorUsername = null;
+  let visitorName = null;
+  if (req.userId) {
+    try {
+      const visitor = await User.findById(req.userId, { username: 1, name: 1 });
+      if (visitor && visitor.username !== username) {
+        // Only track if visitor is different from profile owner
+        visitorUsername = visitor.username;
+        visitorName = visitor.name;
+      }
+    } catch (err) {
+      console.error(`Error fetching visitor info:`, err);
+    }
+  }
+  
+  // Check if email notification is enabled for LinkHub views
   try {
     const settings = await UserSettings.getUserSettings(username);
-    if (settings && settings.shouldEmailOnProfileView()) {
-      sendVisitEmail(email,username,name,deviceDetails,"LinkHub").catch(err => {
-        console.error(`Failed to send profile view email to ${username}:`, err);
+    if (settings && settings.shouldEmailOnLinkHubView()) {
+      sendProfileVisitEmail(
+        email,
+        username,
+        name,
+        deviceDetails,
+        visitorUsername,
+        visitorName
+      ).catch(err => {
+        console.error(`Failed to send LinkHub visit email to ${username}:`, err);
       });
     }
   } catch (err) {

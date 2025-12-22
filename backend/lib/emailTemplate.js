@@ -702,9 +702,319 @@ const Onboarding_Email_Template = `
   </html>
 `;
 
+const Profile_Visit_Email_Template = `
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Profile Visit Notification</title>
+      <style>
+          * {
+              margin: 0;
+              padding: 0;
+              box-sizing: border-box;
+          }
+          body {
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+              background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+              padding: 20px;
+              color: #333;
+          }
+          .email-wrapper {
+              max-width: 600px;
+              margin: 0 auto;
+              background: #ffffff;
+              border-radius: 16px;
+              overflow: hidden;
+              box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+          }
+          .header {
+              background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
+              color: white;
+              padding: 40px 30px;
+              text-align: center;
+              position: relative;
+              overflow: hidden;
+          }
+          .header::before {
+              content: '';
+              position: absolute;
+              top: -50%;
+              left: -50%;
+              width: 200%;
+              height: 200%;
+              background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+              animation: pulse 3s ease-in-out infinite;
+          }
+          @keyframes pulse {
+              0%, 100% { transform: scale(1); opacity: 0.5; }
+              50% { transform: scale(1.1); opacity: 0.8; }
+          }
+          .header h1 {
+              font-size: 32px;
+              font-weight: 700;
+              margin-bottom: 10px;
+              position: relative;
+              z-index: 1;
+          }
+          .header p {
+              font-size: 16px;
+              opacity: 0.95;
+              position: relative;
+              z-index: 1;
+          }
+          .content {
+              padding: 40px 30px;
+          }
+          .visit-notification {
+              background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+              border-left: 5px solid #3b82f6;
+              padding: 25px;
+              border-radius: 12px;
+              margin: 25px 0;
+              text-align: center;
+          }
+          .visit-notification h2 {
+              color: #1e40af;
+              font-size: 24px;
+              margin-bottom: 15px;
+          }
+          .visitor-info {
+              background: #ffffff;
+              border: 2px solid #e5e7eb;
+              border-radius: 12px;
+              padding: 25px;
+              margin: 25px 0;
+          }
+          .visitor-name {
+              font-size: 28px;
+              font-weight: 700;
+              color: #1f2937;
+              margin-bottom: 10px;
+              text-align: center;
+          }
+          .visitor-username {
+              font-size: 18px;
+              color: #6b7280;
+              text-align: center;
+              margin-bottom: 20px;
+          }
+          .visitor-username code {
+              background: #f3f4f6;
+              padding: 4px 12px;
+              border-radius: 6px;
+              color: #3b82f6;
+              font-weight: 600;
+          }
+          .details-grid {
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 15px;
+              margin: 25px 0;
+          }
+          .detail-card {
+              background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+              border-radius: 10px;
+              padding: 20px;
+              text-align: center;
+              border: 1px solid #e5e7eb;
+              transition: transform 0.2s ease, box-shadow 0.2s ease;
+          }
+          .detail-card:hover {
+              transform: translateY(-2px);
+              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+          }
+          .detail-icon {
+              font-size: 32px;
+              margin-bottom: 10px;
+          }
+          .detail-label {
+              font-size: 12px;
+              color: #6b7280;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+              margin-bottom: 5px;
+          }
+          .detail-value {
+              font-size: 16px;
+              font-weight: 600;
+              color: #1f2937;
+          }
+          .profile-link-box {
+              background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+              border: 2px dashed #f59e0b;
+              border-radius: 12px;
+              padding: 20px;
+              margin: 25px 0;
+              text-align: center;
+          }
+          .profile-link-box p {
+              color: #92400e;
+              font-size: 14px;
+              margin-bottom: 10px;
+          }
+          .profile-link-box code {
+              background: white;
+              padding: 8px 16px;
+              border-radius: 6px;
+              color: #f59e0b;
+              font-size: 16px;
+              font-weight: 600;
+              display: inline-block;
+          }
+          .cta-section {
+              text-align: center;
+              margin: 35px 0;
+          }
+          .cta-button {
+              display: inline-block;
+              padding: 16px 40px;
+              background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+              color: white;
+              text-decoration: none;
+              border-radius: 12px;
+              font-size: 18px;
+              font-weight: 600;
+              box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+              transition: transform 0.2s ease, box-shadow 0.2s ease;
+          }
+          .cta-button:hover {
+              transform: translateY(-2px);
+              box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+          }
+          .stats-box {
+              background: #f0fdf4;
+              border-left: 4px solid #10b981;
+              padding: 20px;
+              border-radius: 8px;
+              margin: 25px 0;
+          }
+          .stats-box p {
+              color: #065f46;
+              line-height: 1.8;
+              font-size: 14px;
+          }
+          .footer {
+              background: #f9fafb;
+              padding: 30px;
+              text-align: center;
+              border-top: 1px solid #e5e7eb;
+          }
+          .footer p {
+              color: #6b7280;
+              font-size: 14px;
+              margin: 5px 0;
+          }
+          .footer a {
+              color: #3b82f6;
+              text-decoration: none;
+          }
+          @media only screen and (max-width: 600px) {
+              .content {
+                  padding: 30px 20px;
+              }
+              .header {
+                  padding: 30px 20px;
+              }
+              .header h1 {
+                  font-size: 26px;
+              }
+              .details-grid {
+                  grid-template-columns: 1fr;
+              }
+              .visitor-name {
+                  font-size: 24px;
+              }
+          }
+      </style>
+  </head>
+  <body>
+      <div class="email-wrapper">
+          <div class="header">
+              <h1>👋 Profile Visit Alert!</h1>
+              <p>Someone just checked out your profile</p>
+          </div>
+          <div class="content">
+              <div class="visit-notification">
+                  <h2>🎉 Great News!</h2>
+                  <p style="color: #1e40af; font-size: 18px; line-height: 1.6;">
+                      {{visitorName}} has visited your LinkBridger profile!
+                  </p>
+              </div>
+
+              <div class="visitor-info">
+                  <div class="visitor-name">{{visitorDisplayName}}</div>
+                  <div class="visitor-username">
+                      Username: <code>@{{visitorUsername}}</code>
+                  </div>
+              </div>
+
+              <div class="details-grid">
+                  <div class="detail-card">
+                      <div class="detail-icon">📍</div>
+                      <div class="detail-label">Location</div>
+                      <div class="detail-value">{{city}}, {{country}}</div>
+                  </div>
+                  <div class="detail-card">
+                      <div class="detail-icon">🖥️</div>
+                      <div class="detail-label">Browser</div>
+                      <div class="detail-value">{{browser}}</div>
+                  </div>
+                  <div class="detail-card">
+                      <div class="detail-icon">⏰</div>
+                      <div class="detail-label">Visit Time</div>
+                      <div class="detail-value">{{time}}</div>
+                  </div>
+                  <div class="detail-card">
+                      <div class="detail-icon">🌐</div>
+                      <div class="detail-label">IP Address</div>
+                      <div class="detail-value" style="font-size: 12px;">{{ipAdd}}</div>
+                  </div>
+              </div>
+
+              <div class="profile-link-box">
+                  <p>Your profile link:</p>
+                  <code>https://clickly.cv/{{username}}</code>
+              </div>
+
+              <div class="stats-box">
+                  <p style="margin-bottom: 10px;"><strong>📊 Engagement Insight:</strong></p>
+                  <p>
+                      Profile visits are a great indicator of interest! Keep sharing your link and engaging with your audience to grow your presence.
+                  </p>
+              </div>
+
+              <div class="cta-section">
+                  <a href="https://clickly.cv/app/analytics" class="cta-button">View Full Analytics →</a>
+              </div>
+
+              <p style="color: #4b5563; line-height: 1.8; margin-top: 30px; text-align: center; font-size: 14px;">
+                  Want to see more details? Check your analytics dashboard to track all profile visits and link clicks in real-time.
+              </p>
+          </div>
+          <div class="footer">
+              <p><strong>LinkBridger Notification</strong></p>
+              <p style="margin-top: 15px;">
+                  <a href="https://clickly.cv/app/settings">Manage Notification Settings</a> | 
+                  <a href="https://clickly.cv/app/analytics">View Analytics</a>
+              </p>
+              <p style="margin-top: 20px; font-size: 12px;">
+                  &copy; ${new Date().getFullYear()} LinkBridger. All rights reserved.
+              </p>
+              <p style="font-size: 12px; color: #9ca3af;">
+                  This is an automated notification email. You can disable these notifications in your settings.
+              </p>
+          </div>
+      </div>
+  </body>
+  </html>
+`;
+
 module.exports={
     Verification_Email_Template,
     Welcome_Email_Template,
     Notification_Email_Template,
-    Onboarding_Email_Template
+    Onboarding_Email_Template,
+    Profile_Visit_Email_Template
 }
