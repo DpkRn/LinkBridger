@@ -20,6 +20,7 @@ const LinkPage = ({ children }) => {
   
   const links = useSelector((store) => store.admin.links);
   const username = useSelector((store) => store.admin.user.username);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   // Mouse tracking for interactive background
   useEffect(() => {
@@ -51,6 +52,8 @@ const LinkPage = ({ children }) => {
         );
         if (res.status === 200 && res.data.success) {
           dispatch(setLinks(res.data.sources));
+          // Trigger preview refresh when links are updated
+          setRefreshKey(prev => prev + 1);
         }
       } catch (err) {
         console.log(err);
@@ -60,6 +63,13 @@ const LinkPage = ({ children }) => {
     };
     getAllLinks();
   }, []);
+
+  // Watch for link changes and refresh preview
+  useEffect(() => {
+    if (links.length > 0) {
+      setRefreshKey(prev => prev + 1);
+    }
+  }, [links]);
 
   const copyToClipboard = () => {
     const linkText = linkRef.current.innerText;
@@ -292,8 +302,8 @@ const LinkPage = ({ children }) => {
                 variants={itemVariants} 
                 className="lg:sticky lg:top-8 h-fit"
               >
-                <div>
-                  {children}
+                <div key={refreshKey}>
+                  {React.cloneElement(children, { refreshTrigger: refreshKey })}
                 </div>
               </motion.div>
             )}

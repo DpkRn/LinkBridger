@@ -17,7 +17,8 @@ const Template = ({
   height = "h-[600px] md:h-[700px]",
   showStatusBar = true,
   showBrowserChrome = true,
-  template: previewTemplate = null
+  template: previewTemplate = null,
+  refreshTrigger = 0
 }) => {
   const { username } = useSelector((store) => store.admin.user);
   const [template, setTemplate] = useState(previewTemplate || 'default');
@@ -84,6 +85,21 @@ const Template = ({
       iframeRef.current.src = url;
     }
   }, [template, username, previewTemplate]);
+
+  // Refresh preview when refreshTrigger changes (triggered by parent when links update)
+  useEffect(() => {
+    if (!username || refreshTrigger === 0) return;
+    
+    const apiBaseUrl = api.defaults.baseURL || 'http://localhost:8080';
+    const baseUrl = apiBaseUrl.replace(/\/$/, '');
+    const selectedTemplate = previewTemplate || template || 'default';
+    const url = `${baseUrl}/${username}?template=${selectedTemplate}&preview=${Date.now()}`;
+    setPreviewUrl(url);
+    setRefreshKey(prev => prev + 1);
+    if (iframeRef.current) {
+      iframeRef.current.src = url;
+    }
+  }, [refreshTrigger, username, template, previewTemplate]);
 
   if (!username) return null;
 
