@@ -267,8 +267,8 @@ const LinkPage = ({ children }) => {
               )}
             </motion.div>
 
-            {/* Right Side: Template Preview (only if children provided) */}
-            {children && (
+            {/* Right Side: Template Preview (only if children provided and pathname is not /links) */}
+            {children && location.pathname !== '/links' && (
               <motion.div 
                 variants={itemVariants} 
                 className="lg:sticky lg:top-8 h-fit"
