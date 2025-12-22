@@ -10,7 +10,7 @@ import { setLinks } from "../../redux/userSlice";
 import toast from "react-hot-toast";
 import api from "../../utils/api";
 
-const LinkPage = () => {
+const LinkPage = ({ children }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const linkRef = useRef(null);
@@ -215,55 +215,76 @@ const LinkPage = () => {
             </motion.div>
           </motion.div>
 
-          {/* Links Section */}
-          <motion.div variants={itemVariants} className="space-y-6">
-            {links.length === 0 ? (
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-12 md:p-16 text-center"
-              >
+          {/* Main Content: Links and Preview */}
+          <div className={`grid grid-cols-1 ${children ? 'lg:grid-cols-2' : ''} gap-6 lg:gap-8`}>
+            {/* Left Side: Links Section */}
+            <motion.div variants={itemVariants} className="space-y-6">
+              {links.length === 0 ? (
                 <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ type: "spring", stiffness: 200, damping: 15 }}
-                  className="mb-6"
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-12 md:p-16 text-center"
                 >
-                  <FaLink className="text-6xl md:text-8xl text-gray-400 dark:text-gray-600 mx-auto" />
-                </motion.div>
-                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4">
-                  No Links Yet
-                </h2>
-                <p className="text-gray-700 dark:text-gray-400 text-lg mb-8 max-w-md mx-auto">
-                  Get started by creating your first personalized link. Click
-                  the button above to create a new bridge!
-                </p>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={handleCreateNewBridge}
-                  className="bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 text-white font-bold py-4 px-8 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 flex items-center gap-3 mx-auto"
-                >
-                  <FaRocket className="text-xl" />
-                  Create Your First Link
-                </motion.button>
-              </motion.div>
-            ) : (
-              <AnimatePresence>
-                {links.map((link, index) => (
                   <motion.div
-                    key={link._id}
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -30 }}
-                    transition={{ delay: index * 0.1, duration: 0.5 }}
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring", stiffness: 200, damping: 15 }}
+                    className="mb-6"
                   >
-                    <Linkcard sources={link} />
+                    <FaLink className="text-6xl md:text-8xl text-gray-400 dark:text-gray-600 mx-auto" />
                   </motion.div>
-                ))}
-              </AnimatePresence>
+                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4">
+                    No Links Yet
+                  </h2>
+                  <p className="text-gray-700 dark:text-gray-400 text-lg mb-8 max-w-md mx-auto">
+                    Get started by creating your first personalized link. Click
+                    the button above to create a new bridge!
+                  </p>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={handleCreateNewBridge}
+                    className="bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 text-white font-bold py-4 px-8 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 flex items-center gap-3 mx-auto"
+                  >
+                    <FaRocket className="text-xl" />
+                    Create Your First Link
+                  </motion.button>
+                </motion.div>
+              ) : (
+                <AnimatePresence>
+                  {links.map((link, index) => (
+                    <motion.div
+                      key={link._id}
+                      initial={{ opacity: 0, y: 30 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -30 }}
+                      transition={{ delay: index * 0.1, duration: 0.5 }}
+                    >
+                      <Linkcard sources={link} />
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              )}
+            </motion.div>
+
+            {/* Right Side: Template Preview (only if children provided) */}
+            {children && (
+              <motion.div 
+                variants={itemVariants} 
+                className="lg:sticky lg:top-8 h-fit"
+              >
+                <div className="bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-4 md:p-6">
+                  <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-4 text-center lg:text-left">
+                    Live Preview
+                  </h3>
+                  <p className="text-sm text-gray-700 dark:text-gray-400 mb-4 text-center lg:text-left">
+                    See how your LinkHub looks on mobile
+                  </p>
+                  {children}
+                </div>
+              </motion.div>
             )}
-          </motion.div>
+          </div>
 
           {/* Stats Summary */}
           {links.length > 0 && (
