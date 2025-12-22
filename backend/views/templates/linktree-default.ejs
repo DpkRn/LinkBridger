@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="<%=username.toUpperCase()%>'s LinkBridger profile - Connect with all my social media profiles">
-    <link rel="icon" type="image/svg+xml" href="<%=dp.image%>" />
+    <!-- Circular favicon will be set by JavaScript -->
+    <link rel="icon" type="image/png" id="dynamic-favicon" href="/images/panda.png" />
     <title><%=username.toUpperCase()%> - LinkBridger</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -689,11 +690,81 @@
                 });
             });
 
+            // Create circular favicon from profile image
+            function createCircularFavicon(imageUrl) {
+                if (!imageUrl || imageUrl === '' || imageUrl.includes('data:')) {
+                    return; // Skip if no image or already a data URL
+                }
+                
+                const img = new Image();
+                // Try with CORS first
+                img.crossOrigin = 'anonymous';
+                
+                img.onload = function() {
+                    try {
+                        const canvas = document.createElement('canvas');
+                        const size = 32; // Favicon size (32x32 is standard)
+                        canvas.width = size;
+                        canvas.height = size;
+                        const ctx = canvas.getContext('2d');
+                        
+                        // Create circular clipping path
+                        ctx.beginPath();
+                        ctx.arc(size / 2, size / 2, size / 2, 0, 2 * Math.PI);
+                        ctx.clip();
+                        
+                        // Draw image centered and scaled to fit
+                        const imgSize = Math.min(img.width, img.height);
+                        const sx = (img.width - imgSize) / 2;
+                        const sy = (img.height - imgSize) / 2;
+                        ctx.drawImage(img, sx, sy, imgSize, imgSize, 0, 0, size, size);
+                        
+                        // Convert to data URL and set as favicon
+                        const dataUrl = canvas.toDataURL('image/png');
+                        const favicon = document.getElementById('dynamic-favicon');
+                        if (favicon) {
+                            favicon.href = dataUrl;
+                        } else {
+                            // Create new favicon link if it doesn't exist
+                            const link = document.createElement('link');
+                            link.id = 'dynamic-favicon';
+                            link.rel = 'icon';
+                            link.type = 'image/png';
+                            link.href = dataUrl;
+                            document.head.appendChild(link);
+                        }
+                    } catch (e) {
+                        console.log('Error creating circular favicon:', e);
+                    }
+                };
+                
+                img.onerror = function() {
+                    // If CORS fails, try without CORS (may work for same-origin images)
+                    if (img.crossOrigin === 'anonymous') {
+                        const img2 = new Image();
+                        img2.onload = img.onload;
+                        img2.onerror = function() {
+                            // If image fails to load, keep default favicon
+                            console.log('Failed to load profile image for favicon');
+                        };
+                        img2.src = imageUrl;
+                    }
+                };
+                
+                img.src = imageUrl;
+            }
+
             // Animate profile pic on load
             window.addEventListener('load', () => {
                 const profilePic = document.querySelector('.profile-pic');
                 if (profilePic) {
                     profilePic.style.animation = 'fadeInScale 0.8s ease-out';
+                    
+                    // Create circular favicon from profile image
+                    const profileImageUrl = profilePic.src;
+                    if (profileImageUrl && profileImageUrl !== window.location.href) {
+                        createCircularFavicon(profileImageUrl);
+                    }
                 }
                 
                 // Animate links with stagger

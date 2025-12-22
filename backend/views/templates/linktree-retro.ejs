@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="<%=username.toUpperCase()%>'s LinkBridger profile">
-    <link rel="icon" type="image/svg+xml" href="<%=dp.image%>" />
+    <!-- Circular favicon will be set by JavaScript -->
+    <link rel="icon" type="image/png" id="dynamic-favicon" href="/images/panda.png" />
     <title><%=username.toUpperCase()%> - LinkBridger</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
     <style>
@@ -330,6 +331,61 @@
                 const svg = encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="140" height="140"><rect width="140" height="140" fill="#0a0a0a"/><rect x="10" y="10" width="120" height="120" fill="none" stroke="#0f0" stroke-width="4"/><text x="50%" y="50%" text-anchor="middle" dy=".3em" font-size="50" fill="#0f0" font-weight="bold" font-family="monospace">${initial}</text></svg>`);
                 img.src = 'data:image/svg+xml,' + svg;
             };
+
+            // Create circular favicon from profile image
+            function createCircularFavicon(imageUrl) {
+                if (!imageUrl || imageUrl === '' || imageUrl.includes('data:')) {
+                    return;
+                }
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                img.onload = function() {
+                    try {
+                        const canvas = document.createElement('canvas');
+                        const size = 32;
+                        canvas.width = size;
+                        canvas.height = size;
+                        const ctx = canvas.getContext('2d');
+                        ctx.beginPath();
+                        ctx.arc(size / 2, size / 2, size / 2, 0, 2 * Math.PI);
+                        ctx.clip();
+                        const imgSize = Math.min(img.width, img.height);
+                        const sx = (img.width - imgSize) / 2;
+                        const sy = (img.height - imgSize) / 2;
+                        ctx.drawImage(img, sx, sy, imgSize, imgSize, 0, 0, size, size);
+                        const dataUrl = canvas.toDataURL('image/png');
+                        const favicon = document.getElementById('dynamic-favicon');
+                        if (favicon) {
+                            favicon.href = dataUrl;
+                        } else {
+                            const link = document.createElement('link');
+                            link.id = 'dynamic-favicon';
+                            link.rel = 'icon';
+                            link.type = 'image/png';
+                            link.href = dataUrl;
+                            document.head.appendChild(link);
+                        }
+                    } catch (e) {
+                        console.log('Error creating circular favicon:', e);
+                    }
+                };
+                img.onerror = function() {
+                    if (img.crossOrigin === 'anonymous') {
+                        const img2 = new Image();
+                        img2.onload = img.onload;
+                        img2.onerror = function() {};
+                        img2.src = imageUrl;
+                    }
+                };
+                img.src = imageUrl;
+            }
+
+            window.addEventListener('load', () => {
+                const profilePic = document.querySelector('.profile-pic');
+                if (profilePic && profilePic.src && profilePic.src !== window.location.href) {
+                    createCircularFavicon(profilePic.src);
+                }
+            });
         })();
     </script>
 </body>
