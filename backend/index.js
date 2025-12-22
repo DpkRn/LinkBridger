@@ -48,7 +48,6 @@ const allowedOrigins = [
   'http://localhost:8080'
 ];
 
-console.log("tier=",process.env.TIER)
 
 app.use(cors({
   origin: function (origin, callback) {
@@ -212,7 +211,20 @@ app.get('/:username/:source',extractInfo, async (req, res) => {
   await Link.updateOne({username,source},{$set:{clicked:clicked+1,notSeen:notSeen+1}})
 
   const deviceDetails=req.details
-  sendVisitEmail(email,username,name,deviceDetails,source)
+  
+  // Check if email notification is enabled for link clicks
+  try {
+    const settings = await UserSettings.getUserSettings(username);
+    if (settings && settings.shouldEmailOnClick()) {
+      sendVisitEmail(email,username,name,deviceDetails,source).catch(err => {
+        console.error(`Failed to send visit email to ${username}:`, err);
+      });
+    }
+  } catch (err) {
+    console.error(`Error checking notification settings for ${username}:`, err);
+    // Don't send email if there's an error checking settings
+  }
+  
   return res.redirect(307,destination)
 })
 
@@ -238,7 +250,19 @@ app.get('/:username',extractInfo, async (req, res) => {
   }
   const {email,name}=info
   const deviceDetails=req.details
-  sendVisitEmail(email,username,name,deviceDetails,"LinkHub")
+  
+  // Check if email notification is enabled for profile views
+  try {
+    const settings = await UserSettings.getUserSettings(username);
+    if (settings && settings.shouldEmailOnProfileView()) {
+      sendVisitEmail(email,username,name,deviceDetails,"LinkHub").catch(err => {
+        console.error(`Failed to send profile view email to ${username}:`, err);
+      });
+    }
+  } catch (err) {
+    console.error(`Error checking notification settings for ${username}:`, err);
+    // Don't send email if there's an error checking settings
+  }
 
   if(tree&&dp){
     // Get user settings to determine template

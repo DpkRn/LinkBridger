@@ -150,6 +150,36 @@ userSettingsSchema.methods.isSearchable = function() {
            !this.deletedAt;
 };
 
+// Method to check if email notification should be sent on new click
+userSettingsSchema.methods.shouldEmailOnClick = function() {
+    return this.notifications && 
+           this.notifications.emailOnNewClick &&
+           !this.deletedAt;
+};
+
+// Method to check if email notification should be sent on profile view
+userSettingsSchema.methods.shouldEmailOnProfileView = function() {
+    return this.notifications && 
+           this.notifications.emailOnProfileView &&
+           !this.deletedAt;
+};
+
+// Method to check if weekly report notifications are enabled
+userSettingsSchema.methods.shouldSendWeeklyReport = function() {
+    return this.notifications && 
+           this.notifications.weeklyReport &&
+           !this.deletedAt;
+};
+
+// Method to check if any email notifications are enabled
+userSettingsSchema.methods.hasEmailNotificationsEnabled = function() {
+    return this.notifications && 
+           (this.notifications.emailOnNewClick || 
+            this.notifications.emailOnProfileView || 
+            this.notifications.weeklyReport) &&
+           !this.deletedAt;
+};
+
 // Static method to get settings for a user
 userSettingsSchema.statics.getUserSettings = async function(userIdOrUsername, userData = null) {
     let query;
