@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import { motion } from 'framer-motion'
-import { FaEye, FaExternalLinkAlt, FaSpinner, FaSync, FaChevronDown } from 'react-icons/fa'
+import { FaEye, FaExternalLinkAlt, FaSpinner, FaSync, FaChevronDown, FaDesktop, FaMobileAlt } from 'react-icons/fa'
 import api from '../../utils/api'
 
 const TemplatePreview = () => {
   const { username } = useSelector((store) => store.admin.user);
   const [template, setTemplate] = useState('default');
+  const [device, setDevice] = useState('desktop'); // 'desktop' or 'phone'
   const [availableTemplates, setAvailableTemplates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingTemplates, setLoadingTemplates] = useState(true);
@@ -14,6 +15,7 @@ const TemplatePreview = () => {
   const [refreshKey, setRefreshKey] = useState(0);
   const [iframeError, setIframeError] = useState(false);
   const [showTemplateDropdown, setShowTemplateDropdown] = useState(false);
+  const [showDeviceDropdown, setShowDeviceDropdown] = useState(false);
   const iframeRef = useRef(null);
 
   // Fetch available templates
@@ -79,11 +81,14 @@ const TemplatePreview = () => {
     loadTemplate();
   }, [username]);
 
-  // Close dropdown when clicking outside
+  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (showTemplateDropdown && !event.target.closest('.template-dropdown-container')) {
         setShowTemplateDropdown(false);
+      }
+      if (showDeviceDropdown && !event.target.closest('.device-dropdown-container')) {
+        setShowDeviceDropdown(false);
       }
     };
 
@@ -91,7 +96,7 @@ const TemplatePreview = () => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [showTemplateDropdown]);
+  }, [showTemplateDropdown, showDeviceDropdown]);
 
   // Add timeout to detect if iframe fails to load
   useEffect(() => {
@@ -141,6 +146,11 @@ const TemplatePreview = () => {
     updatePreviewUrl(selectedTemplate);
   };
 
+  const handleDeviceChange = (selectedDevice) => {
+    setDevice(selectedDevice);
+    setShowDeviceDropdown(false);
+  };
+
   if (!username) return null;
 
   return (
@@ -167,6 +177,52 @@ const TemplatePreview = () => {
             </div>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
+            {/* Device Selector Dropdown */}
+            <div className="relative device-dropdown-container">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setShowDeviceDropdown(!showDeviceDropdown)}
+                className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl transition-colors text-sm font-semibold"
+                title="Select device view"
+              >
+                {device === 'desktop' ? (
+                  <FaDesktop className="text-sm" />
+                ) : (
+                  <FaMobileAlt className="text-sm" />
+                )}
+                <span className="capitalize">{device}</span>
+                <FaChevronDown className={`text-xs transition-transform ${showDeviceDropdown ? 'rotate-180' : ''}`} />
+              </motion.button>
+              
+              {showDeviceDropdown && (
+                <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl shadow-2xl z-50">
+                  <button
+                    onClick={() => handleDeviceChange('desktop')}
+                    className={`w-full text-left px-4 py-2 text-sm hover:bg-purple-50 dark:hover:bg-purple-900/30 transition-colors flex items-center gap-2 ${
+                      device === 'desktop'
+                        ? 'bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 font-semibold'
+                        : 'text-gray-700 dark:text-gray-300'
+                    }`}
+                  >
+                    <FaDesktop className="text-sm" />
+                    <span>Desktop</span>
+                  </button>
+                  <button
+                    onClick={() => handleDeviceChange('phone')}
+                    className={`w-full text-left px-4 py-2 text-sm hover:bg-purple-50 dark:hover:bg-purple-900/30 transition-colors flex items-center gap-2 ${
+                      device === 'phone'
+                        ? 'bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 font-semibold'
+                        : 'text-gray-700 dark:text-gray-300'
+                    }`}
+                  >
+                    <FaMobileAlt className="text-sm" />
+                    <span>Phone</span>
+                  </button>
+                </div>
+              )}
+            </div>
+
             {/* Template Selector Dropdown */}
             <div className="relative template-dropdown-container">
               <motion.button
@@ -239,68 +295,153 @@ const TemplatePreview = () => {
             <FaSpinner className="animate-spin text-purple-600 text-3xl" />
           </div>
         ) : (
-          <div className="relative w-full bg-gray-100 dark:bg-gray-800 rounded-2xl overflow-hidden border-2 border-gray-200 dark:border-gray-700 shadow-inner">
-            {/* Browser Chrome */}
-            <div className="absolute top-0 left-0 right-0 h-10 bg-gray-200 dark:bg-gray-700 flex items-center px-4 gap-2 z-10 border-b border-gray-300 dark:border-gray-600">
-              <div className="w-3 h-3 rounded-full bg-red-500"></div>
-              <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-              <div className="w-3 h-3 rounded-full bg-green-500"></div>
-              <div className="ml-4 flex-1 bg-white dark:bg-gray-800 rounded px-3 py-1 text-xs text-gray-600 dark:text-gray-400 truncate">
-                {previewUrl.split('?')[0]}
-              </div>
-            </div>
-            {/* Iframe Container */}
-            <div className="relative w-full h-[600px] md:h-[700px] overflow-auto mt-10">
-              {iframeError ? (
-                <div className="flex flex-col items-center justify-center h-full bg-gray-100 dark:bg-gray-800 rounded-2xl p-8">
-                  <FaEye className="text-4xl text-gray-400 mb-4" />
-                  <p className="text-gray-600 dark:text-gray-400 text-center mb-4">
-                    Unable to load preview. This might happen if:
-                  </p>
-                  <ul className="text-sm text-gray-500 dark:text-gray-500 text-center space-y-2 mb-6">
-                    <li>• Your profile doesn't have any public links yet</li>
-                    <li>• Your profile information is not set up</li>
-                    <li>• The page is still loading</li>
-                  </ul>
-                  <a
-                    href={previewUrl.split('?')[0]}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl transition-colors text-sm font-semibold"
-                  >
-                    Open in New Tab
-                  </a>
+          <div className={`relative ${device === 'phone' ? 'flex justify-center' : 'w-full'} bg-gray-100 dark:bg-gray-800 rounded-2xl overflow-hidden border-2 border-gray-200 dark:border-gray-700 shadow-inner`}>
+            {/* Device Frame - Phone */}
+            {device === 'phone' && (
+              <div 
+                className="relative mx-auto"
+                style={{ width: '375px', maxWidth: '375px' }}
+              >
+                {/* Phone Frame */}
+                <div className="relative bg-gray-900 dark:bg-gray-950 rounded-[2.5rem] p-2 shadow-2xl">
+                  {/* Phone Notch (optional) */}
+                  <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-32 h-6 bg-gray-900 dark:bg-gray-950 rounded-b-2xl z-20"></div>
+                  
+                  {/* Phone Screen */}
+                  <div className="relative bg-white dark:bg-gray-800 rounded-[2rem] overflow-hidden">
+                    {/* Status Bar */}
+                    <div className="absolute top-0 left-0 right-0 h-6 bg-gray-900 dark:bg-gray-900 flex items-center justify-between px-4 text-white text-xs z-10">
+                      <span>9:41</span>
+                      <div className="flex items-center gap-1">
+                        <div className="w-4 h-2 border border-white rounded-sm"></div>
+                        <div className="w-1 h-1 rounded-full bg-white"></div>
+                      </div>
+                    </div>
+                    
+                    {/* Browser Chrome for Phone */}
+                    <div className="absolute top-6 left-0 right-0 h-12 bg-gray-200 dark:bg-gray-700 flex items-center px-3 gap-2 z-10 border-b border-gray-300 dark:border-gray-600">
+                      <div className="flex-1 bg-white dark:bg-gray-800 rounded px-2 py-1 text-xs text-gray-600 dark:text-gray-400 truncate">
+                        {previewUrl.split('?')[0]}
+                      </div>
+                    </div>
+                    
+                    {/* Iframe Container for Phone */}
+                    <div className="relative w-full h-[600px] md:h-[700px] overflow-auto mt-[3rem]">
+                      {iframeError ? (
+                        <div className="flex flex-col items-center justify-center h-full bg-gray-100 dark:bg-gray-800 rounded-2xl p-8">
+                          <FaEye className="text-4xl text-gray-400 mb-4" />
+                          <p className="text-gray-600 dark:text-gray-400 text-center mb-4 text-sm">
+                            Unable to load preview. This might happen if:
+                          </p>
+                          <ul className="text-xs text-gray-500 dark:text-gray-500 text-center space-y-2 mb-6">
+                            <li>• Your profile doesn't have any public links yet</li>
+                            <li>• Your profile information is not set up</li>
+                            <li>• The page is still loading</li>
+                          </ul>
+                          <a
+                            href={previewUrl.split('?')[0]}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl transition-colors text-xs font-semibold"
+                          >
+                            Open in New Tab
+                          </a>
+                        </div>
+                      ) : (
+                        <iframe
+                          key={refreshKey}
+                          ref={iframeRef}
+                          src={previewUrl}
+                          className="w-full h-full border-0"
+                          title="LinkHub Preview"
+                          loading="lazy"
+                          sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+                          onError={() => {
+                            console.error("Iframe load error");
+                            setIframeError(true);
+                          }}
+                          onLoad={() => {
+                            setIframeError(false);
+                            try {
+                              const iframe = iframeRef.current;
+                              if (iframe && iframe.contentWindow) {
+                                console.log("Iframe loaded successfully");
+                              }
+                            } catch (e) {
+                              console.log("Cross-origin iframe (expected)");
+                            }
+                          }}
+                        />
+                      )}
+                    </div>
+                  </div>
                 </div>
-              ) : (
-                <iframe
-                  key={refreshKey}
-                  ref={iframeRef}
-                  src={previewUrl}
-                  className="w-full h-full border-0"
-                  title="LinkHub Preview"
-                  loading="lazy"
-                  sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
-                  onError={() => {
-                    console.error("Iframe load error");
-                    setIframeError(true);
-                  }}
-                  onLoad={() => {
-                    setIframeError(false);
-                    // Check if iframe content is accessible
-                    try {
-                      const iframe = iframeRef.current;
-                      if (iframe && iframe.contentWindow) {
-                        // If we can access contentWindow, it loaded successfully
-                        console.log("Iframe loaded successfully");
-                      }
-                    } catch (e) {
-                      // Cross-origin restrictions - this is normal, but iframe should still work
-                      console.log("Cross-origin iframe (expected)");
-                    }
-                  }}
-                />
-              )}
-            </div>
+              </div>
+            )}
+
+            {/* Desktop View */}
+            {device === 'desktop' && (
+              <>
+                {/* Browser Chrome */}
+                <div className="absolute top-0 left-0 right-0 h-10 bg-gray-200 dark:bg-gray-700 flex items-center px-4 gap-2 z-10 border-b border-gray-300 dark:border-gray-600">
+                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                  <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                  <div className="ml-4 flex-1 bg-white dark:bg-gray-800 rounded px-3 py-1 text-xs text-gray-600 dark:text-gray-400 truncate">
+                    {previewUrl.split('?')[0]}
+                  </div>
+                </div>
+                {/* Iframe Container */}
+                <div className="relative w-full h-[600px] md:h-[700px] overflow-auto mt-10">
+                  {iframeError ? (
+                    <div className="flex flex-col items-center justify-center h-full bg-gray-100 dark:bg-gray-800 rounded-2xl p-8">
+                      <FaEye className="text-4xl text-gray-400 mb-4" />
+                      <p className="text-gray-600 dark:text-gray-400 text-center mb-4">
+                        Unable to load preview. This might happen if:
+                      </p>
+                      <ul className="text-sm text-gray-500 dark:text-gray-500 text-center space-y-2 mb-6">
+                        <li>• Your profile doesn't have any public links yet</li>
+                        <li>• Your profile information is not set up</li>
+                        <li>• The page is still loading</li>
+                      </ul>
+                      <a
+                        href={previewUrl.split('?')[0]}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl transition-colors text-sm font-semibold"
+                      >
+                        Open in New Tab
+                      </a>
+                    </div>
+                  ) : (
+                    <iframe
+                      key={refreshKey}
+                      ref={iframeRef}
+                      src={previewUrl}
+                      className="w-full h-full border-0"
+                      title="LinkHub Preview"
+                      loading="lazy"
+                      sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+                      onError={() => {
+                        console.error("Iframe load error");
+                        setIframeError(true);
+                      }}
+                      onLoad={() => {
+                        setIframeError(false);
+                        try {
+                          const iframe = iframeRef.current;
+                          if (iframe && iframe.contentWindow) {
+                            console.log("Iframe loaded successfully");
+                          }
+                        } catch (e) {
+                          console.log("Cross-origin iframe (expected)");
+                        }
+                      }}
+                    />
+                  )}
+                </div>
+              </>
+            )}
           </div>
         )}
       </div>
