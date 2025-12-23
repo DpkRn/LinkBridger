@@ -505,8 +505,8 @@ const AuthPage = () => {
                                 toast.error("Space not allowed");
                                 return;
                               }
-                              checkAvailablity(e.target.value);
-                              setUsername(e.target.value);
+                              checkAvailablity(e.target.value.toLowerCase());
+                              setUsername(e.target.value.toLowerCase());
                             }}
                             className="w-full pl-12 pr-12 py-4 bg-white/10 dark:bg-gray-800/50 border border-white/20 dark:border-gray-700 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 backdrop-blur-sm"
                           />

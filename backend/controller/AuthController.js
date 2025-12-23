@@ -40,7 +40,7 @@ const signUpController = async (req, res, next) => {
     const user = await User.create({
       email,
       password: hashedPassword,
-      username,
+      username:username.toLowerCase(),
     });
     const userinfo=await Profile.create({username,image:"/images/panda.png"});
     if (user&&userinfo) {
