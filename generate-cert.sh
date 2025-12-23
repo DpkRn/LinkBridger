@@ -1,29 +1,66 @@
 #!/bin/bash
 
 # Script to generate SSL certificates for clickly.cv
-# Supports both regular and wildcard certificates
-# Usage: ./generate-cert.sh [--wildcard]
+# 
+# IMPORTANT: For subdomain routing (e.g., dpkrn.clickly.cv), you MUST use a wildcard certificate.
+# This script generates a wildcard certificate by default to support all dynamic subdomains.
+#
+# Usage: 
+#   ./generate-cert.sh              # Generate wildcard certificate (recommended for subdomains)
+#   ./generate-cert.sh --standard    # Generate standard certificate (main domain only, no subdomains)
 
 CERT_PATH="/etc/letsencrypt/live/clickly.cv/fullchain.pem"
 WILDCERT_PATH="/etc/letsencrypt/live/clickly.cv-0001/fullchain.pem"
 EMAIL="your-email@example.com"  # Change this to your email
-USE_WILDCARD=false
+USE_WILDCARD=true  # Default to wildcard for subdomain support
 
-# Check for wildcard flag
-if [[ "$1" == "--wildcard" ]]; then
-    USE_WILDCARD=true
+# Check for standard flag (non-wildcard)
+if [[ "$1" == "--standard" ]]; then
+    USE_WILDCARD=false
+    echo "⚠️  WARNING: Standard certificate will NOT work for subdomains!"
+    echo "   Subdomains like dpkrn.clickly.cv will show SSL warnings."
+    echo "   Use wildcard certificate (default) for subdomain support."
+    echo ""
+    read -p "Continue with standard certificate? (y/n) " -n 1 -r
+    echo ""
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        echo "Aborted. Use ./generate-cert.sh (without --standard) for wildcard certificate."
+        exit 0
+    fi
 fi
 
 echo "=========================================="
 echo "SSL Certificate Generation Script"
 echo "=========================================="
+echo ""
 
 # Check if certificate already exists
 if [ "$USE_WILDCARD" = true ]; then
-    CERT_PATH="$WILDCERT_PATH"
+    # Check multiple possible locations for wildcard cert
     if [ -f "$CERT_PATH" ]; then
-        echo "✓ Wildcard certificate already exists at $CERT_PATH"
-        echo "Certificate expires on: $(openssl x509 -enddate -noout -in $CERT_PATH 2>/dev/null | cut -d= -f2)"
+        # Verify it's actually a wildcard cert
+        WILDCARD_CHECK=$(openssl x509 -in "$CERT_PATH" -text -noout 2>/dev/null | grep -o "*.clickly.cv" || echo "")
+        if [ -n "$WILDCARD_CHECK" ]; then
+            echo "✓ Wildcard certificate already exists at $CERT_PATH"
+            echo "Certificate expires on: $(openssl x509 -enddate -noout -in $CERT_PATH 2>/dev/null | cut -d= -f2)"
+            echo ""
+            echo "Certificate covers:"
+            openssl x509 -in "$CERT_PATH" -text -noout 2>/dev/null | grep -A 1 "Subject Alternative Name" || echo "  *.clickly.cv, clickly.cv"
+            exit 0
+        else
+            echo "⚠️  Certificate exists but does NOT include wildcard (*.clickly.cv)"
+            echo "   This certificate will NOT work for subdomains!"
+            echo ""
+            read -p "Do you want to generate a new wildcard certificate? (y/n) " -n 1 -r
+            echo ""
+            if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+                echo "Aborted."
+                exit 0
+            fi
+        fi
+    elif [ -f "$WILDCERT_PATH" ]; then
+        echo "✓ Wildcard certificate already exists at $WILDCERT_PATH"
+        echo "Certificate expires on: $(openssl x509 -enddate -noout -in $WILDCERT_PATH 2>/dev/null | cut -d= -f2)"
         exit 0
     fi
 else
@@ -31,13 +68,19 @@ else
         echo "✓ Certificate already exists at $CERT_PATH"
         echo "Certificate expires on: $(openssl x509 -enddate -noout -in $CERT_PATH 2>/dev/null | cut -d= -f2)"
         echo ""
-        echo "Note: For subdomain support, you may need a wildcard certificate."
-        echo "Run with --wildcard flag to generate wildcard certificate."
+        echo "⚠️  Note: Standard certificate does NOT cover subdomains (*.clickly.cv)"
+        echo "   Subdomains will show SSL warnings."
+        echo "   Run without --standard flag to generate wildcard certificate."
         exit 0
     fi
 fi
 
-echo "Certificate not found. Generating new certificate..."
+if [ "$USE_WILDCARD" = true ]; then
+    echo "Generating WILDCARD certificate for subdomain support..."
+else
+    echo "Generating standard certificate (main domain only)..."
+fi
+echo ""
 
 # Install certbot if not installed
 if ! command -v certbot &> /dev/null; then
@@ -58,19 +101,35 @@ sudo mkdir -p /etc/letsencrypt
 if [ "$USE_WILDCARD" = true ]; then
     echo ""
     echo "=========================================="
-    echo "Generating WILDCARD certificate"
-    echo "This requires DNS-01 challenge (manual DNS verification)"
+    echo "Generating WILDCARD Certificate"
+    echo "This will cover: *.clickly.cv and clickly.cv"
     echo "=========================================="
     echo ""
-    echo "You will need to add a TXT record to your DNS:"
-    echo "  Name: _acme-challenge.clickly.cv"
-    echo "  Value: (will be provided by certbot)"
+    echo "This certificate will work for ALL dynamic subdomains:"
+    echo "  ✓ dpkrn.clickly.cv"
+    echo "  ✓ username.clickly.cv (any username)"
+    echo "  ✓ clickly.cv (main domain)"
     echo ""
-    echo "Press Enter when ready to continue..."
-    read
+    echo "This requires DNS-01 challenge (manual DNS verification)"
+    echo ""
+    echo "You will need to add a TXT record to your DNS:"
+    echo "  Name: _acme-challenge"
+    echo "  Value: (will be provided by certbot)"
+    echo "  TTL: Automatic (or 300)"
+    echo ""
+    echo "DNS Provider Instructions:"
+    echo "  - Namecheap: Advanced DNS → Add TXT Record"
+    echo "  - GoDaddy: DNS Management → Add TXT Record"
+    echo "  - Cloudflare: DNS → Add Record (Type: TXT)"
+    echo ""
+    read -p "Press Enter when ready to continue..."
+    echo ""
     
     # Generate wildcard certificate using DNS-01 challenge
-    echo "Generating wildcard certificate for *.clickly.cv and clickly.cv..."
+    echo "Starting certificate generation..."
+    echo "Certbot will prompt you to add a DNS TXT record."
+    echo ""
+    
     sudo certbot certonly --manual \
         --preferred-challenges dns \
         --agree-tos \
@@ -80,6 +139,15 @@ if [ "$USE_WILDCARD" = true ]; then
         --server https://acme-v02.api.letsencrypt.org/directory
     
     # Check for wildcard cert in different possible locations
+    # Certbot may store it in different locations depending on existing certs
+    if [ -f "/etc/letsencrypt/live/clickly.cv/fullchain.pem" ]; then
+        # Verify it's actually a wildcard cert
+        WILDCARD_CHECK=$(sudo openssl x509 -in "/etc/letsencrypt/live/clickly.cv/fullchain.pem" -text -noout 2>/dev/null | grep -o "*.clickly.cv" || echo "")
+        if [ -n "$WILDCARD_CHECK" ]; then
+            CERT_PATH="/etc/letsencrypt/live/clickly.cv/fullchain.pem"
+        fi
+    fi
+    
     if [ -f "$WILDCERT_PATH" ]; then
         CERT_PATH="$WILDCERT_PATH"
     elif [ -f "/etc/letsencrypt/live/clickly.cv-0002/fullchain.pem" ]; then
@@ -118,19 +186,42 @@ if [ -f "$CERT_PATH" ]; then
     openssl x509 -in "$CERT_PATH" -noout -subject -issuer 2>/dev/null || true
     echo ""
     
+    if [ "$USE_WILDCARD" = true ]; then
+        echo "Certificate covers:"
+        openssl x509 -in "$CERT_PATH" -text -noout 2>/dev/null | grep -A 1 "Subject Alternative Name" || echo "  *.clickly.cv, clickly.cv"
+        echo ""
+        echo "✅ This wildcard certificate will work for:"
+        echo "   • Main domain: https://clickly.cv"
+        echo "   • All subdomains: https://username.clickly.cv (any username)"
+        echo "   • Examples: https://dpkrn.clickly.cv, https://john.clickly.cv, etc."
+    else
+        echo "⚠️  This certificate only covers:"
+        echo "   • Main domain: https://clickly.cv"
+        echo "   • www: https://www.clickly.cv"
+        echo "   • Does NOT cover subdomains (*.clickly.cv)"
+    fi
+    echo ""
+    
     # Restart nginx
     echo "Restarting nginx container..."
-    docker-compose up -d nginx
+    cd "$(dirname "$0")"
+    docker-compose up -d nginx 2>/dev/null || systemctl restart nginx 2>/dev/null || true
     
     echo ""
     echo "✓ Setup complete! Your site should now work with HTTPS."
-    if [ "$USE_WILDCARD" = false ]; then
+    if [ "$USE_WILDCARD" = true ]; then
         echo ""
-        echo "⚠️  Note: This certificate does NOT cover subdomains (*.clickly.cv)"
-        echo "   For subdomain support, run: ./generate-cert.sh --wildcard"
+        echo "✅ Wildcard certificate installed! All dynamic subdomains are now secured."
+        echo ""
+        echo "Next steps:"
+        echo "  1. Test main domain: curl -I https://clickly.cv"
+        echo "  2. Test subdomain: curl -I https://dpkrn.clickly.cv"
+        echo "  3. Verify SSL: openssl s_client -connect dpkrn.clickly.cv:443 -servername dpkrn.clickly.cv"
     else
         echo ""
-        echo "✓ Wildcard certificate installed! All subdomains are now covered."
+        echo "⚠️  WARNING: This certificate does NOT cover subdomains!"
+        echo "   Subdomains will show SSL warnings."
+        echo "   Run without --standard flag to generate wildcard certificate."
     fi
 else
     echo ""
@@ -149,9 +240,18 @@ else
     exit 1
 fi
 
-echo ""
-echo "Next steps:"
-echo "  1. Update nginx.conf if using wildcard cert with different path"
-echo "  2. Test SSL: openssl s_client -connect clickly.cv:443 -servername clickly.cv"
-echo "  3. Set up auto-renewal: sudo certbot renew --dry-run"
+if [ "$USE_WILDCARD" = true ]; then
+    echo ""
+    echo "Additional notes:"
+    echo "  • This wildcard certificate works for ALL dynamic subdomains automatically"
+    echo "  • No need to generate separate certificates for each username"
+    echo "  • Certificate auto-renewal may require manual DNS verification"
+    echo "  • Set up auto-renewal: sudo certbot renew --dry-run"
+else
+    echo ""
+    echo "Additional notes:"
+    echo "  • Update nginx.conf if using cert with different path"
+    echo "  • Test SSL: openssl s_client -connect clickly.cv:443 -servername clickly.cv"
+    echo "  • Set up auto-renewal: sudo certbot renew --dry-run"
+fi
 
