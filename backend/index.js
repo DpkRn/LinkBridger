@@ -42,6 +42,7 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Allowed origins for CORS
 const allowedOrigins = [
   'https://clickly.cv',
   'https://www.clickly.cv',
@@ -50,30 +51,52 @@ const allowedOrigins = [
   'http://localhost:8080'
 ];
 
-
+// CORS configuration with subdomain support
 app.use(cors({
   origin: function (origin, callback) {
-    if (!origin) return callback(null, true);
+    // Allow requests with no origin (like mobile apps, Postman, etc.)
+    if (!origin) {
+      return callback(null, true);
+    }
     
-    // Check if origin is in allowed list
+    // Check if origin is in explicit allowed list
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
     
-    // Allow all subdomains of clickly.cv
+    // Allow all subdomains of clickly.cv (for custom user domains)
+    // Examples: https://dpkrn.clickly.cv, https://username.clickly.cv
     try {
       const url = new URL(origin);
-      if (url.hostname.endsWith('.clickly.cv') || url.hostname === 'clickly.cv') {
+      const hostname = url.hostname.toLowerCase();
+      
+      // Allow exact match for clickly.cv
+      if (hostname === 'clickly.cv') {
         return callback(null, true);
       }
+      
+      // Allow all subdomains (*.clickly.cv)
+      // Supports both single-level (dpkrn.clickly.cv) and multi-level (api.dpkrn.clickly.cv)
+      if (hostname.endsWith('.clickly.cv')) {
+        const subdomain = hostname.replace('.clickly.cv', '');
+        // Subdomain should be non-empty (allows multi-level subdomains)
+        if (subdomain && subdomain.length > 0) {
+          return callback(null, true);
+        }
+      }
     } catch (e) {
-      // Invalid URL, reject
+      // Invalid URL format, reject
+      console.warn('Invalid CORS origin format:', origin);
     }
     
-    return callback(new Error('Not allowed by CORS'));
+    // Reject all other origins
+    return callback(new Error(`CORS: Origin ${origin} is not allowed`));
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+  exposedHeaders: ['Content-Length', 'Content-Type'],
+  maxAge: 86400 // 24 hours
 }));
 
 app.options('*', cors());
