@@ -7,7 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added - 2024-12-XX
+### Added - 2024-12-XX (Latest)
+
+- **Custom Subdomain Routing**: Complete subdomain-based routing system
+  - Subdomain middleware (`resolveUsername`) to extract username from subdomain
+  - Root route handler for subdomain linkhub display (`username.clickly.cv/`)
+  - Subdomain source route handler (`username.clickly.cv/platform`)
+  - Main domain redirects to frontend (`clickly.cv` → `clickly.cv/app/`)
+  - Separate nginx server blocks for main domain and wildcard subdomains
+  - EJS helper function (`getUserLinkUrl`) for subdomain URL generation in templates
+  - Updated all 13 EJS templates to use subdomain format
+  - Environment-aware URL generation (dev: `username.localhost:8080`, prod: `username.clickly.cv`)
+  - CORS configuration updated to allow all subdomains
+  - Password-protected links work correctly with subdomain routing
+  - LinkHub generation updated for subdomain format in error messages
+
+### Added - 2024-12-XX (Previous)
 
 - **Link Model Enhancements**: Added visibility and password fields
   - Added `visibility` field with enum: 'public', 'unlisted', 'private'

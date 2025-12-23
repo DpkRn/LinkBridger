@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added - 2024-12-XX (Latest)
 
+- **Custom Subdomain Routing**: Revolutionary subdomain-based link format
+  - Each user now gets their own custom subdomain (e.g., `username.clickly.cv`)
+  - Hub link format: `https://username.clickly.cv` (replaces `https://clickly.cv/username`)
+  - Platform links format: `https://username.clickly.cv/platform` (replaces `https://clickly.cv/username/platform`)
+  - Environment-aware URL generation (dev: `username.localhost:8080`, prod: `username.clickly.cv`)
+  - Updated all frontend components to use new subdomain format
+  - Updated utility functions for consistent URL generation across app
+  - All link displays, copy functions, and previews now use subdomain format
+  - Backward compatible - legacy format still works for main domain access
+
+### Added - 2024-12-XX (Previous)
+
 - **Private Link Password Protection**: Complete password protection UI for private links
   - Password modal in Linkcard component for setting private link passwords
   - Password input with confirmation field

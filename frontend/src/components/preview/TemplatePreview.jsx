@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux'
 import { motion } from 'framer-motion'
 import { FaEye, FaExternalLinkAlt, FaSpinner, FaSync, FaChevronDown, FaDesktop, FaMobileAlt } from 'react-icons/fa'
 import api from '../../utils/api'
+import { getUserLinkUrl } from '../../lib/utils'
 
 const TemplatePreview = () => {
   const { username } = useSelector((store) => store.admin.user);
@@ -56,21 +57,16 @@ const TemplatePreview = () => {
           setTemplate(selectedTemplate);
         }
         
-        // Create preview URL using the API baseURL
-        // Extract base URL from api instance (defaults to localhost:8080 or use env)
-        const apiBaseUrl = api.defaults.baseURL || 'http://localhost:8080';
-        // Remove trailing slash if present
-        const baseUrl = apiBaseUrl.replace(/\/$/, '');
-        // Add timestamp to force refresh when needed
-        const url = `${baseUrl}/${username}?preview=${Date.now()}`;
+        // Create preview URL using environment-aware format
+        const baseUrl = getUserLinkUrl(username);
+        const url = `${baseUrl}?preview=${Date.now()}`;
         console.log("Setting preview URL:", url);
         setPreviewUrl(url);
       } catch (error) {
         console.error("Error loading template:", error);
         // Fallback to default preview URL
-        const apiBaseUrl = api.defaults.baseURL || 'http://localhost:8080';
-        const baseUrl = apiBaseUrl.replace(/\/$/, '');
-        const url = `${baseUrl}/${username}?preview=${Date.now()}`;
+        const baseUrl = getUserLinkUrl(username);
+        const url = `${baseUrl}?preview=${Date.now()}`;
         console.log("Setting fallback preview URL:", url);
         setPreviewUrl(url);
       } finally {
@@ -131,9 +127,8 @@ const TemplatePreview = () => {
   };
 
   const updatePreviewUrl = (selectedTemplate) => {
-    const apiBaseUrl = api.defaults.baseURL || 'http://localhost:8080';
-    const baseUrl = apiBaseUrl.replace(/\/$/, '');
-    const newUrl = `${baseUrl}/${username}?template=${selectedTemplate}&preview=${Date.now()}`;
+    const baseUrl = getUserLinkUrl(username);
+    const newUrl = `${baseUrl}?template=${selectedTemplate}&preview=${Date.now()}`;
     setPreviewUrl(newUrl);
     if (iframeRef.current) {
       iframeRef.current.src = newUrl;

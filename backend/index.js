@@ -21,6 +21,7 @@ const { extractInfo } = require('./middleware/deviceInfo')
 const { sendVisitEmail, sendProfileVisitEmail } = require('./lib/mail')
 const { verifyTokenOptional } = require('./middleware/verifyToken')
 const resolveUsername = require('./middleware/resolveUsername')
+const { getUserLinkUrl } = require('./utils')
 const bcryptjs = require('bcryptjs')
 
 
@@ -41,6 +42,9 @@ const db_url=process.env.DATABASE_URL;
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Make helper function available to all EJS templates
+app.locals.getUserLinkUrl = getUserLinkUrl;
 
 // Allowed origins for CORS
 const allowedOrigins = [
@@ -309,7 +313,8 @@ app.get('/:source', resolveUsername, extractInfo, async (req, res) => {
 
   const username = req.params.username;
   const source = req.params.source;
-  const linkHub = `${req.protocol}://${req.get('host')}/`;
+  // Generate linkHub in subdomain format for subdomain requests
+  const linkHub = `Available link: ${req.protocol}://${username}.clickly.cv`;
 
   const doc = await Link.findOne({
     username,

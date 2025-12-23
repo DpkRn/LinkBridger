@@ -1,3 +1,5 @@
+const crypto = require('crypto');
+
 const hashData = (data) => {
     const algorithm = 'aes-256-cbc';
     const secretKey = process.env.ENCRYPTION_KEY || 'default-secret-key-change-in-production-32chars!!';
@@ -27,4 +29,31 @@ const hashData = (data) => {
       return null;
     }
   };
-  module.exports = { hashData, unhashData };
+
+/**
+ * Generate user link URL in subdomain format for EJS templates
+ * @param {string} username - User's username
+ * @param {string} source - Optional source/platform name
+ * @returns {string} Full URL (e.g., https://username.clickly.cv or http://username.localhost:8080)
+ */
+const getUserLinkUrl = (username, source = null) => {
+  if (!username) return '';
+  
+  // Check if we're in production (check NODE_ENV or host)
+  const isProd = process.env.NODE_ENV === 'production' || 
+                 process.env.NODE_ENV === 'prod' ||
+                 (process.env.DOMAIN && process.env.DOMAIN.includes('clickly.cv'));
+  
+  if (isProd) {
+    // Production: Use subdomain format
+    const baseUrl = `https://${username}.clickly.cv`;
+    return source ? `${baseUrl}/${source}` : baseUrl;
+  } else {
+    // Development: Use localhost subdomain format
+    const port = process.env.PORT || '8080';
+    const baseUrl = `http://${username}.localhost:${port}`;
+    return source ? `${baseUrl}/${source}` : baseUrl;
+  }
+};
+
+module.exports = { hashData, unhashData, getUserLinkUrl };

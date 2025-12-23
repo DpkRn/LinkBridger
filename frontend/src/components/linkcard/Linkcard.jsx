@@ -9,6 +9,7 @@ import api from "../../utils/api";
 import { setLinks } from "../../redux/userSlice";
 import { setEditLinkData } from "../../redux/pageSlice";
 import { FcImageFile } from "react-icons/fc";
+import { getUserLinkUrl } from "../../lib/utils";
 
 const Linkcard = ({ sources }) => {
   const linkRef = useRef(null);
@@ -319,7 +320,7 @@ const Linkcard = ({ sources }) => {
                   ref={linkRef}
                   className="break-all font-mono text-base md:text-lg text-white dark:text-gray-200 flex-1 min-w-0"
                 >
-                  {`https://clickly.cv/${username}/${source}`}
+                  {getUserLinkUrl(username, source)}
                 </span>
                 <motion.button
                   whileHover={{ scale: 1.1, rotate: 5 }}

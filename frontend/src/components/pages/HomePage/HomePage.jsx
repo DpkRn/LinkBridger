@@ -175,32 +175,32 @@ const HomePage = () => {
   const exampleLinks = [
     {
       platform: "LinkedIn",
-      url: "https://clickly.cv/dpkrn/linkedin",
+      url: "https://dpkrn.clickly.cv/linkedin",
       color: "from-blue-500 to-cyan-500",
     },
     {
       platform: "GitHub",
-      url: "https://clickly.cv/dpkrn/github",
+      url: "https://dpkrn.clickly.cv/github",
       color: "from-gray-600 to-gray-800",
     },
     {
       platform: "LeetCode",
-      url: "https://clickly.cv/dpkrn/leetcode",
+      url: "https://dpkrn.clickly.cv/leetcode",
       color: "from-orange-500 to-yellow-500",
     },
     {
       platform: "Portfolio",
-      url: "https://clickly.cv/dpkrn/portfolio",
+      url: "https://dpkrn.clickly.cv/portfolio",
       color: "from-purple-500 to-pink-500",
     },
     {
       platform: "Instagram",
-      url: "https://clickly.cv/dpkrn/instagram",
+      url: "https://dpkrn.clickly.cv/instagram",
       color: "from-pink-500 to-rose-500",
     },
     {
       platform: "Codeforces",
-      url: "https://clickly.cv/dpkrn/codeforces",
+      url: "https://dpkrn.clickly.cv/codeforces",
       color: "from-red-500 to-orange-500",
     },
   ];
@@ -284,7 +284,7 @@ const HomePage = () => {
     {
       step: "2",
       title: "Choose a Username",
-      desc: "Pick a username that's easy to remember (e.g., dpkrn). Your link will follow this format: https://clickly.cv/your-username/instagram.",
+      desc: "Pick a username that's easy to remember (e.g., dpkrn). Your link will follow this format: https://your-username.clickly.cv/instagram.",
       icon: FaLink,
     },
     {
@@ -302,7 +302,7 @@ const HomePage = () => {
     {
       step: "5",
       title: "Share the Link",
-      desc: "Copy and share your smart link across various platforms. Share your hub link (https://clickly.cv/yourname) to let visitors see all your profiles in one place.",
+      desc: "Copy and share your smart link across various platforms. Share your hub link (https://yourname.clickly.cv) to let visitors see all your profiles in one place.",
       icon: FaSyncAlt,
     },
     {
@@ -434,14 +434,14 @@ const HomePage = () => {
                     }}
                   >
                     <motion.a
-                      href="https://clickly.cv/dpkrn/"
+                      href="https://dpkrn.clickly.cv/"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-xs md:text-sm lg:text-base font-mono font-bold text-purple-300 dark:text-purple-200 bg-purple-500/20 dark:bg-purple-500/30 px-2 py-1 rounded-lg border border-purple-400/30 hover:bg-purple-500/30 dark:hover:bg-purple-500/40 hover:border-purple-400/50 transition-all duration-300 inline-block"
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
-                      https://clickly.cv/dpkrn/
+                      https://dpkrn.clickly.cv/
                     </motion.a>
                     <span className="text-xs md:text-sm text-gray-400 dark:text-gray-500 italic">
                       (accessible for all generated link at one place)
@@ -466,13 +466,13 @@ const HomePage = () => {
                 {/* Links List - Perfectly Aligned */}
                 <div className="space-y-1.5 md:space-y-2">
                   {[
-                    { platform: "LinkedIn", url: "https://clickly.cv/dpkrn/linkedin", color: "from-blue-500 to-cyan-500" },
-                    { platform: "GitHub", url: "https://clickly.cv/dpkrn/github", color: "from-gray-400 to-gray-600" },
-                    { platform: "LeetCode", url: "https://clickly.cv/dpkrn/leetcode", color: "from-orange-500 to-yellow-500" },
-                    { platform: "Portfolio", url: "https://clickly.cv/dpkrn/portfolio", color: "from-purple-500 to-pink-500" },
-                    { platform: "Instagram", url: "https://clickly.cv/dpkrn/instagram", color: "from-pink-500 to-rose-500" },
-                    { platform: "Facebook", url: "https://clickly.cv/dpkrn/facebook", color: "from-blue-600 to-blue-700" },
-                    { platform: "Codeforces", url: "https://clickly.cv/dpkrn/codeforces", color: "from-red-500 to-orange-500" },
+                    { platform: "LinkedIn", url: "https://dpkrn.clickly.cv/linkedin", color: "from-blue-500 to-cyan-500" },
+                    { platform: "GitHub", url: "https://dpkrn.clickly.cv/github", color: "from-gray-400 to-gray-600" },
+                    { platform: "LeetCode", url: "https://dpkrn.clickly.cv/leetcode", color: "from-orange-500 to-yellow-500" },
+                    { platform: "Portfolio", url: "https://dpkrn.clickly.cv/portfolio", color: "from-purple-500 to-pink-500" },
+                    { platform: "Instagram", url: "https://dpkrn.clickly.cv/instagram", color: "from-pink-500 to-rose-500" },
+                    { platform: "Facebook", url: "https://dpkrn.clickly.cv/facebook", color: "from-blue-600 to-blue-700" },
+                    { platform: "Codeforces", url: "https://dpkrn.clickly.cv/codeforces", color: "from-red-500 to-orange-500" },
                   ].map((link, idx) => (
                     <motion.div
                       key={link.platform}
@@ -511,7 +511,7 @@ const HomePage = () => {
                         <div className="flex items-center font-mono">
                           {/* Base URL - Static */}
                           <span className="text-xs md:text-sm lg:text-base text-gray-400 dark:text-gray-500 select-all">
-                            https://clickly.cv/dpkrn/
+                            https://dpkrn.clickly.cv/
                           </span>
                           {/* Platform Name - Animated (no space before) */}
                           <motion.a
@@ -718,12 +718,12 @@ const HomePage = () => {
                   className="text-base md:text-lg lg:text-2xl xl:text-3xl text-center"
                 >
                   <a
-                    href="https://clickly.cv/dpkrn/"
+                    href="https://dpkrn.clickly.cv/"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-400 dark:text-blue-300 underline font-mono hover:text-blue-300 dark:hover:text-blue-200 transition-colors break-all md:break-normal"
                   >
-                    https://clickly.cv/dpkrn
+                    https://dpkrn.clickly.cv
                   </a>
                 </motion.p>
 
@@ -749,12 +749,12 @@ const HomePage = () => {
                   className="text-base md:text-lg lg:text-2xl xl:text-3xl text-center"
                 >
                   <a
-                    href="https://clickly.cv/dpkrn/"
+                    href="https://dpkrn.clickly.cv/"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-400 dark:text-blue-300 underline font-mono hover:text-blue-300 dark:hover:text-blue-200 transition-colors break-all md:break-normal"
                   >
-                    https://clickly.cv/dpkrn/
+                    https://dpkrn.clickly.cv/
                     <FlipWords
                       className="text-blue-400 dark:text-blue-300"
                       words={platformsForFlip}
@@ -878,7 +878,7 @@ const HomePage = () => {
               personalized URL that automatically redirects users to the
               correct platform. Access all your links at one place by visiting{" "}
               <b className="text-gray-900 dark:text-white">
-                https://clickly.cv/yourname
+                https://yourname.clickly.cv
               </b>{" "}
               (without any platform name). Plus, get real-time email
               notifications every time someone visits your links!
@@ -927,22 +927,22 @@ const HomePage = () => {
               </p>
               <div className="space-y-2">
                 <motion.a
-                  href="https://clickly.cv/dpkrn/instagram"
+                  href="https://dpkrn.clickly.cv/instagram"
                   target="_blank"
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.02, x: 5 }}
                   className="block text-blue-400 hover:text-blue-300 underline font-mono text-base md:text-lg"
                 >
-                  Instagram: https://clickly.cv/dpkrn/instagram
+                  Instagram: https://dpkrn.clickly.cv/instagram
                 </motion.a>
                 <motion.a
-                  href="https://clickly.cv/dpkrn/leetcode"
+                  href="https://dpkrn.clickly.cv/leetcode"
                   target="_blank"
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.02, x: 5 }}
                   className="block text-blue-400 hover:text-blue-300 underline font-mono text-base md:text-lg"
                 >
-                  LeetCode: https://clickly.cv/dpkrn/leetcode
+                  LeetCode: https://dpkrn.clickly.cv/leetcode
                 </motion.a>
               </div>
             </motion.div>

@@ -256,7 +256,7 @@
                     const delay = index * 0.1;
             %>
                     <div class="link-item" data-delay="<%= delay %>">
-                        <a href="https://clickly.cv/<%= item.username %>/<%= item.source %>" class="btn" rel="noopener noreferrer" target="_self">
+                        <a href="<%= getUserLinkUrl(item.username, item.source) %>" class="btn" rel="noopener noreferrer" target="_self">
                             <div class="btn-icon">🔗</div>
                             <span class="btn-text"><%= item.source.toUpperCase() %></span>
                         </a>

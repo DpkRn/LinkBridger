@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux'
 import { motion } from 'framer-motion'
 import { FaEye, FaSpinner } from 'react-icons/fa'
 import api from '../../utils/api'
+import { getUserLinkUrl } from '../../lib/utils'
 
 /**
  * Template Component - Displays LinkHub preview in a realistic smartphone frame
@@ -48,20 +49,18 @@ const Template = ({
           }
         }
         
-        // Create preview URL using the API baseURL
-        const apiBaseUrl = api.defaults.baseURL || 'http://localhost:8080';
-        const baseUrl = apiBaseUrl.replace(/\/$/, '');
+        // Create preview URL using environment-aware format
         const selectedTemplate = previewTemplate || template;
-        const url = `${baseUrl}/${username}?template=${selectedTemplate}&preview=${Date.now()}`;
+        const baseUrl = getUserLinkUrl(username);
+        const url = `${baseUrl}?template=${selectedTemplate}&preview=${Date.now()}`;
         console.log("Setting preview URL:", url);
         setPreviewUrl(url);
       } catch (error) {
         console.error("Error loading template:", error);
         // Fallback to default preview URL
-        const apiBaseUrl = api.defaults.baseURL || 'http://localhost:8080';
-        const baseUrl = apiBaseUrl.replace(/\/$/, '');
         const selectedTemplate = previewTemplate || template || 'default';
-        const url = `${baseUrl}/${username}?template=${selectedTemplate}&preview=${Date.now()}`;
+        const baseUrl = getUserLinkUrl(username);
+        const url = `${baseUrl}?template=${selectedTemplate}&preview=${Date.now()}`;
         console.log("Setting fallback preview URL:", url);
         setPreviewUrl(url);
       } finally {
