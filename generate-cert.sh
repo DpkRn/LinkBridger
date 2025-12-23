@@ -127,7 +127,16 @@ if [ "$USE_WILDCARD" = true ]; then
     
     # Generate wildcard certificate using DNS-01 challenge
     echo "Starting certificate generation..."
-    echo "Certbot will prompt you to add a DNS TXT record."
+    echo ""
+    echo "⚠️  IMPORTANT: Certbot will prompt you to add a DNS TXT record."
+    echo "   When it shows the TXT record value, you MUST:"
+    echo "   1. Add it to your DNS provider (Namecheap, GoDaddy, etc.)"
+    echo "   2. Host/Name should be: _acme-challenge (NOT _acme-challenge.clickly.cv)"
+    echo "   3. Wait 2-5 minutes for DNS propagation"
+    echo "   4. Verify with: dig _acme-challenge.clickly.cv TXT +short"
+    echo "   5. Then press Enter in certbot"
+    echo ""
+    read -p "Press Enter to start certbot..."
     echo ""
     
     sudo certbot certonly --manual \
@@ -205,7 +214,7 @@ if [ -f "$CERT_PATH" ]; then
     # Restart nginx
     echo "Restarting nginx container..."
     cd "$(dirname "$0")"
-    docker-compose up -d nginx 2>/dev/null || systemctl restart nginx 2>/dev/null || true
+    docker compose up -d nginx 2>/dev/null || systemctl restart nginx 2>/dev/null || true
     
     echo ""
     echo "✓ Setup complete! Your site should now work with HTTPS."
@@ -235,8 +244,31 @@ else
     echo "  2. Ports 80/443 not accessible"
     echo "  3. For wildcard: DNS TXT record not added correctly"
     echo ""
+    echo ""
+    echo "=========================================="
+    echo "Troubleshooting Steps"
+    echo "=========================================="
+    echo ""
+    echo "1. Verify DNS TXT record exists:"
+    echo "   Run: ./verify-dns.sh"
+    echo "   Or manually: dig _acme-challenge.clickly.cv TXT +short"
+    echo ""
+    echo "2. Check certbot logs:"
+    echo "   Run: ./check-certbot-logs.sh"
+    echo "   Or manually: sudo cat /var/log/letsencrypt/letsencrypt.log"
+    echo ""
+    echo "3. Common DNS issues:"
+    echo "   • Host name should be: _acme-challenge (NOT _acme-challenge.clickly.cv)"
+    echo "   • Wait 5-10 minutes after adding the record"
+    echo "   • Verify in your DNS provider dashboard"
+    echo "   • Check the value matches exactly what certbot showed"
+    echo ""
+    echo "4. Retry after fixing DNS:"
+    echo "   sudo ./generate-cert.sh"
+    echo ""
     echo "Restarting nginx container..."
-    docker-compose up -d nginx
+    cd "$(dirname "$0")"
+    docker-compose up -d nginx 2>/dev/null || systemctl restart nginx 2>/dev/null || true
     exit 1
 fi
 
