@@ -37,30 +37,47 @@ echo ""
 # Check if certificate already exists
 if [ "$USE_WILDCARD" = true ]; then
     # Check multiple possible locations for wildcard cert
-    if [ -f "$CERT_PATH" ]; then
-        # Verify it's actually a wildcard cert
-        WILDCARD_CHECK=$(openssl x509 -in "$CERT_PATH" -text -noout 2>/dev/null | grep -o "*.clickly.cv" || echo "")
+    EXISTING_CERT=""
+    
+    # Check clickly.cv-0001 first (most common for renewals)
+    if [ -f "$WILDCERT_PATH" ]; then
+        WILDCARD_CHECK=$(sudo openssl x509 -in "$WILDCERT_PATH" -text -noout 2>/dev/null | grep -o "*.clickly.cv" || echo "")
         if [ -n "$WILDCARD_CHECK" ]; then
-            echo "✓ Wildcard certificate already exists at $CERT_PATH"
-            echo "Certificate expires on: $(openssl x509 -enddate -noout -in $CERT_PATH 2>/dev/null | cut -d= -f2)"
-            echo ""
-            echo "Certificate covers:"
-            openssl x509 -in "$CERT_PATH" -text -noout 2>/dev/null | grep -A 1 "Subject Alternative Name" || echo "  *.clickly.cv, clickly.cv"
-            exit 0
-        else
-            echo "⚠️  Certificate exists but does NOT include wildcard (*.clickly.cv)"
-            echo "   This certificate will NOT work for subdomains!"
-            echo ""
-            read -p "Do you want to generate a new wildcard certificate? (y/n) " -n 1 -r
-            echo ""
-            if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-                echo "Aborted."
-                exit 0
-            fi
+            EXISTING_CERT="$WILDCERT_PATH"
         fi
-    elif [ -f "$WILDCERT_PATH" ]; then
-        echo "✓ Wildcard certificate already exists at $WILDCERT_PATH"
-        echo "Certificate expires on: $(openssl x509 -enddate -noout -in $WILDCERT_PATH 2>/dev/null | cut -d= -f2)"
+    fi
+    
+    # Check main location
+    if [ -z "$EXISTING_CERT" ] && [ -f "$CERT_PATH" ]; then
+        WILDCARD_CHECK=$(sudo openssl x509 -in "$CERT_PATH" -text -noout 2>/dev/null | grep -o "*.clickly.cv" || echo "")
+        if [ -n "$WILDCARD_CHECK" ]; then
+            EXISTING_CERT="$CERT_PATH"
+        fi
+    fi
+    
+    # Check other possible locations
+    if [ -z "$EXISTING_CERT" ] && [ -f "/etc/letsencrypt/live/clickly.cv-0002/fullchain.pem" ]; then
+        WILDCARD_CHECK=$(sudo openssl x509 -in "/etc/letsencrypt/live/clickly.cv-0002/fullchain.pem" -text -noout 2>/dev/null | grep -o "*.clickly.cv" || echo "")
+        if [ -n "$WILDCARD_CHECK" ]; then
+            EXISTING_CERT="/etc/letsencrypt/live/clickly.cv-0002/fullchain.pem"
+        fi
+    fi
+    
+    if [ -n "$EXISTING_CERT" ]; then
+        echo "✓ Wildcard certificate already exists at $EXISTING_CERT"
+        echo "Certificate expires on: $(sudo openssl x509 -enddate -noout -in $EXISTING_CERT 2>/dev/null | cut -d= -f2)"
+        echo ""
+        echo "Certificate covers:"
+        sudo openssl x509 -in "$EXISTING_CERT" -text -noout 2>/dev/null | grep -A 1 "Subject Alternative Name" || echo "  *.clickly.cv, clickly.cv"
+        echo ""
+        echo "✅ Your wildcard certificate is ready to use!"
+        echo "   Certificate location: $EXISTING_CERT"
+        echo ""
+        echo "Next steps:"
+        echo "  1. Verify nginx is using this certificate: ./verify-certificate.sh"
+        echo "  2. Test nginx config: docker exec nginx nginx -t"
+        echo "  3. Reload nginx: docker exec nginx nginx -s reload"
+        echo "  4. Test SSL: curl -I https://dpkrn.clickly.cv"
         exit 0
     fi
 else
@@ -190,7 +207,7 @@ else
 fi
 
 # Find the actual certificate path (certbot may have created it in different location)
-# Check common locations
+# Also check if certbot kept an existing certificate
 ACTUAL_CERT_PATH=""
 for possible_path in \
     "/etc/letsencrypt/live/clickly.cv-0001/fullchain.pem" \
@@ -218,7 +235,7 @@ if [ -n "$ACTUAL_CERT_PATH" ]; then
     CERT_PATH="$ACTUAL_CERT_PATH"
 fi
 
-# Check if certificate was generated successfully
+# Check if certificate exists (either newly generated or kept existing)
 if [ -f "$CERT_PATH" ]; then
     echo ""
     echo "=========================================="
@@ -230,12 +247,12 @@ if [ -f "$CERT_PATH" ]; then
     
     # Show certificate details
     echo "Certificate details:"
-    openssl x509 -in "$CERT_PATH" -noout -subject -issuer 2>/dev/null || true
+    sudo openssl x509 -in "$CERT_PATH" -noout -subject -issuer 2>/dev/null || true
     echo ""
     
     if [ "$USE_WILDCARD" = true ]; then
         echo "Certificate covers:"
-        openssl x509 -in "$CERT_PATH" -text -noout 2>/dev/null | grep -A 1 "Subject Alternative Name" || echo "  *.clickly.cv, clickly.cv"
+        sudo openssl x509 -in "$CERT_PATH" -text -noout 2>/dev/null | grep -A 1 "Subject Alternative Name" || echo "  *.clickly.cv, clickly.cv"
         echo ""
         echo "✅ This wildcard certificate will work for:"
         echo "   • Main domain: https://clickly.cv"
