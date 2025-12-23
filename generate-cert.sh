@@ -149,17 +149,26 @@ if [ "$USE_WILDCARD" = true ]; then
     
     # Check for wildcard cert in different possible locations
     # Certbot may store it in different locations depending on existing certs
-    if [ -f "/etc/letsencrypt/live/clickly.cv/fullchain.pem" ]; then
-        # Verify it's actually a wildcard cert
+    # Check clickly.cv-0001 first (common for renewals)
+    if [ -f "/etc/letsencrypt/live/clickly.cv-0001/fullchain.pem" ]; then
+        WILDCARD_CHECK=$(sudo openssl x509 -in "/etc/letsencrypt/live/clickly.cv-0001/fullchain.pem" -text -noout 2>/dev/null | grep -o "*.clickly.cv" || echo "")
+        if [ -n "$WILDCARD_CHECK" ]; then
+            CERT_PATH="/etc/letsencrypt/live/clickly.cv-0001/fullchain.pem"
+        fi
+    fi
+    
+    # Check main location
+    if [ -f "/etc/letsencrypt/live/clickly.cv/fullchain.pem" ] && [ -z "$CERT_PATH" ]; then
         WILDCARD_CHECK=$(sudo openssl x509 -in "/etc/letsencrypt/live/clickly.cv/fullchain.pem" -text -noout 2>/dev/null | grep -o "*.clickly.cv" || echo "")
         if [ -n "$WILDCARD_CHECK" ]; then
             CERT_PATH="/etc/letsencrypt/live/clickly.cv/fullchain.pem"
         fi
     fi
     
-    if [ -f "$WILDCERT_PATH" ]; then
+    # Check other possible locations
+    if [ -z "$CERT_PATH" ] && [ -f "$WILDCERT_PATH" ]; then
         CERT_PATH="$WILDCERT_PATH"
-    elif [ -f "/etc/letsencrypt/live/clickly.cv-0002/fullchain.pem" ]; then
+    elif [ -z "$CERT_PATH" ] && [ -f "/etc/letsencrypt/live/clickly.cv-0002/fullchain.pem" ]; then
         CERT_PATH="/etc/letsencrypt/live/clickly.cv-0002/fullchain.pem"
     fi
 else
@@ -178,6 +187,35 @@ else
         --email "$EMAIL" \
         -d clickly.cv \
         -d www.clickly.cv
+fi
+
+# Find the actual certificate path (certbot may have created it in different location)
+# Check common locations
+ACTUAL_CERT_PATH=""
+for possible_path in \
+    "/etc/letsencrypt/live/clickly.cv-0001/fullchain.pem" \
+    "/etc/letsencrypt/live/clickly.cv/fullchain.pem" \
+    "/etc/letsencrypt/live/clickly.cv-0002/fullchain.pem" \
+    "$WILDCERT_PATH" \
+    "$CERT_PATH"; do
+    if [ -f "$possible_path" ]; then
+        # Verify it's a wildcard cert if we're generating wildcard
+        if [ "$USE_WILDCARD" = true ]; then
+            WILDCARD_CHECK=$(sudo openssl x509 -in "$possible_path" -text -noout 2>/dev/null | grep -o "*.clickly.cv" || echo "")
+            if [ -n "$WILDCARD_CHECK" ]; then
+                ACTUAL_CERT_PATH="$possible_path"
+                break
+            fi
+        else
+            ACTUAL_CERT_PATH="$possible_path"
+            break
+        fi
+    fi
+done
+
+# Use actual cert path if found, otherwise use expected path
+if [ -n "$ACTUAL_CERT_PATH" ]; then
+    CERT_PATH="$ACTUAL_CERT_PATH"
 fi
 
 # Check if certificate was generated successfully
