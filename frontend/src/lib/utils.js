@@ -10,7 +10,15 @@ export function cn(...inputs) {
  * @returns {boolean} True if production, false if development
  */
 function isProduction() {
-  // Check Vite environment variable first
+  // Check TIER environment variable first (explicit override)
+  if (import.meta.env.VITE_TIER === 'prod' || import.meta.env.TIER === 'prod') {
+    return true;
+  }
+  if (import.meta.env.VITE_TIER === 'dev' || import.meta.env.TIER === 'dev') {
+    return false;
+  }
+  
+  // Check Vite environment variable
   if (import.meta.env.PROD) {
     return true;
   }

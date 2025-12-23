@@ -75,9 +75,9 @@ const Template = ({
   useEffect(() => {
     if (!username || !template || previewTemplate) return;
     
-    const apiBaseUrl = api.defaults.baseURL || 'http://localhost:8080';
-    const baseUrl = apiBaseUrl.replace(/\/$/, '');
-    const url = `${baseUrl}/${username}?template=${template}&preview=${Date.now()}`;
+    // Use getUserLinkUrl for environment-aware URL generation
+    const baseUrl = getUserLinkUrl(username);
+    const url = `${baseUrl}?template=${template}&preview=${Date.now()}`;
     setPreviewUrl(url);
     setRefreshKey(prev => prev + 1);
     if (iframeRef.current) {
@@ -89,10 +89,10 @@ const Template = ({
   useEffect(() => {
     if (!username || refreshTrigger === 0) return;
     
-    const apiBaseUrl = api.defaults.baseURL || 'http://localhost:8080';
-    const baseUrl = apiBaseUrl.replace(/\/$/, '');
+    // Use getUserLinkUrl for environment-aware URL generation
+    const baseUrl = getUserLinkUrl(username);
     const selectedTemplate = previewTemplate || template || 'default';
-    const url = `${baseUrl}/${username}?template=${selectedTemplate}&preview=${Date.now()}`;
+    const url = `${baseUrl}?template=${selectedTemplate}&preview=${Date.now()}`;
     setPreviewUrl(url);
     setRefreshKey(prev => prev + 1);
     if (iframeRef.current) {

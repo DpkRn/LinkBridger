@@ -40,9 +40,7 @@ const getUserLinkUrl = (username, source = null) => {
   if (!username) return '';
   
   // Check if we're in production (check NODE_ENV or host)
-  const isProd = process.env.NODE_ENV === 'production' || 
-                 process.env.NODE_ENV === 'prod' ||
-                 (process.env.DOMAIN && process.env.DOMAIN.includes('clickly.cv'));
+  const isProd = process.env.TIER === 'dev';
   
   if (isProd) {
     // Production: Use subdomain format
