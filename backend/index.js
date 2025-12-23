@@ -20,6 +20,7 @@ const profileRoute=require('./routes/ProfileRoute')
 const { extractInfo } = require('./middleware/deviceInfo')
 const { sendVisitEmail, sendProfileVisitEmail } = require('./lib/mail')
 const { verifyTokenOptional } = require('./middleware/verifyToken')
+const resolveUsername = require('./middleware/resolveUsername')
 const bcryptjs = require('bcryptjs')
 
 
@@ -53,9 +54,22 @@ const allowedOrigins = [
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin) return callback(null, true);
+    
+    // Check if origin is in allowed list
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
+    
+    // Allow all subdomains of clickly.cv
+    try {
+      const url = new URL(origin);
+      if (url.hostname.endsWith('.clickly.cv') || url.hostname === 'clickly.cv') {
+        return callback(null, true);
+      }
+    } catch (e) {
+      // Invalid URL, reject
+    }
+    
     return callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
@@ -88,10 +102,105 @@ app.use(helmet.contentSecurityPolicy({
 
 
 
-app.get('/',(req,res)=>{
-  console.log("redirecting to frontend")
-  return res.redirect(307,"https://clickly.cv/app/")
-})
+// Root route - handle main domain redirect and subdomain routing
+app.get('/', resolveUsername, async (req, res) => {
+  // If it's the main domain (clickly.cv or www.clickly.cv), redirect to frontend
+  if (req.isMainDomain || !req.params.username) {
+    console.log("Main domain detected, redirecting to frontend");
+    return res.redirect(307, "https://clickly.cv/app/");
+  }
+
+  // If it's a subdomain, treat it as username route (show linkhub)
+  const username = req.params.username;
+  console.log("Subdomain detected, username:", username);
+  
+  // Use the same logic as /:username route
+  const tree = await Link.find({
+    username: username,
+    visibility: 'public',
+    deletedAt: null
+  });
+  const dp = await Profile.findOne({ username }, { image: 1, bio: 1 });
+  const info = await User.findOne({ username }, { email: 1, name: 1 });
+
+  if (!info) {
+    return res.render('not_exists');
+  }
+
+  const { email, name } = info;
+  const deviceDetails = req.details || {};
+
+  // Get visitor information if they're logged in
+  let visitorUsername = null;
+  let visitorName = null;
+  if (req.userId) {
+    try {
+      const visitor = await User.findById(req.userId, { username: 1, name: 1 });
+      if (visitor && visitor.username !== username) {
+        visitorUsername = visitor.username;
+        visitorName = visitor.name;
+      }
+    } catch (err) {
+      console.error(`Error fetching visitor info:`, err);
+    }
+  }
+
+  // Check if email notification is enabled for LinkHub views
+  try {
+    const settings = await UserSettings.getUserSettings(username);
+    if (settings && settings.shouldEmailOnLinkHubView()) {
+      sendProfileVisitEmail(
+        email,
+        username,
+        name,
+        deviceDetails,
+        visitorUsername,
+        visitorName
+      ).catch(err => {
+        console.error(`Failed to send LinkHub visit email to ${username}:`, err);
+      });
+    }
+  } catch (err) {
+    console.error(`Error checking notification settings for ${username}:`, err);
+  }
+
+  if (tree && dp) {
+    // Get user settings to determine template
+    let template = 'default';
+    const previewTemplate = req.query.template;
+    if (previewTemplate) {
+      template = previewTemplate;
+    } else {
+      try {
+        const settings = await UserSettings.getUserSettings(username);
+        if (settings && settings.template) {
+          template = settings.template;
+        }
+      } catch (err) {
+        console.log('Error fetching template settings, using default:', err.message);
+      }
+    }
+
+    const templateName = `templates/linktree-${template}`;
+    console.log("templateName", templateName);
+    try {
+      return res.render(templateName, {
+        username: username,
+        tree: tree,
+        dp: dp
+      });
+    } catch (renderErr) {
+      console.log(`Template ${templateName} not found, using default:`, renderErr.message);
+      return res.render('templates/linktree-default', {
+        username: username,
+        tree: tree,
+        dp: dp
+      });
+    }
+  }
+
+  return res.render('not_exists', { linkHub: '' });
+});
 
 app.use('/auth',authRoute)
 app.use('/source',linkRoute)
@@ -165,10 +274,74 @@ app.post('/link/verify-password', extractInfo, async (req, res) => {
   });
 });
 
+// Subdomain route handler: dpkrn.clickly.cv/github
+// This route handles subdomain-based source access
+// Note: API routes (defined with app.use above) will match first, so this won't interfere
+app.get('/:source', resolveUsername, extractInfo, async (req, res) => {
+  // Only process if username was extracted from subdomain (not main domain)
+  if (req.isMainDomain || !req.params.username) {
+    // This is main domain, let it fall through to other routes
+    return res.redirect(307, "https://clickly.cv/app/");
+  }
 
+  const username = req.params.username;
+  const source = req.params.source;
+  const linkHub = `${req.protocol}://${req.get('host')}/`;
 
+  const doc = await Link.findOne({
+    username,
+    source,
+    deletedAt: null
+  });
 
-app.get('/:username/:source',extractInfo, async (req, res) => {
+  const info = await User.findOne({ username }, { email: 1, name: 1 });
+  if (!info) {
+    return res.render('not_exists', {
+      linkHub: ""
+    });
+  }
+  const { email, name } = info;
+
+  if (!doc) {
+    return res.render('not_exists', {
+      linkHub: linkHub
+    });
+  }
+
+  // Check link visibility
+  if (!doc.isAccessible()) {
+    console.log("not accessible");
+    const hashedUsername = encodeData(username);
+    const hashedSource = encodeData(source);
+    return res.render('password_prompt', {
+      hashedUsername: hashedUsername,
+      hashedSource: hashedSource,
+      linkId: doc.linkId
+    });
+  }
+
+  const { destination, clicked, notSeen } = doc;
+  await Link.updateOne({ username, source }, { $set: { clicked: clicked + 1, notSeen: notSeen + 1 } });
+
+  const deviceDetails = req.details;
+
+  // Check if email notification is enabled for link clicks
+  try {
+    const settings = await UserSettings.getUserSettings(username);
+    if (settings && settings.shouldEmailOnClick()) {
+      sendVisitEmail(email, username, name, deviceDetails, source).catch(err => {
+        console.error(`Failed to send visit email to ${username}:`, err);
+      });
+    }
+  } catch (err) {
+    console.error(`Error checking notification settings for ${username}:`, err);
+  }
+
+  return res.redirect(307, destination);
+});
+
+// Main domain route handler: clickly.cv/username/source
+app.get('/:username/:source', extractInfo, async (req, res) => {
   const {username,source}=req.params;
   const linkHub=`Available link: ${req.protocol}://${req.get('host')}/${username}`
 
