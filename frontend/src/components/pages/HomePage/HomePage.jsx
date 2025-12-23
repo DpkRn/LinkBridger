@@ -411,6 +411,13 @@ const HomePage = () => {
               ))}
 
               <div className="relative z-10">
+                {/* Example Username Badge - Top Right */}
+                <div className="absolute top-0 right-0">
+                  <span className="text-xs md:text-sm font-bold text-gray-600 dark:text-gray-400">
+                    Example username: <span className="text-purple-600 dark:text-purple-400">dpkrn</span>
+                  </span>
+                </div>
+                
                 {/* Base URL Display - Shown Once */}
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
@@ -441,7 +448,7 @@ const HomePage = () => {
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
-                      https://dpkrn.clickly.cv/
+                      https://<span className="font-bold text-purple-200 dark:text-purple-100 bg-purple-400/20 dark:bg-purple-400/30 px-1 rounded">dpkrn</span>.clickly.cv/
                     </motion.a>
                     <span className="text-xs md:text-sm text-gray-400 dark:text-gray-500 italic">
                       (accessible for all generated link at one place)
@@ -509,9 +516,9 @@ const HomePage = () => {
 
                         {/* Complete URL - No Space */}
                         <div className="flex items-center font-mono">
-                          {/* Base URL - Static */}
+                          {/* Base URL - Static with highlighted username */}
                           <span className="text-xs md:text-sm lg:text-base text-gray-400 dark:text-gray-500 select-all">
-                            https://dpkrn.clickly.cv/
+                            https://<span className="font-bold text-purple-400 dark:text-purple-300 bg-purple-500/10 dark:bg-purple-500/20 px-1 rounded">dpkrn</span>.clickly.cv/
                           </span>
                           {/* Platform Name - Animated (no space before) */}
                           <motion.a
@@ -723,7 +730,7 @@ const HomePage = () => {
                     rel="noopener noreferrer"
                     className="text-blue-400 dark:text-blue-300 underline font-mono hover:text-blue-300 dark:hover:text-blue-200 transition-colors break-all md:break-normal"
                   >
-                    https://dpkrn.clickly.cv
+                    https://<span className="font-bold text-purple-400 dark:text-purple-300 bg-purple-500/10 dark:bg-purple-500/20 px-1 rounded">dpkrn</span>.clickly.cv
                   </a>
                 </motion.p>
 
@@ -754,7 +761,7 @@ const HomePage = () => {
                     rel="noopener noreferrer"
                     className="text-blue-400 dark:text-blue-300 underline font-mono hover:text-blue-300 dark:hover:text-blue-200 transition-colors break-all md:break-normal"
                   >
-                    https://dpkrn.clickly.cv/
+                    https://<span className="font-bold text-purple-400 dark:text-purple-300 bg-purple-500/10 dark:bg-purple-500/20 px-1 rounded">dpkrn</span>.clickly.cv/
                     <FlipWords
                       className="text-blue-400 dark:text-blue-300"
                       words={platformsForFlip}
@@ -878,7 +885,7 @@ const HomePage = () => {
               personalized URL that automatically redirects users to the
               correct platform. Access all your links at one place by visiting{" "}
               <b className="text-gray-900 dark:text-white">
-                https://yourname.clickly.cv
+                https://<span className="font-bold text-purple-600 dark:text-purple-400">yourname</span>.clickly.cv
               </b>{" "}
               (without any platform name). Plus, get real-time email
               notifications every time someone visits your links!
@@ -933,7 +940,7 @@ const HomePage = () => {
                   whileHover={{ scale: 1.02, x: 5 }}
                   className="block text-blue-400 hover:text-blue-300 underline font-mono text-base md:text-lg"
                 >
-                  Instagram: https://dpkrn.clickly.cv/instagram
+                  Instagram: https://<span className="font-bold text-purple-400 dark:text-purple-300 bg-purple-500/10 dark:bg-purple-500/20 px-1 rounded">dpkrn</span>.clickly.cv/instagram
                 </motion.a>
                 <motion.a
                   href="https://dpkrn.clickly.cv/leetcode"
@@ -942,7 +949,7 @@ const HomePage = () => {
                   whileHover={{ scale: 1.02, x: 5 }}
                   className="block text-blue-400 hover:text-blue-300 underline font-mono text-base md:text-lg"
                 >
-                  LeetCode: https://dpkrn.clickly.cv/leetcode
+                  LeetCode: https://<span className="font-bold text-purple-400 dark:text-purple-300 bg-purple-500/10 dark:bg-purple-500/20 px-1 rounded">dpkrn</span>.clickly.cv/leetcode
                 </motion.a>
               </div>
             </motion.div>

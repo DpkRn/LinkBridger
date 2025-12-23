@@ -557,7 +557,7 @@ const Documentation = () => {
     {
       img: logo,
       title: "All Links at One Place",
-      desc: "Access all your profiles with a single hub link. Simply visit https://clickly.cv/yourname (without any platform name) to see all your links in one beautiful, organized page. Perfect for sharing in bios, resumes, and business cards.",
+      desc: "Access all your profiles with a single hub link. Simply visit https://yourname.clickly.cv (without any platform name) to see all your links in one beautiful, organized page. Perfect for sharing in bios, resumes, and business cards.",
       icon: FaHome,
       gradient: "from-violet-500 to-purple-500",
     },
@@ -1250,7 +1250,7 @@ const Documentation = () => {
                   </p>
                   
                   <p className="text-base md:text-lg lg:text-[1.125rem] leading-relaxed md:leading-[1.85] text-gray-700 dark:text-gray-300 font-normal tracking-wide">
-                    Whether you're sharing your Instagram, GitHub, LinkedIn, or any other platform, LinkBridger allows you to generate a single, personalized URL that leads to a beautiful, customizable landing page featuring all your profiles. Simply visit <span className="font-medium text-purple-600 dark:text-purple-400">https://clickly.cv/yourname</span> (without any platform name) to access your unified link hub.
+                    Whether you're sharing your Instagram, GitHub, LinkedIn, or any other platform, LinkBridger allows you to generate a single, personalized URL that leads to a beautiful, customizable landing page featuring all your profiles. Simply visit <span className="font-medium text-purple-600 dark:text-purple-400">https://<span className="font-bold">yourname</span>.clickly.cv</span> (without any platform name) to access your unified link hub.
                   </p>
                   
                   <p className="text-base md:text-lg lg:text-[1.125rem] leading-relaxed md:leading-[1.85] text-gray-700 dark:text-gray-300 font-normal tracking-wide">
@@ -1310,12 +1310,12 @@ const Documentation = () => {
                 <div className="relative z-10 w-full max-w-6xl mx-auto px-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                     {[
-                      { platform: "LinkedIn", url: "https://clickly.cv/dpkrn/linkedin", color: "from-blue-500 to-cyan-500", icon: "💼" },
-                      { platform: "GitHub", url: "https://clickly.cv/dpkrn/github", color: "from-gray-600 to-gray-800", icon: "🐙" },
-                      { platform: "LeetCode", url: "https://clickly.cv/dpkrn/leetcode", color: "from-orange-500 to-yellow-500", icon: "💻" },
-                      { platform: "Portfolio", url: "https://clickly.cv/dpkrn/portfolio", color: "from-purple-500 to-pink-500", icon: "🎨" },
-                      { platform: "Instagram", url: "https://clickly.cv/dpkrn/instagram", color: "from-pink-500 to-rose-500", icon: "📸" },
-                      { platform: "Codeforces", url: "https://clickly.cv/dpkrn/codeforces", color: "from-red-500 to-orange-500", icon: "⚔️" },
+                      { platform: "LinkedIn", url: "https://dpkrn.clickly.cv/linkedin", color: "from-blue-500 to-cyan-500", icon: "💼" },
+                      { platform: "GitHub", url: "https://dpkrn.clickly.cv/github", color: "from-gray-600 to-gray-800", icon: "🐙" },
+                      { platform: "LeetCode", url: "https://dpkrn.clickly.cv/leetcode", color: "from-orange-500 to-yellow-500", icon: "💻" },
+                      { platform: "Portfolio", url: "https://dpkrn.clickly.cv/portfolio", color: "from-purple-500 to-pink-500", icon: "🎨" },
+                      { platform: "Instagram", url: "https://dpkrn.clickly.cv/instagram", color: "from-pink-500 to-rose-500", icon: "📸" },
+                      { platform: "Codeforces", url: "https://dpkrn.clickly.cv/codeforces", color: "from-red-500 to-orange-500", icon: "⚔️" },
                     ].map((link, idx) => (
                       <AnimatedLinkCard key={link.platform} link={link} idx={idx} />
                     ))}
@@ -1646,12 +1646,12 @@ const Documentation = () => {
                     className="text-base md:text-lg lg:text-2xl xl:text-3xl text-center"
                   >
                     <a
-                      href="https://clickly.cv/dpkrn/"
+                      href="https://dpkrn.clickly.cv/"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-400 dark:text-blue-300 underline font-mono hover:text-blue-300 dark:hover:text-blue-200 transition-colors break-all md:break-normal"
                     >
-                      https://clickly.cv/dpkrn
+                      https://<span className="font-bold text-purple-400 dark:text-purple-300 bg-purple-500/10 dark:bg-purple-500/20 px-1 rounded">dpkrn</span>.clickly.cv
                     </a>
                   </motion.p>
                   
@@ -1677,12 +1677,12 @@ const Documentation = () => {
                     className="text-base md:text-lg lg:text-2xl xl:text-3xl text-center"
                   >
                     <a
-                      href="https://clickly.cv/dpkrn/"
+                      href="https://dpkrn.clickly.cv/"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-400 dark:text-blue-300 underline font-mono hover:text-blue-300 dark:hover:text-blue-200 transition-colors break-all md:break-normal"
                     >
-                      https://clickly.cv/dpkrn/
+                      https://<span className="font-bold text-purple-400 dark:text-purple-300 bg-purple-500/10 dark:bg-purple-500/20 px-1 rounded">dpkrn</span>.clickly.cv/
                       <FlipWords className="text-blue-400 dark:text-blue-300" words={platforms} />
                     </a>
                   </motion.div>
@@ -1854,7 +1854,7 @@ const Documentation = () => {
                 The core idea behind <b className="text-gray-900 dark:text-white">LinkBridger</b> is to simplify the
                 management of social media links. Instead of sharing long,
                 hard-to-remember URLs, you create a single, personalized URL that
-                automatically redirects users to the correct platform. Access all your links at one place by visiting <b className="text-gray-900 dark:text-white">https://clickly.cv/yourname</b> (without any platform name). Plus, get real-time email notifications every time someone visits your links!
+                automatically redirects users to the correct platform. Access all your links at one place by visiting <b className="text-gray-900 dark:text-white">https://<span className="font-bold text-purple-600 dark:text-purple-400">yourname</span>.clickly.cv</b> (without any platform name). Plus, get real-time email notifications every time someone visits your links!
               </motion.p>
               
               <div className="space-y-6">
@@ -1868,7 +1868,7 @@ const Documentation = () => {
                   {
                     step: "2",
                     title: "Choose a Username",
-                    desc: "Pick a username that's easy to remember (e.g., dpkrn). Your link will follow this format: https://clickly.cv/your-username/instagram.",
+                    desc: "Pick a username that's easy to remember (e.g., dpkrn). Your link will follow this format: https://your-username.clickly.cv/instagram.",
                     icon: FaLink,
                   },
                   {
@@ -1886,7 +1886,7 @@ const Documentation = () => {
                   {
                     step: "5",
                     title: "Share the Link",
-                    desc: "Copy and share your smart link across various platforms. Share your hub link (https://clickly.cv/yourname) to let visitors see all your profiles in one place.",
+                    desc: "Copy and share your smart link across various platforms. Share your hub link (https://yourname.clickly.cv) to let visitors see all your profiles in one place.",
                     icon: FaSyncAlt,
                   },
                   {
@@ -1935,22 +1935,22 @@ const Documentation = () => {
                 <p className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Example:</p>
                 <div className="space-y-2">
                   <motion.a
-                    href="https://clickly.cv/dpkrn/instagram"
+                    href="https://dpkrn.clickly.cv/instagram"
                     target="_blank"
                     rel="noopener noreferrer"
                     whileHover={{ scale: 1.02, x: 5 }}
                     className="block text-blue-400 hover:text-blue-300 underline font-mono text-base md:text-lg"
                   >
-                    Instagram: https://clickly.cv/dpkrn/instagram
+                    Instagram: https://<span className="font-bold text-purple-400 dark:text-purple-300 bg-purple-500/10 dark:bg-purple-500/20 px-1 rounded">dpkrn</span>.clickly.cv/instagram
                   </motion.a>
                   <motion.a
-                    href="https://clickly.cv/dpkrn/leetcode"
+                    href="https://dpkrn.clickly.cv/leetcode"
                     target="_blank"
                     rel="noopener noreferrer"
                     whileHover={{ scale: 1.02, x: 5 }}
                     className="block text-blue-400 hover:text-blue-300 underline font-mono text-base md:text-lg"
                   >
-                    LeetCode: https://clickly.cv/dpkrn/leetcode
+                    LeetCode: https://<span className="font-bold text-purple-400 dark:text-purple-300 bg-purple-500/10 dark:bg-purple-500/20 px-1 rounded">dpkrn</span>.clickly.cv/leetcode
                   </motion.a>
                 </div>
               </motion.div>
