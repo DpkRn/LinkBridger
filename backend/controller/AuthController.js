@@ -294,7 +294,7 @@ const handleAuthCallback=async (req, res) => {
       return res.status(401).json({ error: "Invalid audience" });
     }
 
-    const {username}=JSON.parse(
+    const {username,usertype}=JSON.parse(
       Buffer.from(state,'base64').toString()
     )
     
@@ -308,7 +308,7 @@ const handleAuthCallback=async (req, res) => {
     const user = await User.findOne({ email }).lean();
    
     
-    if (!user){
+    if (!user && usertype=='onboarding'){
       //create user
       const newUser = await User.create({
         email,
@@ -329,7 +329,11 @@ const handleAuthCallback=async (req, res) => {
       //     .json({ success: true, message: "user registerd !", user });
       }
     }
-      
+    
+    if (!user && usertype=='onboarded')
+      return res
+        .status(404)
+        .json({ success: false, message: "Email does not exist !" });
     // console.log("id=",user._id)
 
     // 🧠 Create your app JWT

@@ -83,7 +83,7 @@ const AuthPageV1 = () => {
             scope: "openid email profile",
             access_type: "offline",
             prompt: "select_account",
-            state:btoa(JSON.stringify({username:username}))
+            state:btoa(JSON.stringify({username:username,usertype:"onboarding"}))
           });
   
           window.location.href =
@@ -100,6 +100,7 @@ const AuthPageV1 = () => {
             scope: "openid email profile",
             access_type: "offline",
             prompt: "select_account",
+            state:btoa(JSON.stringify({username:username,usertype:"onboarded"}))
           });
   
           window.location.href =
