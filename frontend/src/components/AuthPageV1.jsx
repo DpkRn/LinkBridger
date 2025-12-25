@@ -60,7 +60,7 @@ const AuthPageV1 = () => {
                 setAvailable(true);
             }
         } catch (err) {
-            console.log(err);
+            // console.log(err);
             setAvailable(false);
         }
     };
