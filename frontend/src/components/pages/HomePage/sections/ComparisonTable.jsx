@@ -179,15 +179,19 @@ const ComparisonTable = () => {
   useEffect(() => {
     const checkMobile = () => {
       const width = window.innerWidth;
-      setIsMobile(width < 768);
+      const mobile = width < 768;
+      if (isMobile !== mobile) setIsMobile(mobile);
       const calculatedWidths = calculateColumnWidths(width);
-      setColumnWidths(calculatedWidths);
+      // Only update if widths actually changed
+      if (JSON.stringify(columnWidths) !== JSON.stringify(calculatedWidths)) {
+        setColumnWidths(calculatedWidths);
+      }
     };
 
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
-  }, [calculateColumnWidths]);
+  }, [calculateColumnWidths, isMobile, columnWidths]);
 
   const getIcon = (status, mobile = false) => {
     const iconSize = mobile ? 'w-3 h-3' : 'w-4 h-4 sm:w-5 sm:h-5';

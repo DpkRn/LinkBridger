@@ -247,7 +247,9 @@ const changePassword = async (req, res, next) => {
 
 const handleAuthCallback=async (req, res) => {
   try {
+    
     const { code, state } = req.query;
+    // console.log("code and status=",code,state)
 
     if (!code) {
       return res.status(400).json({ error: "Authorization code missing" });
@@ -271,6 +273,7 @@ const handleAuthCallback=async (req, res) => {
     const tokens = await tokenRes.json();
 
     if (!tokens.id_token) {
+      console.log("got error while fetching token")
       return res.status(400).json({ error: "Failed to get ID token" });
     }
 
@@ -287,6 +290,7 @@ const handleAuthCallback=async (req, res) => {
     // ✅ Verify audience
  
     if (payload.aud !== process.env.GOOGLE_CLIENT_ID) {
+      // console.log("got error while aud compare")
       return res.status(401).json({ error: "Invalid audience" });
     }
 
@@ -297,6 +301,8 @@ const handleAuthCallback=async (req, res) => {
     const email=payload.email
     const picture=payload.picture
     const email_verified=payload.email_verified
+
+    // console.log("user payload and username",payload,username)
 
     //check user already exist or have to create
     const user = await User.findOne({ email }).lean();
@@ -324,7 +330,7 @@ const handleAuthCallback=async (req, res) => {
       }
     }
       
-    
+    // console.log("id=",user._id)
 
     // 🧠 Create your app JWT
     const token = jwt.sign(
@@ -332,6 +338,7 @@ const handleAuthCallback=async (req, res) => {
       process.env.JWT_KEY,
       { expiresIn: "24h" }
     );
+    console.log("generated token:",token)
     res.cookie("token", token, {
       maxAge: 24 * 60 * 60 * 1000,
       sameSite: "None",
@@ -339,7 +346,7 @@ const handleAuthCallback=async (req, res) => {
     });
 
     // 🔁 Redirect to frontend
-    res.redirect("http://clickly.cv/app/");
+    res.redirect("http://localhost:5173/app");
 
     // 🔵 Option 2 (testing only): return JSON
     // res.json({ tokens, user: payload });
