@@ -339,7 +339,7 @@ const HomePage = () => {
       <HeroSection
         words={words}
         flipWords={flipWords}
-        description="LinkBridger transforms your social media presence with memorable, personalized URLs."
+        description="LinkBridger transforms your social media presence with memorable, personalized URLs by providing your own free domain"
         highlightText="One link to rule them all. Update once, reflect everywhere."
         ctaText="Get Started Free"
         secondaryCtaText="Learn More"

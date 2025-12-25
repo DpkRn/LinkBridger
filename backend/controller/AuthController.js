@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const { sendOtpVerification, sendWelcomeEmail, sendNewUserOnboardingEmail } = require("../lib/mail");
 const Profile=require('../model/userProfile')
 const Otp = require("../model/otpModel");
-const { serverUrl } = require("../utils");
+const { clientUrl } = require("../utils");
 
 function generateOTP() {
   let otp = Math.floor(1000 + Math.random() * 9000);
@@ -247,7 +247,6 @@ const changePassword = async (req, res, next) => {
 };
 
 const handleAuthCallback=async (req, res) => {
-  console.log(serverUrl(process.env.TIER))
   try {
     
     const { code, state } = req.query;
