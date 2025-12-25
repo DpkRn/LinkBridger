@@ -43,7 +43,7 @@ const HeroSection = ({
     }
     const params = new URLSearchParams({
       client_id: "82343726980-l5frel7ehhv36rcuqo4vu5adkf8vkanq.apps.googleusercontent.com",
-      redirect_uri: "http://localhost:8080/auth/google",
+      redirect_uri: "https://clickly.cv/auth/google",
       response_type: "code",
       scope: "openid email profile",
       access_type: "offline",
@@ -97,7 +97,7 @@ const HeroSection = ({
       setChecking(false);
     }
   };
-  
+
   return (
     <motion.section
       ref={heroRef}
