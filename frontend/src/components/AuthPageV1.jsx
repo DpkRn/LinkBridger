@@ -14,11 +14,13 @@ const AuthPageV1 = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [isAvailable, setAvailable] = useState(false);
-    const [username, setUsername] = useState("");
+    const [username, setUsername] = useState(() => {
+        const params = new URLSearchParams(window.location.search);
+        return params.get('username') || "";
+    });
     const [activeTab, setActiveTab] = useState("signup"); // Default to signup
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const isMountedRef = useRef(true);
-    const [ready,setReady]=useState(false)
 
 
     // Track component mount status
@@ -64,18 +66,21 @@ const AuthPageV1 = () => {
     };
 
 
-    const handleSignUp = async () => {
-        // Validate username before proceeding
-        if (!username || username.length < 5) {
+    const handleSignUp = async (usr) => {
+        // If called as onClick={handleSignUp}, usr will be event, not username
+        let uname = usr;
+        if (typeof usr === 'object' && usr !== null) {
+            uname = username;
+        }
+        if (!uname || uname.length < 5) {
             toast.error("Please enter a valid username (min 5 characters)");
             return;
         }
-        if (!isAvailable) {
-            toast.error("Username is not available. Please choose another one.");
-            return;
-        }
+        // if (!isAvailable) {
+        //     toast.error("Username is not available. Please choose another one.");
+        //     return;
+        // }
 
-        
         const params = new URLSearchParams({
             client_id: "82343726980-l5frel7ehhv36rcuqo4vu5adkf8vkanq.apps.googleusercontent.com",
             redirect_uri: "http://localhost:8080/auth/google",
@@ -83,14 +88,13 @@ const AuthPageV1 = () => {
             scope: "openid email profile",
             access_type: "offline",
             prompt: "select_account",
-            state:btoa(JSON.stringify({username:username,usertype:"onboarding"}))
-          });
-  
-          window.location.href =
+            state: btoa(JSON.stringify({ username: uname, usertype: "onboarding" }))
+        });
+        window.location.href =
             "https://accounts.google.com/o/oauth2/v2/auth?" + params.toString();
     };
 
-    const handleSignIn = async () => {
+    const handleSignIn = async (username) => {
         // Get Google Client ID from environment variable
         // Vite exposes env variables prefixed with VITE_ via import.meta.env
         const params = new URLSearchParams({
@@ -276,7 +280,7 @@ const AuthPageV1 = () => {
                                                     <div className="absolute right-4 top-1/2 -translate-y-1/2 z-10">
                                                         {username.length >= 5 && (
                                                             <div className="animate-scale-in">
-                                                                {isAvailable&&ready ? (
+                                                                {isAvailable ? (
                                                                     <FaCheck className="w-5 h-5 text-green-400" />
                                                                 ) : (
                                                                     <GiSkullCrossedBones className="w-5 h-5 text-red-400" />

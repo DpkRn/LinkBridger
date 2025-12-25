@@ -10,10 +10,9 @@ const HeroSection = ({
   flipWords = [],
   description = "",
   highlightText = "",
-  ctaText = "Get Started Free",
+  ctaText = "Start with your username",
   ctaAction = null,
-  secondaryCtaText = "Learn More",
-  secondaryCtaAction = null,
+  // Removed secondaryCtaText and secondaryCtaAction
   platforms = [],
   showScrollIndicator = true,
   className = "",
@@ -26,11 +25,12 @@ const HeroSection = ({
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
   const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.8]);
 
-  const handleCtaClick = () => {
+  const handleCtaClick = (usernameValue) => {
     if (ctaAction) {
       ctaAction();
     } else {
-      navigate('/login');
+      // Pass username as query param
+      navigate(`/login?username=${encodeURIComponent(usernameValue || username)}`);
     }
   };
 
@@ -42,6 +42,9 @@ const HeroSection = ({
     }
   };
 
+  const [username, setUsername] = React.useState("");
+  const [showTooltip, setShowTooltip] = React.useState(false);
+  const tooltipTimeoutRef = React.useRef(null);
   return (
     <motion.section
       ref={heroRef}
@@ -114,21 +117,56 @@ const HeroSection = ({
             </motion.p>
           )}
 
-          {/* CTA Buttons */}
+          {/* Username Input and CTA */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.7 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-10"
+            className="flex flex-col gap-4 justify-center items-center mt-10 group relative"
+            tabIndex={0}
+            onMouseEnter={() => {
+              if (username.length === 0) {
+                setShowTooltip(true);
+                if (tooltipTimeoutRef.current) clearTimeout(tooltipTimeoutRef.current);
+                tooltipTimeoutRef.current = setTimeout(() => setShowTooltip(false), 2000);
+              }
+            }}
+            onMouseLeave={() => {
+              setShowTooltip(false);
+              if (tooltipTimeoutRef.current) clearTimeout(tooltipTimeoutRef.current);
+            }}
           >
+            {/* Tooltip as toast-like message */}
+            {showTooltip && username.length === 0 && (
+              <div className="absolute -top-10 left-1/2 -translate-x-1/2 z-20 transition-opacity duration-200">
+                <div className="bg-purple-600 text-white text-xs px-4 py-2 rounded-lg shadow-lg font-semibold whitespace-nowrap animate-fade-in">
+                  Always choose easy and memorable username
+                </div>
+              </div>
+            )}
+            <div className="flex flex-col sm:flex-row gap-2 items-center w-full sm:w-auto">
+              <span className="text-lg font-medium text-gray-700 dark:text-gray-200">https://</span>
+              <div className="relative w-36 sm:w-44">
+                <input
+                  type="text"
+                  value={username}
+                  onChange={e => setUsername(e.target.value.replace(/[^a-zA-Z0-9-_]/g, ''))}
+                  placeholder="enter username"
+                  className="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-700 bg-transparent text-gray-900 dark:text-gray-100 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 text-lg font-semibold placeholder-gray-400 dark:placeholder-gray-500 hover:border-purple-400 dark:hover:border-purple-400"
+                  autoComplete="off"
+                  spellCheck="false"
+                />
+              </div>
+              <span className="text-lg font-medium text-gray-700 dark:text-gray-200">.clickly.cv/</span>
+            </div>
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={handleCtaClick}
+              onClick={() => handleCtaClick(username)}
               className="group relative px-6 py-3 sm:px-8 sm:py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold text-base sm:text-lg rounded-full shadow-2xl hover:shadow-purple-500/50 transition-all duration-300 overflow-hidden w-full sm:w-auto"
             >
               <span className="relative z-10 flex items-center justify-center gap-2">
-                {ctaText}
+                Start with your username
                 <FaArrowRight className="group-hover:translate-x-1 transition-transform" />
               </span>
               <motion.div
@@ -138,17 +176,7 @@ const HeroSection = ({
                 transition={{ duration: 0.3 }}
               />
             </motion.button>
-
-            {secondaryCtaText && (
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={handleSecondaryCtaClick}
-                className="px-6 py-3 sm:px-8 sm:py-4 bg-white dark:bg-gray-800 backdrop-blur-sm text-gray-800 dark:text-gray-200 font-bold text-base sm:text-lg rounded-full shadow-xl border-2 border-purple-600 dark:border-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all duration-300 w-full sm:w-auto"
-              >
-                {secondaryCtaText}
-              </motion.button>
-            )}
+            <p className="text-base text-gray-700 dark:text-gray-200 mt-2">Get your own domain to manage your links</p>
           </motion.div>
 
           {/* Platform Icons */}
