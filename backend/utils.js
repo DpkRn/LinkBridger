@@ -32,7 +32,7 @@ const unhashData = (hashedData) => {
 
 const clientUrl=(tier)=>{
   if(tier=='dev'){
-    return "http://localhost:5173"
+    return "http://localhost:5173/app"
   }
   return "https://clickly.cv/app"
 }

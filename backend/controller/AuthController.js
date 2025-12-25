@@ -352,7 +352,7 @@ const handleAuthCallback=async (req, res) => {
     });
 
     // 🔁 Redirect to frontend
-    res.redirect(serverUrl(process.env.TIER));
+    res.redirect(clientUrl(process.env.TIER));
 
     // 🔵 Option 2 (testing only): return JSON
     // res.json({ tokens, user: payload });
