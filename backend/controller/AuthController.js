@@ -266,7 +266,7 @@ const handleAuthCallback=async (req, res) => {
         code,
         client_id: process.env.GOOGLE_CLIENT_ID,
         client_secret: process.env.GOOGLE_CLIENT_SECRET,
-        redirect_uri: "http://localhost:8080/auth/google",
+        redirect_uri: `${process.env.TIER=='dev'?"http://localhost:8080":"https://clickly.cv"}/auth/google`,
         grant_type: "authorization_code",
       }),
     });
@@ -274,7 +274,6 @@ const handleAuthCallback=async (req, res) => {
     const tokens = await tokenRes.json();
 
     if (!tokens.id_token) {
-      console.log("got error while fetching token")
       return res.status(400).json({ error: "Failed to get ID token" });
     }
 
@@ -291,7 +290,6 @@ const handleAuthCallback=async (req, res) => {
     // ✅ Verify audience
  
     if (payload.aud !== process.env.GOOGLE_CLIENT_ID) {
-      // console.log("got error while aud compare")
       return res.status(401).json({ error: "Invalid audience" });
     }
 
@@ -310,7 +308,6 @@ const handleAuthCallback=async (req, res) => {
    
     
     if (!user && usertype=='onboarding'){
-      //create user
       const newUser = await User.create({
         email,
         // password: hashedPassword,
@@ -325,9 +322,6 @@ const handleAuthCallback=async (req, res) => {
         sendWelcomeEmail(email, username, displayName, "LinkBridger");
         adminEmail=process.env.ADMIN_EMAIL || "d.wizard.techno@gmail.com";
         sendNewUserOnboardingEmail("d.wizard.techno@gmail.com", username, displayName, "LinkBridger");
-      //   return res
-      //     .status(201)
-      //     .json({ success: true, message: "user registerd !", user });
       }
     }
     
