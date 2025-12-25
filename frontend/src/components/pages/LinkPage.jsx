@@ -9,6 +9,7 @@ import { FaRocket, FaLink, FaChartLine, FaHome, FaEye } from "react-icons/fa";
 import { setLinks } from "../../redux/userSlice";
 import toast from "react-hot-toast";
 import api from "../../utils/api";
+import { getUserLinkUrl } from "../../lib/utils";
 
 const LinkPage = ({ children }) => {
   const navigate = useNavigate();
@@ -226,7 +227,7 @@ const LinkPage = ({ children }) => {
                         ref={linkRef}
                         className="break-all font-mono text-base md:text-lg text-white dark:text-gray-200"
                       >
-                        {`https://clickly.cv/${username}`}
+                        {getUserLinkUrl(username)}
                       </span>
                       <motion.button
                         whileHover={{ scale: 1.1 }}

@@ -22,7 +22,7 @@ const ComparisonTable = () => {
     {
       name: 'Link Format',
       values: [
-        'domain/username/platform',
+        'username.domain/platform',
         'bit.ly/xyz123',
         'linktr.ee/username',
         'bio.link/username',

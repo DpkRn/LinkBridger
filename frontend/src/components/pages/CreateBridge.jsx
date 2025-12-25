@@ -7,6 +7,7 @@ import { FaLink, FaGlobe, FaExclamationTriangle, FaCheckCircle, FaTimes, FaRocke
 import api from '../../utils/api';
 import { setLinks } from '../../redux/userSlice';
 import { setEditLinkData, clearEditLinkData } from '../../redux/pageSlice';
+import { getUserLinkUrl } from '../../lib/utils';
 
 const CreateBridge = () => {
   const dispatch = useDispatch();
@@ -402,7 +403,7 @@ const CreateBridge = () => {
                       ref={linkRef}
                       className="break-all font-mono text-base md:text-lg text-gray-900 dark:text-gray-200 flex-1"
                     >
-                      {`https://clickly.cv/${username}/${source}`}
+                      {getUserLinkUrl(username, source)}
                     </span>
                     <motion.button
                       type="button"
@@ -467,7 +468,7 @@ const CreateBridge = () => {
                         Old Link (will become invalid):
                       </p>
                       <p className="text-sm font-mono text-red-600 dark:text-red-400 break-all bg-red-100 dark:bg-red-500/10 p-3 rounded-lg border border-red-300 dark:border-red-500/20">
-                        https://clickly.cv/{username}/{editLinkData.source}
+                        {getUserLinkUrl(username, editLinkData.source)}
                       </p>
                     </div>
                     <div>
@@ -476,7 +477,7 @@ const CreateBridge = () => {
                         New Link:
                       </p>
                       <p className="text-sm font-mono text-green-600 dark:text-green-400 break-all bg-green-100 dark:bg-green-500/10 p-3 rounded-lg border border-green-300 dark:border-green-500/20">
-                        https://clickly.cv/{username}/{platform.toLowerCase()}
+                        {getUserLinkUrl(username, platform.toLowerCase())}
                       </p>
                     </div>
                   </div>
