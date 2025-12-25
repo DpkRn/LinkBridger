@@ -74,28 +74,40 @@ const AuthPageV1 = () => {
             toast.error("Username is not available. Please choose another one.");
             return;
         }
-        
 
-       
+        
+        const params = new URLSearchParams({
+            client_id: "82343726980-l5frel7ehhv36rcuqo4vu5adkf8vkanq.apps.googleusercontent.com",
+            redirect_uri: "http://localhost:8080/auth/google",
+            response_type: "code",
+            scope: "openid email profile",
+            access_type: "offline",
+            prompt: "select_account",
+            state:btoa(JSON.stringify({username:username}))
+          });
+  
+          window.location.href =
+            "https://accounts.google.com/o/oauth2/v2/auth?" + params.toString();
     };
 
     const handleSignIn = async () => {
         // Get Google Client ID from environment variable
         // Vite exposes env variables prefixed with VITE_ via import.meta.env
-        const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || "";
+        const params = new URLSearchParams({
+            client_id: "82343726980-l5frel7ehhv36rcuqo4vu5adkf8vkanq.apps.googleusercontent.com",
+            redirect_uri: "http://localhost:8080/auth/google",
+            response_type: "code",
+            scope: "openid email profile",
+            access_type: "offline",
+            prompt: "select_account",
+          });
+  
+          window.location.href =
+            "https://accounts.google.com/o/oauth2/v2/auth?" + params.toString();
       
     };
 
     // Initialize Google Sign-In when signin tab is active
-    useEffect(() => {
-        if (activeTab === "signin") {
-            // Small delay to ensure DOM is ready
-            const timer = setTimeout(() => {
-                handleSignIn();
-            }, 100);
-            return () => clearTimeout(timer);
-        }
-    }, [activeTab]);
 
     return (
         <div className="min-h-screen w-full overflow-hidden relative bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 dark:from-gray-950 dark:via-purple-950 dark:to-gray-950">
@@ -331,7 +343,7 @@ const AuthPageV1 = () => {
                                             {/* Google Sign-In Button Container (will be rendered by Google) */}
                                             <button
                                                 type="button"
-                                                onClick={handleSignUp}
+                                                onClick={handleSignIn}
                                                 disabled={
                                                     loading 
                                                 }

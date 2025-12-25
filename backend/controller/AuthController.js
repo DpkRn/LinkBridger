@@ -14,7 +14,7 @@ function generateOTP() {
 const signUpController = async (req, res, next) => {
   try {
     const { email, password, username } = req.body;
-    if (!email || !username || !password) {
+    if (!email || !username ) {
       return res
         .status(400)
         .json({ success: false, message: "All fields are required" });
@@ -34,12 +34,12 @@ const signUpController = async (req, res, next) => {
         .status(409)
         .json({ success: false, message: "user allready exists !" });
     }
-    const hashedPassword = await bcryptjs.hash(password, 10);
+    // const hashedPassword = await bcryptjs.hash(password, 10);
     
 
     const user = await User.create({
       email,
-      password: hashedPassword,
+      // password: hashedPassword,
       username:username.toLowerCase(),
     });
     const userinfo=await Profile.create({username,image:"/images/panda.png"});
@@ -245,6 +245,111 @@ const changePassword = async (req, res, next) => {
   }
 };
 
+const handleAuthCallback=async (req, res) => {
+  try {
+    const { code, state } = req.query;
+
+    if (!code) {
+      return res.status(400).json({ error: "Authorization code missing" });
+    }
+
+    // 🔁 Exchange auth code for tokens (SERVER ONLY)
+    const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams({
+        code,
+        client_id: process.env.GOOGLE_CLIENT_ID,
+        client_secret: process.env.GOOGLE_CLIENT_SECRET,
+        redirect_uri: "http://localhost:8080/auth/google",
+        grant_type: "authorization_code",
+      }),
+    });
+
+    const tokens = await tokenRes.json();
+
+    if (!tokens.id_token) {
+      return res.status(400).json({ error: "Failed to get ID token" });
+    }
+
+    // 🔐 Decode ID token (basic decode for now)
+    const payload = JSON.parse(
+      Buffer.from(tokens.id_token.split(".")[1], "base64").toString()
+    );
+
+    /**
+     * payload contains:
+     * sub, email, name, picture, email_verified, aud, iss, exp
+     */
+
+    // ✅ Verify audience
+ 
+    if (payload.aud !== process.env.GOOGLE_CLIENT_ID) {
+      return res.status(401).json({ error: "Invalid audience" });
+    }
+
+    const {username}=JSON.parse(
+      Buffer.from(state,'base64').toString()
+    )
+    
+    const email=payload.email
+    const picture=payload.picture
+    const email_verified=payload.email_verified
+
+    //check user already exist or have to create
+    const user = await User.findOne({ email }).lean();
+   
+    
+    if (!user){
+      //create user
+      const newUser = await User.create({
+        email,
+        // password: hashedPassword,
+        username:username.toLowerCase(),
+      });
+      const newUserInfo=await Profile.create({username,image:picture});
+      if (newUser&&newUserInfo) {
+        console.log("user created");
+        user._id=newUser._id
+        // Use name from request body or fallback to username
+        const displayName =  username;
+        sendWelcomeEmail(email, username, displayName, "LinkBridger");
+        adminEmail=process.env.ADMIN_EMAIL || "d.wizard.techno@gmail.com";
+        sendNewUserOnboardingEmail("d.wizard.techno@gmail.com", username, displayName, "LinkBridger");
+      //   return res
+      //     .status(201)
+      //     .json({ success: true, message: "user registerd !", user });
+      }
+    }
+      
+    
+
+    // 🧠 Create your app JWT
+    const token = jwt.sign(
+      { email:email, id: user._id },
+      process.env.JWT_KEY,
+      { expiresIn: "24h" }
+    );
+    res.cookie("token", token, {
+      maxAge: 24 * 60 * 60 * 1000,
+      sameSite: "None",
+      secure: true,
+    });
+
+    // 🔁 Redirect to frontend
+    res.redirect("http://clickly.cv/app/");
+
+    // 🔵 Option 2 (testing only): return JSON
+    // res.json({ tokens, user: payload });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Google auth failed" });
+  }
+}
+
 module.exports = {
   signUpController,
   signInController,
@@ -253,4 +358,5 @@ module.exports = {
   checkAvailablity,
   sendOtp,
   changePassword,
+  handleAuthCallback
 };

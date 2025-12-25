@@ -5,9 +5,8 @@ const userSchema=mongoose.Schema({
     },
     email:{
         type:String,
-        required:false, // Made optional for username-only signup
-        unique:true,
-        sparse:true // Allows multiple null values
+        required:true,
+        unique:true // Allows multiple null values
     },
     password:{
         type:String,
