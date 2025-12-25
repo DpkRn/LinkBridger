@@ -1,4 +1,6 @@
 import React, { useRef } from 'react';
+import toast from 'react-hot-toast';
+import api from '../utils/api';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { TypewriterEffect } from '../../../ui/typewriter-effect';
@@ -25,12 +27,38 @@ const HeroSection = ({
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
   const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.8]);
 
+  // Google signup logic (copied from AuthPageV1)
+  const handleSignUp = async (usr) => {
+    let uname = usr;
+    if (typeof usr === 'object' && usr !== null) {
+      uname = username;
+    }
+    if (!uname || uname.length < 5) {
+      toast.error("Please enter a valid username (min 5 characters)");
+      return;
+    }
+    if (!isAvailable) {
+      toast.error("Username is not available. Please choose another one.");
+      return;
+    }
+    const params = new URLSearchParams({
+      client_id: "82343726980-l5frel7ehhv36rcuqo4vu5adkf8vkanq.apps.googleusercontent.com",
+      redirect_uri: "http://localhost:8080/auth/google",
+      response_type: "code",
+      scope: "openid email profile",
+      access_type: "offline",
+      prompt: "select_account",
+      state: btoa(JSON.stringify({ username: uname, usertype: "onboarding" }))
+    });
+    window.location.href =
+      "https://accounts.google.com/o/oauth2/v2/auth?" + params.toString();
+  };
+
   const handleCtaClick = (usernameValue) => {
     if (ctaAction) {
       ctaAction();
     } else {
-      // Pass username as query param
-      navigate(`/login?username=${encodeURIComponent(usernameValue || username)}`);
+      handleSignUp(usernameValue || username);
     }
   };
 
@@ -43,8 +71,33 @@ const HeroSection = ({
   };
 
   const [username, setUsername] = React.useState("");
+  const [isAvailable, setAvailable] = React.useState(false);
+  const [checking, setChecking] = React.useState(false);
   const [showTooltip, setShowTooltip] = React.useState(false);
   const tooltipTimeoutRef = React.useRef(null);
+
+  // Username availability check (copied logic from AuthPageV1)
+  const checkAvailablity = async (usrnm) => {
+    if (usrnm.length < 5) {
+      setAvailable(false);
+      return;
+    }
+    setChecking(true);
+    try {
+      const res = await api.post("/auth/checkavailablity", { username: usrnm });
+      if (res.status === 209 && res.data.success) {
+        setAvailable(false);
+      }
+      if (res.status === 200 && res.data.success) {
+        setAvailable(true);
+      }
+    } catch (err) {
+      setAvailable(false);
+    } finally {
+      setChecking(false);
+    }
+  };
+  
   return (
     <motion.section
       ref={heroRef}
@@ -150,7 +203,15 @@ const HeroSection = ({
                 <input
                   type="text"
                   value={username}
-                  onChange={e => setUsername(e.target.value.replace(/[^a-zA-Z0-9-_]/g, ''))}
+                  onChange={e => {
+                    const val = e.target.value.replace(/[^a-zA-Z0-9-_]/g, '');
+                    setUsername(val);
+                    if (val.length >= 5) {
+                      checkAvailablity(val.toLowerCase());
+                    } else {
+                      setAvailable(false);
+                    }
+                  }}
                   placeholder="enter username"
                   className="w-full px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-700 bg-transparent text-gray-900 dark:text-gray-100 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 text-lg font-semibold placeholder-gray-400 dark:placeholder-gray-500 hover:border-purple-400 dark:hover:border-purple-400"
                   autoComplete="off"
@@ -163,7 +224,8 @@ const HeroSection = ({
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => handleCtaClick(username)}
-              className="group relative px-6 py-3 sm:px-8 sm:py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold text-base sm:text-lg rounded-full shadow-2xl hover:shadow-purple-500/50 transition-all duration-300 overflow-hidden w-full sm:w-auto"
+              disabled={username.length < 5 || !isAvailable || checking}
+              className="group relative px-6 py-3 sm:px-8 sm:py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold text-base sm:text-lg rounded-full shadow-2xl hover:shadow-purple-500/50 transition-all duration-300 overflow-hidden w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <span className="relative z-10 flex items-center justify-center gap-2">
                 Start with your username
@@ -176,6 +238,11 @@ const HeroSection = ({
                 transition={{ duration: 0.3 }}
               />
             </motion.button>
+            {username.length >= 5 && (
+              <p className={`mt-2 text-xs ml-1 transition-all duration-300 ${isAvailable ? "text-green-400" : "text-red-400"}`}>
+                {isAvailable ? "✓ Username is available" : "✗ Username is not available"}
+              </p>
+            )}
             <p className="text-base text-gray-700 dark:text-gray-200 mt-2">Get your own domain to manage your links</p>
           </motion.div>
 
