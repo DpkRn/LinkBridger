@@ -27,4 +27,19 @@ const hashData = (data) => {
       return null;
     }
   };
-  module.exports = { hashData, unhashData };
+
+  const clientUrl=(tier)=>{
+    if(tier=='dev'){
+      return "http://localhost:5173"
+    }
+    return "https://clickly.cv/app"
+  }
+
+
+  const serverUrl=(tier)=>{
+    if(tier==dev){
+        return "http://localhost:8080"
+    }
+    return "https://clickly.cv"
+}
+  module.exports = { hashData, unhashData,clientUrl,serverUrl };
