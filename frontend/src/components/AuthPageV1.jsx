@@ -67,7 +67,6 @@ const AuthPageV1 = () => {
 
 
     const handleSignUp = async (usr) => {
-        // If called as onClick={handleSignUp}, usr will be event, not username
         let uname = usr;
         if (typeof usr === 'object' && usr !== null) {
             uname = username;
@@ -76,10 +75,6 @@ const AuthPageV1 = () => {
             toast.error("Please enter a valid username (min 5 characters)");
             return;
         }
-        // if (!isAvailable) {
-        //     toast.error("Username is not available. Please choose another one.");
-        //     return;
-        // }
 
         const params = new URLSearchParams({
             client_id: "82343726980-l5frel7ehhv36rcuqo4vu5adkf8vkanq.apps.googleusercontent.com",
@@ -94,9 +89,11 @@ const AuthPageV1 = () => {
             "https://accounts.google.com/o/oauth2/v2/auth?" + params.toString();
     };
 
-    const handleSignIn = async (username) => {
-        // Get Google Client ID from environment variable
-        // Vite exposes env variables prefixed with VITE_ via import.meta.env
+    const handleSignIn = async (usr) => {
+        let uname = usr;
+        if (typeof usr === 'object' && usr !== null) {
+            uname = username;
+        }
         const params = new URLSearchParams({
             client_id: "82343726980-l5frel7ehhv36rcuqo4vu5adkf8vkanq.apps.googleusercontent.com",
             redirect_uri: "https://clickly.cv/auth/google",
@@ -104,12 +101,10 @@ const AuthPageV1 = () => {
             scope: "openid email profile",
             access_type: "offline",
             prompt: "select_account",
-            state:btoa(JSON.stringify({username:username,usertype:"onboarded"}))
-          });
-  
-          window.location.href =
+            state: btoa(JSON.stringify({ username: uname, usertype: "onboarded" }))
+        });
+        window.location.href =
             "https://accounts.google.com/o/oauth2/v2/auth?" + params.toString();
-      
     };
 
     // Initialize Google Sign-In when signin tab is active
