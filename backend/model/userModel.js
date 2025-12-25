@@ -5,17 +5,22 @@ const userSchema=mongoose.Schema({
     },
     email:{
         type:String,
-        required:true,
-        unique:true
+        required:false, // Made optional for username-only signup
+        unique:true,
+        sparse:true // Allows multiple null values
     },
     password:{
         type:String,
-        required:true
+        required:false // Made optional for OAuth users
     },
     username:{
         type:String,
         required:true,
         unique:true,
+    },
+    picture:{
+        type:String,
+        default:null
     },
     deletedAt: {
         type: Date,

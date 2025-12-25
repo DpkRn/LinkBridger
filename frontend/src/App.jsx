@@ -26,6 +26,7 @@ import Benefits from './components/pages/docs/Benefits'
 import Security from './components/pages/docs/Security'
 import HowToUse from './components/pages/docs/HowToUse'
 import Different from './components/pages/docs/Different'
+import AuthPageV1 from './components/AuthPageV1'
 
 function App() {
   const location = useLocation();
@@ -141,7 +142,7 @@ function App() {
         <Route path='/docs/security' element={<Security/>} />
         <Route path='/docs/how-to-use' element={<HowToUse/>} />
         <Route path='/docs/different' element={<Different/>} />
-        <Route path='/login' element={<AuthRoute><AuthPage /></AuthRoute>}/>
+        <Route path='/login' element={<AuthRoute><AuthPageV1 /></AuthRoute>}/>
         <Route path='/verify' element={<VerificationPage />} />
         <Route path='/links' element={<PrivateRoute><LinkPage/></PrivateRoute>} />
         <Route path='/preview' element={<PrivateRoute><TemplatePreview/></PrivateRoute>} />
