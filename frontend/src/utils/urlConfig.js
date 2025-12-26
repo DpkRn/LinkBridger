@@ -1,26 +1,4 @@
-/**
- * Global tier configuration for LinkBridger frontend
- *
- * This module provides a global `tier` variable that can be used throughout the app
- * to determine if we're running in development ('dev') or production ('prod') mode.
- *
- * Tier Detection Priority:
- * 1. VITE_TIER environment variable (highest priority)
- * 2. Hostname check (localhost = dev, clickly.cv = prod)
- * 3. Vite's PROD flag
- * 4. Default to 'prod'
- *
- * Usage:
- * - Import { tier } from './utils/urlConfig'
- * - Access window.tier (globally available)
- * - Use isDevelopment() or isProduction() utility functions
- *
- * To set tier via environment:
- * - Development: VITE_TIER=dev npm run dev
- * - Production: VITE_TIER=prod npm run build
- */
 
-// Global tier detection and configuration
 const detectTier = () => {
   // Check Vite environment variable first (highest priority)
   if (import.meta.env?.VITE_TIER) {
