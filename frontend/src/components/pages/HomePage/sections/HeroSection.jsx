@@ -140,12 +140,12 @@ const HeroSection = ({
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
+              transition={{ duration: 0.1, delay: 0.1 }}
               className="text-2xl md:text-4xl font-semibold text-gray-800 dark:text-gray-300 mb-4"
             >
               Create personalized links for your{' '}
               <span className="inline-block">
-                <FlipWords words={flipWords} duration={2000} className="text-3xl md:text-5xl font-bold" />
+                <FlipWords words={flipWords} duration={100} className="text-3xl md:text-5xl font-bold" />
               </span>
             </motion.div>
           )}

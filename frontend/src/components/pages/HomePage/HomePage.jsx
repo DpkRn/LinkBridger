@@ -349,63 +349,33 @@ const HomePage = () => {
       />
 
       {/* Have You Ever Wondered Section - Redesigned with Perfect Alignment */}
-      <motion.section
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
+      <section
         className="py-8 sm:py-12 md:py-16 lg:py-20 px-4 sm:px-6 lg:px-8"
       >
         <div className="container mx-auto max-w-3xl">
-          <motion.h2
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
+          <h2
             className="text-2xl md:text-3xl lg:text-4xl font-bold text-center mb-3 sm:mb-4 md:mb-6 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
           >
             Have You Ever Wondered How Link Has Been Personalized:
-          </motion.h2>
+          </h2>
 
           <MagneticCard intensity={0.15}>
-            <motion.div
+            <div
               className="relative bg-gradient-to-br from-slate-800/95 via-slate-700/95 to-slate-800/95 dark:from-slate-900/95 dark:via-slate-800/95 dark:to-slate-900/95 backdrop-blur-xl rounded-xl md:rounded-2xl shadow-2xl border border-purple-500/20 dark:border-purple-400/20 p-4 md:p-5 lg:p-6 overflow-hidden"
-              whileHover={{ scale: 1.02, y: -5 }}
-              transition={{ duration: 0.3 }}
             >
-              {/* Animated Background Glow */}
-              <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-blue-500/10"
-                animate={{
-                  opacity: [0.3, 0.6, 0.3],
-                  scale: [1, 1.05, 1],
-                }}
-                transition={{
-                  duration: 4,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
+              {/* Static Background Glow */}
+              <div
+                className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-blue-500/10 opacity-40"
               />
 
-              {/* Floating Particles */}
+              {/* Static Particles */}
               {[...Array(8)].map((_, i) => (
-                <motion.div
+                <div
                   key={i}
                   className="absolute w-1 h-1 rounded-full bg-purple-400/40"
                   style={{
                     left: `${10 + (i * 7)}%`,
                     top: `${15 + (i % 4) * 25}%`,
-                  }}
-                  animate={{
-                    y: [0, -20, 0],
-                    x: [0, Math.sin(i) * 10, 0],
-                    opacity: [0.2, 0.6, 0.2],
-                    scale: [1, 1.5, 1],
-                  }}
-                  transition={{
-                    duration: 3 + i * 0.2,
-                    repeat: Infinity,
-                    delay: i * 0.3,
-                    ease: "easeInOut",
                   }}
                 />
               ))}
@@ -417,58 +387,35 @@ const HomePage = () => {
                     Example username: <span className="text-purple-600 dark:text-purple-400">dpkrn</span>
                   </span>
                 </div>
-                
+
                 {/* Base URL Display - Shown Once */}
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6 }}
+                <div
                   className="mb-4 pb-3 border-b border-purple-500/30 dark:border-purple-400/30"
                 >
                   <p className="text-xs text-gray-400 dark:text-gray-500 mb-1.5 font-semibold uppercase tracking-wider">
                     Base URL (Same for All):
                   </p>
-                  <motion.div
+                  <div
                     className="flex items-center gap-2 flex-wrap"
-                    animate={{
-                      x: [0, 5, 0],
-                    }}
-                    transition={{
-                      duration: 3,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                    }}
                   >
-                    <motion.a
+                    <a
                       href="https://dpkrn.clickly.cv/"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-xs md:text-sm lg:text-base font-mono font-bold text-purple-300 dark:text-purple-200 bg-purple-500/20 dark:bg-purple-500/30 px-2 py-1 rounded-lg border border-purple-400/30 hover:bg-purple-500/30 dark:hover:bg-purple-500/40 hover:border-purple-400/50 transition-all duration-300 inline-block"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
                     >
                       https://<span className="font-bold text-purple-200 dark:text-purple-100 bg-purple-400/20 dark:bg-purple-400/30 px-1 rounded">dpkrn</span>.clickly.cv/
-                    </motion.a>
+                    </a>
                     <span className="text-xs md:text-sm text-gray-400 dark:text-gray-500 italic">
                       (accessible for all generated link at one place)
                     </span>
-                    <motion.span
+                    <span
                       className="text-lg"
-                      animate={{
-                        opacity: [0.5, 1, 0.5],
-                        scale: [1, 1.2, 1],
-                      }}
-                      transition={{
-                        duration: 1.5,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                      }}
                     >
                       ⬇️
-                    </motion.span>
-                  </motion.div>
-                </motion.div>
+                    </span>
+                  </div>
+                </div>
 
                 {/* Links List - Perfectly Aligned */}
                 <div className="space-y-1.5 md:space-y-2">
@@ -481,21 +428,8 @@ const HomePage = () => {
                     { platform: "Facebook", url: "https://dpkrn.clickly.cv/facebook", color: "from-blue-600 to-blue-700" },
                     { platform: "Codeforces", url: "https://dpkrn.clickly.cv/codeforces", color: "from-red-500 to-orange-500" },
                   ].map((link, idx) => (
-                    <motion.div
+                    <div
                       key={link.platform}
-                      initial={{ opacity: 0, x: -50 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ 
-                        delay: 0.3 + idx * 0.1,
-                        type: "spring",
-                        stiffness: 100,
-                        damping: 15
-                      }}
-                      whileHover={{ 
-                        x: 10,
-                        scale: 1.02,
-                      }}
                       className="group relative"
                     >
                       {/* Hover Glow Effect */}
@@ -535,179 +469,108 @@ const HomePage = () => {
                           </motion.a>
                         </div>
 
-                        {/* Animated Arrow */}
-                        <motion.div
+                        {/* Static Arrow */}
+                        <div
                           className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity"
-                          animate={{
-                            x: [0, 5, 0],
-                          }}
-                          transition={{
-                            duration: 1.5,
-                            repeat: Infinity,
-                            ease: "easeInOut",
-                          }}
                         >
                           <span className="text-purple-400">→</span>
-                        </motion.div>
+                        </div>
                       </div>
-                    </motion.div>
+                    </div>
                   ))}
                 </div>
 
                 {/* Bottom CTA */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 1.2, duration: 0.6 }}
+                <div
                   className="mt-5 pt-4 border-t border-purple-500/30 dark:border-purple-400/30"
                 >
-                  <motion.div
+                  <div
                     className="flex flex-col items-center justify-center gap-2"
-                    animate={{
-                      scale: [1, 1.02, 1],
-                    }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                    }}
                   >
                    
-                    <motion.div
+                    <div
                       className="flex items-center justify-center gap-2"
-                      whileHover={{ scale: 1.05 }}
                     >
-                      <motion.span
+                      <span
                         className="text-lg"
-                        animate={{
-                          rotate: [0, 360],
-                          scale: [1, 1.2, 1],
-                        }}
-                        transition={{
-                          duration: 3,
-                          repeat: Infinity,
-                          ease: "linear",
-                        }}
                       >
                         ✨
-                      </motion.span>
-                      <motion.a
+                      </span>
+                      <a
                         href="/login"
                         onClick={(e) => {
                           e.preventDefault();
                           navigate('/login');
                         }}
                         className="text-center text-sm md:text-base text-purple-300 dark:text-purple-200 font-bold hover:text-purple-200 dark:hover:text-purple-100 transition-colors underline decoration-2 underline-offset-3 decoration-purple-400/50 hover:decoration-purple-400"
-                        whileHover={{ 
-                          scale: 1.1,
-                          x: 5,
-                        }}
-                        whileTap={{ scale: 0.95 }}
                       >
                         You can create your own links: click here to start
-                      </motion.a>
-                      <motion.span
+                      </a>
+                      <span
                         className="text-lg"
-                        animate={{
-                          rotate: [360, 0],
-                          scale: [1, 1.2, 1],
-                        }}
-                        transition={{
-                          duration: 3,
-                          repeat: Infinity,
-                          ease: "linear",
-                        }}
                       >
                         ✨
-                      </motion.span>
-                    </motion.div>
-                  </motion.div>
-                </motion.div>
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </motion.div>
+            </div>
           </MagneticCard>
         </div>
-      </motion.section>
+      </section>
 
       {/* Only the platform name changes Section */}
-      <motion.section
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
+      <section
         className="py-8 sm:py-12 md:py-16 lg:py-20 px-4 sm:px-6 lg:px-8"
       >
         <div className="container mx-auto">
           <MagneticCard intensity={0.1}>
-            <motion.div
+            <div
               className="relative bg-gradient-to-br from-purple-900/40 via-pink-900/40 to-blue-900/40 dark:from-purple-950/60 dark:via-pink-950/60 dark:to-blue-950/60 backdrop-blur-xl rounded-xl sm:rounded-2xl md:rounded-3xl shadow-2xl border border-purple-500/30 dark:border-purple-400/20 p-4 sm:p-5 md:p-6 lg:p-8 overflow-hidden"
-              whileHover={{ scale: 1.02, y: -5 }}
-              transition={{ duration: 0.3 }}
             >
               <div className="relative z-10 text-center">
-                <motion.div
+                <div
                   className="flex items-center justify-center gap-2 mb-3 sm:mb-4"
-                  animate={{ scale: [1, 1.1, 1] }}
-                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                 >
-                  <motion.span
+                  <span
                     className="text-2xl md:text-3xl"
-                    animate={{ rotate: [0, 360] }}
-                    transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
                   >
                     ✨
-                  </motion.span>
-                  <motion.h3
+                  </span>
+                  <h3
                     className="text-xl md:text-2xl font-bold bg-gradient-to-r from-purple-300 via-pink-300 to-blue-300 dark:from-purple-200 dark:via-pink-200 dark:to-blue-200 bg-clip-text text-transparent"
-                    animate={{ backgroundPosition: ["0%", "100%", "0%"] }}
-                    transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                    style={{ backgroundSize: "200% 100%" }}
                   >
                     Only the platform name changes
-                  </motion.h3>
-                  <motion.span
+                  </h3>
+                  <span
                     className="text-2xl md:text-3xl"
-                    animate={{ rotate: [360, 0] }}
-                    transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
                   >
                     ✨
-                  </motion.span>
-                </motion.div>
-                <motion.p
+                  </span>
+                </div>
+                <p
                   className="text-base md:text-lg text-gray-200 dark:text-gray-300 font-medium"
-                  animate={{ opacity: [0.8, 1, 0.8] }}
-                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                 >
                   All else remains the same
-                </motion.p>
+                </p>
               </div>
-            </motion.div>
+            </div>
           </MagneticCard>
         </div>
-      </motion.section>
+      </section>
 
       {/* It will provide a special link Section */}
-      <motion.section
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
+      <section
         className="py-8 sm:py-12 md:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-black/5 dark:bg-black/20"
       >
         <div className="container mx-auto">
           <MagneticCard intensity={0.1}>
-            <motion.div
+            <div
               className="relative bg-black dark:bg-black backdrop-blur-xl rounded-xl sm:rounded-2xl md:rounded-3xl shadow-2xl border border-gray-900 dark:border-gray-800 p-4 sm:p-5 md:p-6 lg:p-8 xl:p-10 overflow-hidden"
-              whileHover={{ scale: 1.02, y: -5 }}
-              transition={{ duration: 0.3 }}
             >
               <div className="relative z-10 space-y-3 sm:space-y-4 md:space-y-5 lg:space-y-6">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6 }}
+                <div
                   className="text-center"
                 >
                   <div className="relative bg-clip-text text-transparent bg-no-repeat bg-gradient-to-r from-purple-400 via-violet-200 to-pink-500 dark:from-purple-300 dark:via-violet-100 dark:to-pink-400 py-2 md:py-4">
@@ -715,13 +578,9 @@ const HomePage = () => {
                       It will provide a special link for all your platforms.
                     </span>
                   </div>
-                </motion.div>
+                </div>
 
-                <motion.p
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, delay: 0.1 }}
+                <p
                   className="text-base md:text-lg lg:text-2xl xl:text-3xl text-center"
                 >
                   <a
@@ -732,13 +591,9 @@ const HomePage = () => {
                   >
                     https://<span className="font-bold text-purple-400 dark:text-purple-300 bg-purple-500/10 dark:bg-purple-500/20 px-1 rounded">dpkrn</span>.clickly.cv
                   </a>
-                </motion.p>
+                </p>
 
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.2, duration: 0.6 }}
+                <div
                   className="text-center"
                 >
                   <div className="relative bg-clip-text text-transparent bg-no-repeat bg-gradient-to-r from-purple-400 via-violet-200 to-pink-500 dark:from-purple-300 dark:via-violet-100 dark:to-pink-400 py-2 md:py-4">
@@ -746,13 +601,9 @@ const HomePage = () => {
                       Change only the platform name to redirect to all profiles
                     </span>
                   </div>
-                </motion.div>
+                </div>
 
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.3, duration: 0.6 }}
+                <div
                   className="text-base md:text-lg lg:text-2xl xl:text-3xl text-center"
                 >
                   <a
@@ -763,45 +614,34 @@ const HomePage = () => {
                   >
                     https://<span className="font-bold text-purple-400 dark:text-purple-300 bg-purple-500/10 dark:bg-purple-500/20 px-1 rounded">dpkrn</span>.clickly.cv/
                     <FlipWords
+                    duration={100}
                       className="text-blue-400 dark:text-blue-300"
                       words={platformsForFlip}
                     />
                   </a>
-                </motion.div>
+                </div>
               </div>
-            </motion.div>
+            </div>
           </MagneticCard>
         </div>
-      </motion.section>
+      </section>
 
       {/* Use Cases Section - Title changed to "Perfect for Everyone" */}
-      <motion.section
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
+      <section
         className="py-8 sm:py-12 md:py-16 lg:py-20 px-4 sm:px-6 lg:px-8"
       >
         <div className="container mx-auto">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+          <h2
             className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 sm:mb-5 md:mb-6 lg:mb-8 text-center bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
           >
             Perfect for Everyone
-          </motion.h2>
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6 lg:gap-8">
             {useCases.map((useCase, idx) => {
               const IconComponent = useCase.icon;
               return (
-                <motion.div
+                <div
                   key={useCase.title}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: idx * 0.1 }}
-                  whileHover={{ scale: 1.05, y: -5 }}
                   className="bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-6 md:p-8 relative overflow-hidden group"
                 >
                   <motion.div
@@ -832,50 +672,34 @@ const HomePage = () => {
                       ))}
                     </div>
                   </div>
-                </motion.div>
+                </div>
               );
             })}
           </div>
         </div>
-      </motion.section>
+      </section>
 
-    
-       <motion.section
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
+
+       <section
         className="pt-8 sm:pt-12 md:pt-16 lg:pt-20 pb-2 sm:pb-4 md:pb-6 lg:pb-8 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50/80 via-purple-50/80 to-pink-50/80 dark:from-slate-900/60 dark:via-purple-950/40 dark:to-pink-950/40"
       >
-         <ComparisonTable/> 
-      </motion.section>
+         <ComparisonTable/>
+      </section>
 
       {/* How It Works Section */}
-      <motion.section
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
+      <section
         className="pt-2 sm:pt-4 md:pt-6 lg:pt-8 pb-8 sm:pb-12 md:pb-16 lg:pb-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50/80 via-purple-50/80 to-pink-50/80 dark:from-slate-900/60 dark:via-purple-950/40 dark:to-pink-950/40"
       >
         <div className="container mx-auto">
-          <motion.div
+          <div
             className="bg-white/10 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-6 md:p-10 lg:p-12"
-            whileHover={{ scale: 1.01 }}
           >
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+            <h2
               className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
             >
               How It Works
-            </motion.h2>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
+            </h2>
+            <p
               className="text-base md:text-lg lg:text-xl leading-8 text-gray-700 dark:text-gray-300 mb-3 sm:mb-4 md:mb-6"
             >
               The core idea behind{" "}
@@ -889,18 +713,14 @@ const HomePage = () => {
               </b>{" "}
               (without any platform name). Plus, get real-time email
               notifications every time someone visits your links!
-            </motion.p>
+            </p>
 
             <div className="space-y-4 sm:space-y-5 md:space-y-6">
               {howItWorksSteps.map((item, idx) => {
                 const IconComponent = item.icon;
                 return (
-                  <motion.div
+                  <div
                     key={item.step}
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: idx * 0.1 }}
                     className="flex items-start gap-3 sm:gap-4 p-4 sm:p-5 md:p-6 bg-white/5 dark:bg-gray-800/30 rounded-xl sm:rounded-2xl border border-white/10 hover:border-white/20 transition-all group"
                   >
                     <motion.div
@@ -917,45 +737,39 @@ const HomePage = () => {
                         {item.desc}
                       </p>
                     </div>
-                  </motion.div>
+                  </div>
                 );
               })}
             </div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.6 }}
+            <div
               className="mt-4 sm:mt-6 md:mt-8 p-4 sm:p-5 md:p-6 bg-white/5 dark:bg-gray-800/30 rounded-xl sm:rounded-2xl border border-white/10"
             >
               <p className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-3 sm:mb-4">
                 Example:
               </p>
               <div className="space-y-2">
-                <motion.a
+                <a
                   href="https://dpkrn.clickly.cv/instagram"
                   target="_blank"
                   rel="noopener noreferrer"
-                  whileHover={{ scale: 1.02, x: 5 }}
                   className="block text-blue-400 hover:text-blue-300 underline font-mono text-base md:text-lg"
                 >
                   Instagram: https://<span className="font-bold text-purple-400 dark:text-purple-300 bg-purple-500/10 dark:bg-purple-500/20 px-1 rounded">dpkrn</span>.clickly.cv/instagram
-                </motion.a>
-                <motion.a
+                </a>
+                <a
                   href="https://dpkrn.clickly.cv/leetcode"
                   target="_blank"
                   rel="noopener noreferrer"
-                  whileHover={{ scale: 1.02, x: 5 }}
                   className="block text-blue-400 hover:text-blue-300 underline font-mono text-base md:text-lg"
                 >
                   LeetCode: https://<span className="font-bold text-purple-400 dark:text-purple-300 bg-purple-500/10 dark:bg-purple-500/20 px-1 rounded">dpkrn</span>.clickly.cv/leetcode
-                </motion.a>
+                </a>
               </div>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         </div>
-      </motion.section>
+      </section>
 
       {/* Statistics Section */}
       <StatisticsSection
