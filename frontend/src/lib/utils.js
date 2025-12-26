@@ -1,5 +1,6 @@
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { tier, serverUrl, clientUrl } from "../utils/urlConfig";
 
 export function cn(...inputs) {
   return twMerge(clsx(inputs));
@@ -10,30 +11,7 @@ export function cn(...inputs) {
  * @returns {boolean} True if production, false if development
  */
 function isProduction() {
-  // Check TIER environment variable first (explicit override)
-  if (import.meta.env.VITE_TIER === 'prod' || import.meta.env.TIER === 'prod') {
-    return true;
-  }
-  if (import.meta.env.VITE_TIER === 'dev' || import.meta.env.TIER === 'dev') {
-    return false;
-  }
-  
-  // Check Vite environment variable
-  if (import.meta.env.PROD) {
-    return true;
-  }
-  
-  // Check if API URL is set to production
-  if (import.meta.env.VITE_API_URL?.includes('clickly.cv')) {
-    return true;
-  }
-  
-  // Check current hostname (only if window is available - client-side only)
-  if (typeof window !== 'undefined' && window.location?.hostname?.includes('clickly.cv')) {
-    return true;
-  }
-  
-  return false;
+  return tier === 'prod';
 }
 
 /**
@@ -48,23 +26,13 @@ function getSubdomainConfig() {
       port: '' // No port in production
     };
   }
-  
-  // Development: Extract from API URL or use localhost:8080
-  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
-  try {
-    const url = new URL(apiUrl);
-    return {
-      domain: 'localhost',
-      protocol: url.protocol.replace(':', ''),
-      port: url.port ? `:${url.port}` : ':8080'
-    };
-  } catch {
-    return {
-      domain: 'localhost',
-      protocol: 'http',
-      port: ':8080'
-    };
-  }
+
+  // Development: Use localhost format
+  return {
+    domain: 'localhost',
+    protocol: 'http',
+    port: ':8080' // Default development port
+  };
 }
 
 /**
@@ -86,18 +54,7 @@ export function getUserLinkUrl(username, source = null) {
  * @returns {string} Base URL (production: https://clickly.cv, dev: http://localhost:8080)
  */
 function getBaseUrl() {
-  if (isProduction()) {
-    return 'https://clickly.cv';
-  }
-  // In development, use API URL or localhost
-  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
-  // Remove protocol and extract host
-  try {
-    const url = new URL(apiUrl);
-    return `${url.protocol}//${url.host}`;
-  } catch {
-    return 'http://localhost:8080';
-  }
+  return serverUrl();
 }
 
 /**

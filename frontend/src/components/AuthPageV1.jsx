@@ -7,6 +7,7 @@ import { GiSkullCrossedBones } from "react-icons/gi";
 import { HiSparkles } from "react-icons/hi2";
 import { FcGoogle } from "react-icons/fc";
 import api from "../utils/api";
+import { serverUrl } from "../utils/urlConfig";
 // import { signUp, signIn } from "../utils/authUtils";
 
 const AuthPageV1 = () => {
@@ -75,7 +76,7 @@ const AuthPageV1 = () => {
 
         const params = new URLSearchParams({
             client_id: "82343726980-l5frel7ehhv36rcuqo4vu5adkf8vkanq.apps.googleusercontent.com",
-            redirect_uri: "https:/clickly.cv/auth/google",
+            redirect_uri: `${serverUrl()}/auth/google`,
             response_type: "code",
             scope: "openid email profile",
             access_type: "offline",
@@ -97,7 +98,7 @@ const AuthPageV1 = () => {
         }
         const params = new URLSearchParams({
             client_id: "82343726980-l5frel7ehhv36rcuqo4vu5adkf8vkanq.apps.googleusercontent.com",
-            redirect_uri: "https://clickly.cv/auth/google",
+            redirect_uri: `${serverUrl()}/auth/google`,
             response_type: "code",
             scope: "openid email profile",
             access_type: "offline",

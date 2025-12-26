@@ -1,14 +1,11 @@
 import axios from 'axios';
+import { serverUrl, tier } from './urlConfig';
 
-// // Create an Axios instance
+// Create an Axios instance with dynamic base URL based on tier
 const api = axios.create({
-
-  // baseURL: 'http://localhost:8080',// Replace with your API base URL
-//   baseURL: 'https://linkb-one.vercel.app',
-  // baseURL: import.meta.env.VITE_API_URL || 'https://clickly.cv',
-  // baseURL: 'http://localhost:8080',// Replace with your API base URL
-  // baseURL: 'https://linkb-one.vercel.app',
-  baseURL: import.meta.env.VITE_API_URL || 'https://clickly.cv',
+  // Use VITE_API_URL if set, otherwise use serverUrl based on detected tier
+  baseURL: import.meta.env?.VITE_API_URL || serverUrl(),
   withCredentials: true,
 });
+
 export default api;

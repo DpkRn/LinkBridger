@@ -9,6 +9,7 @@ import { GiSkullCrossedBones } from "react-icons/gi";
 import { FaCheck, FaEnvelope, FaLock, FaUser, FaEye, FaEyeSlash, FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { HiSparkles } from "react-icons/hi2";
 import { FcGoogle } from "react-icons/fc";
+import { serverUrl } from "../utils/urlConfig";
 
 const AuthPage = () => {
   const dispatch = useDispatch();
@@ -152,7 +153,7 @@ const AuthPage = () => {
 
     const params = new URLSearchParams({
       client_id: "82343726980-l5frel7ehhv36rcuqo4vu5adkf8vkanq.apps.googleusercontent.com",
-      redirect_uri: "https://clickly.cv/auth/google",
+      redirect_uri: `${serverUrl()}/auth/google`,
       response_type: "code",
       scope: "openid email profile",
       access_type: "offline",
@@ -169,7 +170,7 @@ const AuthPage = () => {
     }
     const params = new URLSearchParams({
       client_id: "82343726980-l5frel7ehhv36rcuqo4vu5adkf8vkanq.apps.googleusercontent.com",
-      redirect_uri: "https://clickly.cv/auth/google",
+      redirect_uri: `${serverUrl()}/auth/google`,
       response_type: "code",
       scope: "openid email profile",
       access_type: "offline",
