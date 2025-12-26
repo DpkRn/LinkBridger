@@ -545,7 +545,7 @@ const AuthPage = () => {
                         >
                           <h2 className="text-2xl font-bold text-white">Create Account</h2>
                           <p className="text-gray-300 dark:text-gray-400 text-sm mt-1">
-                            Choose a memorable username for your domain
+                            Username is required for both Google and password registration
                           </p>
                         </motion.div>
 
@@ -605,23 +605,15 @@ const AuthPage = () => {
                           </motion.p>
                         )}
 
-                        {/* Google Sign Up Button - Only show when username is valid */}
+                        {/* Registration Options - Only show when username is valid */}
                         {username.length >= 5 && isAvailable && (
                           <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2 }}
+                            className="space-y-6"
                           >
-                            {/* Divider */}
-                            <div className="relative my-6">
-                              <div className="absolute inset-0 flex items-center">
-                                <div className="w-full border-t border-gray-600"></div>
-                              </div>
-                              <div className="relative flex justify-center text-sm">
-                                <span className="px-2 bg-gray-900 text-gray-400">then</span>
-                              </div>
-                            </div>
-
+                            {/* Google Sign Up Button */}
                             <motion.button
                               type="button"
                               onClick={() => handleGoogleSignUp(username)}
@@ -643,16 +635,7 @@ const AuthPage = () => {
                                 )}
                               </span>
                             </motion.button>
-                          </motion.div>
-                        )}
 
-                        {/* Alternative - Password Sign Up */}
-                        {(!username.length || !isAvailable) && (
-                          <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.3 }}
-                          >
                             {/* Divider */}
                             <div className="relative my-6">
                               <div className="absolute inset-0 flex items-center">
@@ -775,6 +758,28 @@ const AuthPage = () => {
                                 />
                               </motion.button>
                             </motion.form>
+                          </motion.div>
+                        )}
+
+                        {/* Show message when username is not valid yet */}
+                        {(!username || username.length < 5) && (
+                          <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="text-center text-gray-400 text-sm"
+                          >
+                            Enter a valid username first to continue registration
+                          </motion.div>
+                        )}
+
+                        {/* Show message when username exists but is not available */}
+                        {username && username.length >= 5 && !isAvailable && (
+                          <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="text-center text-red-400 text-sm"
+                          >
+                            Please choose a different username - this one is already taken
                           </motion.div>
                         )}
                       </motion.div>
