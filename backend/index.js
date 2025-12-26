@@ -120,7 +120,8 @@ app.use(helmet.contentSecurityPolicy({
     defaultSrc: ["'self'"],
     scriptSrc: ["'self'", "'unsafe-inline'", "https://vercel.live", "https://*.vercel.app"],  // Allow inline scripts for EJS templates
     imgSrc: ["'self'", "data:", "https://res.cloudinary.com"],  // Add your image host if needed
-    styleSrc: ["'self'", "'unsafe-inline'"],  // Allow inline styles if needed
+    styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],  // Allow Google Fonts stylesheets
+    fontSrc: ["'self'", "https://fonts.gstatic.com"],  // Allow Google Fonts actual font files
     connectSrc: ["'self'", "https://clickly.cv","https://clickly.cv/*", "http://localhost:8080"],  // Add your API backend here
     frameAncestors: ["'self'", "http://localhost:5173", "https://clickly.cv", "https://linkbriger.vercel.app"],  // Allow iframes from these origins
     // Add more directives as needed
