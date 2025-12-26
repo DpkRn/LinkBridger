@@ -14,10 +14,7 @@ const AuthPageV1 = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [isAvailable, setAvailable] = useState(false);
-    const [username, setUsername] = useState(() => {
-        const params = new URLSearchParams(window.location.search);
-        return params.get('username') || "";
-    });
+    const [username, setUsername] = useState("");
     const [activeTab, setActiveTab] = useState("signup"); // Default to signup
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const isMountedRef = useRef(true);
@@ -93,6 +90,10 @@ const AuthPageV1 = () => {
         let uname = usr;
         if (typeof usr === 'object' && usr !== null) {
             uname = username;
+        }
+        if (!uname) {
+            toast.error("Please enter a valid username");
+            return;
         }
         const params = new URLSearchParams({
             client_id: "82343726980-l5frel7ehhv36rcuqo4vu5adkf8vkanq.apps.googleusercontent.com",
@@ -273,7 +274,7 @@ const AuthPageV1 = () => {
                                                         className="w-full pl-12 pr-12 py-4 bg-white/10 dark:bg-gray-800/50 border border-white/20 dark:border-gray-700 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 backdrop-blur-sm hover:bg-white/15"
                                                     />
                                                     <div className="absolute right-4 top-1/2 -translate-y-1/2 z-10">
-                                                        {username.length >= 5 && (
+                                                        {username && username.length >= 5 && (
                                                             <div className="animate-scale-in">
                                                                 {isAvailable ? (
                                                                     <FaCheck className="w-5 h-5 text-green-400" />
@@ -284,7 +285,7 @@ const AuthPageV1 = () => {
                                                         )}
                                                     </div>
                                                 </div>
-                                                {username.length >= 5 && (
+                                                {username && username.length >= 5 && (
                                                     <p
                                                         className={`mt-2 text-xs ml-1 transition-all duration-300 ${isAvailable ? "text-green-400" : "text-red-400"
                                                             }`}
@@ -302,6 +303,7 @@ const AuthPageV1 = () => {
                                                 onClick={handleSignUp}
                                                 disabled={
                                                     loading ||
+                                                    !username ||
                                                     username.length < 5 ||
                                                     (username.length >= 5 && !isAvailable)
                                                 }

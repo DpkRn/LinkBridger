@@ -142,7 +142,7 @@ function App() {
         <Route path='/docs/security' element={<Security/>} />
         <Route path='/docs/how-to-use' element={<HowToUse/>} />
         <Route path='/docs/different' element={<Different/>} />
-        <Route path='/login' element={<AuthRoute><AuthPageV1 /></AuthRoute>}/>
+        <Route path='/login' element={<AuthRoute><AuthPage /></AuthRoute>}/>
         <Route path='/verify' element={<VerificationPage />} />
         <Route path='/links' element={<PrivateRoute><LinkPage/></PrivateRoute>} />
         <Route path='/preview' element={<PrivateRoute><TemplatePreview/></PrivateRoute>} />

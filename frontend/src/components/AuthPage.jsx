@@ -6,8 +6,9 @@ import { useDispatch } from "react-redux";
 import { setAuthenticated, setUser } from "../redux/userSlice";
 import { Link, useNavigate } from "react-router-dom";
 import { GiSkullCrossedBones } from "react-icons/gi";
-import { FaCheck, FaEnvelope, FaLock, FaUser, FaEye, FaEyeSlash, FaArrowLeft } from "react-icons/fa";
+import { FaCheck, FaEnvelope, FaLock, FaUser, FaEye, FaEyeSlash, FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { HiSparkles } from "react-icons/hi2";
+import { FcGoogle } from "react-icons/fc";
 
 const AuthPage = () => {
   const dispatch = useDispatch();
@@ -18,6 +19,7 @@ const AuthPage = () => {
   const [isShow, setShow] = useState(false);
   const [isShowSignup, setShowSignup] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  
   const isMountedRef = useRef(true);
 
   const [loginemail, setLoginEmail] = useState("");
@@ -57,7 +59,6 @@ const AuthPage = () => {
       );
       if (res.status === 201 && res.data.success) {
         toast.success(res.data.message);
-        // Set loading to false before navigation to prevent state update on unmounted component
         if (isMountedRef.current) {
           setLoading(false);
         }
@@ -68,22 +69,20 @@ const AuthPage = () => {
             password: signinpassword,
           },
         });
-        return; // Exit early to prevent finally block from executing
+        return;
       }
     } catch (err) {
       console.log(err);
       const message = err.response?.data?.message || "Network Slow ! Try again";
       toast.error(message);
       if (err.response?.status === 409) {
-        // Set loading to false before navigation
         if (isMountedRef.current) {
           setLoading(false);
         }
         navigate("/login");
-        return; // Exit early to prevent finally block from executing
+        return;
       }
     } finally {
-      // Only update loading state if component is still mounted
       if (isMountedRef.current) {
         setLoading(false);
       }
@@ -105,19 +104,17 @@ const AuthPage = () => {
         setLoginEmail("");
         setLoginPassword("");
         toast.success(`Welcome ${res.data.user.username}!`);
-        // Set loading to false before navigation to prevent state update on unmounted component
         if (isMountedRef.current) {
           setLoading(false);
         }
         navigate("/home", { replace: true });
-        return; // Exit early to prevent finally block from executing
+        return;
       }
     } catch (err) {
       console.log(err);
       const message = err.response?.data?.message || "Network Slow ! Try again";
       toast.error(message);
     } finally {
-      // Only update loading state if component is still mounted
       if (isMountedRef.current) {
         setLoading(false);
       }
@@ -143,24 +140,43 @@ const AuthPage = () => {
     }
   };
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        duration: 0.6,
-        staggerChildren: 0.1,
-      },
-    },
+  const handleGoogleSignUp = async (usr) => {
+    let uname = usr;
+    if (typeof usr === 'object' && usr !== null) {
+      uname = username;
+    }
+    if (!uname || uname.length < 5) {
+      toast.error("Please enter a valid username (min 5 characters)");
+      return;
+    }
+
+    const params = new URLSearchParams({
+      client_id: "82343726980-l5frel7ehhv36rcuqo4vu5adkf8vkanq.apps.googleusercontent.com",
+      redirect_uri: "https://clickly.cv/auth/google",
+      response_type: "code",
+      scope: "openid email profile",
+      access_type: "offline",
+      prompt: "select_account",
+      state: btoa(JSON.stringify({ username: uname, usertype: "onboarding" }))
+    });
+    window.location.href = "https://accounts.google.com/o/oauth2/v2/auth?" + params.toString();
   };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.5 },
-    },
+  const handleGoogleSignIn = async (usr) => {
+    let uname = usr;
+    if (typeof usr === 'object' && usr !== null) {
+      uname = username;
+    }
+    const params = new URLSearchParams({
+      client_id: "82343726980-l5frel7ehhv36rcuqo4vu5adkf8vkanq.apps.googleusercontent.com",
+      redirect_uri: "https://clickly.cv/auth/google",
+      response_type: "code",
+      scope: "openid email profile",
+      access_type: "offline",
+      prompt: "select_account",
+      state: btoa(JSON.stringify({ username: uname, usertype: "onboarded" }))
+    });
+    window.location.href = "https://accounts.google.com/o/oauth2/v2/auth?" + params.toString();
   };
 
   return (
@@ -192,7 +208,7 @@ const AuthPage = () => {
           }}
           transition={{ type: "spring", stiffness: 50, damping: 20 }}
         />
-        
+
         {/* Animated Grid */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]" />
       </div>
@@ -213,7 +229,6 @@ const AuthPage = () => {
         </motion.button>
 
         <motion.div
-          variants={containerVariants}
           initial="hidden"
           animate="visible"
           className="w-full max-w-5xl"
@@ -221,7 +236,6 @@ const AuthPage = () => {
           <div className="grid md:grid-cols-2 gap-6 md:gap-8 items-center">
             {/* Left Side - Welcome Content */}
             <motion.div
-              variants={itemVariants}
               className="flex flex-col items-center justify-center text-center space-y-4 md:space-y-6 p-4 md:p-8 mb-6 md:mb-0"
             >
               <motion.div
@@ -235,7 +249,7 @@ const AuthPage = () => {
                   <HiSparkles className="text-4xl sm:text-5xl md:text-6xl text-white" />
                 </div>
               </motion.div>
-              
+
               <motion.h1
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -244,7 +258,7 @@ const AuthPage = () => {
               >
                 Welcome to LinkBridger
               </motion.h1>
-              
+
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -276,10 +290,7 @@ const AuthPage = () => {
             </motion.div>
 
             {/* Right Side - Auth Forms */}
-            <motion.div
-              variants={itemVariants}
-              className="w-full"
-            >
+            <motion.div className="w-full">
               <div className="relative">
                 {/* Form Container */}
                 <motion.div
@@ -289,9 +300,9 @@ const AuthPage = () => {
                 >
                   {/* Animated Border Gradient */}
                   <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 opacity-0 hover:opacity-20 transition-opacity duration-500 -z-10 blur-xl" />
-                  
-                  {/* Toggle Buttons */}
-                  <div className="flex gap-2 mb-8 p-1 bg-white/5 dark:bg-gray-800/50 rounded-xl backdrop-blur-sm">
+
+                  {/* Sign In/Up Toggle */}
+                  <div className="flex gap-2 mb-6 p-1 bg-white/5 dark:bg-gray-800/50 rounded-xl backdrop-blur-sm">
                     <motion.button
                       type="button"
                       onClick={() => setIsSignUpMode(false)}
@@ -305,14 +316,14 @@ const AuthPage = () => {
                     >
                       {!isSignUpMode && (
                         <motion.div
-                          layoutId="activeTab"
+                          layoutId="activeModeTab"
                           className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg"
                           transition={{ type: "spring", stiffness: 500, damping: 30 }}
                         />
                       )}
                       <span className="relative z-10">Sign In</span>
                     </motion.button>
-                    
+
                     <motion.button
                       type="button"
                       onClick={() => setIsSignUpMode(true)}
@@ -326,7 +337,7 @@ const AuthPage = () => {
                     >
                       {isSignUpMode && (
                         <motion.div
-                          layoutId="activeTab"
+                          layoutId="activeModeTab"
                           className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg"
                           transition={{ type: "spring", stiffness: 500, damping: 30 }}
                         />
@@ -335,156 +346,210 @@ const AuthPage = () => {
                     </motion.button>
                   </div>
 
-                  {/* Forms */}
+                  {/* Authentication Forms */}
                   <AnimatePresence mode="wait">
                     {!isSignUpMode ? (
-                      <motion.form
-                        key="login"
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: 20 }}
+                      /* Sign In - Show both Password and Google options */
+                      <motion.div
+                        key="signin"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
                         transition={{ duration: 0.3 }}
-                        onSubmit={handleLogin}
                         className="space-y-6"
                       >
-                        <motion.h2
+                        {/* Header */}
+                        <motion.div
                           initial={{ opacity: 0, y: -10 }}
                           animate={{ opacity: 1, y: 0 }}
-                          className="text-3xl font-bold text-white mb-6 text-center"
+                          className="text-center mb-6"
                         >
-                          Welcome Back
-                        </motion.h2>
-
-                        <motion.div
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.1 }}
-                          className="relative group"
-                        >
-                          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-purple-400 transition-colors z-10">
-                            <FaEnvelope className="w-5 h-5" />
-                          </div>
-                          <input
-                            type="email"
-                            placeholder="Email"
-                            value={loginemail}
-                            required
-                            onChange={(e) => {
-                              if (e.target.value.includes(" ")) {
-                                toast.error("Space not allowed");
-                                return;
-                              }
-                              setLoginEmail(e.target.value);
-                            }}
-                            className="w-full pl-12 pr-4 py-4 bg-white/10 dark:bg-gray-800/50 border border-white/20 dark:border-gray-700 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 backdrop-blur-sm"
-                          />
+                          <h2 className="text-2xl font-bold text-white">Welcome Back</h2>
+                          <p className="text-gray-300 dark:text-gray-400 text-sm mt-1">
+                            Sign in with your preferred method
+                          </p>
                         </motion.div>
 
-                        <motion.div
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.2 }}
-                          className="relative group"
-                        >
-                          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-purple-400 transition-colors z-10">
-                            <FaLock className="w-5 h-5" />
-                          </div>
-                          <input
-                            type={isShow ? "text" : "password"}
-                            placeholder="Password"
-                            value={loginpassword}
-                            required
-                            minLength={6}
-                            onChange={(e) => {
-                              if (e.target.value.includes(" ")) {
-                                toast.error("Space not allowed");
-                                return;
-                              }
-                              setLoginPassword(e.target.value);
-                            }}
-                            className="w-full pl-12 pr-12 py-4 bg-white/10 dark:bg-gray-800/50 border border-white/20 dark:border-gray-700 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 backdrop-blur-sm"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setShow(!isShow)}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-purple-400 transition-colors z-10"
-                          >
-                            {isShow ? <FaEyeSlash className="w-5 h-5" /> : <FaEye className="w-5 h-5" />}
-                          </button>
-                        </motion.div>
-
-                        <motion.div
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.3 }}
-                          className="flex items-center justify-between"
-                        >
-                          <label className="flex items-center gap-2 text-gray-300 dark:text-gray-400 cursor-pointer">
-                            <input
-                              type="checkbox"
-                              checked={isShow}
-                              onChange={() => setShow(!isShow)}
-                              className="w-4 h-4 rounded border-gray-400 text-purple-600 focus:ring-purple-500"
-                            />
-                            <span className="text-sm">Show Password</span>
-                          </label>
-                          <Link
-                            to="/reset_password"
-                            className="text-sm text-purple-400 hover:text-purple-300 transition-colors"
-                          >
-                            Forgot password?
-                          </Link>
-                        </motion.div>
-
+                        {/* Google Sign In Button */}
                         <motion.button
-                          type="submit"
+                          type="button"
+                          onClick={() => handleGoogleSignIn(username)}
                           disabled={loading}
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.4 }}
+                          transition={{ delay: 0.1 }}
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
-                          className="w-full py-4 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group"
+                          className="w-full py-4 px-6 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group"
                         >
-                          <span className="relative z-10 flex items-center justify-center gap-2">
-                            {loading ? (
-                              <>
-                                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                                </svg>
-                                Signing In...
-                              </>
-                            ) : (
-                              "Sign In"
+                          <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                          <span className="relative z-10 flex items-center justify-center gap-3">
+                            <FcGoogle className="w-5 h-5" />
+                            <span>Continue with Gmail</span>
+                            <FaArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
+                            {loading && (
+                              <svg className="animate-spin h-5 w-5 ml-2" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                              </svg>
                             )}
                           </span>
-                          <motion.div
-                            className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity"
-                            initial={{ x: "-100%" }}
-                            whileHover={{ x: "100%" }}
-                            transition={{ duration: 0.6 }}
-                          />
                         </motion.button>
-                      </motion.form>
+
+                        {/* Divider */}
+                        <div className="relative my-6">
+                          <div className="absolute inset-0 flex items-center">
+                            <div className="w-full border-t border-gray-600"></div>
+                          </div>
+                          <div className="relative flex justify-center text-sm">
+                            <span className="px-2 bg-gray-900 text-gray-400">or</span>
+                          </div>
+                        </div>
+
+                        {/* Password Sign In Form */}
+                        <motion.form
+                          onSubmit={handleLogin}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.2 }}
+                          className="space-y-4"
+                        >
+                          <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.1 }}
+                            className="relative group"
+                          >
+                            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-purple-400 transition-colors z-10">
+                              <FaEnvelope className="w-5 h-5" />
+                            </div>
+                            <input
+                              type="email"
+                              placeholder="Email"
+                              value={loginemail}
+                              required
+                              onChange={(e) => {
+                                if (e.target.value.includes(" ")) {
+                                  toast.error("Space not allowed");
+                                  return;
+                                }
+                                setLoginEmail(e.target.value);
+                              }}
+                              className="w-full pl-12 pr-4 py-4 bg-white/10 dark:bg-gray-800/50 border border-white/20 dark:border-gray-700 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 backdrop-blur-sm"
+                            />
+                          </motion.div>
+
+                          <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.2 }}
+                            className="relative group"
+                          >
+                            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-purple-400 transition-colors z-10">
+                              <FaLock className="w-5 h-5" />
+                            </div>
+                            <input
+                              type={isShow ? "text" : "password"}
+                              placeholder="Password"
+                              value={loginpassword}
+                              required
+                              minLength={6}
+                              onChange={(e) => {
+                                if (e.target.value.includes(" ")) {
+                                  toast.error("Space not allowed");
+                                  return;
+                                }
+                                setLoginPassword(e.target.value);
+                              }}
+                              className="w-full pl-12 pr-12 py-4 bg-white/10 dark:bg-gray-800/50 border border-white/20 dark:border-gray-700 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 backdrop-blur-sm"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setShow(!isShow)}
+                              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-purple-400 transition-colors z-10"
+                            >
+                              {isShow ? <FaEyeSlash className="w-5 h-5" /> : <FaEye className="w-5 h-5" />}
+                            </button>
+                          </motion.div>
+
+                          <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.3 }}
+                            className="flex items-center justify-between"
+                          >
+                            <label className="flex items-center gap-2 text-gray-300 dark:text-gray-400 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={isShow}
+                                onChange={() => setShow(!isShow)}
+                                className="w-4 h-4 rounded border-gray-400 text-purple-600 focus:ring-purple-500"
+                              />
+                              <span className="text-sm">Show Password</span>
+                            </label>
+                            <Link
+                              to="/reset_password"
+                              className="text-sm text-purple-400 hover:text-purple-300 transition-colors"
+                            >
+                              Forgot password?
+                            </Link>
+                          </motion.div>
+
+                          <motion.button
+                            type="submit"
+                            disabled={loading}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.4 }}
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            className="w-full py-4 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group"
+                          >
+                            <span className="relative z-10 flex items-center justify-center gap-2">
+                              {loading ? (
+                                <>
+                                  <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                  </svg>
+                                  Signing In...
+                                </>
+                              ) : (
+                                "Sign In"
+                              )}
+                            </span>
+                            <motion.div
+                              className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                              initial={{ x: "-100%" }}
+                              whileHover={{ x: "100%" }}
+                              transition={{ duration: 0.6 }}
+                            />
+                          </motion.button>
+                        </motion.form>
+                      </motion.div>
                     ) : (
-                      <motion.form
+                      /* Sign Up - Username required, then Google */
+                      <motion.div
                         key="signup"
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20 }}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
                         transition={{ duration: 0.3 }}
-                        onSubmit={handleSignUp}
                         className="space-y-6"
                       >
-                        <motion.h2
+                        {/* Header */}
+                        <motion.div
                           initial={{ opacity: 0, y: -10 }}
                           animate={{ opacity: 1, y: 0 }}
-                          className="text-3xl font-bold text-white mb-6 text-center"
+                          className="text-center mb-6"
                         >
-                          Create Account
-                        </motion.h2>
+                          <h2 className="text-2xl font-bold text-white">Create Account</h2>
+                          <p className="text-gray-300 dark:text-gray-400 text-sm mt-1">
+                            Choose a memorable username for your domain
+                          </p>
+                        </motion.div>
 
+                        {/* Username Input */}
                         <motion.div
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
@@ -527,113 +592,192 @@ const AuthPage = () => {
                           </div>
                         </motion.div>
 
-                        <motion.div
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.2 }}
-                          className="relative group"
-                        >
-                          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-purple-400 transition-colors z-10">
-                            <FaEnvelope className="w-5 h-5" />
-                          </div>
-                          <input
-                            type="email"
-                            placeholder="Email"
-                            value={signinemail}
-                            required
-                            onChange={(e) => {
-                              if (e.target.value.includes(" ")) {
-                                toast.error("Space not allowed");
-                                return;
-                              }
-                              setSigninEmail(e.target.value);
-                            }}
-                            className="w-full pl-12 pr-4 py-4 bg-white/10 dark:bg-gray-800/50 border border-white/20 dark:border-gray-700 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 backdrop-blur-sm"
-                          />
-                        </motion.div>
-
-                        <motion.div
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.3 }}
-                          className="relative group"
-                        >
-                          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-purple-400 transition-colors z-10">
-                            <FaLock className="w-5 h-5" />
-                          </div>
-                          <input
-                            type={isShowSignup ? "text" : "password"}
-                            placeholder="Password (min 6 characters)"
-                            value={signinpassword}
-                            required
-                            minLength={6}
-                            onChange={(e) => {
-                              if (e.target.value.includes(" ")) {
-                                toast.error("Space not allowed");
-                                return;
-                              }
-                              setSigninPassword(e.target.value);
-                            }}
-                            className="w-full pl-12 pr-12 py-4 bg-white/10 dark:bg-gray-800/50 border border-white/20 dark:border-gray-700 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 backdrop-blur-sm"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setShowSignup(!isShowSignup)}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-purple-400 transition-colors z-10"
+                        {username.length >= 5 && (
+                          <motion.p
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className={`text-xs ml-1 transition-all duration-300 ${isAvailable ? "text-green-400" : "text-red-400"
+                              }`}
                           >
-                            {isShowSignup ? <FaEyeSlash className="w-5 h-5" /> : <FaEye className="w-5 h-5" />}
-                          </button>
-                        </motion.div>
+                            {isAvailable
+                              ? "✓ Username is available"
+                              : "✗ Username is not available"}
+                          </motion.p>
+                        )}
 
-                        <motion.div
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.4 }}
-                          className="flex items-center gap-2 text-gray-300 dark:text-gray-400"
-                        >
-                          <input
-                            type="checkbox"
-                            id="signupCheck"
-                            checked={isShowSignup}
-                            onChange={() => setShowSignup(!isShowSignup)}
-                            className="w-4 h-4 rounded border-gray-400 text-purple-600 focus:ring-purple-500"
-                          />
-                          <label htmlFor="signupCheck" className="text-sm cursor-pointer">
-                            Show Password
-                          </label>
-                        </motion.div>
-
-                        <motion.button
-                          type="submit"
-                          disabled={loading || username.length < 5 || (username.length >= 5 && !isAvailable)}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.5 }}
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                          className="w-full py-4 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group"
-                        >
-                          <span className="relative z-10 flex items-center justify-center gap-2">
-                            {loading ? (
-                              <>
-                                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                                </svg>
-                                Creating Account...
-                              </>
-                            ) : (
-                              "Create Account"
-                            )}
-                          </span>
+                        {/* Google Sign Up Button - Only show when username is valid */}
+                        {username.length >= 5 && isAvailable && (
                           <motion.div
-                            className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity"
-                            initial={{ x: "-100%" }}
-                            whileHover={{ x: "100%" }}
-                            transition={{ duration: 0.6 }}
-                          />
-                        </motion.button>
-                      </motion.form>
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.2 }}
+                          >
+                            {/* Divider */}
+                            <div className="relative my-6">
+                              <div className="absolute inset-0 flex items-center">
+                                <div className="w-full border-t border-gray-600"></div>
+                              </div>
+                              <div className="relative flex justify-center text-sm">
+                                <span className="px-2 bg-gray-900 text-gray-400">then</span>
+                              </div>
+                            </div>
+
+                            <motion.button
+                              type="button"
+                              onClick={() => handleGoogleSignUp(username)}
+                              disabled={loading}
+                              whileHover={{ scale: 1.02 }}
+                              whileTap={{ scale: 0.98 }}
+                              className="w-full py-4 px-6 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group"
+                            >
+                              <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                              <span className="relative z-10 flex items-center justify-center gap-3">
+                                <FcGoogle className="w-5 h-5" />
+                                <span>Register with Google</span>
+                                <FaArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
+                                {loading && (
+                                  <svg className="animate-spin h-5 w-5 ml-2" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                  </svg>
+                                )}
+                              </span>
+                            </motion.button>
+                          </motion.div>
+                        )}
+
+                        {/* Alternative - Password Sign Up */}
+                        {(!username.length || !isAvailable) && (
+                          <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.3 }}
+                          >
+                            {/* Divider */}
+                            <div className="relative my-6">
+                              <div className="absolute inset-0 flex items-center">
+                                <div className="w-full border-t border-gray-600"></div>
+                              </div>
+                              <div className="relative flex justify-center text-sm">
+                                <span className="px-2 bg-gray-900 text-gray-400">or use password</span>
+                              </div>
+                            </div>
+
+                            {/* Password Sign Up Form */}
+                            <motion.form
+                              onSubmit={handleSignUp}
+                              className="space-y-4"
+                            >
+                              <motion.div
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.1 }}
+                                className="relative group"
+                              >
+                                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-purple-400 transition-colors z-10">
+                                  <FaEnvelope className="w-5 h-5" />
+                                </div>
+                                <input
+                                  type="email"
+                                  placeholder="Email"
+                                  value={signinemail}
+                                  required
+                                  onChange={(e) => {
+                                    if (e.target.value.includes(" ")) {
+                                      toast.error("Space not allowed");
+                                      return;
+                                    }
+                                    setSigninEmail(e.target.value);
+                                  }}
+                                  className="w-full pl-12 pr-4 py-4 bg-white/10 dark:bg-gray-800/50 border border-white/20 dark:border-gray-700 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 backdrop-blur-sm"
+                                />
+                              </motion.div>
+
+                              <motion.div
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.2 }}
+                                className="relative group"
+                              >
+                                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-purple-400 transition-colors z-10">
+                                  <FaLock className="w-5 h-5" />
+                                </div>
+                                <input
+                                  type={isShowSignup ? "text" : "password"}
+                                  placeholder="Password (min 6 characters)"
+                                  value={signinpassword}
+                                  required
+                                  minLength={6}
+                                  onChange={(e) => {
+                                    if (e.target.value.includes(" ")) {
+                                      toast.error("Space not allowed");
+                                      return;
+                                    }
+                                    setSigninPassword(e.target.value);
+                                  }}
+                                  className="w-full pl-12 pr-12 py-4 bg-white/10 dark:bg-gray-800/50 border border-white/20 dark:border-gray-700 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 backdrop-blur-sm"
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => setShowSignup(!isShowSignup)}
+                                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-purple-400 transition-colors z-10"
+                                >
+                                  {isShowSignup ? <FaEyeSlash className="w-5 h-5" /> : <FaEye className="w-5 h-5" />}
+                                </button>
+                              </motion.div>
+
+                              <motion.div
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.3 }}
+                                className="flex items-center gap-2 text-gray-300 dark:text-gray-400"
+                              >
+                                <input
+                                  type="checkbox"
+                                  id="signupCheck"
+                                  checked={isShowSignup}
+                                  onChange={() => setShowSignup(!isShowSignup)}
+                                  className="w-4 h-4 rounded border-gray-400 text-purple-600 focus:ring-purple-500"
+                                />
+                                <label htmlFor="signupCheck" className="text-sm cursor-pointer">
+                                  Show Password
+                                </label>
+                              </motion.div>
+
+                              <motion.button
+                                type="submit"
+                                disabled={loading}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.4 }}
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                className="w-full py-4 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group"
+                              >
+                                <span className="relative z-10 flex items-center justify-center gap-2">
+                                  {loading ? (
+                                    <>
+                                      <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                      </svg>
+                                      Creating Account...
+                                    </>
+                                  ) : (
+                                    "Create Account"
+                                  )}
+                                </span>
+                                <motion.div
+                                  className="absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                                  initial={{ x: "-100%" }}
+                                  whileHover={{ x: "100%" }}
+                                  transition={{ duration: 0.6 }}
+                                />
+                              </motion.button>
+                            </motion.form>
+                          </motion.div>
+                        )}
+                      </motion.div>
                     )}
                   </AnimatePresence>
                 </motion.div>
