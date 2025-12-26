@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
 import { MdContentCopy } from "react-icons/md";
-import { FaLink, FaGlobe, FaExclamationTriangle, FaCheckCircle, FaTimes, FaRocket, FaEdit } from 'react-icons/fa';
+import { FaLink, FaGlobe, FaExclamationTriangle, FaCheckCircle, FaTimes, FaRocket, FaEdit, FaDiceSix } from 'react-icons/fa';
 import api from '../../utils/api';
 import { setLinks } from '../../redux/userSlice';
 import { setEditLinkData, clearEditLinkData } from '../../redux/pageSlice';
@@ -173,6 +173,20 @@ const CreateBridge = () => {
       });
   };
 
+  const generateRandomCode = () => {
+    // Generate 8-character random code (alphanumeric)
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let code = '';
+    for (let i = 0; i < 8; i++) {
+      code += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    setPlatform(code);
+    if (isEditMode) {
+      setSource(code);
+    }
+    toast.success("Random code generated!");
+  };
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -282,12 +296,27 @@ const CreateBridge = () => {
             {/* Platform Input */}
             <motion.div
               variants={itemVariants}
-              className="space-y-2"
+              className="space-y-2 relative"
             >
-              <label className="flex items-center gap-2 text-gray-700 dark:text-gray-200 font-semibold text-lg">
-                <FaLink className="text-purple-600 dark:text-purple-400" />
-                Platform Name
-              </label>
+              <div className="flex items-center justify-between">
+                <label className="flex items-center gap-2 text-gray-700 dark:text-gray-200 font-semibold text-lg">
+                  <FaLink className="text-purple-600 dark:text-purple-400" />
+                  Platform Name
+                </label>
+                <motion.button
+                  type="button"
+                  onClick={generateRandomCode}
+                  disabled={showWarningModal || loading}
+                  whileHover={{ scale: loading ? 1 : 1.02 }}
+                  whileTap={{ scale: loading ? 1 : 0.98 }}
+                  className="bg-transparent hover:bg-gray-500/20 border border-gray-400 hover:border-gray-500 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-semibold py-1.5 px-3 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5 text-xs"
+                  title="Generate Random Code"
+                >
+                  <FaDiceSix className="text-sm" />
+                  Random
+                </motion.button>
+              </div>
+
               <div className="relative group">
                 <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 group-focus-within:text-purple-600 dark:group-focus-within:text-purple-400 transition-colors z-10">
                   <FaLink className="w-5 h-5" />
