@@ -339,7 +339,7 @@ const HomePage = () => {
       <HeroSection
         words={words}
         flipWords={flipWords}
-        description="LinkBridger transforms your social media presence with memorable, personalized URLs by providing your own free domain"
+        description="LinkBridger transforms your social media presence with memorable, personalized URLs by providing your own FREE domain that will reflect your brand identity"
         highlightText="One link to rule them all. Update once, reflect everywhere."
         ctaText="Get Started Free"
         secondaryCtaText="Learn More"
@@ -968,7 +968,7 @@ const HomePage = () => {
       {/* Final CTA Section */}
       <CTASection
         title="Ready to Transform Your Links?"
-        subtitle="Join thousands of professionals who trust LinkBridger to manage their social presence"
+        subtitle="Join thousands of professionals who trust LinkBridger. Get your own domain FREE to manage your links and reflect your brand identity professionally."
         ctaText="Get Started Now"
       />
       

@@ -12,7 +12,8 @@ const HowToUse = () => {
       details: [
         "Visit the signup page",
         "Enter your email address",
-        "Choose a short, memorable username (this will be part of your links)",
+        "Choose a short, memorable username (this becomes your FREE domain like username.clickly.cv)",
+        "Get your own domain FREE to reflect your brand identity",
         "Create a strong password",
         "Click 'Sign Up' to create your account"
       ],
@@ -45,14 +46,15 @@ const HowToUse = () => {
     {
       icon: FaLink,
       title: "4. Generate Links",
-      description: "Create personalized links for your platforms",
+      description: "Create personalized links for your platforms using your own domain",
       details: [
         "Go to the 'Links' page from navigation",
         "Click 'Add New Link' or 'Create Bridge'",
         "Enter platform name (e.g., 'LinkedIn', 'GitHub', 'Portfolio')",
         "Enter the destination URL (the actual link to your profile)",
+        "Get your own domain FREE to manage all your links professionally",
         "Click 'Create' to generate your personalized link",
-        "Your link will be: clickly.cv/yourusername/platformname"
+        "Your professional link will be: clickly.cv/yourusername/platformname"
       ],
       gradient: "from-orange-500 to-red-500"
     },
@@ -74,10 +76,11 @@ const HowToUse = () => {
     {
       icon: FaShare,
       title: "6. Share LinkHub",
-      description: "Share your main hub link that shows all profiles",
+      description: "Share your main hub link that reflects your brand identity",
       details: [
-        "Your hub link is: yourusername.clickly.cv",
-        "This link acts as a landing page for all your profiles",
+        "Your professional hub link is: yourusername.clickly.cv",
+        "Get your own domain FREE to manage all your links professionally",
+        "This link acts as a beautiful landing page for all your profiles",
         "Share it on:",
         "  • Business cards",
         "  • Email signatures",

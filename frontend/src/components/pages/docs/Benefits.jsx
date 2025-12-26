@@ -8,7 +8,7 @@ const Benefits = () => {
     {
       icon: FaStar,
       title: "Memorable & Professional Links",
-      description: "Transform long, complex URLs into clean, branded links. Instead of 'linkedin.com/in/john-doe-software-engineer-123456789', get 'clickly.cv/johndoe/linkedin' that's easy to remember and share.",
+      description: "Transform long, complex URLs into clean, branded links. Instead of 'linkedin.com/in/john-doe-software-engineer-123456789', get 'clickly.cv/johndoe/linkedin' that's easy to remember and share. Get your own domain FREE that will reflect your brand identity.",
       example: "Before: https://www.linkedin.com/in/john-doe-software-engineer-123456789/\nAfter: https://johndoe.clickly.cv/linkedin",
       gradient: "from-purple-500 to-pink-500"
     },
@@ -17,6 +17,7 @@ const Benefits = () => {
       title: "For Professionals",
       benefits: [
         "Build your brand with consistent, memorable links",
+        "Get your own domain FREE to reflect your brand identity",
         "Professional appearance on resumes and business cards",
         "Time-saving centralized link management",
         "Analytics to understand engagement",
@@ -30,9 +31,10 @@ const Benefits = () => {
       title: "For Content Creators",
       benefits: [
         "Easy sharing with one simple link format",
+        "Get your own domain FREE to manage all your links",
         "Audience insights through click tracking",
         "Flexibility to add any platform",
-        "Customization to match your brand",
+        "Customization to match your brand identity",
         "Cross-platform promotion with hub link",
         "Engagement tracking to focus content strategy"
       ],
@@ -56,6 +58,7 @@ const Benefits = () => {
       title: "For Students & Job Seekers",
       benefits: [
         "Professional links that stand out on resumes",
+        "Get your own domain FREE to build your brand identity",
         "Easy management - update once, changes everywhere",
         "Analytics to see which platforms recruiters visit",
         "Free forever - no subscription fees",

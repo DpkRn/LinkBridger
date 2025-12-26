@@ -146,7 +146,7 @@ const Security = () => {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.4 }}
           >
-            Learn how to protect your links, secure your profile, and maintain your privacy
+            Learn how to protect your links, secure your profile, and maintain your privacy. Get your own domain FREE to manage everything professionally and reflect your brand identity securely.
           </motion.p>
         </motion.div>
 

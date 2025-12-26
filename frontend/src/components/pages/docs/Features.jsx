@@ -8,7 +8,7 @@ const Features = () => {
     {
       icon: FaLink,
       title: "Personalized Smart Links",
-      description: "Create memorable, branded links using your username and platform name. Instead of random codes like 'bit.ly/xyz123', get clean URLs like 'clickly.cv/yourname/linkedin' that reflect your brand identity.",
+      description: "Create memorable, branded links using your username and platform name. Instead of random codes like 'bit.ly/xyz123', get clean URLs like 'yourname.clickly.cv/linkedin' that reflect your brand identity. Get your own domain FREE to manage all your links professionally.",
       gradient: "from-purple-500 to-pink-500",
       color: "from-blue-500 to-cyan-500"
     },

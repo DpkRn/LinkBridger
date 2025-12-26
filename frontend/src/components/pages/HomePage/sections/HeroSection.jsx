@@ -243,7 +243,8 @@ const HeroSection = ({
                 {isAvailable ? "✓ Username is available" : "✗ Username is not available"}
               </p>
             )}
-            <p className="text-base text-gray-700 dark:text-gray-200 mt-2">Get your own domain to manage your links</p>
+            <p className="text-base text-gray-700 dark:text-gray-200 mt-2">Get your own domain <strong>FREE</strong> to manage your links</p>
+            <p className="text-sm text-purple-600 dark:text-purple-400 mt-1 font-semibold">That will reflect your brand identity ✨</p>
           </motion.div>
 
           {/* Platform Icons */}
