@@ -1,5 +1,5 @@
 export const serverUrl=(tier)=>{
-    if(tier==dev){
+    if(tier=='dev'){
         return "http://localhost:8080"
     }
     return "https://clickly.cv"

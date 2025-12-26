@@ -110,7 +110,7 @@ const Security = () => {
     {
       icon: FaServer,
       title: "Privacy First",
-      description: "Your data is yours - we don't sell it:",
+      description: "Your data is yours",
       features: [
         "No Tracking Scripts - No Google Analytics or third-party trackers",
         "No Data Selling - Your data is yours",

@@ -76,7 +76,7 @@ const HowToUse = () => {
       title: "6. Share LinkHub",
       description: "Share your main hub link that shows all profiles",
       details: [
-        "Your hub link is: clickly.cv/yourusername",
+        "Your hub link is: yourusername.clickly.cv",
         "This link acts as a landing page for all your profiles",
         "Share it on:",
         "  • Business cards",
