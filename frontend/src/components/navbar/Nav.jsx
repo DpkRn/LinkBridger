@@ -14,7 +14,7 @@ import {
 } from "../../redux/userSlice";
 import { MdOutlineArrowDropDownCircle, MdMenu, MdClose } from "react-icons/md";
 import { MdDarkMode, MdLightMode } from "react-icons/md";
-import { FaBell, FaUser, FaCog, FaSignOutAlt, FaHome, FaLink, FaBook, FaSearch, FaTimes, FaChartLine, FaRocket, FaStar, FaShieldAlt, FaLightbulb } from "react-icons/fa";
+import { FaBell, FaUser, FaCog, FaSignOutAlt, FaHome, FaLink, FaBook, FaSearch, FaTimes, FaChartLine, FaRocket, FaStar, FaShieldAlt, FaLightbulb, FaListUl } from "react-icons/fa";
 import Notification from "../notification/Notification";
 
 const Nav = () => {
@@ -215,6 +215,7 @@ const Nav = () => {
     { to: "/home", label: "Home", icon: FaHome },
     { to: "/links", label: "Links", icon: FaLink },
     { to: "/analytics", label: "Analytics", icon: FaChartLine },
+    { to: "/click-details", label: "Click Details", icon: FaListUl },
   ];
 
   const docsMenuItems = [
@@ -740,19 +741,31 @@ const Nav = () => {
                     <div className="max-h-96 overflow-y-auto">
                       <Notification />
                     </div>
-                    {notifications > 0 && (
-                      <div className="p-4 border-t border-gray-600/30 dark:border-gray-700/50">
+                    <div className="p-4 border-t border-gray-600/30 dark:border-gray-700/50 space-y-3">
+                      {notifications > 0 && (
                         <motion.button
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                           onClick={handleMarkRead}
-                          className="w-full py-2.5 px-4 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2"
+                          className="w-full py-2 px-3 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2 text-sm"
                         >
-                          <FaBell className="w-4 h-4" />
+                          <FaBell className="w-3 h-3" />
                           Mark All as Read
                         </motion.button>
-                      </div>
-                    )}
+                      )}
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => {
+                          navigate('/click-details');
+                          setNotificationPage(false);
+                        }}
+                        className="w-full py-2 px-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2 text-sm"
+                      >
+                        <FaListUl className="w-3 h-3" />
+                        See All Notifications
+                      </motion.button>
+                    </div>
                   </motion.div>
                 )}
               </AnimatePresence>

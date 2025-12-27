@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Link = require('../model/linkModel');
 const LinkAnalytics = require('../model/linkAnalyticsModel');
 
@@ -220,8 +221,117 @@ const saveAnalytics = async ({
   }
 };
 
+const getClickDetails = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const {
+            username,
+            linkId,
+            page = 1,
+            limit = 50,
+            search = '',
+            startDate,
+            endDate
+        } = req.body;
+
+        if (!userId || !username) {
+            return res.status(400).json({
+                success: false,
+                message: 'Username is required'
+            });
+        }
+
+        // Build match conditions
+        const matchConditions = {
+            userId: new mongoose.Types.ObjectId(userId),
+            username,
+            deletedAt: null
+        };
+
+        // Filter by specific link if provided
+        if (linkId) {
+            matchConditions.linkId = new mongoose.Types.ObjectId(linkId);
+        }
+
+        // Date range filter
+        if (startDate || endDate) {
+            matchConditions.clickDate = {};
+            if (startDate) {
+                matchConditions.clickDate.$gte = new Date(startDate);
+            }
+            if (endDate) {
+                matchConditions.clickDate.$lte = new Date(endDate);
+            }
+        }
+
+        // Search filter (search in referrer, userAgent, browser.name, os.name, device info)
+        if (search) {
+            matchConditions.$or = [
+                { 'referrer': { $regex: search, $options: 'i' } },
+                { 'userAgent': { $regex: search, $options: 'i' } },
+                { 'browser.name': { $regex: search, $options: 'i' } },
+                { 'os.name': { $regex: search, $options: 'i' } },
+                { 'device.brand': { $regex: search, $options: 'i' } },
+                { 'device.model': { $regex: search, $options: 'i' } },
+                { 'location.country': { $regex: search, $options: 'i' } },
+                { 'location.city': { $regex: search, $options: 'i' } }
+            ];
+        }
+
+        // Get total count for pagination
+        const totalCount = await LinkAnalytics.countDocuments(matchConditions);
+
+        // Get paginated results
+        const clicks = await LinkAnalytics.find(matchConditions)
+            .populate('linkId', 'source destination')
+            .sort({ clickDate: -1 })
+            .skip((page - 1) * limit)
+            .limit(parseInt(limit))
+            .lean();
+
+        // Format the response
+        const formattedClicks = clicks.map(click => ({
+            _id: click._id,
+            linkId: click.linkId?._id || "linkhub" ,
+            linkSource: click.linkId?.source || 'Unknown',
+            linkDestination: click.linkId?.destination || 'linkhub',
+            clickDate: click.clickDate,
+            clickedTime: click.clickedTime,
+            location: click.location,
+            device: click.device,
+            os: click.os,
+            browser: click.browser,
+            referrer: click.referrer,
+            userAgent: click.userAgent,
+            seen: click.seen
+        }));
+
+        return res.status(200).json({
+            success: true,
+            data: {
+                clicks: formattedClicks,
+                pagination: {
+                    currentPage: parseInt(page),
+                    totalPages: Math.ceil(totalCount / limit),
+                    totalClicks: totalCount,
+                    hasNext: page * limit < totalCount,
+                    hasPrev: page > 1
+                }
+            }
+        });
+
+    } catch (err) {
+        console.error('❌ Failed to get click details:', err);
+        return res.status(500).json({
+            success: false,
+            message: 'Server Internal Error'
+        });
+    }
+};
+
 module.exports = {
     getAnalytics,
+    getClickDetails,
     saveAnalytics,
 };
 

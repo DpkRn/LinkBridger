@@ -20,6 +20,7 @@ import Settings from './components/pages/Settings'
 import NotFound from './components/pages/NotFound'
 import AboutDeveloper from './components/pages/AboutDeveloper'
 import Analytics from './components/pages/Analytics'
+import LinkClickDetails from './components/pages/LinkClickDetails'
 import TemplatePreview from './components/preview/TemplatePreview'
 import Features from './components/pages/docs/Features'
 import Benefits from './components/pages/docs/Benefits'
@@ -27,6 +28,7 @@ import Security from './components/pages/docs/Security'
 import HowToUse from './components/pages/docs/HowToUse'
 import Different from './components/pages/docs/Different'
 import AuthPageV1 from './components/AuthPageV1'
+import LinkClickDetailsV1 from './components/pages/LinkClickDetailsV1'
 
 function App() {
   const location = useLocation();
@@ -152,6 +154,7 @@ function App() {
         <Route path='/settings' element={<PrivateRoute><Settings/></PrivateRoute>} />
         <Route path='/home' element={<PrivateRoute><DashBoard /></PrivateRoute>} />
         <Route path='/analytics' element={<PrivateRoute><Analytics /></PrivateRoute>} />
+        <Route path='/click-details' element={<PrivateRoute><LinkClickDetailsV1/></PrivateRoute>} />
         <Route path='/verified' element={<VerifiedPage />} />
         <Route path='/reset_password' element={<PasswordReset />} />
         <Route path='/about-developer' element={<AboutDeveloper />} />
