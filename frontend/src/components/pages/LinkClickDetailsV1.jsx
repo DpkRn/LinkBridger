@@ -17,6 +17,8 @@ const LinkClickDetailsV1 = () => {
   const [selectedLink, setSelectedLink] = useState('all');
   const [showFilters, setShowFilters] = useState(false);
   const [selectedClick, setSelectedClick] = useState(null);
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
 
   // Get unique links for filter
   const uniqueLinks = [...new Set(clicks.map(c => c.linkId))].map(linkId => {
@@ -84,8 +86,27 @@ const LinkClickDetailsV1 = () => {
       );
     }
 
+    // Date range filtering
+    if (startDate || endDate) {
+      filtered = filtered.filter(c => {
+        const clickDate = new Date(c.clickDate);
+        const start = startDate ? new Date(startDate) : null;
+        const end = endDate ? new Date(endDate) : null;
+
+        // Set end date to end of day
+        if (end) {
+          end.setHours(23, 59, 59, 999);
+        }
+
+        if (start && clickDate < start) return false;
+        if (end && clickDate > end) return false;
+
+        return true;
+      });
+    }
+
     setFilteredClicks(filtered);
-  }, [selectedLink, searchQuery, clicks]);
+  }, [selectedLink, searchQuery, startDate, endDate, clicks]);
 
   const getDeviceIcon = (type) => {
     switch (type) {
@@ -142,27 +163,27 @@ const LinkClickDetailsV1 = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
-            <div className="p-3 bg-gray-700/30 rounded-lg border border-gray-600/50">
-              <div className="flex items-center  gap-2 mb-1">
-                <FaChartLine className="w-5 h-5 text-purple-400" />
-                <span className="text-sm text-gray-400">Total Clicks</span>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
+            <div className="p-2 bg-gray-700/30 rounded-lg border border-gray-600/50">
+              <div className="flex items-center gap-1.5 mb-0.5">
+                <FaChartLine className="w-4 h-4 text-purple-400" />
+                <span className="text-xs text-gray-400">Total Clicks</span>
               </div>
-                  <p className="text-2xl font-bold text-white">{allClicksCount}</p>
+              <p className="text-xl font-bold text-white">{allClicksCount}</p>
             </div>
-            <div className="p-3 bg-gray-700/30 rounded-lg border border-gray-600/50">
-              <div className="flex items-center gap-2 mb-1">
-                <FaUsers className="w-5 h-5 text-pink-400" />
-                <span className="text-sm text-gray-400">Unique Visitors</span>
+            <div className="p-2 bg-gray-700/30 rounded-lg border border-gray-600/50">
+              <div className="flex items-center gap-1.5 mb-0.5">
+                <FaUsers className="w-4 h-4 text-pink-400" />
+                <span className="text-xs text-gray-400">Unique Visitors</span>
               </div>
-              <p className="text-2xl font-bold text-white">{uniqueVisitors}</p>
+              <p className="text-xl font-bold text-white">{uniqueVisitors}</p>
             </div>
-            <div className="p-3 bg-gray-700/30 rounded-lg border border-gray-600/50">
-              <div className="flex items-center gap-2 mb-1">
-                <FaGlobe className="w-5 h-5 text-cyan-400" />
-                <span className="text-sm text-gray-400">Top Country</span>
+            <div className="p-2 bg-gray-700/30 rounded-lg border border-gray-600/50">
+              <div className="flex items-center gap-1.5 mb-0.5">
+                <FaGlobe className="w-4 h-4 text-cyan-400" />
+                <span className="text-xs text-gray-400">Top Country</span>
               </div>
-              <p className="text-2xl font-bold text-white">{topCountryName}</p>
+              <p className="text-xl font-bold text-white">{topCountryName}</p>
             </div>
           </div>
 
@@ -222,6 +243,45 @@ const LinkClickDetailsV1 = () => {
                   </button>
                 ))}
               </div>
+
+              {/* Date Range Filter */}
+              <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm text-gray-400 mb-2">Start Date</label>
+                  <input
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    className="w-full px-3 py-2 bg-gray-700/50 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-gray-400 mb-2">End Date</label>
+                  <input
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    className="w-full px-3 py-2 bg-gray-700/50 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  />
+                </div>
+              </div>
+
+              {/* Clear Filters Button */}
+              {(selectedLink !== 'all' || searchQuery || startDate || endDate) && (
+                <div className="mt-4 flex justify-end">
+                  <button
+                    onClick={() => {
+                      setSelectedLink('all');
+                      setSearchQuery('');
+                      setStartDate('');
+                      setEndDate('');
+                    }}
+                    className="px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg transition-colors text-sm"
+                  >
+                    Clear All Filters
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>

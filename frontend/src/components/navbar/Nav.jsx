@@ -114,7 +114,8 @@ const Nav = () => {
 
   const onNotificationClick = async () => {
     if (notifications === 0) {
-      toast("You have no new clicks", { icon: "📭" });
+      // Navigate to click details page when no notifications
+      navigate('/click-details');
       return;
     }
     setNotificationPage((state) => !state);
@@ -215,7 +216,7 @@ const Nav = () => {
     { to: "/home", label: "Home", icon: FaHome },
     { to: "/links", label: "Links", icon: FaLink },
     { to: "/analytics", label: "Analytics", icon: FaChartLine },
-    { to: "/click-details", label: "Click Details", icon: FaListUl },
+    // { to: "/click-details", label: "Click Details", icon: FaListUl },
   ];
 
   const docsMenuItems = [
