@@ -39,8 +39,28 @@ const extractInfo = (req, res, next) => {
 
   /* ----------------------------------
      5. REFERRER (fix: use lowercase 'referer')
+     Note: Social media platforms like LinkedIn don't send referrer due to privacy policies
   ---------------------------------- */
-  const referrer = req.get('referer') || req.headers.referer || req.get('Referrer') || 'direct';
+  let referrer = req.get('referer') || req.headers.referer || req.get('Referrer') || 'direct';
+
+  // Additional referrer detection for social media
+  const origin = req.headers.origin;
+  const requestHost = req.get('host') || '';
+
+  // If referrer is 'direct' but we have an origin, use that
+  if (referrer === 'direct' && origin) {
+    referrer = origin;
+  }
+
+  // Log for debugging (remove in production)
+  if (referrer === 'direct') {
+    console.log('Direct access - Headers:', {
+      referer: req.headers.referer,
+      origin: origin,
+      host: requestHost,
+      userAgent: req.headers['user-agent']?.substring(0, 50)
+    });
+  }
 
   /* ----------------------------------
      6. TIME
