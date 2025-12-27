@@ -55,12 +55,34 @@ const LinkClickDetailsV1 = () => {
         setClicks(apiClicks);
         setFilteredClicks(apiClicks);
       }
-      } catch (error) {
+    } catch (error) {
       console.error('Error fetching click details:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Mark notification as read
+  const markAsRead = async (clickId) => {
+    try {
+      await api.post('/analytics/mark-read', {
+        clickId: clickId,
+      });
+      // Update local state to reflect the change
+      setClicks(prevClicks =>
+        prevClicks.map(click =>
+          click._id === clickId ? { ...click, seen: true } : click
+        )
+      );
+      setFilteredClicks(prevClicks =>
+        prevClicks.map(click =>
+          click._id === clickId ? { ...click, seen: true } : click
+        )
+      );
+    } catch (error) {
+      console.error('Error marking notification as read:', error);
+    }
+  };
 
   useEffect(() => {
     if (username) {
@@ -333,7 +355,12 @@ const LinkClickDetailsV1 = () => {
               filteredClicks.map((click) => (
                 <div
                   key={click._id}
-                  onClick={() => setSelectedClick(click)}
+                  onClick={() => {
+                    setSelectedClick(click);
+                    if (!click.seen) {
+                      markAsRead(click._id);
+                    }
+                  }}
                   className={`p-4 rounded-xl cursor-pointer transition-all duration-200 ${
                     selectedClick?._id === click._id
                       ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 border-2 border-purple-500/50 shadow-lg shadow-purple-500/20'

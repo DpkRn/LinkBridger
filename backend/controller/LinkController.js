@@ -1,3 +1,4 @@
+const LinkAnalytics = require("../model/linkAnalyticsModel");
 const Link = require("../model/linkModel");
 const crypto = require('crypto');
 
@@ -90,6 +91,9 @@ const deleteLink=async(req,res)=>{
             const userId=req.userId;
             console.log('updating')
             await Link.updateMany({userId},{$set:{notSeen:0}});
+
+            console.log('updating')
+            await LinkAnalytics.updateMany({userId,seen:false},{$set:{seen:true}});
             return res.status(201).json({success:true})
         }catch(err){
             console.log(err);

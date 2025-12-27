@@ -383,10 +383,52 @@ const getClickDetailsV1 = async (req, res) => {
     }
 };
 
+const markReadNotification = async (req, res) => {
+    try {
+        const { clickId } = req.body;
+        const userId = req.userId;
+
+        if (!clickId || !userId) {
+            return res.status(400).json({
+                success: false,
+                message: 'Click ID is required'
+            });
+        }
+
+        // Update the specific click to mark as seen
+        const updatedClick = await LinkAnalytics.findOneAndUpdate(
+            { _id: clickId, userId: userId },
+            { $set: { seen: true } },
+            { new: true }
+        );
+
+        if (!updatedClick) {
+            return res.status(404).json({
+                success: false,
+                message: 'Click not found or access denied'
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: 'Notification marked as read',
+            data: updatedClick
+        });
+
+    } catch (err) {
+        console.error('❌ Failed to mark notification as read:', err);
+        return res.status(500).json({
+            success: false,
+            message: 'Server Internal Error'
+        });
+    }
+};
+
 module.exports = {
     getAnalytics,
     getClickDetails,
     getClickDetailsV1,
+    markReadNotification,
     saveAnalytics,
 };
 
