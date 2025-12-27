@@ -151,7 +151,7 @@ app.get('/', resolveUsername, async (req, res) => {
     deletedAt: null
   });
   const dp = await Profile.findOne({ username }, { image: 1, bio: 1 });
-  const info = await User.findOne({ username }, { email: 1, name: 1 });
+  const info = await User.findOne({ username }, { email: 1, name: 1, _id:1, username:1 });
 
   if (!info) {
     return res.render('not_exists');
@@ -193,6 +193,15 @@ app.get('/', resolveUsername, async (req, res) => {
   } catch (err) {
     console.error(`Error checking notification settings for ${username}:`, err);
   }
+
+  saveAnalytics({
+    linkId: null,
+    userId: info._id,
+    username: info.username,
+    req
+  }).catch(err => {
+    console.error('Analytics error:', err);
+  });
 
   if (tree && dp){
     // Get user settings to determine template

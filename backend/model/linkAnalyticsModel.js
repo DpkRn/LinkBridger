@@ -6,10 +6,9 @@ const linkAnalyticsSchema = new mongoose.Schema(
        Core References
     ========================= */
     linkId: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      ref: 'link',
-      index: true
+       type: mongoose.Schema.Types.ObjectId,
+       default: null,
+       ref: 'link'
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
