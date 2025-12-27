@@ -329,9 +329,64 @@ const getClickDetails = async (req, res) => {
     }
 };
 
+const getClickDetailsV1 = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const { username } = req.body;
+
+        if (!userId || !username) {
+            return res.status(400).json({
+                success: false,
+                message: 'Username is required'
+            });
+        }
+
+        // Get all clicks for the user (no pagination, return all for mock format)
+        const clicks = await LinkAnalytics.find({
+            userId: new mongoose.Types.ObjectId(userId),
+            username,
+            deletedAt: null
+        })
+        .populate('linkId', 'source destination')
+        .sort({ clickDate: -1 }) // Most recent first
+        .lean();
+
+        // Transform data to match the original mock format
+        const mockFormattedClicks = clicks.map(click => ({
+            _id: click._id.toString(),
+            linkId: click.linkId?._id?.toString() || "undefined",
+            linkSource: click.linkId?.source || 'linkhub',
+            shortUrl: `/${click.linkId?.source || 'unknown'}`,
+            linkDestination: click.linkId?.destination || `${username}.clickly.cv`,
+            clickDate: click.clickDate,
+            clickedTime: click.clickedTime,
+            location: click.location,
+            device: click.device,
+            os: click.os,
+            browser: click.browser,
+            referrer: click.referrer,
+            userAgent: click.userAgent,
+            seen: click.seen
+        }));
+
+        return res.status(200).json({
+            success: true,
+            data: mockFormattedClicks
+        });
+
+    } catch (err) {
+        console.error('❌ Failed to get click details v1:', err);
+        return res.status(500).json({
+            success: false,
+            message: 'Server Internal Error'
+        });
+    }
+};
+
 module.exports = {
     getAnalytics,
     getClickDetails,
+    getClickDetailsV1,
     saveAnalytics,
 };
 

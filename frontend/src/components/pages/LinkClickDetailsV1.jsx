@@ -17,9 +17,6 @@ const LinkClickDetailsV1 = () => {
   const [selectedLink, setSelectedLink] = useState('all');
   const [showFilters, setShowFilters] = useState(false);
   const [selectedClick, setSelectedClick] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalClicks, setTotalClicks] = useState(0);
 
   // Get unique links for filter
   const uniqueLinks = [...new Set(clicks.map(c => c.linkId))].map(linkId => {
@@ -42,31 +39,25 @@ const LinkClickDetailsV1 = () => {
   }, {});
   const topCountryName = Object.keys(topCountry).sort((a, b) => topCountry[b] - topCountry[a])[0] || 'N/A';
 
-  // Fetch click details from API
-  const fetchClickDetails = async (page = 1) => {
+  // Fetch click details from API (v1 format)
+  const fetchClickDetails = async () => {
     try {
       setLoading(true);
-      const response = await api.post('/analytics/click-details', {
+      const response = await api.post('/analytics/click-details-v1', {
         username: username,
-        linkId: selectedLink !== 'all' ? selectedLink : undefined,
-        page,
-        limit: 50,
-        search: searchQuery,
       });
 
       if (response.data.success) {
-        const apiClicks = response.data.data.clicks;
+        const apiClicks = response.data.data;
         setClicks(apiClicks);
-        setTotalPages(response.data.data.pagination.totalPages);
-        setTotalClicks(response.data.data.pagination.totalClicks);
-        setCurrentPage(response.data.data.pagination.currentPage);
+        setFilteredClicks(apiClicks);
       }
-      } catch (error) {
+    } catch (error) {
       console.error('Error fetching click details:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (username) {
@@ -74,21 +65,27 @@ const LinkClickDetailsV1 = () => {
     }
   }, [username]);
 
-  // Debounced effect for search and filter
+  // Client-side filtering and search
   useEffect(() => {
-    const debounceTimer = setTimeout(() => {
-      if (username) {
-        fetchClickDetails(1);
-      }
-    }, 500);
+    let filtered = clicks;
 
-    return () => clearTimeout(debounceTimer);
-  }, [searchQuery, selectedLink]);
+    if (selectedLink !== 'all') {
+      filtered = filtered.filter(c => c.linkId === selectedLink);
+    }
 
-  // Set filtered clicks to all clicks (API handles filtering)
-  useEffect(() => {
-    setFilteredClicks(clicks);
-  }, [clicks]);
+    if (searchQuery) {
+      filtered = filtered.filter(c =>
+        c.linkSource.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        c.location.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        c.location.country.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        c.device.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        c.browser.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        c.os.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    setFilteredClicks(filtered);
+  }, [selectedLink, searchQuery, clicks]);
 
   const getDeviceIcon = (type) => {
     switch (type) {
@@ -147,7 +144,7 @@ const LinkClickDetailsV1 = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
             <div className="p-3 bg-gray-700/30 rounded-lg border border-gray-600/50">
-              <div className="flex items-center gap-2 mb-1">
+              <div className="flex items-center  gap-2 mb-1">
                 <FaChartLine className="w-5 h-5 text-purple-400" />
                 <span className="text-sm text-gray-400">Total Clicks</span>
               </div>
@@ -209,7 +206,7 @@ const LinkClickDetailsV1 = () => {
                       : 'bg-gray-700/50 text-gray-300 hover:bg-gray-700 border border-gray-600'
                   }`}
                 >
-                  All Links ({totalClicks})
+                  All Links ({clicks.length})
                 </button>
                 {uniqueLinks.map(link => (
                   <button
@@ -231,34 +228,10 @@ const LinkClickDetailsV1 = () => {
 
         <div className="mb-4">
           <p className="text-sm text-gray-400">
-            Showing {filteredClicks.length} of {totalClicks} clicks
+            Showing {filteredClicks.length} of {clicks.length} clicks
           </p>
         </div>
 
-        {/* Pagination Controls */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-center gap-4 mb-6">
-            <button
-              onClick={() => fetchClickDetails(currentPage - 1)}
-              disabled={currentPage === 1}
-              className="px-4 py-2 bg-gray-700/50 border border-gray-600 rounded-lg text-gray-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-700 transition-colors flex items-center gap-2"
-            >
-              <FaChevronDown className="w-4 h-4 rotate-90" />
-              Previous
-            </button>
-            <span className="text-gray-400">
-              Page {currentPage} of {totalPages} ({totalClicks} total clicks)
-            </span>
-            <button
-              onClick={() => fetchClickDetails(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className="px-4 py-2 bg-gray-700/50 border border-gray-600 rounded-lg text-gray-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-700 transition-colors flex items-center gap-2"
-            >
-              Next
-              <FaChevronDown className="w-4 h-4 -rotate-90" />
-            </button>
-          </div>
-        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
@@ -298,7 +271,7 @@ const LinkClickDetailsV1 = () => {
                           </h3>
                           <p className="text-xs text-gray-400 flex items-center gap-1">
                             <FaLink className="w-3 h-3" />
-                            /{click.linkSource || 'unknown'}
+                            {click.linkDestination || 'linkhub'}
                           </p>
                         </div>
                         <span className="text-xs text-gray-500 whitespace-nowrap">
@@ -351,8 +324,8 @@ const LinkClickDetailsV1 = () => {
                 <div className="mb-6 p-4 bg-gray-700/30 rounded-lg border border-gray-600/50">
                   <h3 className="text-sm font-semibold text-gray-300 mb-2">Link</h3>
                   <p className="text-white font-medium mb-1">{selectedClick.linkSource || 'Unknown Link'}</p>
-                  <p className="text-xs text-gray-400 mb-2">/{selectedClick.linkSource || 'unknown'}</p>
-                  <a 
+                  <p className="text-xs text-gray-400 mb-2">{selectedClick.linkDestination || 'linkhub'}</p>
+                  <a
                     href={selectedClick.linkDestination || '#'}
                     target="_blank"
                     rel="noopener noreferrer"
