@@ -134,8 +134,6 @@ app.use(helmet.contentSecurityPolicy({
 
 // Root route - handle main domain redirect and subdomain routing
 app.get('/', resolveUsername, async (req, res) => {
-  console.log(req.get("referrer"))
-  console.log()
 
   // If it's the main domain (clickly.cv or www.clickly.cv), redirect to frontend
   if (req.isMainDomain || !req.params.username) {
@@ -145,7 +143,6 @@ app.get('/', resolveUsername, async (req, res) => {
 
   // If it's a subdomain, treat it as username route (show linkhub)
   const username = req.params.username;
-  console.log("Subdomain detected, username:", username);
   
   // Use the same logic as /:username route
   const tree = await Link.find({
@@ -197,7 +194,7 @@ app.get('/', resolveUsername, async (req, res) => {
     console.error(`Error checking notification settings for ${username}:`, err);
   }
 
-  if (tree && dp) {
+  if (tree && dp){
     // Get user settings to determine template
     let template = 'default';
     const previewTemplate = req.query.template;
@@ -360,8 +357,7 @@ app.get('/:source', resolveUsername, extractInfo, async (req, res) => {
 
   
   const deviceDetails = req.details;
-  //save it asyncronosly
-  console.log(link,info)
+  
   saveAnalytics({
     linkId: link._id,
     userId: info._id,

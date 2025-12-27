@@ -157,8 +157,6 @@ const getAnalytics = async (req, res) => {
     }
 };
 
-
-
 const saveAnalytics = async ({
   linkId,
   userId,
@@ -201,8 +199,6 @@ const saveAnalytics = async ({
     console.error('❌ Failed to save analytics:', err);
   }
 };
-
-
 
 module.exports = {
     getAnalytics,
