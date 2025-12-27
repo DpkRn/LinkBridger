@@ -1,4 +1,4 @@
-const useragent = require('express-useragent');
+
 const UAParser = require('ua-parser-js');
 const geoip = require('geoip-lite');
 
