@@ -168,9 +168,9 @@ const saveAnalytics = async ({
     }
       
   try {
-    const details = req?.details || {};
-    console.log("details",details)
-    console.log(linkId,userId,username)
+    const payload = req?.analyticsPayload || {};
+    const details = req?.details || {}; // Keep for backward compatibility
+
     const analytics = new LinkAnalytics({
       linkId,
       userId,
@@ -178,16 +178,36 @@ const saveAnalytics = async ({
 
       // Location
       location: {
-        country: details?.country || null,
-        city: details?.city || null,
-        ipAddress: details?.ip || null
+        country: payload?.location?.country || details?.country || null,
+        city: payload?.location?.city || details?.city || null,
+        region: payload?.location?.region || null,
+        ipAddress: payload?.location?.ipAddress || details?.ip || null
       },
 
-      // Browser (old system only stored browser string)
-      browser: {
-        name: details?.browser || null,
-        version: null
+      // Device
+      device: {
+        type: payload?.device?.type || null,
+        brand: payload?.device?.brand || null,
+        model: payload?.device?.model || null
       },
+
+      // OS
+      os: {
+        name: payload?.os?.name || null,
+        version: payload?.os?.version || null
+      },
+
+      // Browser
+      browser: {
+        name: payload?.browser?.name || details?.browser || null,
+        version: payload?.browser?.version || null
+      },
+
+      // Referrer
+      referrer: payload?.referrer || 'direct',
+
+      // User Agent
+      userAgent: payload?.userAgent || null,
 
       // clickDate is auto-set
       // clickedTime is auto-derived in pre-save hook
