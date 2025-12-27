@@ -1,4 +1,5 @@
 const Link = require('../model/linkModel');
+const LinkAnalytics = require('../model/linkAnalyticsModel');
 
 const getAnalytics = async (req, res) => {
     try {
@@ -156,7 +157,55 @@ const getAnalytics = async (req, res) => {
     }
 };
 
+
+
+const saveAnalytics = async ({
+  linkId,
+  userId,
+  username,
+  req
+}) => {
+    if (req.skipAnalytics) {
+        return;
+    }
+      
+  try {
+    const details = req?.details || {};
+    console.log("details",details)
+    console.log(linkId,userId,username)
+    const analytics = new LinkAnalytics({
+      linkId,
+      userId,
+      username,
+
+      // Location
+      location: {
+        country: details?.country || null,
+        city: details?.city || null,
+        ipAddress: details?.ip || null
+      },
+
+      // Browser (old system only stored browser string)
+      browser: {
+        name: details?.browser || null,
+        version: null
+      },
+
+      // clickDate is auto-set
+      // clickedTime is auto-derived in pre-save hook
+    });
+    // console.log(analytics)
+
+    await analytics.save();
+  } catch (err) {
+    console.error('❌ Failed to save analytics:', err);
+  }
+};
+
+
+
 module.exports = {
-    getAnalytics
+    getAnalytics,
+    saveAnalytics,
 };
 

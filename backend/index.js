@@ -23,6 +23,8 @@ const { verifyTokenOptional } = require('./middleware/verifyToken')
 const resolveUsername = require('./middleware/resolveUsername')
 const { getUserLinkUrl } = require('./utils')
 const bcryptjs = require('bcryptjs')
+const { time } = require('console')
+const { saveAnalytics } = require('./controller/AnalyticsController')
 
 
 dotenv.config()
@@ -132,6 +134,9 @@ app.use(helmet.contentSecurityPolicy({
 
 // Root route - handle main domain redirect and subdomain routing
 app.get('/', resolveUsername, async (req, res) => {
+  console.log(req.get("referrer"))
+  console.log()
+
   // If it's the main domain (clickly.cv or www.clickly.cv), redirect to frontend
   if (req.isMainDomain || !req.params.username) {
     console.log("Main domain detected, redirecting to frontend");
@@ -307,52 +312,65 @@ app.post('/link/verify-password', extractInfo, async (req, res) => {
 // Note: API routes (defined with app.use above) will match first, so this won't interfere
 app.get('/:source', resolveUsername, extractInfo, async (req, res) => {
   // Only process if username was extracted from subdomain (not main domain)
+  
   if (req.isMainDomain || !req.params.username) {
     // This is main domain, let it fall through to other routes
     return res.redirect(307, "https://clickly.cv/app/");
   }
+
 
   const username = req.params.username;
   const source = req.params.source;
   // Generate linkHub in subdomain format for subdomain requests
   const linkHub = `Available link: ${req.protocol}://${username}.clickly.cv`;
 
-  const doc = await Link.findOne({
+  const link = await Link.findOne({
     username,
     source,
     deletedAt: null
   });
 
-  const info = await User.findOne({ username }, { email: 1, name: 1 });
-  if (!info) {
+  const info = await User.findOne({ username }, { email: 1, name: 1, _id:1,username:1 });
+  if (!info) { 
     return res.render('not_exists', {
       linkHub: ""
     });
   }
   const { email, name } = info;
 
-  if (!doc) {
+  if (!link) {
     return res.render('not_exists', {
       linkHub: linkHub
     });
   }
 
   // Check link visibility
-  if (!doc.isAccessible()) {
-    console.log("not accessible");
+  if (!link.isAccessible()) {
     const hashedUsername = encodeData(username);
     const hashedSource = encodeData(source);
     return res.render('password_prompt', {
       hashedUsername: hashedUsername,
       hashedSource: hashedSource,
-      linkId: doc.linkId
+      linkId: link.linkId
     });
   }
-
-  const { destination, clicked, notSeen } = doc;
+  
+  const { destination, clicked, notSeen } = link;
   await Link.updateOne({ username, source }, { $set: { clicked: clicked + 1, notSeen: notSeen + 1 } });
 
+  
   const deviceDetails = req.details;
+  //save it asyncronosly
+  console.log(link,info)
+  saveAnalytics({
+    linkId: link._id,
+    userId: info._id,
+    username: info.username,
+    req
+  }).catch(err => {
+    console.error('Analytics error:', err);
+  });
+
 
   // Check if email notification is enabled for link clicks
   try {
