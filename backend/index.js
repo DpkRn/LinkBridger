@@ -133,7 +133,7 @@ app.use(helmet.contentSecurityPolicy({
 
 
 // Root route - handle main domain redirect and subdomain routing
-app.get('/', resolveUsername, async (req, res) => {
+app.get('/', resolveUsername, extractInfo, async (req, res) => {
 
   // If it's the main domain (clickly.cv or www.clickly.cv), redirect to frontend
   if (req.isMainDomain || !req.params.username) {
