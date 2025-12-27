@@ -9,6 +9,7 @@ import api from '../../utils/api';
 
 const LinkClickDetailsV1 = () => {
   const { username } = useSelector((store) => store.admin.user);
+  const darkMode = useSelector((store) => store.page.darkMode);
 
   const [clicks, setClicks] = useState([]);
   const [filteredClicks, setFilteredClicks] = useState([]);
@@ -54,12 +55,12 @@ const LinkClickDetailsV1 = () => {
         setClicks(apiClicks);
         setFilteredClicks(apiClicks);
       }
-    } catch (error) {
+      } catch (error) {
       console.error('Error fetching click details:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+      } finally {
+        setLoading(false);
+      }
+    };
 
   useEffect(() => {
     if (username) {
@@ -76,7 +77,7 @@ const LinkClickDetailsV1 = () => {
     }
 
     if (searchQuery) {
-      filtered = filtered.filter(c =>
+      filtered = filtered.filter(c => 
         c.linkSource.toLowerCase().includes(searchQuery.toLowerCase()) ||
         c.location.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
         c.location.country.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -134,19 +135,19 @@ const LinkClickDetailsV1 = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center p-8">
+      <div className={`min-h-screen flex items-center justify-center p-8 ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
         <div className="flex flex-col items-center justify-center gap-4">
           <div className="w-12 h-12 border-4 border-purple-500/30 border-t-purple-500 rounded-full animate-spin" />
-          <p className="text-gray-400">Loading click details...</p>
+          <p className={`text-gray-400 ${darkMode ? '' : 'text-gray-600'}`}>Loading click details...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className={`min-h-screen ${darkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-gray-900'}`}>
       <div className="max-w-7xl mx-auto p-6">
-        <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl shadow-xl p-6 mb-6 border border-gray-700/50">
+        <div className={`backdrop-blur-sm rounded-xl shadow-xl p-6 mb-6 border ${darkMode ? 'bg-gray-800/50 border-gray-700/50' : 'bg-white border-gray-200'}`}>
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
               <div className="p-3 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-xl border border-purple-500/30">
@@ -164,43 +165,49 @@ const LinkClickDetailsV1 = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
-            <div className="p-2 bg-gray-700/30 rounded-lg border border-gray-600/50">
+            <div className={`p-2 rounded-lg border ${darkMode ? 'bg-gray-700/30 border-gray-600/50' : 'bg-gray-100 border-gray-300'}`}>
               <div className="flex items-center gap-1.5 mb-0.5">
                 <FaChartLine className="w-4 h-4 text-purple-400" />
-                <span className="text-xs text-gray-400">Total Clicks</span>
+                <span className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Total Clicks</span>
               </div>
-              <p className="text-xl font-bold text-white">{allClicksCount}</p>
+              <p className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>{allClicksCount}</p>
             </div>
-            <div className="p-2 bg-gray-700/30 rounded-lg border border-gray-600/50">
+            <div className={`p-2 rounded-lg border ${darkMode ? 'bg-gray-700/30 border-gray-600/50' : 'bg-gray-100 border-gray-300'}`}>
               <div className="flex items-center gap-1.5 mb-0.5">
                 <FaUsers className="w-4 h-4 text-pink-400" />
-                <span className="text-xs text-gray-400">Unique Visitors</span>
+                <span className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Unique Visitors</span>
               </div>
-              <p className="text-xl font-bold text-white">{uniqueVisitors}</p>
+              <p className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>{uniqueVisitors}</p>
             </div>
-            <div className="p-2 bg-gray-700/30 rounded-lg border border-gray-600/50">
+            <div className={`p-2 rounded-lg border ${darkMode ? 'bg-gray-700/30 border-gray-600/50' : 'bg-gray-100 border-gray-300'}`}>
               <div className="flex items-center gap-1.5 mb-0.5">
                 <FaGlobe className="w-4 h-4 text-cyan-400" />
-                <span className="text-xs text-gray-400">Top Country</span>
+                <span className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Top Country</span>
               </div>
-              <p className="text-xl font-bold text-white">{topCountryName}</p>
+              <p className={`text-xl font-bold ${darkMode ? 'text-white' : 'text-gray-900'}`}>{topCountryName}</p>
             </div>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="flex-1 relative">
-              <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <FaSearch className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`} />
               <input
                 type="text"
                 placeholder="Search by link, location, device, browser..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-gray-700/50 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-white placeholder-gray-400"
+                className={`w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 placeholder-gray-400 ${
+                  darkMode
+                    ? 'bg-gray-700/50 border-gray-600 text-white'
+                    : 'bg-white border-gray-300 text-gray-900'
+                }`}
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+                  className={`absolute right-3 top-1/2 transform -translate-y-1/2 hover:text-white ${
+                    darkMode ? 'text-gray-400' : 'text-gray-500'
+                  }`}
                 >
                   <FaTimes className="w-5 h-5" />
                 </button>
@@ -208,7 +215,11 @@ const LinkClickDetailsV1 = () => {
             </div>
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="px-4 py-2 bg-gray-700/50 border border-gray-600 rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-2"
+              className={`px-4 py-2 border rounded-lg transition-colors flex items-center gap-2 ${
+                darkMode
+                  ? 'bg-gray-700/50 border-gray-600 hover:bg-gray-700 text-white'
+                  : 'bg-white border-gray-300 hover:bg-gray-100 text-gray-900'
+              }`}
             >
               <FaFilter className="w-4 h-4" />
               Filter by Link
@@ -217,14 +228,16 @@ const LinkClickDetailsV1 = () => {
           </div>
 
           {showFilters && (
-            <div className="mt-4 p-4 bg-gray-700/30 rounded-lg border border-gray-600/50">
+            <div className={`mt-4 p-4 rounded-lg border ${darkMode ? 'bg-gray-700/30 border-gray-600/50' : 'bg-gray-100 border-gray-300'}`}>
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => setSelectedLink('all')}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                     selectedLink === 'all'
                       ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/50'
-                      : 'bg-gray-700/50 text-gray-300 hover:bg-gray-700 border border-gray-600'
+                      : darkMode
+                      ? 'bg-gray-700/50 text-gray-300 hover:bg-gray-700 border border-gray-600'
+                      : 'bg-white text-gray-700 hover:bg-gray-200 border border-gray-300'
                   }`}
                 >
                   All Links ({clicks.length})
@@ -236,7 +249,9 @@ const LinkClickDetailsV1 = () => {
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                       selectedLink === link.id
                         ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/50'
-                        : 'bg-gray-700/50 text-gray-300 hover:bg-gray-700 border border-gray-600'
+                        : darkMode
+                        ? 'bg-gray-700/50 text-gray-300 hover:bg-gray-700 border border-gray-600'
+                        : 'bg-white text-gray-700 hover:bg-gray-200 border border-gray-300'
                     }`}
                   >
                     {link.title} ({clicks.filter(c => c.linkId === link.id).length})
@@ -247,21 +262,29 @@ const LinkClickDetailsV1 = () => {
               {/* Date Range Filter */}
               <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm text-gray-400 mb-2">Start Date</label>
+                  <label className={`block text-sm mb-2 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Start Date</label>
                   <input
                     type="date"
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
-                    className="w-full px-3 py-2 bg-gray-700/50 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 ${
+                      darkMode
+                        ? 'bg-gray-700/50 border-gray-600 text-white'
+                        : 'bg-white border-gray-300 text-gray-900'
+                    }`}
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-2">End Date</label>
+                  <label className={`block text-sm mb-2 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>End Date</label>
                   <input
                     type="date"
                     value={endDate}
                     onChange={(e) => setEndDate(e.target.value)}
-                    className="w-full px-3 py-2 bg-gray-700/50 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 ${
+                      darkMode
+                        ? 'bg-gray-700/50 border-gray-600 text-white'
+                        : 'bg-white border-gray-300 text-gray-900'
+                    }`}
                   />
                 </div>
               </div>
@@ -276,7 +299,11 @@ const LinkClickDetailsV1 = () => {
                       setStartDate('');
                       setEndDate('');
                     }}
-                    className="px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg transition-colors text-sm"
+                    className={`px-4 py-2 rounded-lg transition-colors text-sm ${
+                      darkMode
+                        ? 'bg-gray-600 hover:bg-gray-500 text-white'
+                        : 'bg-gray-500 hover:bg-gray-600 text-white'
+                    }`}
                   >
                     Clear All Filters
                   </button>
@@ -287,7 +314,7 @@ const LinkClickDetailsV1 = () => {
         </div>
 
         <div className="mb-4">
-          <p className="text-sm text-gray-400">
+          <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
             Showing {filteredClicks.length} of {clicks.length} clicks
           </p>
         </div>
@@ -296,11 +323,11 @@ const LinkClickDetailsV1 = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
             <div className="max-h-[800px] overflow-y-auto space-y-3 pr-2 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
-            {filteredClicks.length === 0 ? (
-              <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl shadow-xl p-12 text-center border border-gray-700/50">
-                <FaMousePointer className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-white mb-2">No clicks found</h3>
-                <p className="text-gray-400">Try adjusting your filters or search query</p>
+            {              filteredClicks.length === 0 ? (
+              <div className={`backdrop-blur-sm rounded-xl shadow-xl p-12 text-center border ${darkMode ? 'bg-gray-800/50 border-gray-700/50' : 'bg-white border-gray-200'}`}>
+                <FaMousePointer className={`w-16 h-16 mx-auto mb-4 ${darkMode ? 'text-gray-600' : 'text-gray-400'}`} />
+                <h3 className={`text-lg font-semibold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>No clicks found</h3>
+                <p className={`text-gray-400 ${darkMode ? '' : 'text-gray-600'}`}>Try adjusting your filters or search query</p>
               </div>
             ) : (
               filteredClicks.map((click) => (
@@ -310,7 +337,9 @@ const LinkClickDetailsV1 = () => {
                   className={`p-4 rounded-xl cursor-pointer transition-all duration-200 ${
                     selectedClick?._id === click._id
                       ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 border-2 border-purple-500/50 shadow-lg shadow-purple-500/20'
-                      : 'bg-gray-800/50 hover:bg-gray-800/70 border border-gray-700/50'
+                      : darkMode
+                      ? 'bg-gray-800/50 hover:bg-gray-800/70 border border-gray-700/50'
+                      : 'bg-white hover:bg-gray-50 border border-gray-200'
                   }`}
                 >
                   <div className="flex items-start gap-4">
@@ -321,7 +350,7 @@ const LinkClickDetailsV1 = () => {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2 mb-2">
                         <div>
-                          <h3 className="text-white font-semibold text-sm mb-1 flex items-center gap-2">
+                          <h3 className={`font-semibold text-sm mb-1 flex items-center gap-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                             {click.linkSource || 'Unknown Link'}
                             {!click.seen && (
                               <span className="px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 text-xs border border-purple-400/30">
@@ -329,30 +358,30 @@ const LinkClickDetailsV1 = () => {
                               </span>
                             )}
                           </h3>
-                          <p className="text-xs text-gray-400 flex items-center gap-1">
+                          <p className={`text-xs flex items-center gap-1 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                             <FaLink className="w-3 h-3" />
                             {click.linkDestination || 'linkhub'}
                           </p>
                         </div>
-                        <span className="text-xs text-gray-500 whitespace-nowrap">
+                        <span className={`text-xs whitespace-nowrap ${darkMode ? 'text-gray-500' : 'text-gray-600'}`}>
                           {getRelativeTime(click.clickDate)}
                         </span>
                       </div>
 
                       <div className="grid grid-cols-2 gap-2 text-xs">
-                        <div className="flex items-center gap-1 text-gray-400">
+                        <div className={`flex items-center gap-1 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                           <FaMapMarkerAlt className="w-3 h-3" />
                           <span>{click.location.city}, {click.location.country}</span>
                         </div>
-                        <div className="flex items-center gap-1 text-gray-400">
+                        <div className={`flex items-center gap-1 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                           <FaDesktop className="w-3 h-3" />
                           <span>{click.device.type} • {click.os.name}</span>
                         </div>
-                        <div className="flex items-center gap-1 text-gray-400">
+                        <div className={`flex items-center gap-1 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                           <FaChrome className="w-3 h-3" />
                           <span>{click.browser.name}</span>
                         </div>
-                        <div className="flex items-center gap-1 text-gray-400">
+                        <div className={`flex items-center gap-1 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                           <FaGlobe className="w-3 h-3" />
                           <span className="truncate">
                             {click.referrer && click.referrer !== 'direct' ? (() => {
@@ -375,17 +404,17 @@ const LinkClickDetailsV1 = () => {
 
           <div className="lg:col-span-1">
             {selectedClick ? (
-              <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl shadow-xl p-6 border border-gray-700/50 sticky top-6">
-                <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+              <div className={`backdrop-blur-sm rounded-xl shadow-xl p-6 border sticky top-6 ${darkMode ? 'bg-gray-800/50 border-gray-700/50' : 'bg-white border-gray-200'}`}>
+                <h2 className={`text-lg font-bold mb-4 flex items-center gap-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                   <FaEye className="w-5 h-5 text-purple-400" />
                   Click Details
                 </h2>
 
-                <div className="mb-6 p-4 bg-gray-700/30 rounded-lg border border-gray-600/50">
-                  <h3 className="text-sm font-semibold text-gray-300 mb-2">Link</h3>
-                  <p className="text-white font-medium mb-1">{selectedClick.linkSource || 'Unknown Link'}</p>
-                  <p className="text-xs text-gray-400 mb-2">{selectedClick.linkDestination || 'linkhub'}</p>
-                  <a
+                <div className={`mb-6 p-4 rounded-lg border ${darkMode ? 'bg-gray-700/30 border-gray-600/50' : 'bg-gray-100 border-gray-300'}`}>
+                  <h3 className={`text-sm font-semibold mb-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Link</h3>
+                  <p className={`font-medium mb-1 ${darkMode ? 'text-white' : 'text-gray-900'}`}>{selectedClick.linkSource || 'Unknown Link'}</p>
+                  <p className={`text-xs mb-2 ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>{selectedClick.linkDestination || 'linkhub'}</p>
+                  <a 
                     href={selectedClick.linkDestination || '#'}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -397,113 +426,113 @@ const LinkClickDetailsV1 = () => {
                 </div>
 
                 <div className="mb-6">
-                  <h3 className="text-sm font-semibold text-gray-300 mb-3">Timestamp</h3>
+                  <h3 className={`text-sm font-semibold mb-3 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Timestamp</h3>
                   <div className="space-y-2">
-                    <div className="flex items-center justify-between p-2 bg-gray-700/30 rounded-lg">
-                      <span className="text-xs text-gray-400">Date</span>
-                      <span className="text-xs text-white font-medium">{selectedClick.clickedTime.date}</span>
+                    <div className={`flex items-center justify-between p-2 rounded-lg ${darkMode ? 'bg-gray-700/30' : 'bg-gray-100'}`}>
+                      <span className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Date</span>
+                      <span className={`text-xs font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>{selectedClick.clickedTime.date}</span>
                     </div>
-                    <div className="flex items-center justify-between p-2 bg-gray-700/30 rounded-lg">
-                      <span className="text-xs text-gray-400">Time</span>
-                      <span className="text-xs text-white font-medium">{selectedClick.clickedTime.time}</span>
+                    <div className={`flex items-center justify-between p-2 rounded-lg ${darkMode ? 'bg-gray-700/30' : 'bg-gray-100'}`}>
+                      <span className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Time</span>
+                      <span className={`text-xs font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>{selectedClick.clickedTime.time}</span>
                     </div>
-                    <div className="flex items-center justify-between p-2 bg-gray-700/30 rounded-lg">
-                      <span className="text-xs text-gray-400">Timezone</span>
-                      <span className="text-xs text-white font-medium">{selectedClick.clickedTime.timezone}</span>
+                    <div className={`flex items-center justify-between p-2 rounded-lg ${darkMode ? 'bg-gray-700/30' : 'bg-gray-100'}`}>
+                      <span className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Timezone</span>
+                      <span className={`text-xs font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>{selectedClick.clickedTime.timezone}</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="mb-6">
-                  <h3 className="text-sm font-semibold text-gray-300 mb-3 flex items-center gap-2">
+                  <h3 className={`text-sm font-semibold mb-3 flex items-center gap-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                     <FaMapMarkerAlt className="w-4 h-4 text-purple-400" />
                     Location
                   </h3>
                   <div className="space-y-2">
-                    <div className="flex items-center justify-between p-2 bg-gray-700/30 rounded-lg">
-                      <span className="text-xs text-gray-400">Country</span>
-                      <span className="text-xs text-white font-medium">{selectedClick.location.country}</span>
+                    <div className={`flex items-center justify-between p-2 rounded-lg ${darkMode ? 'bg-gray-700/30' : 'bg-gray-100'}`}>
+                      <span className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Country</span>
+                      <span className={`text-xs font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>{selectedClick.location.country}</span>
                     </div>
-                    <div className="flex items-center justify-between p-2 bg-gray-700/30 rounded-lg">
-                      <span className="text-xs text-gray-400">City</span>
-                      <span className="text-xs text-white font-medium">{selectedClick.location.city}</span>
+                    <div className={`flex items-center justify-between p-2 rounded-lg ${darkMode ? 'bg-gray-700/30' : 'bg-gray-100'}`}>
+                      <span className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>City</span>
+                      <span className={`text-xs font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>{selectedClick.location.city}</span>
                     </div>
-                    <div className="flex items-center justify-between p-2 bg-gray-700/30 rounded-lg">
-                      <span className="text-xs text-gray-400">Region</span>
-                      <span className="text-xs text-white font-medium">{selectedClick.location.region}</span>
+                    <div className={`flex items-center justify-between p-2 rounded-lg ${darkMode ? 'bg-gray-700/30' : 'bg-gray-100'}`}>
+                      <span className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Region</span>
+                      <span className={`text-xs font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>{selectedClick.location.region}</span>
                     </div>
-                    <div className="flex items-center justify-between p-2 bg-gray-700/30 rounded-lg">
-                      <span className="text-xs text-gray-400">IP Address</span>
-                      <span className="text-xs text-white font-medium">{selectedClick.location.ipAddress}</span>
+                    <div className={`flex items-center justify-between p-2 rounded-lg ${darkMode ? 'bg-gray-700/30' : 'bg-gray-100'}`}>
+                      <span className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>IP Address</span>
+                      <span className={`text-xs font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>{selectedClick.location.ipAddress}</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="mb-6">
-                  <h3 className="text-sm font-semibold text-gray-300 mb-3 flex items-center gap-2">
+                  <h3 className={`text-sm font-semibold mb-3 flex items-center gap-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                     {getDeviceIcon(selectedClick.device.type)}
                     <span className="text-purple-400">Device</span>
                   </h3>
                   <div className="space-y-2">
-                    <div className="flex items-center justify-between p-2 bg-gray-700/30 rounded-lg">
-                      <span className="text-xs text-gray-400">Type</span>
-                      <span className="text-xs text-white font-medium capitalize">{selectedClick.device.type}</span>
+                    <div className={`flex items-center justify-between p-2 rounded-lg ${darkMode ? 'bg-gray-700/30' : 'bg-gray-100'}`}>
+                      <span className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Type</span>
+                      <span className={`text-xs font-medium capitalize ${darkMode ? 'text-white' : 'text-gray-900'}`}>{selectedClick.device.type}</span>
                     </div>
                     {selectedClick.device.brand && (
-                      <div className="flex items-center justify-between p-2 bg-gray-700/30 rounded-lg">
-                        <span className="text-xs text-gray-400">Brand</span>
-                        <span className="text-xs text-white font-medium">{selectedClick.device.brand}</span>
+                      <div className={`flex items-center justify-between p-2 rounded-lg ${darkMode ? 'bg-gray-700/30' : 'bg-gray-100'}`}>
+                        <span className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Brand</span>
+                        <span className={`text-xs font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>{selectedClick.device.brand}</span>
                       </div>
                     )}
                     {selectedClick.device.model && (
-                      <div className="flex items-center justify-between p-2 bg-gray-700/30 rounded-lg">
-                        <span className="text-xs text-gray-400">Model</span>
-                        <span className="text-xs text-white font-medium">{selectedClick.device.model}</span>
+                      <div className={`flex items-center justify-between p-2 rounded-lg ${darkMode ? 'bg-gray-700/30' : 'bg-gray-100'}`}>
+                        <span className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Model</span>
+                        <span className={`text-xs font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>{selectedClick.device.model}</span>
                       </div>
                     )}
                   </div>
                 </div>
 
                 <div className="mb-6">
-                  <h3 className="text-sm font-semibold text-gray-300 mb-3 flex items-center gap-2">
+                  <h3 className={`text-sm font-semibold mb-3 flex items-center gap-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                     <FaDesktop className="w-4 h-4 text-purple-400" />
                     Operating System
                   </h3>
                   <div className="space-y-2">
-                    <div className="flex items-center justify-between p-2 bg-gray-700/30 rounded-lg">
-                      <span className="text-xs text-gray-400">Name</span>
-                      <span className="text-xs text-white font-medium">{selectedClick.os.name}</span>
+                    <div className={`flex items-center justify-between p-2 rounded-lg ${darkMode ? 'bg-gray-700/30' : 'bg-gray-100'}`}>
+                      <span className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Name</span>
+                      <span className={`text-xs font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>{selectedClick.os.name}</span>
                     </div>
-                    <div className="flex items-center justify-between p-2 bg-gray-700/30 rounded-lg">
-                      <span className="text-xs text-gray-400">Version</span>
-                      <span className="text-xs text-white font-medium">{selectedClick.os.version}</span>
+                    <div className={`flex items-center justify-between p-2 rounded-lg ${darkMode ? 'bg-gray-700/30' : 'bg-gray-100'}`}>
+                      <span className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Version</span>
+                      <span className={`text-xs font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>{selectedClick.os.version}</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="mb-6">
-                  <h3 className="text-sm font-semibold text-gray-300 mb-3 flex items-center gap-2">
+                  <h3 className={`text-sm font-semibold mb-3 flex items-center gap-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                     <FaChrome className="w-4 h-4 text-purple-400" />
                     Browser
                   </h3>
                   <div className="space-y-2">
-                    <div className="flex items-center justify-between p-2 bg-gray-700/30 rounded-lg">
-                      <span className="text-xs text-gray-400">Name</span>
-                      <span className="text-xs text-white font-medium">{selectedClick.browser.name}</span>
+                    <div className={`flex items-center justify-between p-2 rounded-lg ${darkMode ? 'bg-gray-700/30' : 'bg-gray-100'}`}>
+                      <span className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Name</span>
+                      <span className={`text-xs font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>{selectedClick.browser.name}</span>
                     </div>
-                    <div className="flex items-center justify-between p-2 bg-gray-700/30 rounded-lg">
-                      <span className="text-xs text-gray-400">Version</span>
-                      <span className="text-xs text-white font-medium">{selectedClick.browser.version}</span>
+                    <div className={`flex items-center justify-between p-2 rounded-lg ${darkMode ? 'bg-gray-700/30' : 'bg-gray-100'}`}>
+                      <span className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Version</span>
+                      <span className={`text-xs font-medium ${darkMode ? 'text-white' : 'text-gray-900'}`}>{selectedClick.browser.version}</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="mb-6">
-                  <h3 className="text-sm font-semibold text-gray-300 mb-3 flex items-center gap-2">
+                  <h3 className={`text-sm font-semibold mb-3 flex items-center gap-2 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                     <FaGlobe className="w-4 h-4 text-purple-400" />
                     Referrer
                   </h3>
-                  <div className="p-3 bg-gray-700/30 rounded-lg border border-gray-600/50">
+                  <div className={`p-3 rounded-lg border ${darkMode ? 'bg-gray-700/30 border-gray-600/50' : 'bg-gray-100 border-gray-300'}`}>
                     {selectedClick.referrer && selectedClick.referrer !== 'direct' ? (() => {
                       try {
                         new URL(selectedClick.referrer); // Validate URL
@@ -519,32 +548,32 @@ const LinkClickDetailsV1 = () => {
                           </a>
                         );
                       } catch (e) {
-                        return <span className="text-xs text-gray-400">{selectedClick.referrer}</span>;
+                        return <span className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>{selectedClick.referrer}</span>;
                       }
                     })() : (
-                      <span className="text-xs text-gray-400">Direct Traffic</span>
+                      <span className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>Direct Traffic</span>
                     )}
                   </div>
                 </div>
 
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-300 mb-3">User Agent</h3>
-                  <div className="p-3 bg-gray-700/30 rounded-lg border border-gray-600/50">
-                    <p className="text-xs text-gray-400 break-all font-mono">
+                  <h3 className={`text-sm font-semibold mb-3 ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>User Agent</h3>
+                  <div className={`p-3 rounded-lg border ${darkMode ? 'bg-gray-700/30 border-gray-600/50' : 'bg-gray-100 border-gray-300'}`}>
+                    <p className={`text-xs break-all font-mono ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                       {selectedClick.userAgent}
                     </p>
                   </div>
                 </div>
               </div>
             ) : (
-              <div className="bg-gray-800/50 backdrop-blur-sm rounded-xl shadow-xl p-12 text-center border border-gray-700/50 sticky top-6">
+              <div className={`backdrop-blur-sm rounded-xl shadow-xl p-12 text-center border sticky top-6 ${darkMode ? 'bg-gray-800/50 border-gray-700/50' : 'bg-white border-gray-200'}`}>
                 <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 flex items-center justify-center border border-purple-500/30">
                   <FaMousePointer className="w-8 h-8 text-purple-400" />
                 </div>
-                <h3 className="text-lg font-semibold text-white mb-2">
+                <h3 className={`text-lg font-semibold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
                   Select a click
                 </h3>
-                <p className="text-gray-400 text-sm">
+                <p className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
                   Choose a click from the list to view its complete details
                 </p>
               </div>
