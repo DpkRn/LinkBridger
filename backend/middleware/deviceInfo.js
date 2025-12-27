@@ -24,21 +24,23 @@ const extractInfo = (req, res, next) => {
      3. USER AGENT PARSING
   ---------------------------------- */
   const uaString = req.headers['user-agent'] || null;
-  const parser = new UAParser(uaString);
+  const parser = new UAParser(uaString || '');
   const ua = parser.getResult();
 
   /* ----------------------------------
      4. DEVICE TYPE NORMALIZATION
   ---------------------------------- */
-  let deviceType = 'unknown';
-  if (ua.device.type === 'mobile') deviceType = 'mobile';
-  else if (ua.device.type === 'tablet') deviceType = 'tablet';
-  else if (!ua.device.type) deviceType = 'desktop';
+  let deviceType = 'desktop'; // Default to desktop
+  if (ua.device && ua.device.type) {
+    if (ua.device.type === 'mobile') deviceType = 'mobile';
+    else if (ua.device.type === 'tablet') deviceType = 'tablet';
+    else deviceType = 'desktop';
+  }
 
   /* ----------------------------------
-     5. REFERRER
+     5. REFERRER (fix: use lowercase 'referer')
   ---------------------------------- */
-  const referrer = req.get('referer') || null;
+  const referrer = req.get('referer') || req.headers.referer || req.get('Referrer') || 'direct';
 
   /* ----------------------------------
      6. TIME
@@ -76,18 +78,18 @@ const extractInfo = (req, res, next) => {
 
     device: {
       type: deviceType,
-      brand: ua.device.vendor || null,
-      model: ua.device.model || null
+      brand: ua.device?.vendor || null,
+      model: ua.device?.model || null
     },
 
     os: {
-      name: ua.os.name || null,
-      version: ua.os.version || null
+      name: ua.os?.name || null,
+      version: ua.os?.version || null
     },
 
     browser: {
-      name: ua.browser.name || null,
-      version: ua.browser.version || null
+      name: ua.browser?.name || null,
+      version: ua.browser?.version || null
     },
 
     referrer,
@@ -103,8 +105,8 @@ const extractInfo = (req, res, next) => {
     country: geo?.country || 'Unknown',
 
     // Old system used single browser string
-    browser: ua.browser.name
-      ? `${ua.browser.name} ${ua.browser.version || ''}`.trim()
+    browser: ua.browser?.name
+      ? `${ua.browser.name}${ua.browser.version ? ' ' + ua.browser.version : ''}`.trim()
       : 'Unknown',
 
     // Old system stored only time (HH:MM)
